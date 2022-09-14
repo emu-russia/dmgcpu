@@ -13,4 +13,4 @@ Deroute environment settings:
 
 ## Progress
 
-![netlist](/imgstore/netlist.jpg)
+![netlist](/imgstore/netlist.png)
