@@ -35,22 +35,22 @@ By @msinger: http://iceboy.a-singer.de/doc/dmg_cpu_connections.html
 |R11	|?	|-	|-	|Not connected.|
 |R12	|?	|-	|-	|Not connected.|
 |R13	|?	|-	|-	|Not connected.|
-|R14	|O	|CPU_IRQ0_ACK	|LETY.in	Active-high. Acknowledges IRQ0 (V-Blank).|
-|R15	|I	|CPU_IRQ0_TRIG	|LOPE.q	Active-high. Triggers IRQ0 (V-Blank).|
-|R16	|O	|CPU_IRQ1_ACK	|LEJA.in	Active-high. Acknowledges IRQ1 (Status).|
-|R17	|I	|CPU_IRQ1_TRIG	|LALU.q	Active-high. Triggers IRQ1 (Status).|
-|R18	|O	|CPU_IRQ2_ACK	|LESA.in	Active-high. Acknowledges IRQ2 (Timer).|
-|R19	|I	|CPU_IRQ2_TRIG	|NYBO.q	Active-high. Triggers IRQ2 (Timer).|
-|R20	|O	|CPU_IRQ3_ACK	|LUFE.in	Active-high. Acknowledges IRQ3 (Serial).|
-|R21	|I	|CPU_IRQ3_TRIG	|UBUL.q	Active-high. Triggers IRQ3 (Serial).|
-|R22	|O	|CPU_IRQ4_ACK	|LAMO.in	Active-high. Acknowledges IRQ4 (Joypad).|
-|R23	|I	|CPU_IRQ4_TRIG	|ULAK.q	Active-high. Triggers IRQ4 (Joypad).|
-|R24	|O	|CPU_IRQ5_ACK	|-	Active-high. Acknowledges IRQ5. Not connected.|
-|R25	|I	|CPU_IRQ5_TRIG	|GND	Active-high. Triggers IRQ5. Hardwired to GND.|
-|R26	|O	|CPU_IRQ6_ACK	|-	Active-high. Acknowledges IRQ6. Not connected.|
-|R27	|I	|CPU_IRQ6_TRIG	|GND	Active-high. Triggers IRQ6. Hardwired to GND.|
-|R28	|O	|CPU_IRQ7_ACK	|-	Active-high. Acknowledges IRQ7. Not connected.|
-|R29	|I	|CPU_IRQ7_TRIG	|GND	Active-high. Triggers IRQ7. Hardwired to GND.|
+|R14	|O	|CPU_IRQ0_ACK	|LETY.in	|Active-high. Acknowledges IRQ0 (V-Blank).|
+|R15	|I	|CPU_IRQ0_TRIG	|LOPE.q	|Active-high. Triggers IRQ0 (V-Blank).|
+|R16	|O	|CPU_IRQ1_ACK	|LEJA.in	|Active-high. Acknowledges IRQ1 (Status).|
+|R17	|I	|CPU_IRQ1_TRIG	|LALU.q	|Active-high. Triggers IRQ1 (Status).|
+|R18	|O	|CPU_IRQ2_ACK	|LESA.in	|Active-high. Acknowledges IRQ2 (Timer).|
+|R19	|I	|CPU_IRQ2_TRIG	|NYBO.q	|Active-high. Triggers IRQ2 (Timer).|
+|R20	|O	|CPU_IRQ3_ACK	|LUFE.in	|Active-high. Acknowledges IRQ3 (Serial).|
+|R21	|I	|CPU_IRQ3_TRIG	|UBUL.q	|Active-high. Triggers IRQ3 (Serial).|
+|R22	|O	|CPU_IRQ4_ACK	|LAMO.in	|Active-high. Acknowledges IRQ4 (Joypad).|
+|R23	|I	|CPU_IRQ4_TRIG	|ULAK.q	|Active-high. Triggers IRQ4 (Joypad).|
+|R24	|O	|CPU_IRQ5_ACK	|-	|Active-high. Acknowledges IRQ5. Not connected.|
+|R25	|I	|CPU_IRQ5_TRIG	|GND	|Active-high. Triggers IRQ5. Hardwired to GND.|
+|R26	|O	|CPU_IRQ6_ACK	|-	|Active-high. Acknowledges IRQ6. Not connected.|
+|R27	|I	|CPU_IRQ6_TRIG	|GND	|Active-high. Triggers IRQ6. Hardwired to GND.|
+|R28	|O	|CPU_IRQ7_ACK	|-	|Active-high. Acknowledges IRQ7. Not connected.|
+|R29	|I	|CPU_IRQ7_TRIG	|GND	|Active-high. Triggers IRQ7. Hardwired to GND.|
 |B1	|I/O	|D0	|multiple	|Data bus D0.|
 |B2	|I/O	|D1	|multiple	|Data bus D1.|
 |B3	|I/O	|D2	|multiple	|Data bus D2.|
