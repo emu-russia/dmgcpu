@@ -13,7 +13,7 @@ Topology features:
 (The left part is shown).
 
 - Each decoder output is a branched NAND
-- The output of a whole NAND tree can be `0` only when all outputs of _at least one_ "branch" are equal to `1`.
+- The output of a whole NAND tree can be `0` only when all inputs of _at least one_ "branch" are equal to `1`.
 - During CLK = 0 a Precharge is made
 - During CLK = 1 an operation (Eval) is committed
 - Value is inverted by regular CMOS inverter
