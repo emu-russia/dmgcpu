@@ -4,11 +4,13 @@
 
 ## Connections between the Decoder and Random Logic
 
-![locator_rails_decoder](/imgstore/locator_rails_decoder.png)
+![locator_rails1](/imgstore/locator_rails1.png)
 
 ## Connections between top and bottom
 
-![locator_rails](/imgstore/locator_rails.png)
+![locator_rails2](/imgstore/locator_rails2.png)
+
+![rails2](/imgstore/rails2.jpg)
 
 ## Cross1
 
