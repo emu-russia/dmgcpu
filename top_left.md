@@ -24,7 +24,25 @@ Piece (x8):
 
 ## The middle part
 
-Some obscure construction that looks like a Christmas tree.
+Some obscure construction that looks like a Christmas tree. (x2)
+
+Just below are 8 identical modules.
+
+module2 (x8):
+
+![module2](/imgstore/module2.jpg)
+
+|Port|Dir|Description|
+|---|---|---|
+|a|input|comb1-3 outputs|
+|b|input|From Christmas Tree|
+|c|input|From Christmas Tree|
+|e|input|Large Comb results|
+|f|output (TBD. Fix pic)|To Large Comb NAND trees|
+|g|input|External|
+|clk|input| |
+|x|output|To Christmas Tree|
+|w|output|To Christmas Tree|
 
 TBD.
 
@@ -38,4 +56,12 @@ The top contains 8 comb logic modules (ANDs-to-NORs) whose outputs go up:
 
 (Comb example)
 
-The lower part contains many NAND trees, the inputs for which come from all sides.
+The lower part contains many NAND trees, the inputs for which come from all sides and also from `module2` instancies.
+
+Large Comb 1 (_14 NAND trees_):
+
+![LargeComb1](/imgstore/LargeComb1.jpg)
+
+Large Comb 1 Result:
+
+![LargeComb1_Res](/imgstore/LargeComb1_Res.jpg)

@@ -20,6 +20,12 @@ Topology features:
 
 Dynamic logic is used.
 
+Whole:
+
+![decoder1_all](/imgstore/decoder1_all.jpg)
+
+TBD: Decode me.
+
 ## Decoded Decoder1
 
 Below is a table with the value of the bitmask for each decoder output.
@@ -34,4 +40,4 @@ Below is a table with the value of the bitmask for each decoder output.
 
 :warning: Keep in mind that these fockers wrapped a9 input for the first three outputs with a slingshot.
 
-TBD.
+TBD. Decode me.

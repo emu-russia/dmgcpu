@@ -76,7 +76,3 @@ By @msinger: http://iceboy.a-singer.de/doc/dmg_cpu_connections.html
 |B23	|O	|A1	|multiple	|Address bus A1.|
 |B24	|O	|A0	|multiple	|Address bus A0.|
 |B25	|I	|TO_CPU2	|AWOB.q	|Wakes CPU from STOP mode.|
-
-## VDD/GND
-
-![power](/imgstore/power.jpg)
