@@ -30,32 +30,32 @@ Inputs:
 
 |Input|From|Meaning|
 |---|---|---
-|a0| | |
-|a1| | |
-|a2| | |
-|a3| | |
-|a4| | |
-|a5| | |
-|a6| | |
-|a7| | |
-|a8| | |
-|a9| | |
-|a10| | |
-|a11| | |
-|a12| | |
-|a13| | |
-|a14| | |
-|a15| | |
-|a16| | |
-|a17| | |
-|a18| | |
-|a19| | |
-|a20| | |
-|a21| | |
-|a22| | |
-|a23| | |
-|a24| | |
-|a25| | |
+|a0|Inplace|~a1|
+|a1|Sequencer| ??? |
+|a2|Inplace|~a3|
+|a3|Sequencer| ??? |
+|a4|Inplace|~a5|
+|a5|IR|IR\[7\]|
+|a6|Inplace|~a7|
+|a7|IR|IR\[6\]|
+|a8|Inplace|~a9|
+|a9|IR|IR\[5\]|
+|a10|Inplace|~a11|
+|a11|IR|IR\[4\]|
+|a12|Inplace|~a13|
+|a13|IR|IR\[3\]|
+|a14|Inplace|~a15|
+|a15|IR|IR\[2\]|
+|a16|Inplace|~a17|
+|a17|IR|IR\[1\]|
+|a18|Inplace|~a19|
+|a19|IR|IR\[0\]|
+|a20|Sequencer| ??? |
+|a21|Inplace|~a20|
+|a22|Sequencer| ??? |
+|a23|Inplace|~a22|
+|a24|Sequencer| ??? |
+|a25|Inplace|~a24|
 
 ## Decoded Decoder1
 
