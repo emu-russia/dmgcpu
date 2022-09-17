@@ -1,4 +1,4 @@
-# Dispatcher aka Sequencer
+# Sequencer
 
 :warning: The section is in development.
 
@@ -15,7 +15,7 @@ LR->TD order.
 |Row|Blocks|
 |---|---|
 |1|not (x18), not, nand, not, nand, not, nand, nor, nor, hmm1, not|
-|2|nor4, aoi_1, not, not, huge1, not, module3, module3, module3, module3, hmm2|
+|2|nor3, not, aoi_1, not, not, huge1, not, module3, module3, module3, module3, hmm2|
 |3|module3, iwantsleep, not, nor, module3, comb_12, module4, nor3, not|
 |4|module3, module3, nand, nor, not, module4, module3, not, nand, not, module3, module4, not, nand3, module4, shielded, not, module3, not, nor, module4, nor, nand, nand, not, not, nor4, module3, module3, not, nor, not, module4, nand, comb4, module4, not, comb5, not|
 |5|not, nor|
