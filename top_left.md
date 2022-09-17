@@ -16,7 +16,7 @@ Status: More polishing is required. Very poorly visible Poly.
 
 module1 (x8):
 
-![module1](/imgstore/module1.jpg)
+![module1](/imgstore/modules/module1.jpg)
 
 |Port|Dir|Description|
 |---|---|---|
@@ -29,7 +29,7 @@ module1 (x8):
 
 8-NOR:
 
-![nor8_1](/imgstore/nor8_1.jpg)
+![nor8_1](/imgstore/modules/nor8_1.jpg)
 
 ## The middle part
 
@@ -39,7 +39,7 @@ Just below are 8 identical modules.
 
 module2 (x8):
 
-![module2](/imgstore/module2.jpg)
+![module2](/imgstore/modules/module2.jpg)
 
 |Port|Dir|Description|
 |---|---|---|
@@ -61,7 +61,7 @@ Consists of two halves.
 
 The top contains 8 comb logic modules (ANDs-to-NORs) whose outputs go up:
 
-![comb1](/imgstore/comb1.jpg)
+![comb1](/imgstore/modules/comb1.jpg)
 
 (Comb example)
 
