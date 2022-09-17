@@ -16,6 +16,8 @@
 
 ![locator_cross1](/imgstore/locator_cross1.png)
 
+![cross1](/imgstore/cross1.jpg)
+
 ## Cross2
 
 ![locator_cross2](/imgstore/locator_cross2.png)

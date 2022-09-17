@@ -14,9 +14,18 @@ Status: More polishing is required. Very poorly visible Poly.
 
 ## Top of 8 pieces + NOR-8
 
-Piece (x8):
+module1 (x8):
 
 ![module1](/imgstore/module1.jpg)
+
+|Port|Dir|Description|
+|---|---|---|
+|a|input| |
+|b|input| |
+|c|input| |
+|clk|input| |
+|Data|inout|Connects to external data bus|
+|x|output| |
 
 8-NOR:
 
