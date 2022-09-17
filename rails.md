@@ -6,6 +6,8 @@
 
 ![locator_rails1](/imgstore/locator_rails1.png)
 
+![rails1](/imgstore/rails1.jpg)
+
 ## Connections between top and bottom
 
 ![locator_rails2](/imgstore/locator_rails2.png)
