@@ -69,11 +69,17 @@ LR->TD order.
 |4|module3, module3, nand, nor, not, module4, module3, not, nand, not, module3, module4, not, nand3, module4, shielded, not, module3, not, nor, module4, nor, nand, nand, not, not, nor4, module3, module3, not, nor, not, module4, nand, comb4, module4, not, comb5, not|
 |5|not, nor|
 
-## module3
+## module3 - dff_comp
+
+DFF on a complementary CLK (Dual Rails). Since we do not yet know the polarity of the CLK input signals, we can assume that this is a `negedge` DFF.
+
+The picture uses CLK8 as the CLK, and CLK9 is used as the CLK complement (CCLK). I think I guessed it :smiley:
+
+In fact, when using Dual Rails, you can easily turn a negedge DFF into a posedge by simply rearranging the CLK complement signals.
 
 ![module3](/imgstore/modules/module3.jpg)
 
-TBD.
+![module3_tran](/imgstore/modules/module3_tran.jpg)
 
 ## module4
 
