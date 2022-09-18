@@ -140,9 +140,11 @@ TBD.
 
 ## shielded
 
+Very cleverly twisted combined logic. Bravo, SHARP engineers!
+
 ![shielded](/imgstore/modules/shielded.jpg)
 
-TBD.
+![shielded_tran](/imgstore/modules/shielded_tran.jpg)
 
 ## comb4 - aoi_221_dyn
 

@@ -1,7 +1,5 @@
 # Rails
 
-:warning: The section is in development.
-
 ## Connections between the Decoder and Random Logic
 
 ![locator_rails1](/imgstore/locator_rails1.png)
