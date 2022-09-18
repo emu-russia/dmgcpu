@@ -10,9 +10,7 @@ Decoder1 makes a preliminary decoding of the operation code, which will then be 
 
 Topology features:
 
-![decoder1_topo](/imgstore/decoder1_topo.png)
-
-(The left part is shown).
+![decoder1](/imgstore/decoder1.jpg)
 
 - Each decoder output is a branched NAND
 - The output of a whole NAND tree can be `0` only when all inputs of _at least one_ "branch" are equal to `1`.
@@ -22,13 +20,7 @@ Topology features:
 
 Dynamic logic is used.
 
-Whole:
-
-![decoder1_all](/imgstore/decoder1_all.jpg)
-
-TBD: Decode me.
-
-Inputs:
+## Decoder1 Inputs
 
 |Input|From|Meaning|
 |---|---|---
@@ -59,18 +51,122 @@ Inputs:
 |a24|Sequencer| ??? TBD. |
 |a25|Inplace|~a24|
 
-## Decoded Decoder1
+## Decoder1 Outputs
 
 Below is a table with the value of the bitmask for each decoder output.
-
-|dx|NAND tree|Description
-|---|---|---|
-|0|011001'0110011001'1010100101| |
-|1|011001'0110011010'1010100101| |
-|2|101001'0110011010'1010100101| |
-|3|000000'0000000000'0001100101| |
-|3 alt|000000'0110100000'0010100101| |
 
 :warning: Keep in mind that these fockers wrapped a9 input for the first three outputs with a slingshot.
 
 TBD. Decode me.
+
+|dx Output|NAND trees|To|Description|
+|---|---|---|---|
+|0|011001'0110011001'1010100101| | |
+|1|011001'0110011010'1010100101| | |
+|2|101001'0110011010'1010100101| | |
+|3|000000'0000000000'0001100101<br/>000000'0110100000'0010100101| | |
+|4| | | |
+|5| | | |
+|6| | | |
+|7| | | |
+|8| |Random Logic (not used in Decoder2)| |
+|9| | | |
+|10| | | |
+|11| | | |
+|12| | | |
+|13| | | |
+|14| |Random Logic (not used in Decoder2)| |
+|15| | | |
+|16| | | |
+|17| | | |
+|18| | | |
+|19| | | |
+|20| | | |
+|21| | | |
+|22| | | |
+|23| | | |
+|24| | | |
+|25| |Random Logic (not used in Decoder2)| |
+|26| | | |
+|27| | | |
+|28| | | |
+|29| | | |
+|30| | | |
+|31| | | |
+|32| | | |
+|33| | | |
+|34| |Random Logic (also)| |
+|35| | | |
+|36| | | |
+|37| | | |
+|38| |Random Logic (also)| |
+|39| | | |
+|40| | | |
+|41| |Random Logic (not used in Decoder2)| |
+|42| |Random Logic, ALU, Bottom (not used in Decoder2)| |
+|43| | | |
+|44| | | |
+|45| | | |
+|46| | | |
+|47| | | |
+|48| |:warning: Not used| |
+|49| |:warning: Not used| |
+|50| | | |
+|51| | | |
+|52| | | |
+|53| | | |
+|54| | | |
+|55| | | |
+|56| | | |
+|57| | | |
+|58| |ALU (also)| |
+|59| | | |
+|60| |Bottom (also)| |
+|61| | | |
+|62| |Random Logic (also)| |
+|63| | | |
+|64| |Random Logic (also)| |
+|65| | | |
+|66| | | |
+|67| | | |
+|68| | | |
+|69| | | |
+|70| | | |
+|71| | | |
+|72| | | |
+|73| | | |
+|74| | | |
+|75| | | |
+|76| | | |
+|77| | | |
+|78| | | |
+|79| | | |
+|80| | | |
+|81| | | |
+|82| | | |
+|83| |Random Logic (also)| |
+|84| | | |
+|85| | | |
+|86| | | |
+|87| | | |
+|88| |Random Logic (also). Long wire.| |
+|89| | | |
+|90| | | |
+|91| | | |
+|92| |Bottom (also)| |
+|93| |Random Logic, Bottom (also)| |
+|94| | | |
+|95| | | |
+|96| | | |
+|97| | | |
+|98| | | |
+|99| |Sequencer (also)| |
+|100| |Sequencer (also)| |
+|101| |Sequencer (also)| |
+|102| |Sequencer (also)| |
+|103| | | |
+|104| | | |
+|105| | | |
+|106| | |:warning: Not used|
+
+(The `To` outputs are marked only for those that go somewhere else besides Decoder2).
