@@ -16,74 +16,76 @@ The task of this logic is to generate the control signals for the bottom part.
 
 ## Output List
 
-|Output|Name|CLK|Description|
-|---|---|---|---|
-|x0| |CLK2| |
-|x1| |CLK2| |
-|x2| |CLK2 | |
-|x3| |CLK2 | |
-|x4| |CLK2 | |
-|x5| |CLK2 | |
-|x6| |CLK2 | |
-|x7| |CLK2 | |
-|x8| |CLK2 | |
-|x9| |CLK2 | |
-|x10| |CLK2 | |
-|x11| |CLK2 | |
-|x12| |CLK2 | |
-|x13| |CLK2 | |
-|x14| |CLK2 | |
-|x15|DataOut|CLK2 | |
-|x16| |CLK2 | |
-|x17| |CLK2 | |
-|x18| |CLK2 | |
-|x19| |CLK2 | |
-|x20| |CLK2 | |
-|x21| |CLK2 | |
-|x22| |CLK2 | |
-|x23| |CLK2 | |
-|x24| |CLK2 | |
-|x25| |CLK2 | |
-|x26| |CLK2 | |
-|x27| |CLK2 | |
-|x28| |:warning: CLK4| |
-|x29| |:warning: CLK4| |
-|x30| |CLK2 | |
-|x31| |CLK2 | |
-|x32| |CLK2 | |
-|x33| |CLK2 | |
-|x34| |CLK2 | |
-|x35| |CLK2 | |
-|x36| |CLK2 | |
-|x37| |CLK2 | |
-|x38| |CLK2 | |
-|x39| |CLK2 | |
-|x40| |CLK2 | |
-|x41| |CLK2 | |
-|x42| |CLK2 | |
-|x43| |CLK2 | |
-|x44| |CLK2 | |
-|x45| |CLK2 | |
-|x46| |CLK2 | |
-|x47| |CLK2 | |
-|x48| |:warning: CLK4| |
-|x49| |:warning: CLK4| |
-|x50| |:warning: CLK4| |
-|x51| |:warning: CLK4| |
-|x52| |CLK2 | |
-|x53| |CLK2 | |
-|x54| |CLK2 | |
-|x55| |CLK2 | |
-|x56| |:warning: CLK4| |
-|x57| |CLK2 | |
-|x58| |CLK2 | |
-|x59| |CLK2 | |
-|x60| |CLK2 | |
-|x61| |CLK2 | |
-|x62| |CLK2 | |
-|x63| |CLK2 | |
-|x64| |CLK2 | |
-|x65| |CLK2 | |
-|x66| |CLK2 | |
-|x67| |CLK2 | |
-|x68| |CLK2 | |
+|Output|Name|CLK|To|Description|
+|---|---|---|---|---|
+|x0| |CLK2|ALU Bot| |
+|x1| |CLK2|ALU Bot| |
+|x2| |CLK2 |internal| |
+|x3| |CLK2 |ALU Top| |
+|x4| |CLK2 |ALU module2| |
+|x5| |CLK2 |ALU AND combs| |
+|x6| |CLK2 |ALU AND combs| |
+|x7| |CLK2 |ALU AND combs| |
+|x8| |CLK2 |ALU AND combs| |
+|x9| |CLK2 |ALU AND combs| |
+|x10| |CLK2 |ALU Bot| |
+|x11| |CLK2 |ALU Bot| |
+|x12| |CLK2 |ALU Bot| |
+|x13| |CLK2 |internal| |
+|x14| |CLK2 |internal| |
+|x15|DataOut|:warning: CLK4 |Data Bridge| |
+|x16| |CLK2 |ALU AND combs| |
+|x17| |CLK2 |internal| |
+|x18| |CLK2 |ALU Top| |
+|x19| |CLK2 |ALU Bot, ALU module2| |
+|x20| |CLK2 |internal| |
+|x21| |CLK2 |ALU Bot| |
+|x22| |CLK2 |ALU Bot| |
+|x23| |CLK2 |internal| |
+|x24| |CLK2 |ALU Bot| |
+|x25| |CLK2 |ALU module2| |
+|x26| |CLK2 |ALU Bot| |
+|x27| |CLK2 |ALU Bot| |
+|x28| |:warning: CLK4|ALU Bot Res| |
+|x29| |:warning: CLK4|ALU Bot Res| |
+|x30| |CLK2 |internal| |
+|x31| |CLK2 |ALU Bot, Thingy2| |
+|x32| |CLK2 |internal| |
+|x33| |CLK2 |Bottom| |
+|x34| |CLK2 |internal| |
+|x35| |CLK2 |Bottom| |
+|x36| |CLK2 |internal| |
+|x37|DL_Control2|CLK2 |Data Latch| |
+|x38| |CLK2 |Bottom| |
+|x39| |CLK2 |Bottom| |
+|x40| |CLK2 |Bottom| |
+|x41| |CLK2 |Sequencer| |
+|x42| |CLK2 |Bottom| |
+|x43| |CLK2 |Bottom| |
+|x44| |CLK2 |Bottom| |
+|x45| |CLK2 |Bottom| |
+|x46| |CLK2 |Bottom| |
+|x47| |CLK2 |Bottom| |
+|x48| |:warning: CLK4|Bottom| |
+|x49| |:warning: CLK4|Bottom| |
+|x50| |:warning: CLK4|Bottom| |
+|x51| |:warning: CLK4|Bottom| |
+|x52| |CLK2 |Bottom| |
+|x53| |CLK2 |Bottom| |
+|x54| |CLK2 |Bottom| |
+|x55| |CLK2 |Bottom| |
+|x56| |:warning: CLK4|Bottom| |
+|x57| |CLK2 |Bottom| |
+|x58| |CLK2 |Bottom| |
+|x59| |CLK2 |Bottom| |
+|x60| |CLK2 |Bottom| |
+|x61| |CLK2 |Bottom (twice)| |
+|x62| |CLK2 |Bottom| |
+|x63| |CLK2 |Bottom| |
+|x64| |CLK2 |internal| |
+|x65| |CLK2 |Bottom| |
+|x66| |CLK2 |internal| |
+|x67| |CLK2 |Bottom| |
+|x68| |CLK2 |Bottom (twice)| |
+
+(Outputs not marked as `internal` can still be used internally, I just did not mark it unnecessarily).
