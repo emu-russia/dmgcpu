@@ -8,6 +8,55 @@
 
 TBD.
 
+## Sequencer Inputs
+
+|Signal|From|Description|
+|---|---|---|
+|CLK1|External| |
+|CLK4|External| |
+|CLK6|External|See `huge1` module|
+|CLK8|External| |
+|CLK9|External| |
+|SYNC_RESET|External|Port T12|
+|RESET|External|Port T13|
+|Clock_WTF|External|Port T15|
+|Unbonded|External|Port T16|
+|WAKE|External|Port B25|
+|Maybe1 (DL_Control1)|External|Port R3 (_Maybe used to disable all bus..._)|
+|unnamed|External|Port R4. See `shielded` module|
+|unnamed|External|Port R5. See `shielded` module|
+|unnamed|External|Port R6. See `shielded` module|
+|Seq_Control1|Bottom| |
+|Seq_Control2|Bottom| |
+|d93|Decoder1| |
+|d99|Decoder1| |
+|d100|Decoder1| |
+|d101|Decoder1| |
+|d102|Decoder1| |
+|w11|Decoder2| |
+|w18|Decoder2| |
+|w20|Decoder2| |
+|w26 (LoadIR)|Decoder2| |
+|w32|Decoder2| |
+|w33|Decoder2| |
+|w40|Decoder2| |
+|ALU_Out1|ALU| |
+
+## Sequencer Outputs
+
+|Signal|To|Description|
+|---|---|---|
+|a\[25:0\]|Decoder1|Decoder1 inputs|
+|LongDescr|External|Port T11 with long description|
+|XCK_Ena|External|Port T14|
+|RD|External|Port R1|
+|WR|External|Port R2|
+|MREQ|External|Port R7|
+|nCLK4| |~CLK4|
+|SeqOut_1|Bottom| |
+|SeqOut_2|Bottom| |
+|SeqOut_3|Bottom| |
+
 ## Map
 
 LR->TD order.
