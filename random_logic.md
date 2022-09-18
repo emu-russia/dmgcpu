@@ -10,11 +10,19 @@ The task of this logic is to generate the control signals for the bottom part.
 
 ![rnd](/imgstore/rnd.jpg)
 
+## Random Logic Inputs
+
+TBD.
+
+## IR Nots
+
+![ir_nots](/imgstore/ir_nots.jpg)
+
 ## Output Drivers
 
 ![rnd_drv](/imgstore/modules/rnd_drv.jpg)
 
-## Output List
+## Random Logic Outputs
 
 |Output|Name|CLK|To|Description|
 |---|---|---|---|---|

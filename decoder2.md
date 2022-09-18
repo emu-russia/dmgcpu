@@ -8,18 +8,20 @@ Refines the decoded operation code and reduces the total number of outputs for r
 
 ![decoder2](/imgstore/decoder2.jpg)
 
-The outputs `d[106:0]` from [Decoder1](decoder1.md) are input.
+## Decoder2 Inputs
 
-The outputs of Decoder1 have three paths:
-- Stay inside Decoder2 and form one of Decoder2's outputs with the rest of the signals
-- Go outside
-- Stay inside AND go outside
+The outputs `d[106:0]` from [Decoder1](decoder1.md) are input.
 
 ## Decoder2 Output Driver
 
 TBD.
 
 ## Decoder2 Outputs
+
+The outputs of Decoder1 have three paths:
+- Stay inside Decoder2 and form one of Decoder2's outputs with the rest of the signals
+- Go outside
+- Stay inside AND go outside
 
 All outputs are clocked by the `CLK2` signal.
 

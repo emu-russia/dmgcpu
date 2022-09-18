@@ -10,9 +10,7 @@ Decoder1 makes a preliminary decoding of the operation code, which will then be 
 
 Topology features:
 
-![decoder1_topo](/imgstore/decoder1_topo.png)
-
-(The left part is shown).
+![decoder1](/imgstore/decoder1.jpg)
 
 - Each decoder output is a branched NAND
 - The output of a whole NAND tree can be `0` only when all inputs of _at least one_ "branch" are equal to `1`.
@@ -22,13 +20,7 @@ Topology features:
 
 Dynamic logic is used.
 
-Whole:
-
-![decoder1_all](/imgstore/decoder1_all.jpg)
-
-TBD: Decode me.
-
-Inputs:
+## Decoder1 Inputs
 
 |Input|From|Meaning|
 |---|---|---
@@ -59,7 +51,7 @@ Inputs:
 |a24|Sequencer| ??? TBD. |
 |a25|Inplace|~a24|
 
-## Decoded Decoder1
+## Decoder1 Outputs
 
 Below is a table with the value of the bitmask for each decoder output.
 
