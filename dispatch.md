@@ -68,11 +68,13 @@ TBD.
 
 TBD.
 
-## iwantsleep
+## iwantsleep - oai_21
+
+1 OR x2 to AND inverted.
 
 ![iwantsleep](/imgstore/modules/iwantsleep.jpg)
 
-TBD.
+![iwantsleep_tran](/imgstore/modules/iwantsleep_tran.jpg)
 
 ## shielded
 
