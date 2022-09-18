@@ -82,11 +82,15 @@ In fact, when using Dual Rails, you can easily turn a negedge DFF into a posedge
 
 ![module3_tran](/imgstore/modules/module3_tran.jpg)
 
-## module4
+## module4 - rs_latch
+
+A typical static latch, but made quite compact. The impressive gates on the FlipFlop, where the value is stored, are also a distinguishing feature.
+
+Also: reset input in inverse polarity (`#RESET`).
 
 ![module4](/imgstore/modules/module4.jpg)
 
-TBD.
+![module4_tran](/imgstore/modules/module4_tran.jpg)
 
 ## aoi_1
 
