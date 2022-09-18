@@ -92,8 +92,10 @@ TBD.
 
 TBD.
 
-## comb5
+## comb5 - aoi_22_dyn
+
+2 AND x2 to OR inverted, dynamic.
 
 ![comb5](/imgstore/modules/comb5.jpg)
 
-TBD.
+![comb5_tran](/imgstore/modules/comb5_tran.jpg)
