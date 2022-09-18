@@ -50,11 +50,13 @@ TBD.
 
 TBD.
 
-## hmm1
+## hmm1 - oai_21
+
+1 OR x2 to AND inverted.
 
 ![hmm1](/imgstore/modules/hmm1.jpg)
 
-TBD.
+![hmm1_tran](/imgstore/modules/hmm1_tran.jpg)
 
 ## hmm2
 
