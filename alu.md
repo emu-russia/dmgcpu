@@ -63,9 +63,9 @@ Consists of two halves.
 
 The top contains 8 comb logic modules (ANDs-to-NORs) whose outputs go up:
 
-![comb1](/imgstore/modules/comb1.jpg)
-
-(Comb example)
+|Comb3 (bit 0)|Comb2 (bits 1-6)|Comb1 (bit 7)|
+|---|---|---|
+|![comb3](/imgstore/modules/comb1.jpg)|![comb2](/imgstore/modules/comb1.jpg)|![comb1](/imgstore/modules/comb1.jpg)|
 
 The lower part contains many NAND trees, the inputs for which come from all sides and also from `module2` instancies.
 
