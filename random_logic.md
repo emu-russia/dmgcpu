@@ -49,7 +49,7 @@ The task of this logic is to generate the control signals for the bottom part.
 |x28| |:warning: CLK4|ALU Bot Res| |
 |x29| |:warning: CLK4|ALU Bot Res| |
 |x30| |CLK2 |internal| |
-|x31| |CLK2 |ALU Bot, Thingy2| |
+|x31| |CLK2 |internal| |
 |x32| |CLK2 |internal| |
 |x33| |CLK2 |Bottom| |
 |x34| |CLK2 |internal| |

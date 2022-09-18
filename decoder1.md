@@ -77,13 +77,13 @@ TBD. Decode me.
 |5| | | |
 |6| | | |
 |7| | | |
-|8| | | |
+|8| |Random Logic (not used in Decoder2)| |
 |9| | | |
 |10| | | |
 |11| | | |
 |12| | | |
 |13| | | |
-|14| | | |
+|14| |Random Logic (not used in Decoder2)| |
 |15| | | |
 |16| | | |
 |17| | | |
@@ -94,7 +94,7 @@ TBD. Decode me.
 |22| | | |
 |23| | | |
 |24| | | |
-|25| | | |
+|25| |Random Logic (not used in Decoder2)| |
 |26| | | |
 |27| | | |
 |28| | | |
@@ -103,22 +103,22 @@ TBD. Decode me.
 |31| | | |
 |32| | | |
 |33| | | |
-|34| | | |
+|34| |Random Logic (also)| |
 |35| | | |
 |36| | | |
 |37| | | |
-|38| | | |
+|38| |Random Logic (also)| |
 |39| | | |
 |40| | | |
-|41| | | |
-|42| | | |
+|41| |Random Logic (not used in Decoder2)| |
+|42| |Random Logic, ALU, Bottom (not used in Decoder2)| |
 |43| | | |
 |44| | | |
 |45| | | |
 |46| | | |
 |47| | | |
-|48| | | |
-|49| | | |
+|48| |:warning: Not used| |
+|49| |:warning: Not used| |
 |50| | | |
 |51| | | |
 |52| | | |
@@ -127,13 +127,13 @@ TBD. Decode me.
 |55| | | |
 |56| | | |
 |57| | | |
-|58| | | |
+|58| |ALU (also)| |
 |59| | | |
-|60| | | |
+|60| |Bottom (also)| |
 |61| | | |
-|62| | | |
+|62| |Random Logic (also)| |
 |63| | | |
-|64| | | |
+|64| |Random Logic (also)| |
 |65| | | |
 |66| | | |
 |67| | | |
@@ -152,27 +152,29 @@ TBD. Decode me.
 |80| | | |
 |81| | | |
 |82| | | |
-|83| | | |
+|83| |Random Logic (also)| |
 |84| | | |
 |85| | | |
 |86| | | |
 |87| | | |
-|88| | | |
+|88| |Random Logic (also). Long wire.| |
 |89| | | |
 |90| | | |
 |91| | | |
-|92| | | |
-|93| | | |
+|92| |Bottom (also)| |
+|93| |Random Logic, Bottom (also)| |
 |94| | | |
 |95| | | |
 |96| | | |
 |97| | | |
 |98| | | |
-|99| | | |
-|100| | | |
-|101| | | |
-|102| | | |
+|99| |Sequencer (also)| |
+|100| |Sequencer (also)| |
+|101| |Sequencer (also)| |
+|102| |Sequencer (also)| |
 |103| | | |
 |104| | | |
 |105| | | |
-|106| | |Not used|
+|106| | |:warning: Not used|
+
+(The `To` outputs are marked only for those that go somewhere else besides Decoder2).
