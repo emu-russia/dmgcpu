@@ -40,6 +40,7 @@ TBD.
 |w32|Decoder2| |
 |w33|Decoder2| |
 |w40|Decoder2| |
+|x41|Random Logic| |
 |ALU_Out1|ALU| |
 
 ## Sequencer Outputs
