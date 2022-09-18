@@ -139,11 +139,13 @@ TBD.
 
 TBD.
 
-## comb4
+## comb4 - aoi_221_dyn
+
+2 AND x2 to OR-3 inverted, dynamic.
 
 ![comb4](/imgstore/modules/comb4.jpg)
 
-TBD.
+![comb4_tran](/imgstore/modules/comb4_tran.jpg)
 
 ## comb5 - aoi_22_dyn
 
