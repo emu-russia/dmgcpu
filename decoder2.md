@@ -61,10 +61,10 @@ All Decoder2 outputs are clocked by the `CLK2` signal.
 |w31| | | |
 |w32| |Sequencer (only)| |
 |w33| |Sequencer (only)| |
-|w34| | | |
+|w34| |Bottom (only)| |
 |w35| |Thingy (only)| |
 |w36| | | |
-|w37| | | |
+|w37| |ALU| |
 |w38| | | |
 |w39| | | |
 |w40| |Sequencer| |

@@ -49,7 +49,7 @@ TBD.
 |x20| |CLK2 |internal| |
 |x21| |CLK2 |ALU Bot| |
 |x22| |CLK2 |ALU Bot| |
-|x23| |CLK2 |internal| |
+|x23| |CLK2 |ALU Bot| |
 |x24| |CLK2 |ALU Bot| |
 |x25| |CLK2 |ALU module2| |
 |x26| |CLK2 |ALU Bot| |

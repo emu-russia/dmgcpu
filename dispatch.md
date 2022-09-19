@@ -23,9 +23,9 @@ TBD.
 |Unbonded|External|Port T16|
 |WAKE|External|Port B25|
 |Maybe1 (DL_Control1)|External|Port R3 (_Maybe used to disable all bus..._)|
-|unnamed|External|Port R4. See `shielded` module|
-|unnamed|External|Port R5. See `shielded` module|
-|unnamed|External|Port R6. See `shielded` module|
+|MMIO_REQ|External|Port R4. See `shielded` module|
+|IPL_REQ|External|Port R5. See `shielded` module|
+|Maybe2|External|Port R6. See `shielded` module|
 |Seq_Control1|Bottom| |
 |Seq_Control2|Bottom| |
 |d93|Decoder1| |
@@ -42,6 +42,8 @@ TBD.
 |w40|Decoder2| |
 |x41|Random Logic| |
 |ALU_Out1|ALU| |
+|IR3|IR| |
+|IR4|IR| |
 
 ## Sequencer Outputs
 
