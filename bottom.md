@@ -2,7 +2,7 @@
 
 :warning: The section is in development.
 
-Status: Lapping. Obtaining the topology.
+Status: Obtaining the topology.
 
 ![locator_bottom](/imgstore/locator_bottom.png)
 
