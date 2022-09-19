@@ -2,6 +2,8 @@
 
 :warning: The section is in development.
 
+Status: We need to restore all NAND trees.
+
 ![locator_random_logic](/imgstore/locator_random_logic.png)
 
 Usually this is the kind of logic that only the person who made it understands.
@@ -23,6 +25,8 @@ TBD.
 ![rnd_drv](/imgstore/modules/rnd_drv.jpg)
 
 ## Random Logic Outputs
+
+:warning: Again, carefully check the use of CLK for each output. Everything is tangled in there.
 
 |Output|Name|CLK|To|Description|
 |---|---|---|---|---|
@@ -97,3 +101,7 @@ TBD.
 |x68| |CLK2 |Bottom (twice)| |
 
 (Outputs not marked as `internal` can still be used internally, I just did not mark it unnecessarily).
+
+## Nand Trees
+
+TBD.
