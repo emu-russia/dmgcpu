@@ -92,17 +92,21 @@ Also: reset input in inverse polarity (`#RESET`).
 
 ![module4_tran](/imgstore/modules/module4_tran.jpg)
 
-## aoi_1
+## aoi_1 - aoi_21
+
+1 AND x2 to OR inverted.
 
 ![aoi_1](/imgstore/modules/aoi_1.jpg)
 
-TBD.
+![aoi_1_tran](/imgstore/modules/aoi_1_tran.jpg)
 
-## aoi_2
+## aoi_2 - aoi_21
+
+1 AND x2 to OR inverted.
 
 ![aoi_2](/imgstore/modules/aoi_2.jpg)
 
-TBD.
+![aoi_2_tran](/imgstore/modules/aoi_2_tran.jpg)
 
 ## huge1
 
