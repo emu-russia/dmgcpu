@@ -134,11 +134,13 @@ By the way, there are 2 `not` in the circuit to form the complement, one of whic
 
 ![hmm1_tran](/imgstore/modules/hmm1_tran.jpg)
 
-## hmm2
+## hmm2 - aoi_31
+
+1 AND x3 to OR inverted.
 
 ![hmm2](/imgstore/modules/hmm2.jpg)
 
-TBD.
+![hmm2_tran](/imgstore/modules/hmm2_tran.jpg)
 
 ## hmm3
 
