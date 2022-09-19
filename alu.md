@@ -76,3 +76,28 @@ Large Comb 1 (_14 NAND trees_):
 Large Comb 1 Result:
 
 ![LargeComb1_Res](/imgstore/LargeComb1_Res.jpg)
+
+## Nand Trees
+
+|Tree|Image|Paths|
+|---|---|---|
+|alu_1|![alu_1](/imgstore/nandtrees/alu_1.jpg)|{alu0}<br/>{w24,nIR3,nIR4,nIR5}<br/>{w10,IR5}<br/>{w10,IR4}<br/>{w10,IR3}|
+|alu_2| | |
+|alu_3| | |
+|alu_4| | |
+|alu_5| | |
+|alu_6| | |
+|alu_7| | |
+|alu_8| | |
+|alu_9| | |
+|alu_10| | |
+|alu_11| | |
+|alu_12| | |
+|alu_13| | |
+|alu_14| | |
+
+The result is an AND-to-NOR tree (using alu_1 as an example):
+
+![demo_alu_1](/imgstore/nandtrees/demo_alu_1.jpg)
+
+To convert trees into a schematic, you can use a script to generate an HDL.
