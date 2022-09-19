@@ -100,4 +100,6 @@ The result is an AND-to-NOR tree (using alu_1 as an example):
 
 ![demo_alu_1](/imgstore/nandtrees/demo_alu_1.jpg)
 
+(the dynamic part is not shown in the picture)
+
 To convert trees into a schematic, you can use a script to generate an HDL.
