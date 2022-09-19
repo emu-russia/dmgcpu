@@ -1,12 +1,10 @@
 # Sequencer
 
-:warning: The section is in development.
+Status: All connections and the element base are ready. You can rebuild the circuit.
 
 ![locator_dispatch](/imgstore/locator_dispatch.png)
 
 ![seq](/imgstore/seq.jpg)
-
-TBD.
 
 ## Sequencer Inputs
 
@@ -167,6 +165,8 @@ Output in inverse polarity (`#Q`).
 ## shielded
 
 Very cleverly twisted combined logic. Bravo, SHARP engineers!
+
+This module is essentially used to generate the `#MREQ` signal. Below is `not` to invert it into a `MREQ` signal and output it to the outside.
 
 ![shielded](/imgstore/modules/shielded.jpg)
 

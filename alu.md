@@ -12,6 +12,14 @@ Status: Most of the topology is obtained. Restoration and study is in progress.
 - In the middle part it is not yet clear what is (part of ALU)
 - The lower part is 8-bit ALU
 
+## ALU Inputs
+
+TBD.
+
+## ALU Outputs
+
+TBD.
+
 ## Data Latch + NOR-8
 
 DL_Bit (x8):
@@ -35,7 +43,7 @@ The result of the nor8 operation is the `AllZeros` signal. This is often require
 
 ## The middle part
 
-Some obscure construction that looks like a Christmas tree. (x2)
+Some obscure construction that looks like a Christmas tree. (x2). It's probably two barrel shifters.
 
 Just below are 8 identical modules.
 
@@ -66,6 +74,7 @@ The top contains 8 dynamic comb logic modules (ANDs-to-NORs) whose outputs go up
 |Comb3 (bit 0)|Comb2 (bits 1-6)|Comb1 (bit 7)|
 |---|---|---|
 |![comb3](/imgstore/modules/comb3.jpg)|![comb2](/imgstore/modules/comb2.jpg)|![comb1](/imgstore/modules/comb1.jpg)|
+|TBD: Logic|TBD: Logic|TBD: Logic|
 
 The lower part contains many NAND trees, the inputs for which come from all sides and also from `module2` instancies.
 
