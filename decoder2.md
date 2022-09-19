@@ -18,12 +18,12 @@ TBD.
 
 ## Decoder2 Outputs
 
-The outputs of Decoder1 have three paths:
+The inputs from Decoder1 have three paths:
 - Stay inside Decoder2 and form one of Decoder2's outputs with the rest of the signals
 - Go outside
 - Stay inside AND go outside
 
-All outputs are clocked by the `CLK2` signal.
+All Decoder2 outputs are clocked by the `CLK2` signal.
 
 |Output|Name|To|Description|
 |---|---|---|---|
@@ -72,6 +72,8 @@ All outputs are clocked by the `CLK2` signal.
 (If `wx` signal goes to Random Logic it is not indicated in the table).
 
 ## Nor Trees
+
+There is no point in drawing the topology for the whole Decoder2, because you can restore all the trees from the picture.
 
 |Tree|Image|Paths|
 |---|---|---|
