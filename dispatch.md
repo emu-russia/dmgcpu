@@ -134,17 +134,25 @@ By the way, there are 2 `not` in the circuit to form the complement, one of whic
 
 ![hmm1_tran](/imgstore/modules/hmm1_tran.jpg)
 
-## hmm2
+## hmm2 - aoi_31
+
+1 AND x3 to OR inverted.
 
 ![hmm2](/imgstore/modules/hmm2.jpg)
 
-TBD.
+![hmm2_tran](/imgstore/modules/hmm2_tran.jpg)
 
-## hmm3
+## hmm3 - slatch_comp
+
+Static latch, complementary CLK.
+
+Static means that the value is written on the CLK level, not on the edge of the signal, as in DFF.
+
+Output in inverse polarity (`#Q`).
 
 ![hmm3](/imgstore/modules/hmm3.jpg)
 
-TBD.
+![hmm3_tran](/imgstore/modules/hmm3_tran.jpg)
 
 ## iwantsleep - oai_21
 
