@@ -61,7 +61,7 @@ TBD.
 
 Consists of two halves.
 
-The top contains 8 comb logic modules (ANDs-to-NORs) whose outputs go up:
+The top contains 8 dynamic comb logic modules (ANDs-to-NORs) whose outputs go up:
 
 |Comb3 (bit 0)|Comb2 (bits 1-6)|Comb1 (bit 7)|
 |---|---|---|

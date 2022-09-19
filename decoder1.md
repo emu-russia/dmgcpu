@@ -51,122 +51,126 @@ Dynamic logic is used.
 |a24|Sequencer| ??? TBD. |
 |a25|Inplace|~a24|
 
-## Decoder1 Outputs
+## Decoder1 Output Trees
 
-Below is a table with the value of the bitmask for each decoder output.
+There is no need to draw the whole topology, because all the trees can be extracted from the picture.
 
 :warning: Keep in mind that these fockers wrapped a9 input for the first three outputs with a slingshot.
 
-TBD. Decode me.
-
-|dx Output|NAND trees|To|Description|
+|Tree|Paths|To|Description|
 |---|---|---|---|
-|0|011001'0110011001'1010100101| | |
-|1|011001'0110011010'1010100101| | |
-|2|101001'0110011010'1010100101| | |
-|3|000000'0000000000'0001100101<br/>000000'0110100000'0010100101| | |
-|4| | | |
-|5| | | |
-|6| | | |
-|7| | | |
-|8| |Random Logic (not used in Decoder2)| |
-|9| | | |
-|10| | | |
-|11| | | |
-|12| | | |
-|13| | | |
-|14| |Random Logic (not used in Decoder2)| |
-|15| | | |
-|16| | | |
-|17| | | |
-|18| | | |
-|19| | | |
-|20| | | |
-|21| | | |
-|22| | | |
-|23| | | |
-|24| | | |
-|25| |Random Logic (not used in Decoder2)| |
-|26| | | |
-|27| | | |
-|28| | | |
-|29| | | |
-|30| | | |
-|31| | | |
-|32| | | |
-|33| | | |
-|34| |Random Logic (also)| |
-|35| | | |
-|36| | | |
-|37| | | |
-|38| |Random Logic (also)| |
-|39| | | |
-|40| | | |
-|41| |Random Logic (not used in Decoder2)| |
-|42| |Random Logic, ALU, Bottom (not used in Decoder2)| |
-|43| | | |
-|44| | | |
-|45| | | |
-|46| | | |
-|47| | | |
-|48| |:warning: Not used| |
-|49| |:warning: Not used| |
-|50| | | |
-|51| | | |
-|52| | | |
-|53| | | |
-|54| | | |
-|55| | | |
-|56| | | |
-|57| | | |
-|58| |ALU (also)| |
-|59| | | |
-|60| |Bottom (also)| |
-|61| | | |
-|62| |Random Logic (also)| |
-|63| | | |
-|64| |Random Logic (also)| |
-|65| | | |
-|66| | | |
-|67| | | |
-|68| | | |
-|69| | | |
-|70| | | |
-|71| | | |
-|72| | | |
-|73| | | |
-|74| | | |
-|75| | | |
-|76| | | |
-|77| | | |
-|78| | | |
-|79| | | |
-|80| | | |
-|81| | | |
-|82| | | |
-|83| |Random Logic (also)| |
-|84| | | |
-|85| | | |
-|86| | | |
-|87| | | |
-|88| |Random Logic (also). Long wire.| |
-|89| | | |
-|90| | | |
-|91| | | |
-|92| |Bottom (also)| |
-|93| |Random Logic, Bottom (also)| |
-|94| | | |
-|95| | | |
-|96| | | |
-|97| | | |
-|98| | | |
-|99| |Sequencer (also)| |
-|100| |Sequencer (also)| |
-|101| |Sequencer (also)| |
-|102| |Sequencer (also)| |
-|103| | | |
-|104| | | |
-|105| | | |
-|106| | |:warning: Not used|
+|d0|{0,2,5,7,9,10,13,14,17,18,20,23,24}| | |
+|d1| | | |
+|d2| | | |
+|d3|{0,2,5,6}<br/>{5,7,15,17,18}| | |
+|d4| | | |
+|d5| | | |
+|d6| | | |
+|d7| | | |
+|d8| |Random Logic (not used in Decoder2)| |
+|d9| | | |
+|d10| | | |
+|d11| | | |
+|d12| | | |
+|d13| | | |
+|d14| |Random Logic (not used in Decoder2)| |
+|d15| | | |
+|d16| | | |
+|d17| | | |
+|d18| | | |
+|d19| | | |
+|d20| | | |
+|d21| | | |
+|d22| | | |
+|d23| | | |
+|d24| | | |
+|d25| |Random Logic (not used in Decoder2)| |
+|d26| | | |
+|d27| | | |
+|d28| | | |
+|d29| | | |
+|d30| | | |
+|d31| | | |
+|d32| | | |
+|d33| | | |
+|d34| |Random Logic (also)| |
+|d35| | | |
+|d36| | | |
+|d37| | | |
+|d38| |Random Logic (also)| |
+|d39| | | |
+|d40| | | |
+|d41| |Random Logic (not used in Decoder2)| |
+|d42| |Random Logic, ALU, Bottom (not used in Decoder2)| |
+|d43| | | |
+|d44| | | |
+|d45| | | |
+|d46| | | |
+|d47| | | |
+|d48| |:warning: Not used| |
+|d49| |:warning: Not used| |
+|d50| | | |
+|d51| | | |
+|d52| | | |
+|d53| | | |
+|d54| | | |
+|d55| | | |
+|d56| | | |
+|d57| | | |
+|d58| |ALU (also)| |
+|d59| | | |
+|d60| |Bottom (also)| |
+|d61| | | |
+|d62| |Random Logic (also)| |
+|d63| | | |
+|d64| |Random Logic (also)| |
+|d65| | | |
+|d66| | | |
+|d67| | | |
+|d68| | | |
+|d69| | | |
+|d70| | | |
+|d71| | | |
+|d72| | | |
+|d73| | | |
+|d74| | | |
+|d75| | | |
+|d76| | | |
+|d77| | | |
+|d78| | | |
+|d79| | | |
+|d80| | | |
+|d81| | | |
+|d82| | | |
+|d83| |Random Logic (also)| |
+|d84| | | |
+|d85| | | |
+|d86| | | |
+|d87| | | |
+|d88| |Random Logic (also). Long wire.| |
+|d89| | | |
+|d90| | | |
+|d91| | | |
+|d92| |Bottom (also)| |
+|d93| |Random Logic, Bottom (also)| |
+|d94| | | |
+|d95| | | |
+|d96| | | |
+|d97| | | |
+|d98| | | |
+|d99| |Sequencer (also)| |
+|d100| |Sequencer (also)| |
+|d101| |Sequencer (also)| |
+|d102| |Sequencer (also)| |
+|d103| | | |
+|d104| | | |
+|d105| | | |
+|d106| | |:warning: Not used|
 
-(The `To` outputs are marked only for those that go somewhere else besides Decoder2).
+The numbers in the tree path mark the inputs `a[25:0]`.
+
+The result should be as follows (using d3 as an example, the dynamical part of the logic is not shown):
+
+![demo_d3](/imgstore/nandtrees/demo_d3.jpg)
+
+The `To` outputs are marked only for those that go somewhere else besides Decoder2.
