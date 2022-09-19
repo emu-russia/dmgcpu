@@ -36,6 +36,8 @@ Dynamic logic is used for decoders and random logic:
 - In the first half-cycle (CLK=0) a Precharge is made
 - In the second half-cycle (CLK=1) a logical operation is performed
 
+https://en.wikipedia.org/wiki/Dynamic_logic_(digital_electronics)
+
 ## CMOS Logic
 
 The upper right corner is built almost entirely on CMOS cells.
