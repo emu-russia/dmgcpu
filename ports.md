@@ -29,8 +29,8 @@ By @msinger: http://iceboy.a-singer.de/doc/dmg_cpu_connections.html
 |R5	|I	|unlabeled	|IPL_REQ|TUTU.q	|High when address bus is 0x00xx and boot ROM is still visible. When high, it suppresses R7, so that the data bus can be driven by the internal boot ROM.|
 |R6	|I	|T1T2	|Maybe2|UMUT.q	|Maybe used to disable all bus drivers in the CPU when test mode is active.|
 |R7	|O	|FROM_CPU4	|MREQ|TEXO.in1, AGUT.in3	|Active-high external memory request. Has to be high during external memory cycles (read or write). This causes one of the chip select signals (CS, MCS, A15) to be asserted in the right moment. Has to be low if no memory cycle is going on, otherwise the chip select will be asserted even if R1 and R2 are low. During write cycles, this signal is also needed for driving the internal data bus onto the I/O pads. During read cycles, this signal is also needed for latching the I/O pads and driving the latched data onto the internal data bus. When R4 or R5 is high, the CPU keeps this signal low, allowing internal components (HRAM, OAM, boot ROM, FFxx registers) to drive the internal data bus.|
-|R8	|?	|-	|-	| |Not connected.|
-|R9	|?	|-	|-	| |Not connected.|
+|R8	|?	|-	| |-	|Not connected.|
+|R9	|?	|-	| |-	|Not connected.|
 |R10	|?	|-	| |-	|Not connected.|
 |R11	|?	|-	| |-	|Not connected.|
 |R12	|?	|-	| |-	|Not connected.|
