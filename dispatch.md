@@ -92,23 +92,39 @@ Also: reset input in inverse polarity (`#RESET`).
 
 ![module4_tran](/imgstore/modules/module4_tran.jpg)
 
-## aoi_1
+## aoi_1 - aoi_21
+
+1 AND x2 to OR inverted.
 
 ![aoi_1](/imgstore/modules/aoi_1.jpg)
 
-TBD.
+![aoi_1_tran](/imgstore/modules/aoi_1_tran.jpg)
 
-## aoi_2
+## aoi_2 - aoi_21
+
+1 AND x2 to OR inverted.
 
 ![aoi_2](/imgstore/modules/aoi_2.jpg)
 
-TBD.
+![aoi_2_tran](/imgstore/modules/aoi_2_tran.jpg)
 
-## huge1
+## huge1 - dffre_comp
+
+DFF with reset and complementary set enable, complementary CLK.
+
+A rather complicated circuit to master:
+- In the middle is a FlipFlop made of not and nor (nor is used for resetting)
+- Input value can be written to FlipFlop only if CLK=1 and LD=1
+- When LD=0 the FlipFlop value is updated with the old value
+- The output contains a latch with a gate memory that opens when LD=0 (so that the old value is returned during the write (LD=1))
+- So the written value becomes relevant when LD 1->0 changes (when the output latch opens and is updated with the value from FlipFlop). The same applies to resetting if you do it at the same time as LD=1.
+- The whole thing is complicated by the complementary layout of the LD and CLK signals.
+
+By the way, there are 2 `not` in the circuit to form the complement, one of which takes `CLK6` signal as input and the second `not` takes `LoadIR` signal as input.
 
 ![huge1](/imgstore/modules/huge1.jpg)
 
-TBD.
+![huge1_tran](/imgstore/modules/huge1_tran.jpg)
 
 ## hmm1 - oai_21
 
