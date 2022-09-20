@@ -55,8 +55,8 @@ Status: All connections and the element base are ready. You can rebuild the circ
 |MREQ|External|Port R7|
 |nCLK4| |~CLK4|
 |SeqOut_1|Bottom| |
-|SeqOut_2|Bottom| |
-|SeqOut_3|Bottom| |
+|SeqOut_2|Decoder2, Random Logic| |
+|SeqOut_3|Not connected| |
 
 ## Map
 
