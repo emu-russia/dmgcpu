@@ -11,6 +11,7 @@ Status: All connections and the element base are ready. You can rebuild the circ
 |Signal|From|Description|
 |---|---|---|
 |CLK1|External| |
+|CLK2|External| |
 |CLK4|External| |
 |CLK6|External|See `huge1` module|
 |CLK8|External| |
@@ -40,8 +41,7 @@ Status: All connections and the element base are ready. You can rebuild the circ
 |w40|Decoder2| |
 |x41|Random Logic| |
 |ALU_Out1|ALU| |
-|IR3|IR| |
-|IR4|IR| |
+|IR|IR| |
 
 ## Sequencer Outputs
 
