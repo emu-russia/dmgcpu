@@ -1,8 +1,8 @@
 
-module Decoder1 (a, d, clk);
+module Decoder1 (CLK, a, d);
 
-	input wire [25:0] a;
-	output wire [106:0] d;
-	input wire clk;
+	input CLK;
+	input [25:0] a;
+	output [106:0] d;
 
 endmodule // Decoder1

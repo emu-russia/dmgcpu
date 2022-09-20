@@ -35,7 +35,7 @@ All Decoder2 outputs are clocked by the `CLK2` signal.
 |w3| |ALU, Bottom| |
 |w4| | | |
 |w5| | | |
-|w6| | | |
+|w6|WR| |To external WR port|
 |w7| | | |
 |w8| |Bottom, Thingy| |
 |w9| |ALU, Bottom| |
