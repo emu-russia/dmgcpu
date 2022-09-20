@@ -1,4 +1,3 @@
-// SM83 Decoder1.
 
 module Decoder1 (a, d, clk);
 
