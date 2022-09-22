@@ -58,7 +58,7 @@ Status: All connections and the element base are ready. You can rebuild the circ
 |nCLK4| |~CLK4|
 |SeqOut_1|Bottom| |
 |SeqOut_2|Decoder2, Random Logic| |
-|SeqOut_3|Not connected| |
+|SeqOut_3|GND -> Not connected| |
 
 ## Map
 
