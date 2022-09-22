@@ -174,3 +174,5 @@ The result should be as follows (using d3 as an example, the dynamical part of t
 ![demo_d3](/imgstore/nandtrees/demo_d3.jpg)
 
 The `To` outputs are marked only for those that go somewhere else besides Decoder2.
+
+To convert trees into a schematic, you can use a script to generate an HDL.
