@@ -31,15 +31,15 @@ The result of the nor8 operation is the `AllZeros` signal. This is often require
 
 Some obscure construction that looks like a Christmas tree. (x2).
 
-The design consists of two symmetric halves (module7) with minor logic in between, above which there are 8 instances of module6.
+The design consists of two symmetric halves (module5) with minor logic in between, above which there are 8 instances of module6.
 
 module6 (x8):
 
 ![module6](/imgstore/modules/module6.jpg)
 
-module7 (x2):
+module5 (x2):
 
-![module7](/imgstore/modules/module7.jpg)
+![module5](/imgstore/modules/module5.jpg)
 
 Just below are 8 identical modules.
 
