@@ -6,10 +6,9 @@ Status: Most of the topology is obtained. Restoration and study is in progress.
 
 ![locator_alu](/imgstore/locator_alu.png)
 
-![topleft](/imgstore/topleft.jpg)
+![alu](/imgstore/alu.jpg)
 
-- The top part contain the Data Latch
-- In the middle part it is not yet clear what is (part of ALU)
+- In the top part it is not yet clear what is (part of ALU)
 - The lower part is 8-bit ALU
 
 ## ALU Inputs
@@ -20,20 +19,7 @@ TBD.
 
 TBD.
 
-## Data Latch + NOR-8
-
-DL_Bit (x8):
-
-![module1](/imgstore/modules/module1.jpg)
-
-|Port|Dir|Description|
-|---|---|---|
-|a|input| |
-|b|input| |
-|c|input| |
-|clk|input| |
-|Data|inout|Connects to external data bus|
-|x|output|Current value|
+## NOR-8
 
 8-NOR:
 
@@ -41,7 +27,7 @@ DL_Bit (x8):
 
 The result of the nor8 operation is the `AllZeros` signal. This is often required to calculate the `Z` flag.
 
-## The middle part
+## Top Part
 
 Some obscure construction that looks like a Christmas tree. (x2). It's probably two barrel shifters.
 
@@ -65,7 +51,7 @@ module2 (x8):
 
 TBD.
 
-## Bottom part
+## Bottom Part
 
 Consists of two halves.
 
