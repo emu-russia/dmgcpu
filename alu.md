@@ -2,7 +2,7 @@
 
 :warning: The section is in development.
 
-Status: Most of the topology is obtained. Restoration and study is in progress.
+Status: Restoration and study is in progress.
 
 ![locator_alu](/imgstore/locator_alu.png)
 
@@ -29,7 +29,17 @@ The result of the nor8 operation is the `AllZeros` signal. This is often require
 
 ## Top Part
 
-Some obscure construction that looks like a Christmas tree. (x2). It's probably two barrel shifters.
+Some obscure construction that looks like a Christmas tree. (x2).
+
+The design consists of two symmetric halves (module7) with minor logic in between, above which there are 8 instances of module6.
+
+module6 (x8):
+
+![module6](/imgstore/modules/module6.jpg)
+
+module7 (x2):
+
+![module7](/imgstore/modules/module7.jpg)
 
 Just below are 8 identical modules.
 
@@ -48,8 +58,6 @@ module2 (x8):
 |clk|input| |
 |x|output|To Christmas Tree|
 |w|output|To Christmas Tree|
-
-TBD.
 
 ## Bottom Part
 
