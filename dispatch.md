@@ -4,7 +4,8 @@ Status: All connections and the element base are ready. You can rebuild the circ
 
 ![locator_dispatch](/imgstore/locator_dispatch.png)
 
-![seq](/imgstore/seq.jpg)
+|![seq](/imgstore/seq.jpg)|![seq_netlist](/imgstore/seq_netlist.png)|
+|---|---|
 
 ## Sequencer Inputs
 
@@ -32,6 +33,7 @@ Status: All connections and the element base are ready. You can rebuild the circ
 |d100|Decoder1| |
 |d101|Decoder1| |
 |d102|Decoder1| |
+|w6|Decoder2|Goes to WR|
 |w11|Decoder2| |
 |w18|Decoder2| |
 |w20|Decoder2| |
@@ -56,7 +58,7 @@ Status: All connections and the element base are ready. You can rebuild the circ
 |nCLK4| |~CLK4|
 |SeqOut_1|Bottom| |
 |SeqOut_2|Decoder2, Random Logic| |
-|SeqOut_3|Not connected| |
+|SeqOut_3|GND -> Not connected| |
 
 ## Map
 
