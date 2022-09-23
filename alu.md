@@ -37,6 +37,8 @@ module6 (x8):
 
 ![module6](/imgstore/modules/module6.jpg)
 
+![module6_tran](/imgstore/modules/module6_tran.jpg)
+
 module5 (x2):
 
 ![module5](/imgstore/modules/module5.jpg)
