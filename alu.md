@@ -57,6 +57,9 @@ module2 (x8):
 |e|input|Large Comb results|
 |f|output|To Large Comb NAND trees|
 |g|input|External|
+|h| |
+|k| |
+|m| |
 |clk|input| |
 |x|output|To Christmas Tree|
 |w|output|To Christmas Tree|
