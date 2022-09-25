@@ -1,4 +1,4 @@
-# DMG CPU
+# DMG CPU Core
 
 DMG-01 SM83 core research.
 
