@@ -49,6 +49,8 @@ module2 (x8):
 
 ![module2](/imgstore/modules/module2.jpg)
 
+![module2_tran](/imgstore/modules/module2_tran.jpg)
+
 |Port|Dir|Description|
 |---|---|---|
 |a|input|comb1-3 outputs|
@@ -57,10 +59,10 @@ module2 (x8):
 |e|input|Large Comb results|
 |f|output|To Large Comb NAND trees|
 |g|input|External|
-|h| |
-|k| |
-|m| |
-|clk|input| |
+|h|output|To Christmas Tree|
+|k|input|DV\[n\]|
+|m|output|To Christmas Tree|
+|clk|input|CLK2|
 |x|output|To Christmas Tree|
 |w|output|To Christmas Tree|
 

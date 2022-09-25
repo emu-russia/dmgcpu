@@ -2,7 +2,7 @@
 
 Status: All connections and the element base are ready. You can rebuild the circuit.
 
-![locator_dispatch](/imgstore/locator_dispatch.png)
+![locator_seq](/imgstore/locator_seq.png)
 
 |![seq](/imgstore/seq.jpg)|![seq_netlist](/imgstore/seq_netlist.png)|
 |---|---|
