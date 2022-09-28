@@ -98,6 +98,8 @@ The chip is glued with "Moment" glue to the slide:
 
 ![glued_chip](/imgstore/shop/glued_chip.jpg)
 
+It is better to glue the chip with small "bumps" on the edges, so that it sinks into the glue. This is so that it is supported from the sides when polishing. If this is not done, it will fly right off the glass into the corner.
+
 Do a polishing session (5-10 seconds), take the chip under the microscope and see what happens.
 
 With enough experience, you can learn how to carefully remove layers of 50-100 nm, which is enough to study old microchips.
