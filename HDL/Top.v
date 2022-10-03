@@ -101,6 +101,7 @@ module SM83Core (
 		.Res(Res) );
 
 	DataBridge bridge (
+		.CLK2(CLK2),
 		.DataOut(x[15]),
 		.DV(DV),
 		.DL(DL) );
