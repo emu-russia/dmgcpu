@@ -6,6 +6,9 @@ module SM83Core (
 	WAKE, RD, WR, Maybe1, MMIO_REQ, IPL_REQ, Maybe2, MREQ,
 	D, A, CPU_IRQ_TRIG, CPU_IRQ_ACK );
 
+	// TBD: Obviously, such a large number of dual CLKs is due to the four-cycle "slot" execution of the core.
+	// You need to somehow get the timing diagrams of these signals, but to do that you have to go higher, to the ASIC level.
+
 	input CLK1;
 	input CLK2;
 	input CLK3;
@@ -16,22 +19,22 @@ module SM83Core (
 	input CLK8;
 	input CLK9;
 
-	output LoadIR;
+	output LoadIR; 		// Analog to SYNC signal, which was typically used in old processors (right after the Fetch of the next opcode).
 
-	input Clock_WTF;
-	output XCK_Ena;
-	input RESET;
-	input SYNC_RESET;
+	input Clock_WTF;	// Active-high crystal oscillator stablilized input?
+	output XCK_Ena;		// Crystal oscillator enable. When CPU drives this low, the crystal oscillator gets disabled to save power. This happens during STOP mode.
+	input RESET;		// Active-high asynchronous reset input. Fed directly from RST input pad.
+	input SYNC_RESET;	// Active-high synchronous reset input. Synchronized to CLK8/CLK9.
 	output LongDescr;
-	input Unbonded;
+	input Unbonded;		// Directly connected to an input pad at the top of the die, which is not bonded.
 
-	input WAKE;
+	input WAKE;			// Wakes CPU from STOP mode.
 	output RD;
 	output WR;
-	input Maybe1;
-	input MMIO_REQ;
-	input IPL_REQ;
-	input Maybe2;
+	input Maybe1;		// TBD: Maybe used to disable all bus drivers in the CPU when test mode is active.
+	input MMIO_REQ;		// High when address bus is 0xfexx or 0xffxx.
+	input IPL_REQ;		// High when address bus is 0x00xx and boot ROM is still visible.
+	input Maybe2;		// TBD: Maybe used to disable all bus drivers in the CPU when test mode is active.
 	output MREQ;
 
 	inout [7:0] D;
@@ -63,14 +66,14 @@ module SM83Core (
 	wire DL_Control1;
 	wire DL_Control2;
 	wire [7:0] IR;
-	wire [5:0] nIR;
+	wire [5:0] nIR;				// Inverse IR values are only used for the first 6 bits.
 
 	wire SeqOut_1;
 	wire SeqOut_2;
 	wire SeqOut_3; 		// N.C.
 	wire SeqControl_1;
 	wire SeqControl_2;
-	wire nCLK4;
+	wire nCLK4;					// It is obtained by inverting CLK4 inside the sequencer.
 
 	wire FromThingy;
 	wire bot_to_Thingy;
@@ -87,7 +90,7 @@ module SM83Core (
 
 	// Instances
 
-	nor (AllZeros, Res[0], Res[1], Res[2], Res[3], Res[4], Res[5], Res[6], Res[7]);
+	nor z_eval (AllZeros, Res[0], Res[1], Res[2], Res[3], Res[4], Res[5], Res[6], Res[7]);
 
 	DataLatch dl (
 		.CLK(CLK2), 

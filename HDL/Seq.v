@@ -25,7 +25,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, IR, a, d, w, x, ALU_Out1,
 	input Clock_WTF;
 	input WAKE;
 	output RD;
-	output WR;
+	input WR;
 	input Maybe1;
 	input MMIO_REQ;
 	input IPL_REQ;
