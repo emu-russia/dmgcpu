@@ -65,7 +65,7 @@ TBD.
 |x34| |CLK2 |internal| |
 |x35| |CLK2 |Bottom| |
 |x36| |CLK2 |internal| |
-|x37|DL_Control2|CLK2 |Data Latch| |
+|x37|DL_Control2, ALU_to_DL|CLK2 |Data Latch|1: Save ALU result to DataLatch.|
 |x38| |CLK2 |Bottom| |
 |x39| |CLK2 |Bottom| |
 |x40| |CLK2 |Bottom| |

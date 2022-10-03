@@ -49,9 +49,9 @@ module SM83Core (
 	wire [40:0] w; 			// Decoder2 out
 	wire [68:0] x; 			// Decoder3 out
 
-	wire [7:0] DL;
+	wire [7:0] DL;			// Current DataLatch value
 	wire [7:0] DV;
-	wire [7:0] Res;
+	wire [7:0] Res;			// ALU Result
 	wire AllZeros;
 	wire ALU_to_bot;
 	wire [5:0] bc;
