@@ -16,6 +16,8 @@ The core consists of the following main components:
 - The sequencer occupies the right side and is built on "sort of" standard cells. Actually they are not cells in the usual sense, but "handmade" using standard modules and tweaking them a little bit in some places as required.
 - At the bottom is the branch logic, the registers block, the SP and the PC. Also obviously there is a small circuit for interrupt control and a small but important circuit called the "Thingy".
 
+![sm83](/HDL/Design/sm83.png)
+
 ## Latest Progress
 
 At the moment, the entire topology of the top part and almost the entire topology of the bottom part have been obtained. The basic circuit principles are understood and the transistor circuits of most of the modules are obtained. The main emphasis was made on the sequencer circuit, as the most demanded one.
