@@ -1,7 +1,7 @@
 
-module Decoder1 (CLK, a, d);
+module Decoder1 (CLK2, a, d);
 
-	input CLK;
+	input CLK2;
 	input [25:0] a;
 	output [106:0] d;
 

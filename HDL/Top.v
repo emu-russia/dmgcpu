@@ -44,7 +44,7 @@ module SM83Core (
 	wire [25:0] a; 			// Decoder1 in
 	wire [106:0] d; 		// Decoder1 out
 	wire [40:0] w; 			// Decoder2 out
-	wire [68:0] x; 			// Random Logic out
+	wire [68:0] x; 			// Decoder3 out
 
 	wire [7:0] DL;
 	wire [7:0] DV;
@@ -103,7 +103,7 @@ module SM83Core (
 		.DL(DL) );
 
 	Decoder1 dec1 (
-		.CLK(CLK2),
+		.CLK2(CLK2),
 		.a(a),
 		.d(d) );
 
@@ -114,7 +114,7 @@ module SM83Core (
 		.w(w),
 		.SeqOut_2(SeqOut_2) );
 
-	RandomLogic rnd (
+	Decoder3 dec3 (
 		.CLK2(CLK2),
 		.CLK4(CLK4),
 		.CLK5(CLK5),

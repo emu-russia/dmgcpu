@@ -1,18 +1,16 @@
-# Random Logic
+# Decoder3
 
 :warning: The section is in development.
 
 Status: We need to restore all NAND trees.
 
-![locator_random_logic](/imgstore/locator_random_logic.png)
+![locator_decoder3](/imgstore/locator_decoder3.png)
 
-Usually this is the kind of logic that only the person who made it understands.
+The final stage of the decoder, which generates the `x[68:0]` control signals for the lower part and the ALU.
 
-The task of this logic is to generate the control signals for the bottom part.
+![decoder3](/imgstore/decoder3.jpg)
 
-![rnd](/imgstore/rnd.jpg)
-
-## Random Logic Inputs
+## Decoder3 Inputs
 
 TBD.
 
@@ -24,7 +22,7 @@ TBD.
 
 ![rnd_drv](/imgstore/modules/rnd_drv.jpg)
 
-## Random Logic Outputs
+## Decoder3 Outputs
 
 :warning: Again, carefully check the use of CLK for each output. Everything is tangled in there.
 
