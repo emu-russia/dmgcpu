@@ -29,7 +29,7 @@ Here you can see the CMOS "pockets":
 
 ## Dynamic Logic
 
-Dynamic logic is used for decoders and random logic:
+Dynamic logic is used mostly for decoders:
 
 ![dynamic](/imgstore/dynamic.png)
 

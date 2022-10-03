@@ -1,5 +1,5 @@
 
-module RandomLogic( CLK2, CLK4, CLK5, d, w, x, IR, nIR, SeqOut_2 );
+module Decoder3( CLK2, CLK4, CLK5, d, w, x, IR, nIR, SeqOut_2 );
 
 	input CLK2;
 	input CLK4;
@@ -12,4 +12,4 @@ module RandomLogic( CLK2, CLK4, CLK5, d, w, x, IR, nIR, SeqOut_2 );
 	input [5:0] nIR;
 	input SeqOut_2;
 
-endmodule // RandomLogic
+endmodule // Decoder3

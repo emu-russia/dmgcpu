@@ -6,7 +6,7 @@ Status: We need to restore all NOR trees.
 
 ![locator_decoder2](/imgstore/locator_decoder2.png)
 
-Refines the decoded operation code and reduces the total number of outputs for random logic. Implemented as densely packed NOR trees.
+Refines the decoded operation code and reduces the total number of outputs for Decoder3. Implemented as densely packed NOR trees.
 
 ![decoder2](/imgstore/decoder2.jpg)
 
@@ -71,7 +71,7 @@ All Decoder2 outputs are clocked by the `CLK2` signal.
 |w39| | | |
 |w40| |Sequencer| |
 
-(If `wx` signal goes to Random Logic it is not indicated in the table).
+(If `wx` signal goes to Decoder3 it is not indicated in the table).
 
 ## Nor Trees
 

@@ -1,6 +1,6 @@
 # Rails
 
-## Connections between the Decoder and Random Logic
+## Connections between the Decoders 1/2 and Decoder3
 
 ![locator_rails1](/imgstore/locator_rails1.png)
 

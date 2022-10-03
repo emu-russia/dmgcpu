@@ -67,13 +67,13 @@ There is no need to draw the whole topology, because all the trees can be extrac
 |d5|{`0,2,5,7,8`,15,16,18,22,25}| | |
 |d6|{0,2,5,7,8,14,16,18,22,24}| | |
 |d7|{0,2,4,6,9,14,16,18,22,24}| | |
-|d8|{0,2,5,7,9,11,12,14,18}|Random Logic (not used in Decoder2)| |
+|d8|{0,2,5,7,9,11,12,14,18}|Decoder3 (not used in Decoder2)| |
 |d9|{0,2,5,7,8,10,13,15,16,`20,22,24`}<br/>{0,2,5,7,8,15,16,18,`20,22,24`}| | |
 |d10|{0,2,5,7,8,10,13,15,16,`20,22,25`}<br/>{0,2,5,7,8,15,16,18,`20,22,25`}| | |
 |d11|{0,2,5,7,8,10,13,15,16,`20,23,24`}<br/>{0,2,5,7,8,15,16,18,`20,23,24`}| | |
 |d12|{0,2,5,7,8,10,13,15,16,`20,23,25`}<br/>{0,2,5,7,8,15,16,18,`20,23,25`}| | |
 |d13|{0,2,5,7,8,10,13,15,16,`21,22,24`}<br/>{0,2,5,7,8,15,16,18,`21,22,24`}| | |
-|d14|{0,2,4,6,15,17,18}|Random Logic (not used in Decoder2)| |
+|d14|{0,2,4,6,15,17,18}|Decoder3 (not used in Decoder2)| |
 |d15|{0,2,4,6,22,24}| | |
 |d16|{0,2,4,6,`13`,15,17,18,22,25}<br/>{0,2,4,6,`10`,15,17,18,22,25}<br/>{0,2,4,6,`8`,15,17,18,22,25}| | |
 |d17|{0,2,21,23,24}| | |
@@ -84,7 +84,7 @@ There is no need to draw the whole topology, because all the trees can be extrac
 |d22|{0,2,5,7,9,11,13,14,16,18,23,24}| | |
 |d23|{0,3,5,6,`14`,22,24}<br/>{0,3,5,6,`16`,22,24}<br/>{0,3,5,6,`19`,22,24}| | |
 |d24|{0,3,5,6,15,17,18,22,25}| | |
-|d25| |Random Logic (not used in Decoder2)| |
+|d25| |Decoder3 (not used in Decoder2)| |
 |d26| | | |
 |d27| | | |
 |d28| | | |
@@ -93,15 +93,15 @@ There is no need to draw the whole topology, because all the trees can be extrac
 |d31| | | |
 |d32| | | |
 |d33| | | |
-|d34| |Random Logic (also)| |
+|d34| |Decoder3 (also)| |
 |d35| | | |
 |d36| | | |
 |d37| | | |
-|d38| |Random Logic (also)| |
+|d38| |Decoder3 (also)| |
 |d39| | | |
 |d40| | | |
-|d41| |Random Logic (not used in Decoder2)| |
-|d42| |Random Logic, ALU, Bottom (not used in Decoder2)| |
+|d41| |Decoder3 (not used in Decoder2)| |
+|d42| |Decoder3, ALU, Bottom (not used in Decoder2)| |
 |d43| | | |
 |d44| | | |
 |d45| | | |
@@ -121,9 +121,9 @@ There is no need to draw the whole topology, because all the trees can be extrac
 |d59| | | |
 |d60| |Bottom (also)| |
 |d61| | | |
-|d62| |Random Logic (also)| |
+|d62| |Decoder3 (also)| |
 |d63| | | |
-|d64| |Random Logic (also)| |
+|d64| |Decoder3 (also)| |
 |d65| | | |
 |d66| | | |
 |d67| | | |
@@ -142,17 +142,17 @@ There is no need to draw the whole topology, because all the trees can be extrac
 |d80| | | |
 |d81| | | |
 |d82| | | |
-|d83| |Random Logic (also)| |
+|d83| |Decoder3 (also)| |
 |d84| | | |
 |d85| | | |
 |d86| | | |
 |d87| | | |
-|d88| |Random Logic (also). Long wire.| |
+|d88| |Decoder3 (also). Long wire.| |
 |d89| | | |
 |d90| | | |
 |d91| | | |
 |d92| |Bottom (also)| |
-|d93| |Random Logic, Bottom (also)| |
+|d93| |Decoder3, Bottom (also)| |
 |d94| | | |
 |d95| | | |
 |d96| | | |

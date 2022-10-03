@@ -41,7 +41,7 @@ Status: All connections and the element base are ready. You can rebuild the circ
 |w32|Decoder2| |
 |w33|Decoder2| |
 |w40|Decoder2| |
-|x41|Random Logic| |
+|x41|Decoder3| |
 |ALU_Out1|ALU| |
 |IR|IR| |
 
@@ -57,7 +57,7 @@ Status: All connections and the element base are ready. You can rebuild the circ
 |MREQ|External|Port R7|
 |nCLK4| |~CLK4|
 |SeqOut_1|Bottom| |
-|SeqOut_2|Decoder2, Random Logic| |
+|SeqOut_2|Decoder2, Decoder3| |
 |SeqOut_3|GND -> Not connected| |
 
 ## Map
