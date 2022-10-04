@@ -1,4 +1,4 @@
-# Decoder 2
+# Decoder2
 
 :warning: The section is in development.
 
@@ -14,9 +14,11 @@ Refines the decoded operation code and reduces the total number of outputs for D
 
 The outputs `d[106:0]` from [Decoder1](decoder1.md) are input.
 
-## Decoder2 Output Driver
+## Decoder2 Output Drivers
 
-TBD.
+Some drivers are inverters and some are buffers.
+
+![decoder2_drv](/imgstore/modules/decoder2_drv.jpg)
 
 ## Decoder2 Outputs
 
@@ -86,7 +88,7 @@ There is no point in drawing the topology for the whole Decoder2, because you ca
 |w4| | |
 |w5| | |
 |w6| | |
-|w7| | |
+|w7| |~IR7. Not used (not connected).|
 |w8| | |
 |w9| | |
 |w10| | |

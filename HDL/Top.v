@@ -116,12 +116,14 @@ module SM83Core (
 		.a3(a[3]),
 		.d(d),
 		.w(w),
-		.SeqOut_2(SeqOut_2) );
+		.SeqOut_2(SeqOut_2),
+		.IR7(IR[7]) );
 
 	Decoder3 dec3 (
 		.CLK2(CLK2),
 		.CLK4(CLK4),
 		.CLK5(CLK5),
+		.nCLK4(nCLK4),
 		.d(d),
 		.w(w),
 		.x(x),
@@ -138,6 +140,7 @@ module SM83Core (
 		.CLK5(CLK5),
 		.CLK6(CLK6),
 		.CLK7(CLK7),
+		.DV(DV),
 		.Res(Res),
 		.AllZeros(AllZeros),
 		.TTB3(TTB3),
@@ -165,6 +168,7 @@ module SM83Core (
 		.CLK6(CLK6),
 		.CLK8(CLK8),
 		.CLK9(CLK9),
+		.nCLK4(nCLK4),
 		.IR(IR),
 		.a(a),
 		.d(d),

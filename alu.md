@@ -13,11 +13,37 @@ Status: Restoration and study is in progress.
 
 ## ALU Inputs
 
-TBD.
+|Signal|From|Description|
+|---|---|---|
+|CLK2| | |
+|CLK5| | |
+|CLK6| | |
+|CLK7| | |
+|DV| | |
+|AllZeros| | |
+|TTB3| | |
+|d| | |
+|w| | |
+|x| | |
+|alu| | |
+|bq4| | |
+|bq5| | |
+|bq7| | |
+|ALU_L1| | |
+|ALU_L2| | |
+|ALU_L4| | |
+|IR| | |
+|nIR| | |
 
 ## ALU Outputs
 
-TBD.
+|Signal|To|Description|
+|---|---|---|
+|Res| | |
+|bc| | |
+|ALU_to_bot| | |
+|FromThingy| | |
+|ALU_Out1| | |
 
 ## NOR-8
 
@@ -68,9 +94,7 @@ module2 (x8):
 
 ## Bottom Part
 
-Consists of two halves.
-
-The top contains 8 dynamic comb logic modules (ANDs-to-NORs) whose outputs go up:
+Contains 8 dynamic comb logic modules (ANDs-to-NORs) whose outputs go up (`ca[7:0]`):
 
 |Comb3 (bit 0)|Comb2 (bits 1-6)|Comb1 (bit 7)|
 |---|---|---|
@@ -83,28 +107,24 @@ Large Comb 1 (_14 NAND trees_):
 
 ![LargeComb1](/imgstore/LargeComb1.jpg)
 
-Large Comb 1 Result:
+## LargeComb1 Nand Trees
 
-![LargeComb1_Res](/imgstore/LargeComb1_Res.jpg)
-
-## Nand Trees
-
-|Tree|Image|Paths|
-|---|---|---|
-|alu_1|![alu_1](/imgstore/nandtrees/alu_1.jpg)|{alu0}<br/>{w24,nIR3,nIR4,nIR5}<br/>{w10,IR5}<br/>{w10,IR4}<br/>{w10,IR3}|
-|alu_2| | |
-|alu_3| | |
-|alu_4| | |
-|alu_5| | |
-|alu_6| | |
-|alu_7| | |
-|alu_8| | |
-|alu_9| | |
-|alu_10| | |
-|alu_11| | |
-|alu_12| | |
-|alu_13| | |
-|alu_14| | |
+|Tree|Paths|
+|---|---|
+|alu_1|{alu0}<br/>{w24,nIR3,nIR4,nIR5}<br/>{w10,IR5}<br/>{w10,IR4}<br/>{w10,IR3}|
+|alu_2| |
+|alu_3| |
+|alu_4| |
+|alu_5| |
+|alu_6| |
+|alu_7| |
+|alu_8| |
+|alu_9| |
+|alu_10| |
+|alu_11| |
+|alu_12| |
+|alu_13| |
+|alu_14| |
 
 The result is an AND-to-NOR tree (using alu_1 as an example):
 
@@ -113,3 +133,15 @@ The result is an AND-to-NOR tree (using alu_1 as an example):
 (the dynamic part is not shown in the picture)
 
 To convert trees into a schematic, you can use a script to generate an HDL.
+
+## Below LargeComb1
+
+![LargeComb1_Res](/imgstore/LargeComb1_Res.jpg)
+
+bc:
+
+![bc](/imgstore/modules/bc.jpg)
+
+ALU_to_bot:
+
+![ALU_to_bot](/imgstore/modules/ALU_to_bot.jpg)

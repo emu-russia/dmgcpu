@@ -20,7 +20,7 @@ TBD.
 
 ## Output Drivers
 
-![rnd_drv](/imgstore/modules/rnd_drv.jpg)
+![decoder3_drv](/imgstore/modules/decoder3_drv.jpg)
 
 ## Decoder3 Outputs
 

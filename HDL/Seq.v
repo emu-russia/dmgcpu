@@ -1,5 +1,5 @@
 
-module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, IR, a, d, w, x, ALU_Out1, 
+module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, ALU_Out1, 
 	Unbonded, LongDescr, XCK_Ena, RESET, SYNC_RESET, Clock_WTF, WAKE, RD, WR, Maybe1, MMIO_REQ, IPL_REQ, Maybe2, MREQ,
 	SeqControl_1, SeqControl_2, SeqOut_1, SeqOut_2, SeqOut_3 );
 
@@ -9,6 +9,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, IR, a, d, w, x, ALU_Out1,
 	input CLK6;
 	input CLK8;
 	input CLK9;
+	input nCLK4;
 
 	input [7:0] IR;
 	output [25:0] a;
