@@ -126,9 +126,9 @@ Large Comb 1 (_14 NAND trees_):
 |alu_12|CLK6|{f0,w12,nIR3,nIR4,nIR5}<br/>{f1,w12,IR3,nIR4,nIR5}<br/>{f2,w12,nIR3,IR4,nIR5}<br/>{f3,w12,IR3,IR4,nIR5}<br/>{f4,w12,nIR3,nIR4,IR5}<br/>{f5,w12,IR3,nIR4,IR5}<br/>{f6,w12,nIR3,IR4,IR5}<br/>{f7,w12,IR3,IR4,IR5}<br/>{d42,AllZeros}<br/>{w3,AllZeros}<br/>{w37,AllZeros}<br/>{x22,AllZeros}<br/>{TTB3,d58}<br/>{bc3,w19}<br/>{bc3,x21}<br/>{bc3,w15}<br/>{bc3,x26}|
 |alu_13|CLK2|{w37,nIR0}<br/>{x27}<br/>{w9,bc1}<br/>{nbc1,x24}<br/>{nIR3,x24}<br/>{bc1,w19}<br/>{IR3,x23}|
 
-The result is an AND-to-NOR tree (using alu_1 as an example):
+The result is an AND-to-NOR tree (using alu_0 as an example):
 
-![demo_alu_1](/imgstore/nandtrees/demo_alu_1.jpg)
+![demo_alu_0](/imgstore/nandtrees/demo_alu_0.jpg)
 
 (the dynamic part is not shown in the picture)
 
