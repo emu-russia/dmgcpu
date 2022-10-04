@@ -123,7 +123,7 @@ Large Comb 1 (_14 NAND trees_):
 |alu_9|CLK2|{alu6}<br/>{w24,nIR3,IR4,IR5}<br/>{w10,IR3}<br/>{w10,nIR4}<br/>{w10,nIR5}<br/>{x22,bc5,nbc1,bc2}<br/>{x22,bq7,bq4,nbc2}<br/>{x22,bc1,nbc2}<br/>{x22,bq5,nbc2}|
 |alu_10|CLK2|{alu7}<br/>{w24,IR3,IR4,IR5}<br/>{w10,nIR3}<br/>{w10,nIR4}<br/>{w10,nIR5}<br/>{x22,bc5,bc2}<br/>{x22,bc1,bc2}|
 |alu_11|CLK6|{w0,nIR3,IR4,bc1}<br/>{w0,IR3,IR4,nbc1}<br/>{w0,IR3,nIR4,nbc3}<br/>{w0,nIR3,nIR4,bc3}|
-|alu_12|CLK6|{f0,w12,nIR3,nIR4,nIR5}<br/>{f1,w12,IR3,nIR4,nIR5}<br/>{f2,w12,nIR3,IR4,nIR5}<br/>{f3,w12,IR3,IR4,nIR5}<br/>{f4,w12,nIR3,nIR4,IR5}<br/>{f5,w12,IR3,nIR4,IR5}<br/>{f6,w12,nIR3,IR4,IR5}<br/>{f7,w12,IR3,IR4,IR5}<br/>{d42,AllZeros}<br/>{w3,AllZeros}<br/>{w37,AllZeros}<br/>{x22,AllZeros}<br/>{TTB3,d58}<br/>{bc3,w19}<br/>{bc3,x21}<r/>{bc3,w15}<br/>{bc3,x26}|
+|alu_12|CLK6|{f0,w12,nIR3,nIR4,nIR5}<br/>{f1,w12,IR3,nIR4,nIR5}<br/>{f2,w12,nIR3,IR4,nIR5}<br/>{f3,w12,IR3,IR4,nIR5}<br/>{f4,w12,nIR3,nIR4,IR5}<br/>{f5,w12,IR3,nIR4,IR5}<br/>{f6,w12,nIR3,IR4,IR5}<br/>{f7,w12,IR3,IR4,IR5}<br/>{d42,AllZeros}<br/>{w3,AllZeros}<br/>{w37,AllZeros}<br/>{x22,AllZeros}<br/>{TTB3,d58}<br/>{bc3,w19}<br/>{bc3,x21}<br/>{bc3,w15}<br/>{bc3,x26}|
 |alu_13|CLK2|{w37,nIR0}<br/>{x27}<br/>{w9,bc1}<br/>{nbc1,x24}<br/>{nIR3,x24}<br/>{bc1,w19}<br/>{IR3,x23}|
 
 The result is an AND-to-NOR tree (using alu_1 as an example):
