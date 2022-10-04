@@ -1,4 +1,4 @@
-# Decoder 1
+# Decoder1
 
 :warning: The section is in development.
 
@@ -55,7 +55,7 @@ Dynamic logic is used.
 
 There is no need to draw the whole topology, because all the trees can be extracted from the picture.
 
-:warning: Keep in mind that these fockers wrapped a9 input for the first three outputs with a slingshot.
+:warning: Some inputs are twisted, be careful (e.g. a9 for the first three values).
 
 |Tree|Paths|To|Description|
 |---|---|---|---|

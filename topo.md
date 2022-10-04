@@ -53,7 +53,3 @@ Example:
 ![pignose](/imgstore/pignose.png)
 
 For the interconnection, paired vias are used. Twice as much work.
-
-## Capacitors
-
-TBD.

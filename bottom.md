@@ -12,7 +12,17 @@ The upper part outputs to the lower part a large number of control signals for c
 
 For the SM83 the layout is slightly different: the ALU is on the top-left and at the bottom purely registers and auxiliary logic for switching buses.
 
+## Design
+
+![bottom](/imgstore/bottom.jpg)
+
+The bottom part consists of 8 lanes, according to the number of registers bits. The numbering of the bits is from 0 from top to bottom.
+
+There are minor differences between the lanes, this will be discussed later.
+
 ## Register Bit
+
+All registers use a common module.
 
 ![regbit](/imgstore/modules/regbit.jpg)
 
@@ -26,3 +36,53 @@ DFF with complementary set enable, complementary CLK.
 - The output contains a latch with a gate memory that opens when LD=0 (so that the old value is returned during the write (LD=1))
 - So the written value becomes relevant when LD 1->0 changes (when the output latch opens and is updated with the value from FlipFlop).
 - The whole thing is complicated by the complementary layout of the LD and CLK signals.
+
+## Internal Buses
+
+TBD.
+
+## Reg0 - IR
+
+## Reg1 - ???
+
+## Reg1 Comb
+
+## Bottom Left (ALU bc/bq) Logic
+
+## Reg2 - ???
+
+## Reg3 - ???
+
+## Reg 2/3 Comb
+
+## Reg4 - ???
+
+## Reg5 - ???
+
+## Reg 4/5 Comb
+
+## Reg6 - ???
+
+## Reg7 - ???
+
+## Reg 6/7 Comb
+
+## Reg8 - ???
+
+## Reg8 Comb
+
+## w8+ALU Result Logic
+
+## x59 Logic
+
+## x61 Logic
+
+![x61](/imgstore/modules/x61.jpg)
+
+## x68 Logic
+
+![x68](/imgstore/modules/x68.jpg)
+
+## TTB Logic
+
+## Bottom Right (IRQ) Logic
