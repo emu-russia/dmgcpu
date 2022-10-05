@@ -68,7 +68,7 @@ LR->TD order.
 |---|---|
 |1|not (x18), not, nand, not, nand, not, nand, nor, nor, hmm1, not|
 |2|nor3, not, aoi_1, not, not, huge1, not, module3, module3, module3, module3, hmm2, not, not|
-|3|module3, iwantsleep, not, nor, module3, nor3, not, module4, nor3, not, aoi_2, not, module3, hmm3, nor|
+|3|module3, iwantsleep, not, nor, module3, nor3, not, module4_2, nor3, not, aoi_2, not, module3, hmm3, nor|
 |4|module3, module3, nand, nor, not, module4, module3, not, nand, not, module3, module4, not, nand3, module4, shielded, not, module3, not, nor, module4, nor, nand, nand, not, not, nor4, module3, module3, not, nor, not, module4, nand, comb4, module4, not, comb5, not|
 |5|not, nor|
 
@@ -93,6 +93,16 @@ Also: reset input in inverse polarity (`#RESET`).
 ![module4](/imgstore/modules/module4.jpg)
 
 ![module4_tran](/imgstore/modules/module4_tran.jpg)
+
+## module4_2
+
+Initially it was mistaken for module4, but after a detailed study it became clear that the lower part is different.
+
+![module42](/imgstore/modules/module42.jpg)
+
+(I rechecked all the other modules4).
+
+TBD.
 
 ## aoi_1 - aoi_21
 
