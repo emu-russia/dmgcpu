@@ -5,7 +5,7 @@ echo. >> alu_trees.v
 
 py -3 MakeNandTree.py --tree {alu0}{w24,nIR3,nIR4,nIR5}{w10,IR5}{w10,IR4}{w10,IR3} --output_name "az[0]" >> alu_trees.v
 py -3 MakeNandTree.py --tree {nIR0,w37,ALU_L5}{x10,ALU_L5}{ALU_L3,x12}{w12}{x26}{x19}{ALU_L1,d58} --output_name "az[1]" >> alu_trees.v
-py -3 MakeNandTree.py --tree {f0,x1}{ALU_L2,d58}{nbc1,IR3,x21}{x21,nIR3}{x10,FromThingy}{nbc2,FromThingy,x22}{bc1,x22}{bc1,x26}{x0,f7}{ALU_L0,x11} --output_name "az[2]" >> alu_trees.v
+py -3 MakeNandTree.py --tree {f0,x1}{ALU_L2,d58}{nbc1,IR3,x21}{x21,nIR3}{x10,ALU_to_Thingy}{nbc2,ALU_to_Thingy,x22}{bc1,x22}{bc1,x26}{x0,f7}{ALU_L0,x11} --output_name "az[2]" >> alu_trees.v
 py -3 MakeNandTree.py --tree {alu1}{w24,IR3,nIR4,nIR5}{w10,IR5}{w10,IR4}{w10,nIR3}{x22,bc5}{x22,nbc2,bq4} --output_name "az[3]" >> alu_trees.v
 py -3 MakeNandTree.py --tree {alu2}{x22,bq4,nbc2}{x22,bc5,nbc2}{w24,nIR3,IR4,nIR5}{w10,IR5}{w10,nIR4}{w10,IR3} --output_name "az[4]" >> alu_trees.v
 py -3 MakeNandTree.py --tree {alu3}{w24,IR3,IR4,nIR5}{w10,nIR3}{w10,nIR4}{w10,IR5}{x22,bc5,bc2} --output_name "az[5]" >> alu_trees.v

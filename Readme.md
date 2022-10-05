@@ -26,8 +26,6 @@ For decoders it is necessary to restore all NAND/NOR-trees (you can do it direct
 
 ![DMG01B_Core_Fused_Topo](/imgstore/DMG01B_Core_Fused_Topo.jpg)
 
-https://www.pastraiser.com/cpu/gameboy/gameboy_opcodes.html
-
 ## Why SM83?
 
 There is a manual from Sharp: https://archive.org/details/1996_Sharp_Microcomputer_Data_Book/page/n147/mode/2up
