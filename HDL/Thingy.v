@@ -10,8 +10,8 @@ module Thingy ( w, ALU_to_Thingy, WR, TTB1, TTB2, TTB3, Thingy_to_bot, bot_to_Th
 	input bot_to_Thingy;		// IE access detected (Address = 0xffff)
 	output Thingy_to_bot;		// Load a value into the IE register from the DL bus.	
 
-	wire t1;
-	wire t2;
+	(* keep = "true" *) wire t1;
+	(* keep = "true" *) wire t2;
 
 	assign t1 = ~(w[8] & ALU_to_Thingy & ~TTB3);
 	assign t2 = ~(w[8] & ~ALU_to_Thingy & TTB3);
