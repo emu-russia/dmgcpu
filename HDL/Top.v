@@ -1,3 +1,4 @@
+// Definition of the SM83 CPU top level.
 
 module SM83Core (
 	CLK1, CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, CLK8, CLK9, 
