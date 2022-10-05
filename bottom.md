@@ -37,10 +37,6 @@ DFF with complementary set enable, complementary CLK.
 - So the written value becomes relevant when LD 1->0 changes (when the output latch opens and is updated with the value from FlipFlop).
 - The whole thing is complicated by the complementary layout of the LD and CLK signals.
 
-## Internal Buses
-
-TBD.
-
 ## Reg0 - IR
 
 ## Reg1 - ???

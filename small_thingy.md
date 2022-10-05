@@ -22,3 +22,5 @@
 ![thingy_tran](/imgstore/thingy_tran.jpg)
 
 Inside the circuit contains a FF, so far not yet clear purpose.
+
+![Thingy](/HDL/Design/Thingy.png)
