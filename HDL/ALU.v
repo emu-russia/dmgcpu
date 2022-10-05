@@ -40,7 +40,7 @@ module ALU ( CLK2, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d, w, x, bc, alu, 
 	wire [7:0] na; 		// Christmas tree nots outputs to module6
 	wire [7:0] q; 		// Christmas trees outputs (0-3: left, 4-7: right)
 	wire [5:0] nbc; 	// #bc
-	wire [13:0] az;		// LargeComb1 results
+	wire [13:0] az;		// LargeComb1 results (non-dynamic)
 
 	wire ALU_L0;
 	wire ALU_L3;

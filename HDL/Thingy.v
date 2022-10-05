@@ -6,8 +6,18 @@ module Thingy ( w, ALU_to_Thingy, WR, TTB1, TTB2, TTB3, Thingy_to_bot, bot_to_Th
 	input WR;
 	output TTB1;
 	output TTB2;
-	output TTB3;
-	output Thingy_to_bot;
-	input bot_to_Thingy;
+	output TTB3;		// Some important signal, stored on the FF. Used in ALU and Bottom.
+	input bot_to_Thingy;		// IE access detected (Address = 0xffff)
+	output Thingy_to_bot;		// Load a value into the IE register from the DL bus.	
+
+	wire t1;
+	wire t2;
+
+	assign t1 = ~(w[8] & ALU_to_Thingy & ~TTB3);
+	assign t2 = ~(w[8] & ~ALU_to_Thingy & TTB3);
+	assign TTB1 = ~(t1 & t2);
+	assign TTB2 = ~(~w[35] & t2);
+	assign TTB3 = ~(~w[31] & t1);		// FF
+	assign Thingy_to_bot = bot_to_Thingy & WR;
 
 endmodule // Thingy
