@@ -6,4 +6,19 @@
 
 ![thingy](/imgstore/thingy.jpg)
 
-TBD.
+|Signal|Type|From/To|Description|
+|---|---|---|---|
+|w8|input|Decoder2| |
+|w31|input|Decoder2| |
+|w35|input|Decoder2| |
+|w6|input|Decoder2|WR|
+|ALU_to_Thingy|input|ALU| |
+|TTB1|output|Bottom| |
+|TTB2|output|Bottom| |
+|TTB3|output|Bottom, ALU| |
+|bot_to_Thingy|input|Bottom|IE access detected (Address = 0xffff)|
+|Thingy_to_bot|output|Bottom|Load a value into the IE register from the DL bus.|
+
+![thingy_tran](/imgstore/thingy_tran.jpg)
+
+Inside the circuit contains a FF, so far not yet clear purpose.
