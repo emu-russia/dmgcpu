@@ -75,7 +75,7 @@ module SM83Core (
 	wire SeqControl_2;
 	wire nCLK4;					// It is obtained by inverting CLK4 inside the sequencer.
 
-	wire FromThingy;
+	wire ALU_to_Thingy;
 	wire bot_to_Thingy;
 	wire TTB1;
 	wire TTB2;
@@ -153,7 +153,7 @@ module SM83Core (
 		.bq5(bq5),
 		.bq7(bq7),
 		.ALU_to_bot(ALU_to_bot),
-		.FromThingy(FromThingy),
+		.ALU_to_Thingy(ALU_to_Thingy),
 		.ALU_L1(ALU_L1),
 		.ALU_L2(ALU_L2),
 		.ALU_L4(ALU_L4),
@@ -197,7 +197,7 @@ module SM83Core (
 
 	Thingy thingy (
 		.w(w),
-		.FromThingy(FromThingy),
+		.ALU_to_Thingy(ALU_to_Thingy),
 		.WR(WR),
 		.TTB1(TTB1),
 		.TTB2(TTB2),

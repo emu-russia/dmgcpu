@@ -42,7 +42,7 @@ Status: Restoration and study is in progress.
 |Res| | |
 |bc| | |
 |ALU_to_bot| | |
-|FromThingy| | |
+|ALU_to_Thingy| | |
 |ALU_Out1| | |
 
 ## NOR-8
@@ -113,7 +113,7 @@ Large Comb 1 (_14 NAND trees_):
 |---|---|---|
 |alu_0|CLK2|{alu0}<br/>{w24,nIR3,nIR4,nIR5}<br/>{w10,IR5}<br/>{w10,IR4}<br/>{w10,IR3}|
 |alu_1|CLK6|{nIR0,w37,ALU_L5}<br/>{x10,ALU_L5}<br/>{ALU_L3,x12}<br/>{w12}<br/>{x26}<br/>{x19}<br/>{ALU_L1,d58}|
-|alu_2|CLK6|{f0,x1}<br/>{ALU_L2,d58}<br/>{nbc1,IR3,x21}<br/>{x21,nIR3}<br/>{x10,FromThingy}<br/>{nbc2,FromThingy,x22}<br/>{bc1,x22}<br/>{bc1,x26}<br/>{x0,f7}</br>{ALU_L0,x11}|
+|alu_2|CLK6|{f0,x1}<br/>{ALU_L2,d58}<br/>{nbc1,IR3,x21}<br/>{x21,nIR3}<br/>{x10,ALU_to_Thingy}<br/>{nbc2,ALU_to_Thingy,x22}<br/>{bc1,x22}<br/>{bc1,x26}<br/>{x0,f7}</br>{ALU_L0,x11}|
 |alu_3|CLK2|{alu1}<br/>{w24,IR3,nIR4,nIR5}<br/>{w10,IR5}<br/>{w10,IR4}<br/>{w10,nIR3}<br/>{x22,bc5}<br/>{x22,nbc2,bq4}|
 |alu_4|CLK2|{alu2}<br/>{x22,bq4,nbc2}<br/>{x22,bc5,nbc2}<br/>{w24,nIR3,IR4,nIR5}<br/>{w10,IR5}<br/>{w10,nIR4}<br/>{w10,IR3}|
 |alu_5|CLK2|{alu3}<br/>{w24,IR3,IR4,nIR5}<br/>{w10,nIR3}<br/>{w10,nIR4}<br/>{w10,IR5}<br/>{x22,bc5,bc2}|

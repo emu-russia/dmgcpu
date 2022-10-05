@@ -1,5 +1,5 @@
 
-module ALU ( CLK2, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d, w, x, bc, alu, bq4, bq5, bq7, ALU_to_bot, FromThingy, ALU_L1, ALU_L2, ALU_L4, ALU_Out1, IR, nIR );
+module ALU ( CLK2, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d, w, x, bc, alu, bq4, bq5, bq7, ALU_to_bot, ALU_to_Thingy, ALU_L1, ALU_L2, ALU_L4, ALU_Out1, IR, nIR );
 
 	input CLK2;
 	input CLK5;
@@ -19,7 +19,7 @@ module ALU ( CLK2, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d, w, x, bc, alu, 
 	input bq5;
 	input bq7;
 	output ALU_to_bot;
-	output FromThingy;
+	output ALU_to_Thingy;
 	input ALU_L1;
 	input ALU_L2;
 	input ALU_L4;
@@ -46,7 +46,7 @@ module ALU ( CLK2, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d, w, x, bc, alu, 
 	wire ALU_L3;
 	wire ALU_L5;
 
-	assign ALU_L0 = ~FromThingy;
+	assign ALU_L0 = ~ALU_to_Thingy;
 
 	assign ao = bh & bx; 		// ands
 
@@ -54,7 +54,7 @@ module ALU ( CLK2, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d, w, x, bc, alu, 
  
 	assign az[0] = ~((alu[0]) | (w[24]&nIR[3]&nIR[4]&nIR[5]) | (w[10]&IR[5]) | (w[10]&IR[4]) | (w[10]&IR[3]));
 	assign az[1] = ~((nIR[0]&w[37]&ALU_L5) | (x[10]&ALU_L5) | (ALU_L3&x[12]) | (w[12]) | (x[26]) | (x[19]) | (ALU_L1&d[58]));
-	assign az[2] = ~((f[0]&x[1]) | (ALU_L2&d[58]) | (nbc[1]&IR[3]&x[21]) | (x[21]&nIR[3]) | (x[10]&FromThingy) | (nbc[2]&FromThingy&x[22]) | (bc[1]&x[22]) | (bc[1]&x[26]) | (x[0]&f[7]) | (ALU_L0&x[11]));
+	assign az[2] = ~((f[0]&x[1]) | (ALU_L2&d[58]) | (nbc[1]&IR[3]&x[21]) | (x[21]&nIR[3]) | (x[10]&ALU_to_Thingy) | (nbc[2]&ALU_to_Thingy&x[22]) | (bc[1]&x[22]) | (bc[1]&x[26]) | (x[0]&f[7]) | (ALU_L0&x[11]));
 	assign az[3] = ~((alu[1]) | (w[24]&IR[3]&nIR[4]&nIR[5]) | (w[10]&IR[5]) | (w[10]&IR[4]) | (w[10]&nIR[3]) | (x[22]&bc[5]) | (x[22]&nbc[2]&bq4));
 	assign az[4] = ~((alu[2]) | (x[22]&bq4&nbc[2]) | (x[22]&bc[5]&nbc[2]) | (w[24]&nIR[3]&IR[4]&nIR[5]) | (w[10]&IR[5]) | (w[10]&nIR[4]) | (w[10]&IR[3]));
 	assign az[5] = ~((alu[3]) | (w[24]&IR[3]&IR[4]&nIR[5]) | (w[10]&nIR[3]) | (w[10]&nIR[4]) | (w[10]&IR[5]) | (x[22]&bc[5]&bc[2]));

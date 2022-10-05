@@ -1,8 +1,8 @@
 
-module Thingy ( w, FromThingy, WR, TTB1, TTB2, TTB3, Thingy_to_bot, bot_to_Thingy );
+module Thingy ( w, ALU_to_Thingy, WR, TTB1, TTB2, TTB3, Thingy_to_bot, bot_to_Thingy );
 
 	input [40:0] w;
-	input FromThingy;			// From ALU actually.
+	input ALU_to_Thingy;
 	input WR;
 	output TTB1;
 	output TTB2;
