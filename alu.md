@@ -99,7 +99,7 @@ module2 (x8):
 
 Presumably contains the flag setting logic and the flag register (F).
 
-Contains 8 dynamic comb logic modules (ANDs-to-NORs) whose outputs go up (`ca[7:0]`):
+Contains 8 dynamic comb logic modules (ANDs-to-NORs + CLK2) whose outputs go up (`ca[7:0]`):
 
 |Comb3 (bit 0)|Comb2 (bits 1-6)|Comb1 (bit 7)|
 |---|---|---|
