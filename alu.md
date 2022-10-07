@@ -1,8 +1,6 @@
 # ALU
 
-:warning: The section is in development.
-
-Status: Restoration and study is in progress.
+Status: Schematics of all the basic elements are obtained, you can reconstruct the overall circuit.
 
 ![locator_alu](/imgstore/locator_alu.png)
 
@@ -16,29 +14,32 @@ Status: Restoration and study is in progress.
 |CLK5|External| |
 |CLK6|External| |
 |CLK7|External| |
-|DV|Bottom| |
+|DV\[7:0\]|Bottom| |
 |AllZeros|NOR-8|1: The result (`Res`) is 0.|
 |TTB3|Thingy| |
-|d|Decoder1| |
-|w|Decoder2| |
-|x|Decoder3| |
-|alu|Bottom| |
+|d58|Decoder1| |
+|w (many)|Decoder2| |
+|x (many)|Decoder3| |
+|alu\[7:0\]|Bottom| |
 |bq4|Bottom Left| |
 |bq5|Bottom Left| |
 |bq7|Bottom Left| |
 |ALU_L1|Bottom| |
 |ALU_L2|Bottom| |
 |ALU_L4|Bottom| |
-|IR|IR| |
-|nIR|MightySix| |
+|IR\[7:0\]|IR| |
+|nIR\[5:0\]|MightySix| |
 
 ## ALU Outputs
 
 |Signal|To|Description|
 |---|---|---|
-|Res|Bottom| |
-|bc|Bottom Left| |
-|ALU_to_bot|Bottom| |
+|Res\[7:0\]|Bottom| |
+|bc1|Bottom Left| |
+|bc2|Bottom Left| |
+|bc3|Bottom Left| |
+|bc5|Bottom Left| |
+|ALU_to_bot|Bottom|TTB3 signal stored in the memory cell|
 |ALU_to_Thingy|Thingy| |
 |ALU_Out1|Sequencer| |
 
@@ -114,22 +115,22 @@ Large Comb 1 (_14 NAND trees_):
 
 ## LargeComb1 Nand Trees
 
-|Tree|CLK|Paths|
-|---|---|---|
-|alu_0|CLK2|{alu0}<br/>{w24,nIR3,nIR4,nIR5}<br/>{w10,IR5}<br/>{w10,IR4}<br/>{w10,IR3}|
-|alu_1|CLK6|{nIR0,w37,ALU_L5}<br/>{x10,ALU_L5}<br/>{ALU_L3,x12}<br/>{w12}<br/>{x26}<br/>{x19}<br/>{ALU_L1,d58}|
-|alu_2|CLK6|{f0,x1}<br/>{ALU_L2,d58}<br/>{nbc1,IR3,x21}<br/>{x21,nIR3}<br/>{x10,ALU_to_Thingy}<br/>{nbc2,ALU_to_Thingy,x22}<br/>{bc1,x22}<br/>{bc1,x26}<br/>{x0,f7}</br>{ALU_L0,x11}|
-|alu_3|CLK2|{alu1}<br/>{w24,IR3,nIR4,nIR5}<br/>{w10,IR5}<br/>{w10,IR4}<br/>{w10,nIR3}<br/>{x22,bc5}<br/>{x22,nbc2,bq4}|
-|alu_4|CLK2|{alu2}<br/>{x22,bq4,nbc2}<br/>{x22,bc5,nbc2}<br/>{w24,nIR3,IR4,nIR5}<br/>{w10,IR5}<br/>{w10,nIR4}<br/>{w10,IR3}|
-|alu_5|CLK2|{alu3}<br/>{w24,IR3,IR4,nIR5}<br/>{w10,nIR3}<br/>{w10,nIR4}<br/>{w10,IR5}<br/>{x22,bc5,bc2}|
-|alu_6|CLK2|{alu4}<br/>{x22,bc5,bc2}<br/>{w24,nIR3,nIR4,IR5}<br/>{w10,IR3}<br/>{w10,IR4}<br/>{w10,nIR5}|
-|alu_7|CLK6|{bc2,x22}<br/>{x12}<br/>{x26}<br/>{d58,ALU_L4}|
-|alu_8|CLK2|{alu5}<br/>{w24,IR3,nIR4,IR5}<br/>{w10,nIR3}<br/>{w10,IR4}<br/>{w10,nIR5}<br/>{x22,nbc5,bc1,bc2}<br/>{x22,bc5,nbc1,bc2}<br/>{x22,bq5,nbc2}<br/>{x22,bc1,nbc2}<br/>{x22,bq7,bq4,nbc2}|
-|alu_9|CLK2|{alu6}<br/>{w24,nIR3,IR4,IR5}<br/>{w10,IR3}<br/>{w10,nIR4}<br/>{w10,nIR5}<br/>{x22,bc5,nbc1,bc2}<br/>{x22,bq7,bq4,nbc2}<br/>{x22,bc1,nbc2}<br/>{x22,bq5,nbc2}|
-|alu_10|CLK2|{alu7}<br/>{w24,IR3,IR4,IR5}<br/>{w10,nIR3}<br/>{w10,nIR4}<br/>{w10,nIR5}<br/>{x22,bc5,bc2}<br/>{x22,bc1,bc2}|
-|alu_11|CLK6|{w0,nIR3,IR4,bc1}<br/>{w0,IR3,IR4,nbc1}<br/>{w0,IR3,nIR4,nbc3}<br/>{w0,nIR3,nIR4,bc3}|
-|alu_12|CLK6|{f0,w12,nIR3,nIR4,nIR5}<br/>{f1,w12,IR3,nIR4,nIR5}<br/>{f2,w12,nIR3,IR4,nIR5}<br/>{f3,w12,IR3,IR4,nIR5}<br/>{f4,w12,nIR3,nIR4,IR5}<br/>{f5,w12,IR3,nIR4,IR5}<br/>{f6,w12,nIR3,IR4,IR5}<br/>{f7,w12,IR3,IR4,IR5}<br/>{d42,AllZeros}<br/>{w3,AllZeros}<br/>{w37,AllZeros}<br/>{x22,AllZeros}<br/>{TTB3,d58}<br/>{bc3,w19}<br/>{bc3,x21}<br/>{bc3,w15}<br/>{bc3,x26}|
-|alu_13|CLK2|{w37,nIR0}<br/>{x27}<br/>{w9,bc1}<br/>{nbc1,x24}<br/>{nIR3,x24}<br/>{bc1,w19}<br/>{IR3,x23}|
+|Tree|CLK|Issued as|Paths|
+|---|---|---|---|
+|alu_0|CLK2|e0|{alu0}<br/>{w24,nIR3,nIR4,nIR5}<br/>{w10,IR5}<br/>{w10,IR4}<br/>{w10,IR3}|
+|alu_1|CLK6|bc5|{nIR0,w37,ALU_L5}<br/>{x10,ALU_L5}<br/>{ALU_L3,x12}<br/>{w12}<br/>{x26}<br/>{x19}<br/>{ALU_L1,d58}|
+|alu_2|CLK6|bc1|{f0,x1}<br/>{ALU_L2,d58}<br/>{nbc1,IR3,x21}<br/>{x21,nIR3}<br/>{x10,ALU_to_Thingy}<br/>{nbc2,ALU_to_Thingy,x22}<br/>{bc1,x22}<br/>{bc1,x26}<br/>{x0,f7}</br>{ALU_L0,x11}|
+|alu_3|CLK2|e1|{alu1}<br/>{w24,IR3,nIR4,nIR5}<br/>{w10,IR5}<br/>{w10,IR4}<br/>{w10,nIR3}<br/>{x22,bc5}<br/>{x22,nbc2,bq4}|
+|alu_4|CLK2|e2|{alu2}<br/>{x22,bq4,nbc2}<br/>{x22,bc5,nbc2}<br/>{w24,nIR3,IR4,nIR5}<br/>{w10,IR5}<br/>{w10,nIR4}<br/>{w10,IR3}|
+|alu_5|CLK2|e3|{alu3}<br/>{w24,IR3,IR4,nIR5}<br/>{w10,nIR3}<br/>{w10,nIR4}<br/>{w10,IR5}<br/>{x22,bc5,bc2}|
+|alu_6|CLK2|e4|{alu4}<br/>{x22,bc5,bc2}<br/>{w24,nIR3,nIR4,IR5}<br/>{w10,IR3}<br/>{w10,IR4}<br/>{w10,nIR5}|
+|alu_7|CLK6|bc2|{bc2,x22}<br/>{x12}<br/>{x26}<br/>{d58,ALU_L4}|
+|alu_8|CLK2|e5|{alu5}<br/>{w24,IR3,nIR4,IR5}<br/>{w10,nIR3}<br/>{w10,IR4}<br/>{w10,nIR5}<br/>{x22,nbc5,bc1,bc2}<br/>{x22,bc5,nbc1,bc2}<br/>{x22,bq5,nbc2}<br/>{x22,bc1,nbc2}<br/>{x22,bq7,bq4,nbc2}|
+|alu_9|CLK2|e6|{alu6}<br/>{w24,nIR3,IR4,IR5}<br/>{w10,IR3}<br/>{w10,nIR4}<br/>{w10,nIR5}<br/>{x22,bc5,nbc1,bc2}<br/>{x22,bq7,bq4,nbc2}<br/>{x22,bc1,nbc2}<br/>{x22,bq5,nbc2}|
+|alu_10|CLK2|e7|{alu7}<br/>{w24,IR3,IR4,IR5}<br/>{w10,nIR3}<br/>{w10,nIR4}<br/>{w10,nIR5}<br/>{x22,bc5,bc2}<br/>{x22,bc1,bc2}|
+|alu_11|CLK6|ALU_Out1|{w0,nIR3,IR4,bc1}<br/>{w0,IR3,IR4,nbc1}<br/>{w0,IR3,nIR4,nbc3}<br/>{w0,nIR3,nIR4,bc3}|
+|alu_12|CLK6|bc3|{f0,w12,nIR3,nIR4,nIR5}<br/>{f1,w12,IR3,nIR4,nIR5}<br/>{f2,w12,nIR3,IR4,nIR5}<br/>{f3,w12,IR3,IR4,nIR5}<br/>{f4,w12,nIR3,nIR4,IR5}<br/>{f5,w12,IR3,nIR4,IR5}<br/>{f6,w12,nIR3,IR4,IR5}<br/>{f7,w12,IR3,IR4,IR5}<br/>{d42,AllZeros}<br/>{w3,AllZeros}<br/>{w37,AllZeros}<br/>{x22,AllZeros}<br/>{TTB3,d58}<br/>{bc3,w19}<br/>{bc3,x21}<br/>{bc3,w15}<br/>{bc3,x26}|
+|alu_13|CLK2|ALU_to_top|{w37,nIR0}<br/>{x27}<br/>{w9,bc1}<br/>{nbc1,x24}<br/>{nIR3,x24}<br/>{bc1,w19}<br/>{IR3,x23}|
 
 The result is an AND-to-NOR tree (using alu_0 as an example):
 
@@ -154,3 +155,7 @@ Regular memory cell with write enable (x28/x29). It also contains a Precharge FE
 ### ALU_to_bot
 
 ![ALU_to_bot](/imgstore/modules/ALU_to_bot.jpg)
+
+![ALU_to_bot_tran](/imgstore/modules/ALU_to_bot_tran.jpg)
+
+A regular memory cell, for storing the `TTB3` signal. The signal CLK4 acts as WriteEnable.
