@@ -48,6 +48,8 @@ Status: Restoration and study is in progress.
 
 ![nor8_1](/imgstore/modules/nor8_1.jpg)
 
+![nor8_1_tran](/imgstore/modules/nor8_1_tran.jpg)
+
 The result of the nor8 operation is the `AllZeros` signal. This is often required to calculate the `Z` flag.
 
 ## Top Part
@@ -102,7 +104,7 @@ Contains 8 dynamic comb logic modules (ANDs-to-NORs) whose outputs go up (`ca[7:
 |Comb3 (bit 0)|Comb2 (bits 1-6)|Comb1 (bit 7)|
 |---|---|---|
 |![comb3](/imgstore/modules/comb3.jpg)|![comb2](/imgstore/modules/comb2.jpg)|![comb1](/imgstore/modules/comb1.jpg)|
-|TBD: Logic|TBD: Logic|TBD: Logic|
+|![comb3_tran](/imgstore/modules/comb3_tran.jpg)|![comb2_tran](/imgstore/modules/comb2_tran.jpg)|![comb1_tran](/imgstore/modules/comb1_tran.jpg)|
 
 The lower part contains many NAND trees, the inputs for which come from all sides and also from `module2` instancies.
 
