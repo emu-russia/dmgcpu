@@ -8,42 +8,39 @@ Status: Restoration and study is in progress.
 
 ![alu](/imgstore/alu.jpg)
 
-- In the top part it is not yet clear what is (part of ALU)
-- The lower part is 8-bit ALU
-
 ## ALU Inputs
 
 |Signal|From|Description|
 |---|---|---|
-|CLK2| | |
-|CLK5| | |
-|CLK6| | |
-|CLK7| | |
-|DV| | |
-|AllZeros| | |
-|TTB3| | |
-|d| | |
-|w| | |
-|x| | |
-|alu| | |
-|bq4| | |
-|bq5| | |
-|bq7| | |
-|ALU_L1| | |
-|ALU_L2| | |
-|ALU_L4| | |
-|IR| | |
-|nIR| | |
+|CLK2|External| |
+|CLK5|External| |
+|CLK6|External| |
+|CLK7|External| |
+|DV|Bottom| |
+|AllZeros|NOR-8|1: The result (`Res`) is 0.|
+|TTB3|Thingy| |
+|d|Decoder1| |
+|w|Decoder2| |
+|x|Decoder3| |
+|alu|Bottom| |
+|bq4|Bottom Left| |
+|bq5|Bottom Left| |
+|bq7|Bottom Left| |
+|ALU_L1|Bottom| |
+|ALU_L2|Bottom| |
+|ALU_L4|Bottom| |
+|IR|IR| |
+|nIR|MightySix| |
 
 ## ALU Outputs
 
 |Signal|To|Description|
 |---|---|---|
-|Res| | |
-|bc| | |
-|ALU_to_bot| | |
-|ALU_to_Thingy| | |
-|ALU_Out1| | |
+|Res|Bottom| |
+|bc|Bottom Left| |
+|ALU_to_bot|Bottom| |
+|ALU_to_Thingy|Thingy| |
+|ALU_Out1|Sequencer| |
 
 ## NOR-8
 
@@ -59,17 +56,21 @@ Some obscure construction that looks like a Christmas tree. (x2).
 
 The design consists of two symmetric halves (module5) with minor logic in between, above which there are 8 instances of module6.
 
-module6 (x8):
+### module5 (x2)
+
+![module5](/imgstore/modules/module5.jpg)
+
+![module5_tran](/imgstore/modules/module5_tran.jpg)
+
+### module6 (x8)
 
 ![module6](/imgstore/modules/module6.jpg)
 
 ![module6_tran](/imgstore/modules/module6_tran.jpg)
 
-module5 (x2):
+## Middle Part (module2 Array)
 
-![module5](/imgstore/modules/module5.jpg)
-
-Just below are 8 identical modules.
+8 identical modules.
 
 module2 (x8):
 
@@ -93,6 +94,8 @@ module2 (x8):
 |w|output|To Christmas Tree|
 
 ## Bottom Part
+
+Presumably contains the flag setting logic and the flag register (F).
 
 Contains 8 dynamic comb logic modules (ANDs-to-NORs) whose outputs go up (`ca[7:0]`):
 
@@ -138,10 +141,14 @@ To convert trees into a schematic, you can use a script to generate an HDL.
 
 ![LargeComb1_Res](/imgstore/LargeComb1_Res.jpg)
 
-bc:
+### bc
 
 ![bc](/imgstore/modules/bc.jpg)
 
-ALU_to_bot:
+![bc_tran](/imgstore/modules/bc_tran.jpg)
+
+Regular memory cell with write enable (x28/x29). It also contains a Precharge FET for the dynamic logic which is above (input `d`). By the way the input `d` in the drawing is marked in inverse polarity, because the current hypothesis is that the signal `bc` is in direct polarity, and the operation which forms the signal `d` (AOI) gives the result in inverse polarity.
+
+### ALU_to_bot
 
 ![ALU_to_bot](/imgstore/modules/ALU_to_bot.jpg)
