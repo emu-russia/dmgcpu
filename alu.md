@@ -6,17 +6,21 @@ Status: Schematics of all the basic elements are obtained, you can reconstruct t
 
 ![alu](/imgstore/alu.jpg)
 
+![ALU](/HDL/Design/ALU.png)
+
 ## ALU Inputs
 
 |Signal|From|Description|
 |---|---|---|
 |CLK2|External| |
+|CLK4|External|Used as LoadEnable for ALU_to_bot FF.|
 |CLK5|External| |
 |CLK6|External| |
 |CLK7|External| |
 |DV\[7:0\]|Bottom| |
 |AllZeros|NOR-8|1: The result (`Res`) is 0.|
 |TTB3|Thingy| |
+|d42|Decoder1| |
 |d58|Decoder1| |
 |w (many)|Decoder2| |
 |x (many)|Decoder3| |
@@ -139,6 +143,8 @@ The result is an AND-to-NOR tree (using alu_0 as an example):
 (the dynamic part is not shown in the picture)
 
 To convert trees into a schematic, you can use a script to generate an HDL.
+
+![ALU_LargeComb1](/HDL/Design/ALU_LargeComb1.png)
 
 ## Below LargeComb1
 

@@ -138,6 +138,7 @@ module SM83Core (
 
 	ALU alu_inst (
 		.CLK2(CLK2),
+		.CLK4(CLK4),
 		.CLK5(CLK5),
 		.CLK6(CLK6),
 		.CLK7(CLK7),
@@ -145,7 +146,8 @@ module SM83Core (
 		.Res(Res),
 		.AllZeros(AllZeros),
 		.TTB3(TTB3),
-		.d(d),
+		.d42(d[42]),
+		.d58(d[58]),
 		.w(w),
 		.x(x),
 		.bc(bc),
