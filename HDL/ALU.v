@@ -1,7 +1,8 @@
 
-module ALU ( CLK2, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d42, d58, w, x, bc, alu, bq4, bq5, bq7, ALU_to_bot, ALU_to_Thingy, ALU_L1, ALU_L2, ALU_L4, ALU_Out1, IR, nIR );
+module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d42, d58, w, x, bc, alu, bq4, bq5, bq7, ALU_to_bot, ALU_to_Thingy, ALU_L1, ALU_L2, ALU_L4, ALU_Out1, IR, nIR );
 
 	input CLK2;
+	input CLK4;			// Used as LoadEnable for ALU_to_bot FF.
 	input CLK5;
 	input CLK6;
 	input CLK7;
@@ -52,9 +53,9 @@ module ALU ( CLK2, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d42, d58, w, x, bc
 	module6 res [7:0] (
 		.a({na[7:1],ALU_to_top}), 
 		.b(ao), 
-		.c(x[18]), 
-		.d(x[3]), 
-		.e(e), 
+		.c({8{x[18]}}), 
+		.d({8{x[3]}}), 
+		.e(bw), 
 		.x(Res) );
 
 	assign ALU_L0 = ~ALU_to_Thingy;
@@ -70,11 +71,11 @@ module ALU ( CLK2, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d42, d58, w, x, bc
 
 	module2 m2s [7:0] (
 		.a(ca), 
-		.b(x[19]), 
-		.c(x[4]), 
+		.b({8{x[19]}}), 
+		.c({8{x[4]}}), 
 		.e(e), 
 		.f(f), 
-		.g(x[25]), 
+		.g({8{x[25]}}), 
 		.h(bh), 
 		.k(DV), 
 		.m(bm), 
@@ -150,6 +151,8 @@ module module6 ( a, b, c, d, e, x );
 	input e;
 	output x;
 
+	assign x = ( (b & c) | ((a ^ b) & d) | (e) );
+
 endmodule // module6
 
 module module2 ( a, b, c, e, f, g, h, k, m, x, w );
@@ -166,6 +169,12 @@ module module2 ( a, b, c, e, f, g, h, k, m, x, w );
 	output x;
 	output w;
 
+	assign f = g ^ k;
+	assign h = e | f;
+	assign x = ~(e & f);
+	assign m = ~x;
+	assign w = ~(a & (~(b&m)) & (~(c&h)));
+
 endmodule // module2
 
 module Comb1 ( clk, x, a, b, c, d, e );
@@ -178,6 +187,8 @@ module Comb1 ( clk, x, a, b, c, d, e );
 	input [1:0] d;
 	input [1:0] e;
 
+	assign x = clk ? ~((a[0]&a[1]) | (b[0]&b[1]) | (c[0]&c[1]) | (d[0]&d[1]) | (e[0]&e[1])) : 1'b1;
+
 endmodule // Comb1
 
 module Comb2 ( clk, x, a, b, c );
@@ -187,6 +198,8 @@ module Comb2 ( clk, x, a, b, c );
 	input [1:0] a;
 	input [1:0] b;
 	input [1:0] c;
+
+	assign x = clk ? ~((a[0]&a[1]) | (b[0]&b[1]) | (c[0]&c[1]) ) : 1'b1;
 
 endmodule // Comb2
 
@@ -198,6 +211,8 @@ module Comb3 ( clk, x, a, b, c, d );
 	input [1:0] b;
 	input [1:0] c;
 	input [1:0] d;
+
+	assign x = clk ? ~((a[0]&a[1]) | (b[0]&b[1]) | (c[0]&c[1]) | (d[0]&d[1]) ) : 1'b1;
 
 endmodule // Comb3
 
@@ -251,7 +266,20 @@ module LargeComb1 ( CLK2, CLK6, CLK7, TTB3, AllZeros, d42, d58, w, x, alu, IR, n
 
 	// Dynamic part
 
-	assign azo = CLK7 ? {1'b1} : ({CLK2,CLK6,CLK6,CLK2,CLK2,CLK2,CLK6,CLK2,CLK2,CLK2,CLK2,CLK6,CLK6,CLK2} ? az : {1'b1});
+	assign azo[0] = CLK2 ? az[0] : 1'b1;
+	assign azo[1] = CLK7 ? 1'b1 : (CLK6 ? az[1] : 1'b1);		// -> bc5
+	assign azo[2] = CLK7 ? 1'b1 : (CLK6 ? az[2] : 1'b1);		// -> bc1
+	assign azo[3] = CLK2 ? az[3] : 1'b1;
+	assign azo[4] = CLK2 ? az[4] : 1'b1;
+	assign azo[5] = CLK2 ? az[5] : 1'b1;
+	assign azo[6] = CLK2 ? az[6] : 1'b1;
+	assign azo[7] = CLK7 ? 1'b1 : (CLK6 ? az[7] : 1'b1);		// -> bc2
+	assign azo[8] = CLK2 ? az[7] : 1'b1;
+	assign azo[9] = CLK2 ? az[8] : 1'b1;
+	assign azo[10] = CLK2 ? az[10] : 1'b1;
+	assign azo[11] = CLK7 ? 1'b1 : (CLK6 ? az[11] : 1'b1); 		// -> ALU_Out1
+	assign azo[12] = CLK7 ? 1'b1 : (CLK6 ? az[12] : 1'b1);		// -> bc3
+	assign azo[13] = CLK2 ? az[13] : 1'b1;		// -> ALU_to_top
 
 endmodule // LargeComb1
 

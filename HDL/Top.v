@@ -138,6 +138,7 @@ module SM83Core (
 
 	ALU alu_inst (
 		.CLK2(CLK2),
+		.CLK4(CLK4),
 		.CLK5(CLK5),
 		.CLK6(CLK6),
 		.CLK7(CLK7),
