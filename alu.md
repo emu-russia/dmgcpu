@@ -1,6 +1,6 @@
 # ALU
 
-Status: Schematics of all the basic elements are obtained, you can reconstruct the overall circuit.
+Status: The circuit is fully restored as HDL.
 
 ![locator_alu](/imgstore/locator_alu.png)
 
@@ -38,13 +38,13 @@ Status: Schematics of all the basic elements are obtained, you can reconstruct t
 
 |Signal|To|Description|
 |---|---|---|
-|Res\[7:0\]|Bottom| |
+|Res\[7:0\]|Bottom|ALU Sums|
 |bc1|Bottom Left| |
 |bc2|Bottom Left| |
 |bc3|Bottom Left| |
 |bc5|Bottom Left| |
 |ALU_to_bot|Bottom|TTB3 signal stored in the memory cell|
-|ALU_to_Thingy|Thingy| |
+|ALU_to_Thingy|Thingy|CarryOut|
 |ALU_Out1|Sequencer| |
 
 ## NOR-8
@@ -59,27 +59,33 @@ The result of the nor8 operation is the `AllZeros` signal. This is often require
 
 ## Top Part
 
-Some obscure construction that looks like a Christmas tree. (x2).
+The paired construction that looks like a Christmas tree is actually two 4-bit Carry Lookahead Generators (module5).
 
-The design consists of two symmetric halves (module5) with minor logic in between, above which there are 8 instances of module6.
+In between is the small logic, and above the 8 "Sum" blocks (module6), which give the result of the ALU.
 
-### module5 (x2)
+### module5 (4-bit CLA Generators, x2)
 
 ![module5](/imgstore/modules/module5.jpg)
 
 ![module5_tran](/imgstore/modules/module5_tran.jpg)
 
-### module6 (x8)
+![module5_logisim](/logisim/module5_logisim.png)
+
+(I hope I didn't confuse G and P terms, hehe)
+
+See: https://www.youtube.com/watch?v=WItAXzrfPrE&list=PLBDB2c4Mp7hBLRcEpE19yyHB-zKzsyp_4&index=20
+
+### module6 (Sums)
+
+8 identical modules.
 
 ![module6](/imgstore/modules/module6.jpg)
 
 ![module6_tran](/imgstore/modules/module6_tran.jpg)
 
-## Middle Part (module2 Array)
+## Middle Part (G/P Terms)
 
 8 identical modules.
-
-module2 (x8):
 
 ![module2](/imgstore/modules/module2.jpg)
 
@@ -87,18 +93,18 @@ module2 (x8):
 
 |Port|Dir|Description|
 |---|---|---|
-|a|input|comb1-3 outputs|
-|b|input|From Christmas Tree|
-|c|input|From Christmas Tree|
+|a|input|comb1-3 outputs (`ca[7:0]`)|
+|b|input|x19|
+|c|input|x4|
 |e|input|Large Comb results|
 |f|output|To Large Comb NAND trees|
-|g|input|External|
-|h|output|To Christmas Tree|
+|g|input|x25|
+|h|output|To CLA Generator (P-terms)|
 |k|input|DV\[n\]|
-|m|output|To Christmas Tree|
+|m|output|To CLA Generator (G-terms)|
 |clk|input|CLK2|
-|x|output|To Christmas Tree|
-|w|output|To Christmas Tree|
+|x|output|To ands near CLA|
+|w|output|To Sums (module6)|
 
 ## Bottom Part
 
@@ -134,7 +140,7 @@ Large Comb 1 (_14 NAND trees_):
 |alu_10|CLK2|e7|{alu7}<br/>{w24,IR3,IR4,IR5}<br/>{w10,nIR3}<br/>{w10,nIR4}<br/>{w10,nIR5}<br/>{x22,bc5,bc2}<br/>{x22,bc1,bc2}|
 |alu_11|CLK6|ALU_Out1|{w0,nIR3,IR4,bc1}<br/>{w0,IR3,IR4,nbc1}<br/>{w0,IR3,nIR4,nbc3}<br/>{w0,nIR3,nIR4,bc3}|
 |alu_12|CLK6|bc3|{f0,w12,nIR3,nIR4,nIR5}<br/>{f1,w12,IR3,nIR4,nIR5}<br/>{f2,w12,nIR3,IR4,nIR5}<br/>{f3,w12,IR3,IR4,nIR5}<br/>{f4,w12,nIR3,nIR4,IR5}<br/>{f5,w12,IR3,nIR4,IR5}<br/>{f6,w12,nIR3,IR4,IR5}<br/>{f7,w12,IR3,IR4,IR5}<br/>{d42,AllZeros}<br/>{w3,AllZeros}<br/>{w37,AllZeros}<br/>{x22,AllZeros}<br/>{TTB3,d58}<br/>{bc3,w19}<br/>{bc3,x21}<br/>{bc3,w15}<br/>{bc3,x26}|
-|alu_13|CLK2|ALU_to_top|{w37,nIR0}<br/>{x27}<br/>{w9,bc1}<br/>{nbc1,x24}<br/>{nIR3,x24}<br/>{bc1,w19}<br/>{IR3,x23}|
+|alu_13|CLK2|ALU_to_top ("Carry In")|{w37,nIR0}<br/>{x27}<br/>{w9,bc1}<br/>{nbc1,x24}<br/>{nIR3,x24}<br/>{bc1,w19}<br/>{IR3,x23}|
 
 The result is an AND-to-NOR tree (using alu_0 as an example):
 
