@@ -17,6 +17,7 @@ Status: Schematics of all the basic elements are obtained, you can reconstruct t
 |DV\[7:0\]|Bottom| |
 |AllZeros|NOR-8|1: The result (`Res`) is 0.|
 |TTB3|Thingy| |
+|d42|Decoder1| |
 |d58|Decoder1| |
 |w (many)|Decoder2| |
 |x (many)|Decoder3| |
