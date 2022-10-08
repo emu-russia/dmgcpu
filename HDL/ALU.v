@@ -129,7 +129,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d42, d58, w,
 	bc bc1 ( .nd(azo[2]), .CLK(CLK6), .CCLK(CLK5), .Load(x[28]), .q(bc[1]), .nq(nbc[1]) );
 	bc bc2 ( .nd(azo[7]), .CLK(CLK6), .CCLK(CLK5), .Load(x[29]), .q(bc[2]), .nq(nbc[2]) );
 	bc bc3 ( .nd(azo[12]), .CLK(CLK6), .CCLK(CLK5), .Load(x[29]), .q(bc[3]), .nq(nbc[3]) );
-	ALU_to_bot_FF atb_FF ( .d(azo[13]), .CLK(CLK6), .CCLK(CLK5), .Load(CLK4), .q(ALU_to_bot) );
+	ALU_to_bot_FF ttb3_FF ( .d(TTB3), .CLK(CLK6), .CCLK(CLK5), .Load(CLK4), .q(ALU_to_bot) );
 
 endmodule // ALU
 
@@ -292,6 +292,17 @@ module bc ( nd, CLK, CCLK, Load, q, nq );
 	output q;
 	output nq;
 
+	reg reg_val;
+	initial reg_val <= 1'b0;
+
+	always @(*) begin
+		if (Load && CLK)
+			reg_val <= ~nd;
+	end
+
+	assign q = reg_val;
+	assign nq = ~q;
+
 endmodule // bc
 
 module ALU_to_bot_FF ( d, CLK, CCLK, Load, q );
@@ -301,5 +312,15 @@ module ALU_to_bot_FF ( d, CLK, CCLK, Load, q );
 	input CCLK; 
 	input Load; 
 	output q;
+
+	reg reg_val;
+	initial reg_val <= 1'b0;
+
+	always @(*) begin
+		if (Load && CLK)
+			reg_val <= d;
+	end
+
+	assign q = reg_val;
 
 endmodule // ALU_to_bot_FF
