@@ -7,8 +7,8 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d42, d58, w,
 	input CLK6;
 	input CLK7;
 
-	input [7:0] DV;
-	output [7:0] Res;
+	input [7:0] DV; 		// ALU B
+	output [7:0] Res; 		// ALU Sums
 	input AllZeros;
 	input TTB3;
 	input d42;
@@ -16,12 +16,12 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d42, d58, w,
 	input [40:0] w;
 	input [68:0] x;
 	output [5:0] bc;
-	input [7:0] alu;
+	input [7:0] alu;		// ALU A
 	input bq4;
 	input bq5;
 	input bq7;
 	output ALU_to_bot;
-	output ALU_to_Thingy;
+	output ALU_to_Thingy; 		// Carry Out
 	input ALU_L1;
 	input ALU_L2;
 	input ALU_L4;
@@ -38,24 +38,24 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d42, d58, w,
 	wire [7:0] bm;		// module2 m out
 	wire [7:0] bh;		// module2 h out
 	wire [7:0] bw;		// module2 w out
-	wire [7:0] ao; 		// Christmas tree ands outputs to module6
-	wire [7:0] na; 		// Christmas tree nots outputs to module6
-	wire [7:0] q; 		// Christmas trees outputs (0-3: left, 4-7: right)
+	wire [7:0] ao; 		// G/P ands outputs to module6
+	wire [7:0] na; 		// CLA nots outputs to module6
+	wire [7:0] q; 		// CLA outputs (0-3: left, 4-7: right)
 	wire [5:0] nbc; 	// #bc
 	wire [13:0] azo;	// LargeComb1 results
-	wire ALU_to_top;
+	wire ALU_to_top; 		// Carry In
 	wire ALU_L0;
 	wire ALU_L3;
 	wire ALU_L5;
 
-	// Top part (Christmas tree)
+	// Top part (CLA + Sum)
 
-	module6 res [7:0] (
-		.a({na[7:1],ALU_to_top}), 
-		.b(ao), 
-		.c({8{x[18]}}), 
-		.d({8{x[3]}}), 
-		.e(bw), 
+	module6 Sums [7:0] (
+		.a({na[7:1],ALU_to_top}),
+		.b(ao),
+		.c({8{x[18]}}),
+		.d({8{x[3]}}),
+		.e(bw),
 		.x(Res) );
 
 	assign ALU_L0 = ~ALU_to_Thingy;
@@ -64,12 +64,12 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d42, d58, w,
 	assign {ALU_to_Thingy, na[7:1]} = ~q;
 	assign ao = bh & bx; 		// ands
 
-	module5 ct_left ( .m(bm[3:0]), .h(bh[3:0]), .c(ALU_to_top), .q(q[3:0]) );
-	module5 ct_right ( .m(bm[7:4]), .h(bh[7:4]), .c(na[4]), .q(q[7:4]) );
+	module5 cla_low ( .m(bm[3:0]), .h(bh[3:0]), .c(ALU_to_top), .q(q[3:0]) );
+	module5 cla_high ( .m(bm[7:4]), .h(bh[7:4]), .c(na[4]), .q(q[7:4]) );
 
 	// Middle part
 
-	module2 m2s [7:0] (
+	module2 GP_Terms [7:0] (
 		.a(ca), 
 		.b({8{x[19]}}), 
 		.c({8{x[4]}}), 
@@ -133,15 +133,22 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d42, d58, w,
 
 endmodule // ALU
 
+// Carry lookahead generator
 module module5 ( m, h, c, q );
 
-	input [3:0] m;
-	input [3:0] h;
-	input c;
-	output [3:0] q; 
+	input [3:0] m; 		// G
+	input [3:0] h;		// P
+	input c;			// CarryIn
+	output [3:0] q; 	// C1...C4  (inverted)
+
+	assign q[0] = ~(m[0] | (h[0] & c)); 		// ~Carry1 out
+	assign q[1] = ~(m[1] | (h[1] & q[0]));		// ~Carry2 out
+	assign q[2] = ~(m[2] | (h[2] & q[1]));		// ~Carry3 out
+	assign q[3] = ~(m[3] | (h[3] & q[2]));		// ~Carry4 out
 
 endmodule // module5
 
+// Sums block
 module module6 ( a, b, c, d, e, x );
 
 	input a;
@@ -155,6 +162,7 @@ module module6 ( a, b, c, d, e, x );
 
 endmodule // module6
 
+// G/P Terms Product
 module module2 ( a, b, c, e, f, g, h, k, m, x, w );
 
 	input a;
@@ -279,7 +287,7 @@ module LargeComb1 ( CLK2, CLK6, CLK7, TTB3, AllZeros, d42, d58, w, x, alu, IR, n
 	assign azo[10] = CLK2 ? az[10] : 1'b1;
 	assign azo[11] = CLK7 ? 1'b1 : (CLK6 ? az[11] : 1'b1); 		// -> ALU_Out1
 	assign azo[12] = CLK7 ? 1'b1 : (CLK6 ? az[12] : 1'b1);		// -> bc3
-	assign azo[13] = CLK2 ? az[13] : 1'b1;		// -> ALU_to_top
+	assign azo[13] = CLK2 ? az[13] : 1'b1;		// -> ALU_to_top aka CarryIn
 
 endmodule // LargeComb1
 
