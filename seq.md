@@ -1,10 +1,12 @@
 # Sequencer
 
-Status: All connections and the element base are ready. You can rebuild the circuit.
+Status: The circuit is fully restored as HDL.
 
 ![locator_seq](/imgstore/locator_seq.png)
 
 ![seq](/imgstore/seq.jpg)
+
+![Seq](/HDL/Design/Seq.png)
 
 ## Sequencer Inputs
 

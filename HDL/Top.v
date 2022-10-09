@@ -186,7 +186,6 @@ module SM83Core (
 		.Clock_WTF(Clock_WTF),
 		.WAKE(WAKE),
 		.RD(RD),
-		.WR(WR),
 		.Maybe1(Maybe1),
 		.MMIO_REQ(MMIO_REQ),
 		.IPL_REQ(IPL_REQ),
