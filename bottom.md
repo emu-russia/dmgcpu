@@ -93,11 +93,19 @@ The IRQ logic consists of the following parts:
 
 ![module7](/imgstore/modules/module7.jpg)
 
+![module7_tran](/imgstore/modules/module7_tran.jpg)
+
+Static CMOS latch with reset.
+
 ### IF
 
 Apparently, access to the IF in the DMG CPU has been removed.
 
 ![module8](/imgstore/modules/module8.jpg)
+
+![module8_tran](/imgstore/modules/module8_tran.jpg)
+
+It is a regular static CMOS latch, to store the interrupt flag.
 
 ### Breadcrumps
 
