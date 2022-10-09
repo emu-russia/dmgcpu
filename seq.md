@@ -94,15 +94,17 @@ Also: reset input in inverse polarity (`#RESET`).
 
 ![module4_tran](/imgstore/modules/module4_tran.jpg)
 
-## module4_2
+## module4_2 - rs_latch2
 
 Initially it was mistaken for module4, but after a detailed study it became clear that the lower part is different.
 
 ![module42](/imgstore/modules/module42.jpg)
 
-(I rechecked all the other modules4).
+![module42_tran](/imgstore/modules/module42_tran.jpg)
 
-TBD.
+This is essentially the same rs_latch (see above), but with the inputs rearranged.
+
+(I rechecked all the other modules4).
 
 ## aoi_1 - aoi_21
 
