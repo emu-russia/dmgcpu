@@ -395,7 +395,7 @@
     <comp lib="0" loc="(1050,170)" name="Pin">
       <a name="appearance" val="NewPins"/>
       <a name="facing" val="west"/>
-      <a name="label" val="C2"/>
+      <a name="label" val="C3"/>
       <a name="output" val="true"/>
     </comp>
     <comp lib="0" loc="(200,170)" name="Pin">
