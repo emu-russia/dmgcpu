@@ -4,53 +4,52 @@ Status: All connections and the element base are ready. You can rebuild the circ
 
 ![locator_seq](/imgstore/locator_seq.png)
 
-|![seq](/imgstore/seq.jpg)|![seq_netlist](/imgstore/seq_netlist.png)|
-|---|---|
+![seq](/imgstore/seq.jpg)
 
 ## Sequencer Inputs
 
 |Signal|From|Description|
 |---|---|---|
-|CLK1|External| |
-|CLK2|External| |
+|CLK1|External|To g84|
+|CLK2|External|To g84|
 |CLK4|External| |
 |CLK6|External|See `huge1` module|
 |CLK8|External| |
 |CLK9|External| |
 |SYNC_RESET|External|Port T12|
 |RESET|External|Port T13|
-|Clock_WTF|External|Port T15|
+|Clock_WTF|External|Port T15. To nand g59|
 |Unbonded|External|Port T16|
 |WAKE|External|Port B25|
 |Maybe1 (DL_Control1)|External|Port R3 (_Maybe used to disable all bus..._)|
 |MMIO_REQ|External|Port R4. See `shielded` module|
 |IPL_REQ|External|Port R5. See `shielded` module|
 |Maybe2|External|Port R6. See `shielded` module|
-|Seq_Control1|Bottom| |
-|Seq_Control2|Bottom| |
-|d93|Decoder1| |
-|d99|Decoder1| |
-|d100|Decoder1| |
-|d101|Decoder1| |
-|d102|Decoder1| |
+|Seq_Control1|Bottom|To g42|
+|Seq_Control2|Bottom|To nand g79|
+|d93|Decoder1|To g52, g78|
+|d99|Decoder1|To g80, g91, g94|
+|d100|Decoder1|To g46|
+|d101|Decoder1|To nand g65|
+|d102|Decoder1|See `huge1` module|
 |w6|Decoder2|Goes to WR|
-|w11|Decoder2| |
-|w18|Decoder2| |
-|w20|Decoder2| |
-|w26 (LoadIR)|Decoder2| |
-|w32|Decoder2| |
-|w33|Decoder2| |
-|w40|Decoder2| |
-|x41|Decoder3| |
-|ALU_Out1|ALU| |
-|IR|IR| |
+|w11|Decoder2|See `shielded` module|
+|w18|Decoder2|To g26|
+|w20|Decoder2|To not g22|
+|w26 (LoadIR)|Decoder2|See `huge1` module. Also: g26, g39|
+|w32|Decoder2|To not g18|
+|w33|Decoder2|To not g20|
+|w40|Decoder2|To g38|
+|x41|Decoder3|To g87, g94|
+|ALU_Out1|ALU|To nor g24|
+|IR|IR|Used to form the inputs of Decoder1. IR3 and IR4 are also used in other places.|
 
 ## Sequencer Outputs
 
 |Signal|To|Description|
 |---|---|---|
 |a\[25:0\]|Decoder1|Decoder1 inputs|
-|LongDescr|External|Port T11 with long description|
+|LongDescr|External|~IR4 output|
 |XCK_Ena|External|Port T14|
 |RD|External|Port R1|
 |WR|External|Port R2|

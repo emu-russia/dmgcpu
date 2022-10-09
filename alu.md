@@ -8,6 +8,10 @@ Status: The circuit is fully restored as HDL.
 
 ![ALU](/HDL/Design/ALU.png)
 
+The SM83 ALU is a regular 8-bit CLA adder.
+
+See: https://www.youtube.com/watch?v=WItAXzrfPrE&list=PLBDB2c4Mp7hBLRcEpE19yyHB-zKzsyp_4&index=20
+
 ## ALU Inputs
 
 |Signal|From|Description|
@@ -70,10 +74,6 @@ In between is the small logic, and above the 8 "Sum" blocks (module6), which giv
 ![module5_tran](/imgstore/modules/module5_tran.jpg)
 
 ![module5_logisim](/logisim/module5_logisim.png)
-
-(I hope I didn't confuse G and P terms, hehe)
-
-See: https://www.youtube.com/watch?v=WItAXzrfPrE&list=PLBDB2c4Mp7hBLRcEpE19yyHB-zKzsyp_4&index=20
 
 ### module6 (Sums)
 
