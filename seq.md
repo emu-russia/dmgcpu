@@ -202,3 +202,15 @@ This module is essentially used to generate the `#MREQ` signal. Below is `not` t
 ![comb5](/imgstore/modules/comb5.jpg)
 
 ![comb5_tran](/imgstore/modules/comb5_tran.jpg)
+
+## Logic behind additional Decoder inputs
+
+TBD.
+
+|Extra Decoder1 Input|Meaning|
+|---|---|
+|a1| ??? TBD. |
+|a3| ??? TBD. |
+|a20| ??? TBD. |
+|a22| ??? TBD. |
+|a24| ??? TBD. |
