@@ -53,8 +53,6 @@ Dynamic logic is used.
 
 ## Decoder1 Output Trees
 
-There is no need to draw the whole topology, because all the trees can be extracted from the picture.
-
 :warning: Some inputs are twisted, be careful (e.g. a9 for the first three values).
 
 |Tree|Paths|To|Description|
