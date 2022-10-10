@@ -77,8 +77,6 @@ All Decoder2 outputs are clocked by the `CLK2` signal.
 
 ## Nor Trees
 
-There is no point in drawing the topology for the whole Decoder2, because you can restore all the trees from the picture.
-
 |Tree|Image|Paths|
 |---|---|---|
 |w0|![w0](/imgstore/nortrees/w0.jpg)|{4,5,6,7}|

@@ -22,7 +22,7 @@ The core consists of the following main components:
 
 At the moment, the entire topology of the top part and almost the entire topology of the bottom part have been obtained. The basic circuit principles are understood and the transistor circuits of most of the modules are obtained. The main emphasis was made on the sequencer circuit, as the most demanded one.
 
-For decoders it is necessary to restore all NAND/NOR-trees (you can do it directly from the picture).
+For decoders it is necessary to restore all NAND/NOR-trees.
 
 ![DMG01B_Core_Fused_Topo](/imgstore/DMG01B_Core_Fused_Topo.jpg)
 
