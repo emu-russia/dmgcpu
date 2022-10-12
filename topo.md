@@ -1,5 +1,9 @@
 # Notes on Topology
 
+|Diffusion|Pockets|Poly|Metal|Vias|
+|---|---|---|---|---|
+|![sm83_diffusion](/imgstore/topo/sm83_diffusion.png)|![sm83_pockets](/imgstore/topo/sm83_pockets.png)|![sm83_poly](/imgstore/topo/sm83_poly.png)|![sm83_metal](/imgstore/topo/sm83_metal.png)|![sm83_vias](/imgstore/topo/sm83_vias.png)|
+
 Topo Sources: https://drive.google.com/drive/u/2/folders/1deuhwmRb-PVv-K7pEllSLKQda2ft94Mk
 
 (PhotoShop required)
@@ -59,3 +63,7 @@ For the interconnection, paired vias are used. Twice as much work.
 After studying a large portion of the processor, it became clear that SHARP developers are nice guys and generally prefer to use signals in direct polarity (as opposed to the perverts from Zilog and Z80).
 
 If some signals turn out to be in inverse polarity - this will be discussed on a case-by-case basis.
+
+## Buried Contacts
+
+None. If you want to connect poly and diffusion side by side, a small bridge of M1 is used.
