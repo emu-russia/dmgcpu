@@ -23,7 +23,7 @@ Dynamic logic is used.
 ## Decoder1 Inputs
 
 |Input|From|Meaning|
-|---|---|---
+|---|---|---|
 |a0|Inplace|~a1|
 |a1|Sequencer| ??? TBD. |
 |a2|Inplace|~a3|
