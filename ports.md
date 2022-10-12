@@ -16,7 +16,7 @@ By @msinger: http://iceboy.a-singer.de/doc/dmg_cpu_connections.html
 |T8	|I	|unlabeled	|CLK7|BUKE.q	|A gated 1 MiHz clock. The CPU can stop this clock by driving T11 low.|
 |T9	|I	|unlabeled	|CLK8|BOMA.q	|A gated 1 MiHz clock. The CPU can stop this clock by driving T14 low. This is the inverse of T10.|
 |T10	|I	|BOGA1MHZ	|CLK9|BOGA.q	|A gated 1 MiHz clock. The CPU can stop this clock by driving T14 low. This is the inverse of T9.|
-|T11	|O	|CLK_FROM_CPU	|LongDescr|ABOL.in, TUBO.in1	|Edited by org: ~IR4 Output (bit 4 of current opcode inverted).|
+|T11	|O	|CLK_FROM_CPU	|LongDescr|ABOL.in, TUBO.in1	|Edited by org: See Sequencer g49|
 |T12	|I	|unlabeled	|SYNC_RESET|AFER.q	|Active-high synchronous reset input. Synchronized to T9/T10.|
 |T13	|I	|RESET	|RESET|RST (ext. pad)	|Active-high asynchronous reset input. Fed directly from RST input pad.|
 |T14	|O	|CLKIN_A	|XCK_Ena|multiple	|:warning: _NOTE: The label used in the schematics is misleading. This is not a clock;_ nor is it an input! Crystal oscillator enable. When CPU drives this low, the crystal oscillator gets disabled to save power. This happens during STOP mode.|
