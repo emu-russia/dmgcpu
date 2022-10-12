@@ -4,17 +4,18 @@
 module SM83_Run();
 
 	reg CLK;
-	reg Reset;
-	reg SyncReset;
 	wire [7:0] dbus;
 	wire [15:0] abus;
 	reg [7:0] irq_trig;
 	wire [7:0] irq_ack;
+	reg ExternalRESET;
 
-	wire LoadIR;
-	reg Clock_WTF;
-	wire XCK_Ena;
-	wire LongDescr;
+	wire LoadIR; 		// T1
+
+	wire OSC_STABLE;		// T15
+	wire OSC_ENA;		// T14
+	wire CLK_ENA;		// T11
+	
 	reg Unbonded;
 	wire RD;
 	wire WR;
@@ -27,22 +28,55 @@ module SM83_Run();
 
 	always #25 CLK = ~CLK;
 
+	wire ADR_CLK_N;
+	wire ADR_CLK_P;
+	wire DATA_CLK_N;
+	wire DATA_CLK_P;
+	wire INC_CLK_N;
+	wire INC_CLK_P;
+	wire LATCH_CLK;
+	wire MAIN_CLK_N;
+	wire MAIN_CLK_P;
+
+	wire ASYNC_RESET;
+	wire SYNC_RESET;
+
+	// The core requires a rather sophisticated CLK generation circuit.
+
+	External_CLK clkgen (
+		.CLK(CLK),
+		.RESET(ExternalRESET),
+		.ADR_CLK_N(ADR_CLK_N),
+		.ADR_CLK_P(ADR_CLK_P),
+		.DATA_CLK_N(DATA_CLK_N),
+		.DATA_CLK_P(DATA_CLK_P),
+		.INC_CLK_N(INC_CLK_N),
+		.INC_CLK_P(INC_CLK_P),
+		.LATCH_CLK(LATCH_CLK),
+		.MAIN_CLK_N(MAIN_CLK_N),
+		.MAIN_CLK_P(MAIN_CLK_P),
+		.CLK_ENA(CLK_ENA),
+		.OSC_ENA(OSC_ENA),
+		.OSC_STABLE(OSC_STABLE),
+		.ASYNC_RESET(ASYNC_RESET),
+		.SYNC_RESET(SYNC_RESET) );
+
 	SM83Core dmgcore (
-		.CLK1(~CLK),
-		.CLK2(CLK),
-		.CLK3(~CLK),
-		.CLK4(CLK),
-		.CLK5(~CLK),
-		.CLK6(CLK),
-		.CLK7(~CLK),
-		.CLK8(CLK),
-		.CLK9(~CLK),
+		.CLK1(ADR_CLK_N),
+		.CLK2(ADR_CLK_P),
+		.CLK3(DATA_CLK_N),
+		.CLK4(DATA_CLK_P),
+		.CLK5(INC_CLK_N),
+		.CLK6(INC_CLK_P),
+		.CLK7(LATCH_CLK),
+		.CLK8(MAIN_CLK_N),
+		.CLK9(MAIN_CLK_P),
 		.LoadIR(LoadIR),
-		.Clock_WTF(Clock_WTF),
-		.XCK_Ena(XCK_Ena),
-		.RESET(Reset),
-		.SYNC_RESET(SyncReset),
-		.LongDescr(LongDescr),
+		.Clock_WTF(OSC_STABLE),
+		.XCK_Ena(OSC_ENA),
+		.RESET(ASYNC_RESET),
+		.SYNC_RESET(SYNC_RESET),
+		.LongDescr(CLK_ENA),
 		.Unbonded(Unbonded),
 		.WAKE(WakeUp),
 		.RD(RD),
@@ -61,10 +95,8 @@ module SM83_Run();
 
 		$display("Check that the DMG Core is moving.");
 
+		ExternalRESET <= 1'b0;
 		CLK <= 1'b0;
-		Clock_WTF <= 1'b0;
-		Reset <= 1'b0;
-		SyncReset <= 1'b0;
 		Unbonded <= 1'b0;
 		WakeUp <= 1'b0;
 		Maybe1 <= 1'b0;
