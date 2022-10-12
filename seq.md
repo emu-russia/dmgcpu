@@ -51,7 +51,7 @@ Status: The circuit is fully restored as HDL.
 |Signal|To|Description|
 |---|---|---|
 |a\[25:0\]|Decoder1|Decoder1 inputs|
-|LongDescr|External|~IR4 output|
+|LongDescr|External|See g49|
 |XCK_Ena|External|Port T14|
 |RD|External|Port R1|
 |WR|External|Port R2|
