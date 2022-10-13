@@ -162,7 +162,7 @@ To convert trees into a schematic, you can use a script to generate an HDL.
 
 ![bc_tran](/imgstore/modules/bc_tran.jpg)
 
-Regular memory cell with write enable (x28/x29). It also contains a Precharge FET for the dynamic logic which is above (input `d`). By the way the input `d` in the drawing is marked in inverse polarity, because the current hypothesis is that the signal `bc` is in direct polarity, and the operation which forms the signal `d` (AOI) gives the result in inverse polarity.
+Regular memory cell (latch) with write enable (x28/x29). It also contains a Precharge FET for the dynamic logic which is above (input `d`). By the way the input `d` in the drawing is marked in inverse polarity, because the current hypothesis is that the signal `bc` is in direct polarity, and the operation which forms the signal `d` (AOI) gives the result in inverse polarity.
 
 ### ALU_to_bot
 
@@ -170,4 +170,4 @@ Regular memory cell with write enable (x28/x29). It also contains a Precharge FE
 
 ![ALU_to_bot_tran](/imgstore/modules/ALU_to_bot_tran.jpg)
 
-A regular memory cell, for storing the `BTT` signal. The signal CLK4 acts as WriteEnable.
+A regular memory cell (latch), for storing the `BTT` signal. The signal CLK4 acts as WriteEnable.
