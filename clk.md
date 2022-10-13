@@ -29,3 +29,7 @@ Based on: https://github.com/msinger/dmg-schematics
 ## Waves
 
 ![clk_waves](/imgstore/clk_waves.png)
+
+TBD: The picture shows that some signals are wrongly named or the simulation/schematic is incorrect (mixed up names for: MAIN_CLK_P/MAIN_CLK_N, DATA_CLK_N/DATA_CLK_P). Check with @msinger.
+
+It's always such a headache with clocks, it's normal.

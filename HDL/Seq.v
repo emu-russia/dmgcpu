@@ -19,17 +19,17 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	input ALU_Out1;
 
 	input Unbonded;
-	output LongDescr;
-	output XCK_Ena;
-	input RESET;
+	output LongDescr;		// CLK_ENA
+	output XCK_Ena;			// OSC_ENA
+	input RESET;			// From Reset pad
 	input SYNC_RESET;
-	input Clock_WTF;
+	input Clock_WTF;		// OSC_STABLE
 	input WAKE;
 	output RD;
-	input Maybe1;
+	input Maybe1;			// aka DL_Control1
 	input MMIO_REQ;
 	input IPL_REQ;
-	input Maybe2;
+	input Maybe2; 			// See shielded module.
 	output MREQ;
 
 	input SeqControl_1;
@@ -54,7 +54,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	assign SeqOut_2 = w8;
 	assign RD = w9;
 	assign w11 = w[11];
-	assign SeqOut_3 = w13;
+	assign SeqOut_3 = 1'b0;
 	assign w16 = SYNC_RESET;
 	assign w20 = CLK4;
 	assign w22 = w[18];
@@ -128,7 +128,6 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	wire w10;
 	wire w11;
 	wire w12;
-	wire w13;
 	wire w14;
 	wire w15;
 	wire w16;
@@ -370,6 +369,8 @@ module seq_shielded (  d, b, a, c, x);
 	input wire c;
 	output wire x;
 
+	assign x = d ? ~((~a & c) | ~(a|b)) : 1'b1;
+
 endmodule // seq_shielded
 
 module seq_module3 (  q, clk, cclk, d);
@@ -379,12 +380,23 @@ module seq_module3 (  q, clk, cclk, d);
 	input wire cclk;
 	input wire d;
 
+	reg val;
+	initial val <= 1'b0;
+
+	always @(posedge clk) begin
+		val <= d;
+	end
+
+	assign q = val;
+
 endmodule // seq_module3
 
 module seq_not (  a, x);
 
 	input wire a;
 	output wire x;
+
+	assign x = ~a;
 
 endmodule // seq_not
 
@@ -395,6 +407,8 @@ module seq_nor3 (  a, b, c, x);
 	input wire c;
 	output wire x;
 
+	assign x = ~(a|b|c);
+
 endmodule // seq_nor3
 
 module seq_nor (  a, b, x);
@@ -402,6 +416,8 @@ module seq_nor (  a, b, x);
 	input wire a;
 	input wire b;
 	output wire x;
+
+	assign x = ~(a|b);
 
 endmodule // seq_nor
 
@@ -413,6 +429,8 @@ module seq_hmm2 (  a0, a1, x, b, a2);
 	input wire b;
 	input wire a2;
 
+	assign x = ~( (a0&a1&a2) | b);
+
 endmodule // seq_hmm2
 
 module seq_hmm1 (  a1, b, x, a0);
@@ -421,6 +439,8 @@ module seq_hmm1 (  a1, b, x, a0);
 	input wire b;
 	output wire x;
 	input wire a0;
+
+	assign x = ~( (a0|a1) & b );
 
 endmodule // seq_hmm1
 
@@ -431,13 +451,27 @@ module seq_iwantsleep (  b, a1, a0, x);
 	input wire a0;
 	output wire x;
 
+	assign x = ~( (a0|a1) & b );
+
 endmodule // seq_iwantsleep
 
-module seq_module4_2 (  q, s, nr);
+module seq_module4_2 (  nr, s, q );
 
-	output wire q;
-	input wire s;
 	input wire nr;
+	input wire s;
+	output wire q;
+
+	reg val;
+	initial val <= 1'b0;
+
+	always @(*) begin
+		if (~nr)
+			val <= 1'b0;
+		if (s)
+			val <= 1'b1;
+	end
+
+	assign q = val;
 
 endmodule // seq_module4_2
 
@@ -446,6 +480,18 @@ module seq_module4 (  nr, s, q);
 	input wire nr;
 	input wire s;
 	output wire q;
+
+	reg val;
+	initial val <= 1'b0;
+
+	always @(*) begin
+		if (~nr)
+			val <= 1'b0;
+		if (s)
+			val <= 1'b1;
+	end
+
+	assign q = val;
 
 endmodule // seq_module4
 
@@ -459,6 +505,18 @@ module seq_huge1 (  q, d, res, clk, cclk, ld, nld);
 	input wire ld;
 	input wire nld;
 
+	reg val;
+	initial val <= 1'b0;
+
+	always @(*) begin
+		if (clk & ld)
+			val <= d;
+		if (res)
+			val <= 1'b0;
+	end
+
+	assign q = val;
+
 endmodule // seq_huge1
 
 module seq_nand (  b, a, x);
@@ -466,6 +524,8 @@ module seq_nand (  b, a, x);
 	input wire b;
 	input wire a;
 	output wire x;
+
+	assign x = ~(a&b);
 
 endmodule // seq_nand
 
@@ -476,6 +536,8 @@ module seq_aoi_1 (  b, a0, a1, x);
 	input wire a1;
 	output wire x;
 
+	assign x = ~( (a0&a1) | b);
+
 endmodule // seq_aoi_1
 
 module seq_nand3 (  a, b, c, x);
@@ -484,6 +546,8 @@ module seq_nand3 (  a, b, c, x);
 	input wire b;
 	input wire c;
 	output wire x;
+
+	assign x = ~(a&b&c);
 
 endmodule // seq_nand3
 
@@ -495,6 +559,8 @@ module seq_nor4 (  a, b, c, d, x);
 	input wire d;
 	output wire x;
 
+	assign x = ~(a|b|c|d);
+
 endmodule // seq_nor4
 
 module seq_aoi_2 (  a0, a1, b, x);
@@ -504,6 +570,8 @@ module seq_aoi_2 (  a0, a1, b, x);
 	input wire b;
 	output wire x;
 
+	assign x = ~( (a0&a1) | b);
+
 endmodule // seq_aoi_2
 
 module seq_hmm3 (  cclk, clk, d, nq);
@@ -512,6 +580,16 @@ module seq_hmm3 (  cclk, clk, d, nq);
 	input wire clk;
 	input wire d;
 	output wire nq;
+
+	reg val;
+	initial val <= 1'b0;
+
+	always @(*) begin
+		if (clk)
+			val <= d;
+	end
+
+	assign nq = ~val;
 
 endmodule // seq_hmm3
 
@@ -524,6 +602,8 @@ module seq_comb5 (  clk, a0, a1, b0, b1, x);
 	input wire b1;
 	output wire x;
 
+	assign x = clk ? ~( (a0&a1) | (b0&b1) ) : 1'b1;
+
 endmodule // seq_comb5
 
 module seq_comb4 (  clk, c, a0, a1, b0, b1, x);
@@ -535,5 +615,7 @@ module seq_comb4 (  clk, c, a0, a1, b0, b1, x);
 	input wire b0;
 	input wire b1;
 	output wire x;
+
+	assign x = clk ? ~( (a0&a1) | (b0&b1) | c) : ~c;
 
 endmodule // seq_comb4

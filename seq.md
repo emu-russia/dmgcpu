@@ -20,7 +20,7 @@ Status: The circuit is fully restored as HDL.
 |CLK9|External| |
 |SYNC_RESET|External|Port T12|
 |RESET|External|Port T13|
-|Clock_WTF|External|Port T15. To nand g59|
+|Clock_WTF (OSC_STABLE)|External|Port T15. To nand g59|
 |Unbonded|External|Port T16|
 |WAKE|External|Port B25|
 |Maybe1 (DL_Control1)|External|Port R3 (_Maybe used to disable all bus..._)|
@@ -51,8 +51,8 @@ Status: The circuit is fully restored as HDL.
 |Signal|To|Description|
 |---|---|---|
 |a\[25:0\]|Decoder1|Decoder1 inputs|
-|LongDescr|External|See g49|
-|XCK_Ena|External|Port T14|
+|LongDescr (CLK_ENA)|External|See g49|
+|XCK_Ena (OSC_ENA)|External|Port T14|
 |RD|External|Port R1|
 |WR|External|Port R2|
 |MREQ|External|Port R7|
@@ -73,17 +73,21 @@ LR->TD order.
 |4|module3, module3, nand, nor, not, module4, module3, not, nand, not, module3, module4, not, nand3, module4, shielded, not, module3, not, nor, module4, nor, nand, nand, not, not, nor4, module3, module3, not, nor, not, module4, nand, comb4, module4, not, comb5, not|
 |5|not, nor|
 
-## module3 - dff_comp
+## module3 - dff_posedge_comp
 
-DFF on a complementary CLK (Dual Rails). Since we do not yet know the polarity of the CLK input signals, we can assume that this is a `negedge` DFF.
+DFF on a complementary CLK (Dual Rails).
 
-The picture uses CLK8 as the CLK, and CLK9 is used as the CLK complement (CCLK). I think I guessed it :smiley:
+Since the polarity of CLK is now known (CLK9 = CLK, CLK8 = CCLK), we can say for sure that it is posedge DFF.
 
-In fact, when using Dual Rails, you can easily turn a negedge DFF into a posedge by simply rearranging the CLK complement signals.
+In fact, when using Dual Rails, you can easily turn a posedge DFF into a negedge by simply rearranging the CLK complement signals.
+
+A distinctive feature of the circuits that do Edge Detection is the two serial MUX's that are opened complementary to the CLK. Using black magic and propagation delay - the edge of the signal is caught.
 
 ![module3](/imgstore/modules/module3.jpg)
 
 ![module3_tran](/imgstore/modules/module3_tran.jpg)
+
+Note: If the DFF input goes to a MUX, which opens at CLK=0 by a P-type MOSFET, it is a posedge DFF.
 
 ## module4 - rs_latch
 
@@ -123,15 +127,15 @@ This is essentially the same rs_latch (see above), but with the inputs rearrange
 
 ![aoi_2_tran](/imgstore/modules/aoi_2_tran.jpg)
 
-## huge1 - dffre_comp
+## huge1 - latch_nr_comp
 
-DFF with reset and complementary set enable, complementary CLK.
+Latch with reset and complementary set enable, complementary CLK.
 
 A rather complicated circuit to master:
 - In the middle is a FlipFlop made of not and nor (nor is used for resetting)
 - Input value can be written to FlipFlop only if CLK=1 and LD=1
 - When LD=0 the FlipFlop value is updated with the old value
-- The output contains a latch with a gate memory that opens when LD=0 (so that the old value is returned during the write (LD=1))
+- The output contains a DLatch with a gate memory that opens when LD=0 (so that the old value is returned during the write (LD=1))
 - So the written value becomes relevant when LD 1->0 changes (when the output latch opens and is updated with the value from FlipFlop). The same applies to resetting if you do it at the same time as LD=1.
 - The whole thing is complicated by the complementary layout of the LD and CLK signals.
 
@@ -157,11 +161,11 @@ By the way, there are 2 `not` in the circuit to form the complement, one of whic
 
 ![hmm2_tran](/imgstore/modules/hmm2_tran.jpg)
 
-## hmm3 - slatch_comp
+## hmm3 - latch_comp
 
-Static latch, complementary CLK.
+Latch, complementary CLK.
 
-Static means that the value is written on the CLK level, not on the edge of the signal, as in DFF.
+Latch means that the value is written on the CLK level, not on the edge of the signal, as in DFF.
 
 Output in inverse polarity (`#Q`).
 

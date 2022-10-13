@@ -57,4 +57,4 @@ module CLKGen_Run();
 		$finish;
 	end	
 
-endmodule // SM83_Run
+endmodule // CLKGen_Run
