@@ -89,6 +89,8 @@ A distinctive feature of the circuits that do Edge Detection is the two serial M
 
 Note: If the DFF input goes to a MUX, which opens at CLK=0 by a P-type MOSFET, it is a posedge DFF.
 
+![Modern_dff](/imgstore/Modern_dff.jpg)
+
 ## module4 - rs_latch
 
 A typical static latch, but made quite compact. The impressive gates on the FlipFlop, where the value is stored, are also a distinguishing feature.
