@@ -2,7 +2,7 @@
 
 :warning: The section is in development.
 
-Status: Obtaining the topology.
+Status: All topology obtained, circuit research in progress.
 
 ![locator_bottom](/imgstore/locator_bottom.png)
 
@@ -18,7 +18,20 @@ For the SM83 the layout is slightly different: the ALU is on the top-left and at
 
 The bottom part consists of 8 lanes, according to the number of registers bits. The numbering of the bits is from 0 from top to bottom.
 
-There are minor differences between the lanes, this will be discussed later.
+There are minor differences between the lanes, such places are marked with a :warning: sign.
+
+## Internal bottom buses
+
+- abus
+- bbus
+- cbus
+- dbus
+- ebus
+- fbus
+- gbus
+- kbus
+- xbus
+- wbus
 
 ## Register Bit
 
@@ -39,47 +52,53 @@ DFF with complementary set enable, complementary CLK.
 
 ## Reg0 - IR
 
+## Bottom Left (ALU bc/bq) Logic
+
 ## Reg1 - ???
 
-## Reg1 Comb
-
-## Bottom Left (ALU bc/bq) Logic
+Reg1 to buses:
 
 ## Reg2 - ???
 
+Reg 2 to buses:
+
 ## Reg3 - ???
 
-## Reg 2/3 Comb
+Reg 3 to buses:
 
 ## Reg4 - ???
 
+Reg 4 to buses:
+
 ## Reg5 - ???
 
-## Reg 4/5 Comb
+Reg 5 to buses:
 
 ## Reg6 - ???
 
+Reg 6 to buses:
+
 ## Reg7 - ???
 
-## Reg 6/7 Comb
+Reg 7 to buses:
 
 ## Reg8 - ???
 
-## Reg8 Comb
+Reg 8 to buses:
 
 ## w8+ALU Result Logic
 
-## x59 Logic
+## Reg9 - ???
 
-## SP Logic
+## SP Register
 
 ![x61](/imgstore/modules/x61.jpg)
 
-## PC Logic
+## PC Register
 
 ![x68](/imgstore/modules/x68.jpg)
 
-## TTB Logic
+## Address Bus Logic
 
 ## Bottom Right (IRQ) Logic
 
