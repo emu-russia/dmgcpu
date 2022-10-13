@@ -35,3 +35,16 @@ The value from the bottom for the ALU.
 ## Res
 
 ALU result.
+
+## Internal bottom buses
+
+- abus
+- bbus
+- cbus
+- dbus
+- ebus
+- fbus
+- gbus
+- kbus
+- xbus
+- wbus

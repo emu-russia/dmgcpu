@@ -44,4 +44,17 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 	output [7:0] CPU_IRQ_ACK;
 	input [7:0] CPU_IRQ_TRIG;
 
+	// Internal bottom buses
+
+	wire [7:0] abus;
+	wire [7:0] bbus;
+	wire [7:0] cbus;
+	wire [7:0] dbus;
+	wire [7:0] ebus;
+	wire [7:0] fbus;
+	wire [7:0] gbus;
+	wire [7:0] kbus;
+	wire [7:0] xbus;
+	wire [7:0] wbus;
+
 endmodule // Bottom
