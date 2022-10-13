@@ -77,49 +77,49 @@ All Decoder2 outputs are clocked by the `CLK2` signal.
 
 ## Nor Trees
 
-|Tree|Image|Paths|
-|---|---|---|
-|w0|![w0](/imgstore/nortrees/w0.jpg)|{4,5,6,7}|
-|w1|![w1](/imgstore/nortrees/w1.jpg)|{0,1,w27}|
-|w2| | |
-|w3| | |
-|w4| | |
-|w5| | |
-|w6| | |
-|w7| |~IR7. Not used (not connected).|
-|w8| | |
-|w9| | |
-|w10| | |
-|w11| | |
-|w12| | |
-|w13| | |
-|w14| | |
-|w15| | |
-|w16| | |
-|w17| | |
-|w18| | |
-|w19| | |
-|w20| | |
-|w21| | |
-|w22| | |
-|w23| | |
-|w24| | |
-|w25| | |
-|w26| | |
-|w27| | |
-|w28| | |
-|w29| | |
-|w30| | |
-|w31| | |
-|w32|![w32](/imgstore/nortrees/w32.jpg)|{0,12,13,24,28,30,32,33,36,37,45,47,50,56,59,62,66,68,70,71,75,76,77,83,90,91,92,93,97}|
-|w33| | |
-|w34| | |
-|w35| | |
-|w36| | |
-|w37| | |
-|w38| | |
-|w39| | |
-|w40| | |
+|Tree|Paths|
+|---|---|
+|w0|{4,5,6,7}|
+|w1|{0,1,w27}|
+|w2| |
+|w3| |
+|w4| |
+|w5| |
+|w6| |
+|w7|~IR7. Not used (not connected).|
+|w8| |
+|w9| |
+|w10| |
+|w11| |
+|w12| |
+|w13| |
+|w14| |
+|w15| |
+|w16| |
+|w17| |
+|w18| |
+|w19| |
+|w20| |
+|w21| |
+|w22| |
+|w23| |
+|w24| |
+|w25| |
+|w26| |
+|w27| |
+|w28| |
+|w29| |
+|w30| |
+|w31| |
+|w32|{0,12,13,24,28,30,32,33,36,37,45,47,50,56,59,62,66,68,70,71,75,76,77,83,90,91,92,93,97}|
+|w33| |
+|w34| |
+|w35| |
+|w36| |
+|w37| |
+|w38| |
+|w39| |
+|w40| |
 
 The numbers in the path refer to Decoder1 outputs `d[106:0]`. Sometimes there are other inputs in the tree, and they are marked that way.
 

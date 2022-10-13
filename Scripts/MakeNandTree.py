@@ -23,7 +23,12 @@ def Main(args):
 				text += " | ";
 			text += "(" + t.replace(",", "&") + ")";
 			first = False;
-	text = "\tassign " + args.output_name + " = ~(" + text + ");";
+
+	# Decoder1 Haxo (dynamic)
+	#text = "\tassign " + args.output_name + " = CLK2 ? ~(" + text + ") : 1'b1;";
+
+	text = "\tassign " + args.output_name + " = ~(" + text + ");";	
+
 	print (text);
 
 if __name__ == '__main__':
