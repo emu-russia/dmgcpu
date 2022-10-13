@@ -77,7 +77,7 @@ LR->TD order.
 
 DFF on a complementary CLK (Dual Rails).
 
-Since the polarity of CLK is now known (CLK9 = CLK, CLK8 = CCLK), we can say for sure that it is posedge DFF.
+Since the polarity of CLKs is now known (CLK9 = CLK, CLK8 = CCLK), we can say for sure that it is posedge DFF.
 
 In fact, when using Dual Rails, you can easily turn a posedge DFF into a negedge by simply rearranging the CLK complement signals.
 
@@ -129,9 +129,9 @@ This is essentially the same rs_latch (see above), but with the inputs rearrange
 
 ![aoi_2_tran](/imgstore/modules/aoi_2_tran.jpg)
 
-## huge1 - latch_nr_comp
+## huge1 - latchr_comp
 
-Latch with reset and complementary set enable, complementary CLK.
+Latch with Active-High reset and complementary set enable, complementary CLK.
 
 A rather complicated circuit to master:
 - In the middle is a FlipFlop made of not and nor (nor is used for resetting)
