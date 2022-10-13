@@ -1,5 +1,5 @@
 
-module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d42, d58, w, x, bc, alu, bq4, bq5, bq7, ALU_to_bot, ALU_to_Thingy, ALU_L1, ALU_L2, ALU_L4, ALU_Out1, IR, nIR );
+module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, BTT, d42, d58, w, x, bc, alu, bq4, bq5, bq7, ALU_to_bot, ALU_to_Thingy, ALU_L1, ALU_L2, ALU_L4, ALU_Out1, IR, nIR );
 
 	input CLK2;
 	input CLK4;			// Used as LoadEnable for ALU_to_bot FF.
@@ -10,7 +10,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d42, d58, w,
 	input [7:0] DV; 		// ALU B
 	output [7:0] Res; 		// ALU Sums
 	input AllZeros;
-	input TTB3;
+	input BTT;
 	input d42;
 	input d58;
 	input [40:0] w;
@@ -95,7 +95,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d42, d58, w,
 		.CLK2(CLK2),
 		.CLK6(CLK6),
 		.CLK7(CLK7),
-		.TTB3(TTB3),
+		.BTT(BTT),
 		.AllZeros(AllZeros),
 		.d42(d42),
 		.d58(d58),
@@ -129,7 +129,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, TTB3, d42, d58, w,
 	bc bc1 ( .nd(azo[2]), .CLK(CLK6), .CCLK(CLK5), .Load(x[28]), .q(bc[1]), .nq(nbc[1]) );
 	bc bc2 ( .nd(azo[7]), .CLK(CLK6), .CCLK(CLK5), .Load(x[29]), .q(bc[2]), .nq(nbc[2]) );
 	bc bc3 ( .nd(azo[12]), .CLK(CLK6), .CCLK(CLK5), .Load(x[29]), .q(bc[3]), .nq(nbc[3]) );
-	ALU_to_bot_FF ttb3_FF ( .d(TTB3), .CLK(CLK6), .CCLK(CLK5), .Load(CLK4), .q(ALU_to_bot) );
+	ALU_to_bot_FF BTT_FF ( .d(BTT), .CLK(CLK6), .CCLK(CLK5), .Load(CLK4), .q(ALU_to_bot) );
 
 endmodule // ALU
 
@@ -224,12 +224,12 @@ module Comb3 ( clk, x, a, b, c, d );
 
 endmodule // Comb3
 
-module LargeComb1 ( CLK2, CLK6, CLK7, TTB3, AllZeros, d42, d58, w, x, alu, IR, nIR, f, bc, nbc, ALU_to_Thingy, ALU_L0, ALU_L1, ALU_L2, ALU_L3, ALU_L4, ALU_L5, bq4, bq5, bq7, azo );
+module LargeComb1 ( CLK2, CLK6, CLK7, BTT, AllZeros, d42, d58, w, x, alu, IR, nIR, f, bc, nbc, ALU_to_Thingy, ALU_L0, ALU_L1, ALU_L2, ALU_L3, ALU_L4, ALU_L5, bq4, bq5, bq7, azo );
 
 	input CLK2;
 	input CLK6;
 	input CLK7;
-	input TTB3;
+	input BTT;
 	input AllZeros;
 	input d42;
 	input d58;
@@ -269,7 +269,7 @@ module LargeComb1 ( CLK2, CLK6, CLK7, TTB3, AllZeros, d42, d58, w, x, alu, IR, n
 	assign az[9] = ~((alu[6]) | (w[24]&nIR[3]&IR[4]&IR[5]) | (w[10]&IR[3]) | (w[10]&nIR[4]) | (w[10]&nIR[5]) | (x[22]&bc[5]&nbc[1]&bc[2]) | (x[22]&bq7&bq4&nbc[2]) | (x[22]&bc[1]&nbc[2]) | (x[22]&bq5&nbc[2]));
 	assign az[10] = ~((alu[7]) | (w[24]&IR[3]&IR[4]&IR[5]) | (w[10]&nIR[3]) | (w[10]&nIR[4]) | (w[10]&nIR[5]) | (x[22]&bc[5]&bc[2]) | (x[22]&bc[1]&bc[2]));
 	assign az[11] = ~((w[0]&nIR[3]&IR[4]&bc[1]) | (w[0]&IR[3]&IR[4]&nbc[1]) | (w[0]&IR[3]&nIR[4]&nbc[3]) | (w[0]&nIR[3]&nIR[4]&bc[3]));
-	assign az[12] = ~((f[0]&w[12]&nIR[3]&nIR[4]&nIR[5]) | (f[1]&w[12]&IR[3]&nIR[4]&nIR[5]) | (f[2]&w[12]&nIR[3]&IR[4]&nIR[5]) | (f[3]&w[12]&IR[3]&IR[4]&nIR[5]) | (f[4]&w[12]&nIR[3]&nIR[4]&IR[5]) | (f[5]&w[12]&IR[3]&nIR[4]&IR[5]) | (f[6]&w[12]&nIR[3]&IR[4]&IR[5]) | (f[7]&w[12]&IR[3]&IR[4]&IR[5]) | (d42&AllZeros) | (w[3]&AllZeros) | (w[37]&AllZeros) | (x[22]&AllZeros) | (TTB3&d58) | (bc[3]&w[19]) | (bc[3]&x[21]) | (bc[3]&w[15]) | (bc[3]&x[26]));
+	assign az[12] = ~((f[0]&w[12]&nIR[3]&nIR[4]&nIR[5]) | (f[1]&w[12]&IR[3]&nIR[4]&nIR[5]) | (f[2]&w[12]&nIR[3]&IR[4]&nIR[5]) | (f[3]&w[12]&IR[3]&IR[4]&nIR[5]) | (f[4]&w[12]&nIR[3]&nIR[4]&IR[5]) | (f[5]&w[12]&IR[3]&nIR[4]&IR[5]) | (f[6]&w[12]&nIR[3]&IR[4]&IR[5]) | (f[7]&w[12]&IR[3]&IR[4]&IR[5]) | (d42&AllZeros) | (w[3]&AllZeros) | (w[37]&AllZeros) | (x[22]&AllZeros) | (BTT&d58) | (bc[3]&w[19]) | (bc[3]&x[21]) | (bc[3]&w[15]) | (bc[3]&x[26]));
 	assign az[13] = ~((w[37]&nIR[0]) | (x[27]) | (w[9]&bc[1]) | (nbc[1]&x[24]) | (nIR[3]&x[24]) | (bc[1]&w[19]) | (IR[3]&x[23]));
 
 	// Dynamic part

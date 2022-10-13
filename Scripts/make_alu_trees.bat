@@ -15,5 +15,5 @@ py -3 MakeNandTree.py --tree {alu5}{w24,IR3,nIR4,IR5}{w10,nIR3}{w10,IR4}{w10,nIR
 py -3 MakeNandTree.py --tree {alu6}{w24,nIR3,IR4,IR5}{w10,IR3}{w10,nIR4}{w10,nIR5}{x22,bc5,nbc1,bc2}{x22,bq7,bq4,nbc2}{x22,bc1,nbc2}{x22,bq5,nbc2} --output_name "az[9]" >> alu_trees.v
 py -3 MakeNandTree.py --tree {alu7}{w24,IR3,IR4,IR5}{w10,nIR3}{w10,nIR4}{w10,nIR5}{x22,bc5,bc2}{x22,bc1,bc2} --output_name "az[10]" >> alu_trees.v
 py -3 MakeNandTree.py --tree {w0,nIR3,IR4,bc1}{w0,IR3,IR4,nbc1}{w0,IR3,nIR4,nbc3}{w0,nIR3,nIR4,bc3} --output_name "az[11]" >> alu_trees.v
-py -3 MakeNandTree.py --tree {f0,w12,nIR3,nIR4,nIR5}{f1,w12,IR3,nIR4,nIR5}{f2,w12,nIR3,IR4,nIR5}{f3,w12,IR3,IR4,nIR5}{f4,w12,nIR3,nIR4,IR5}{f5,w12,IR3,nIR4,IR5}{f6,w12,nIR3,IR4,IR5}{f7,w12,IR3,IR4,IR5}{d42,AllZeros}{w3,AllZeros}{w37,AllZeros}{x22,AllZeros}{TTB3,d58}{bc3,w19}{bc3,x21}{bc3,w15}{bc3,x26} --output_name "az[12]" >> alu_trees.v
+py -3 MakeNandTree.py --tree {f0,w12,nIR3,nIR4,nIR5}{f1,w12,IR3,nIR4,nIR5}{f2,w12,nIR3,IR4,nIR5}{f3,w12,IR3,IR4,nIR5}{f4,w12,nIR3,nIR4,IR5}{f5,w12,IR3,nIR4,IR5}{f6,w12,nIR3,IR4,IR5}{f7,w12,IR3,IR4,IR5}{d42,AllZeros}{w3,AllZeros}{w37,AllZeros}{x22,AllZeros}{BTT,d58}{bc3,w19}{bc3,x21}{bc3,w15}{bc3,x26} --output_name "az[12]" >> alu_trees.v
 py -3 MakeNandTree.py --tree {w37,nIR0}{x27}{w9,bc1}{nbc1,x24}{nIR3,x24}{bc1,w19}{IR3,x23} --output_name "az[13]" >> alu_trees.v
