@@ -361,24 +361,24 @@ endmodule // seq
 
 // Module Definitions [It is possible to wrap here on your primitives]
 
-module seq_shielded (  d, b, a, c, x);
+module seq_shielded ( a, b, c, d, x );
 
-	input wire d;
-	input wire b;
 	input wire a;
+	input wire b;	
 	input wire c;
+	input wire d;
 	output wire x;
 
 	assign x = d ? ~((~a & c) | ~(a|b)) : 1'b1;
 
 endmodule // seq_shielded
 
-module seq_module3 (  q, clk, cclk, d);
+module seq_module3 ( d, clk, cclk, q );
 
-	output wire q;
+	input wire d;	
 	input wire clk;
 	input wire cclk;
-	input wire d;
+	output wire q;
 
 	reg val;
 	initial val <= 1'b0;
@@ -391,7 +391,7 @@ module seq_module3 (  q, clk, cclk, d);
 
 endmodule // seq_module3
 
-module seq_not (  a, x);
+module seq_not ( a, x );
 
 	input wire a;
 	output wire x;
@@ -400,7 +400,7 @@ module seq_not (  a, x);
 
 endmodule // seq_not
 
-module seq_nor3 (  a, b, c, x);
+module seq_nor3 ( a, b, c, x );
 
 	input wire a;
 	input wire b;
@@ -411,7 +411,7 @@ module seq_nor3 (  a, b, c, x);
 
 endmodule // seq_nor3
 
-module seq_nor (  a, b, x);
+module seq_nor ( a, b, x );
 
 	input wire a;
 	input wire b;
@@ -421,41 +421,41 @@ module seq_nor (  a, b, x);
 
 endmodule // seq_nor
 
-module seq_hmm2 (  a0, a1, x, b, a2);
+module seq_hmm2 ( a0, a1, a2, b, x );
 
 	input wire a0;
 	input wire a1;
-	output wire x;
-	input wire b;
 	input wire a2;
+	input wire b;
+	output wire x;
 
 	assign x = ~( (a0&a1&a2) | b);
 
 endmodule // seq_hmm2
 
-module seq_hmm1 (  a1, b, x, a0);
+module seq_hmm1 ( a0, a1, b, x );
 
+	input wire a0;
 	input wire a1;
 	input wire b;
 	output wire x;
-	input wire a0;
 
 	assign x = ~( (a0|a1) & b );
 
 endmodule // seq_hmm1
 
-module seq_iwantsleep (  b, a1, a0, x);
+module seq_iwantsleep ( a0, a1, b, x );
 
-	input wire b;
+	input wire a0;	
 	input wire a1;
-	input wire a0;
+	input wire b;	
 	output wire x;
 
 	assign x = ~( (a0|a1) & b );
 
 endmodule // seq_iwantsleep
 
-module seq_module4_2 (  nr, s, q );
+module seq_module4_2 ( nr, s, q );
 
 	input wire nr;
 	input wire s;
@@ -475,7 +475,7 @@ module seq_module4_2 (  nr, s, q );
 
 endmodule // seq_module4_2
 
-module seq_module4 (  nr, s, q);
+module seq_module4 ( nr, s, q );
 
 	input wire nr;
 	input wire s;
@@ -495,7 +495,7 @@ module seq_module4 (  nr, s, q);
 
 endmodule // seq_module4
 
-module seq_huge1 (  q, d, res, clk, cclk, ld, nld);
+module seq_huge1 ( q, d, res, clk, cclk, ld, nld);
 
 	output wire q;
 	input wire d;
@@ -519,28 +519,28 @@ module seq_huge1 (  q, d, res, clk, cclk, ld, nld);
 
 endmodule // seq_huge1
 
-module seq_nand (  b, a, x);
-
-	input wire b;
+module seq_nand ( a, b, x );
+	
 	input wire a;
+	input wire b;
 	output wire x;
 
 	assign x = ~(a&b);
 
 endmodule // seq_nand
 
-module seq_aoi_1 (  b, a0, a1, x);
+module seq_aoi_1 ( a0, a1, b, x );
 
-	input wire b;
 	input wire a0;
 	input wire a1;
+	input wire b;
 	output wire x;
 
 	assign x = ~( (a0&a1) | b);
 
 endmodule // seq_aoi_1
 
-module seq_nand3 (  a, b, c, x);
+module seq_nand3 ( a, b, c, x );
 
 	input wire a;
 	input wire b;
@@ -551,7 +551,7 @@ module seq_nand3 (  a, b, c, x);
 
 endmodule // seq_nand3
 
-module seq_nor4 (  a, b, c, d, x);
+module seq_nor4 ( a, b, c, d, x );
 
 	input wire a;
 	input wire b;
@@ -563,7 +563,7 @@ module seq_nor4 (  a, b, c, d, x);
 
 endmodule // seq_nor4
 
-module seq_aoi_2 (  a0, a1, b, x);
+module seq_aoi_2 ( a0, a1, b, x );
 
 	input wire a0;
 	input wire a1;
@@ -574,11 +574,11 @@ module seq_aoi_2 (  a0, a1, b, x);
 
 endmodule // seq_aoi_2
 
-module seq_hmm3 (  cclk, clk, d, nq);
+module seq_hmm3 ( d, clk, cclk, nq );
 
-	input wire cclk;
-	input wire clk;
 	input wire d;
+	input wire clk;
+	input wire cclk;
 	output wire nq;
 
 	reg val;
@@ -593,7 +593,7 @@ module seq_hmm3 (  cclk, clk, d, nq);
 
 endmodule // seq_hmm3
 
-module seq_comb5 (  clk, a0, a1, b0, b1, x);
+module seq_comb5 ( clk, a0, a1, b0, b1, x );
 
 	input wire clk;
 	input wire a0;
@@ -606,14 +606,14 @@ module seq_comb5 (  clk, a0, a1, b0, b1, x);
 
 endmodule // seq_comb5
 
-module seq_comb4 (  clk, c, a0, a1, b0, b1, x);
+module seq_comb4 ( clk, a0, a1, b0, b1, c, x );
 
 	input wire clk;
-	input wire c;
 	input wire a0;
 	input wire a1;
 	input wire b0;
 	input wire b1;
+	input wire c;
 	output wire x;
 
 	assign x = clk ? ~( (a0&a1) | (b0&b1) | c) : ~c;
