@@ -78,6 +78,7 @@ module SM83Core (
 
 	wire ALU_to_Thingy;
 	wire bot_to_Thingy;
+	wire BTT;
 	wire TTB1;
 	wire TTB2;
 	wire TTB3;
@@ -145,7 +146,7 @@ module SM83Core (
 		.DV(DV),
 		.Res(Res),
 		.AllZeros(AllZeros),
-		.TTB3(TTB3),
+		.BTT(BTT),
 		.d42(d[42]),
 		.d58(d[58]),
 		.w(w),
@@ -201,6 +202,7 @@ module SM83Core (
 		.w(w),
 		.ALU_to_Thingy(ALU_to_Thingy),
 		.WR(WR),
+		.BTT(BTT),
 		.TTB1(TTB1),
 		.TTB2(TTB2),
 		.TTB3(TTB3),
@@ -224,6 +226,7 @@ module SM83Core (
 		.ALU_L1(ALU_L1),
 		.ALU_L2(ALU_L2),
 		.ALU_L4(ALU_L4),
+		.BTT(BTT),
 		.alu(alu),
 		.Res(Res),
 		.IR(IR),
