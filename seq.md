@@ -213,10 +213,10 @@ This module is essentially used to generate the `#MREQ` signal. Below is `not` t
 
 TBD.
 
-|Extra Decoder1 Input|Affects the Decoder1 outputs|Meaning|
-|---|---|---|
-|a1| d75, d76, d77, d93 | ??? TBD. |
-|a3| d23, d24, d27, d42, d55, d56, d57, d94, d95, d96, d97 | ??? TBD. |
-|a20| many | ??? TBD. |
-|a22| many | ??? TBD. |
-|a24| many | ??? TBD. |
+|Extra Decoder1 Input|Meaning|
+|---|---|
+|a1|??? TBD. |
+|a3|??? TBD. |
+|a20|??? TBD. |
+|a22|??? TBD. |
+|a24|??? TBD. |
