@@ -115,7 +115,6 @@ module SM83Core (
 
 	Decoder2 dec2 (
 		.CLK2(CLK2),
-		.a3(a[3]),
 		.d(d),
 		.w(w),
 		.SeqOut_2(SeqOut_2),
@@ -126,6 +125,7 @@ module SM83Core (
 		.CLK4(CLK4),
 		.CLK5(CLK5),
 		.nCLK4(nCLK4),
+		.a3(a[3]),
 		.d(d),
 		.w(w),
 		.x(x),
