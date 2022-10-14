@@ -24,8 +24,8 @@ def Main(args):
 			text += "(" + t.replace(",", "&") + ")";
 			first = False;
 
-	# Decoder1 Haxo (dynamic)
-	#text = "\tassign " + args.output_name + " = CLK2 ? ~(" + text + ") : 1'b1;";
+	# Decoder1 Haxo (dynamic + domino `not`)
+	#text = "\tassign " + args.output_name + " = ~(CLK2 ? ~(" + text + ") : 1'b1);";
 
 	text = "\tassign " + args.output_name + " = ~(" + text + ");";	
 
