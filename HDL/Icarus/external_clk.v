@@ -37,7 +37,7 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 	// Phase Splitter
 
 	wire phase_splitter_out;
-	assign phase_splitter_out = ~(~(~CLK & phase_splitter_out) & ~(~CLK));
+	assign phase_splitter_out = ~(~(CLK & phase_splitter_out) & ~(CLK));
 	wire ATAL_4mhz;
 	assign ATAL_4mhz = ~phase_splitter_out;
 
