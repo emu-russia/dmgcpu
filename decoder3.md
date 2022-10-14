@@ -1,9 +1,5 @@
 # Decoder3
 
-:warning: The section is in development.
-
-Status: We need to restore all NAND trees.
-
 ![locator_decoder3](/imgstore/locator_decoder3.png)
 
 The final stage of the decoder, which generates the `x[68:0]` control signals for the lower part and the ALU.
@@ -12,7 +8,18 @@ The final stage of the decoder, which generates the `x[68:0]` control signals fo
 
 ## Decoder3 Inputs
 
-TBD.
+|Signal|From|
+|---|---|
+|CLK2|External|
+|CLK4|External|
+|CLK5|External. Affects x55|
+|nCLK4|CLK4 Not. Affects x57|
+|a3|Decoder1 a\[3\] input|
+|d|Decoder1 outputs|
+|w|Decoder2 outputs|
+|IR|Bottom|
+|nIR|IR Nots|
+|SeqOut_2|Sequencer|
 
 ## IR Nots
 
@@ -22,84 +29,154 @@ TBD.
 
 ![decoder3_drv](/imgstore/modules/decoder3_drv.jpg)
 
-## Decoder3 Outputs
+The output drivers act as signal amplifiers and are also used as "domino" logic, to translate dynamic CMOS logic into conventional logic.
 
-:warning: Again, carefully check the use of CLK for each output. Everything is tangled in there.
+## Decoder3 Outputs
 
 |Output|Name|CLK|To|Description|
 |---|---|---|---|---|
 |x0| |CLK2|ALU Bot| |
 |x1| |CLK2|ALU Bot| |
-|x2| |CLK2 |internal| |
-|x3| |CLK2 |ALU Top| |
-|x4| |CLK2 |ALU module2| |
-|x5| |CLK2 |ALU AND combs| |
-|x6| |CLK2 |ALU AND combs| |
-|x7| |CLK2 |ALU AND combs| |
-|x8| |CLK2 |ALU AND combs| |
-|x9| |CLK2 |ALU AND combs| |
-|x10| |CLK2 |ALU Bot| |
-|x11| |CLK2 |ALU Bot| |
-|x12| |CLK2 |ALU Bot| |
-|x13| |CLK2 |internal| |
-|x14| |CLK2 |internal| |
-|x15|DataOut|:warning: CLK4 |Data Bridge| |
-|x16| |CLK2 |ALU AND combs| |
-|x17| |CLK2 |internal| |
-|x18| |CLK2 |ALU Top| |
-|x19| |CLK2 |ALU Bot, ALU module2| |
-|x20| |CLK2 |internal| |
-|x21| |CLK2 |ALU Bot| |
-|x22| |CLK2 |ALU Bot| |
-|x23| |CLK2 |ALU Bot| |
-|x24| |CLK2 |ALU Bot| |
-|x25| |CLK2 |ALU module2| |
-|x26| |CLK2 |ALU Bot| |
-|x27| |CLK2 |ALU Bot| |
+|x2| |CLK2|internal| |
+|x3| |CLK2|ALU Top| |
+|x4| |CLK2|ALU module2| |
+|x5| |CLK2|ALU AND combs| |
+|x6| |CLK2|ALU AND combs| |
+|x7| |CLK2|ALU AND combs| |
+|x8| |CLK2|ALU AND combs| |
+|x9| |CLK2|ALU AND combs| |
+|x10| |CLK2|ALU Bot| |
+|x11| |CLK2|ALU Bot| |
+|x12| |CLK2|ALU Bot| |
+|x13| |CLK2|internal| |
+|x14| |CLK2|internal| |
+|x15|DataOut|:warning: CLK4|Data Bridge| |
+|x16| |CLK2|ALU AND combs| |
+|x17| |CLK2|internal| |
+|x18| |CLK2|ALU Top| |
+|x19| |CLK2|ALU Bot, ALU module2| |
+|x20| |CLK2|internal| |
+|x21| |CLK2|ALU Bot| |
+|x22| |CLK2|ALU Bot| |
+|x23| |CLK2|ALU Bot| |
+|x24| |CLK2|ALU Bot| |
+|x25| |CLK2|ALU module2| |
+|x26| |CLK2|ALU Bot| |
+|x27| |CLK2|ALU Bot| |
 |x28| |:warning: CLK4|ALU Bot Res| |
 |x29| |:warning: CLK4|ALU Bot Res| |
-|x30| |CLK2 |internal| |
-|x31| |CLK2 |internal| |
-|x32| |CLK2 |internal| |
-|x33| |CLK2 |Bottom| |
-|x34| |CLK2 |internal| |
-|x35| |CLK2 |Bottom| |
-|x36| |CLK2 |internal| |
-|x37|DL_Control2, ALU_to_DL|CLK2 |Data Latch|1: Save ALU result to DataLatch.|
-|x38| |CLK2 |Bottom| |
-|x39| |CLK2 |Bottom| |
-|x40| |CLK2 |Bottom| |
-|x41| |CLK2 |Sequencer| |
-|x42| |CLK2 |Bottom| |
-|x43| |CLK2 |Bottom| |
-|x44| |CLK2 |Bottom| |
-|x45| |CLK2 |Bottom| |
-|x46| |CLK2 |Bottom| |
-|x47| |CLK2 |Bottom| |
+|x30| |CLK2|internal| |
+|x31| |CLK2|internal| |
+|x32| |CLK2|internal| |
+|x33| |CLK2|Bottom| |
+|x34| |CLK2|internal| |
+|x35| |CLK2|Bottom| |
+|x36| |CLK2|internal| |
+|x37|DL_Control2, ALU_to_DL|:warning: CLK4|Data Latch|1: Save ALU result to DataLatch.|
+|x38| |:warning: CLK4|Bottom| |
+|x39| |:warning: CLK4|Bottom| |
+|x40| |:warning: CLK4|Bottom| |
+|x41| |CLK2|Sequencer| |
+|x42| |CLK2|Bottom| |
+|x43| |CLK2|Bottom| |
+|x44| |CLK2|Bottom| |
+|x45| |CLK2|Bottom| |
+|x46| |CLK2|Bottom| |
+|x47| |CLK2|Bottom| |
 |x48| |:warning: CLK4|Bottom| |
 |x49| |:warning: CLK4|Bottom| |
 |x50| |:warning: CLK4|Bottom| |
 |x51| |:warning: CLK4|Bottom| |
-|x52| |CLK2 |Bottom| |
-|x53| |CLK2 |Bottom| |
-|x54| |CLK2 |Bottom| |
-|x55| |CLK2 |Bottom| |
+|x52| |CLK2|Bottom| |
+|x53| |CLK2|Bottom| |
+|x54| |CLK2|Bottom| |
+|x55| |CLK2|Bottom|:warning: Affected by CLK5 (output is `nor(res,CLK5)` instead `not(res)`|
 |x56| |:warning: CLK4|Bottom| |
-|x57| |CLK2 |Bottom| |
-|x58| |CLK2 |Bottom| |
-|x59| |CLK2 |Bottom| |
-|x60| |CLK2 |Bottom| |
-|x61| |CLK2 |Bottom (twice)| |
-|x62| |CLK2 |Bottom| |
-|x63| |CLK2 |Bottom| |
-|x64| |CLK2 |internal| |
-|x65| |CLK2 |Bottom| |
-|x66| |CLK2 |internal| |
-|x67| |CLK2 |Bottom| |
-|x68| |CLK2 |Bottom (twice)| |
+|x57| |CLK2|Bottom|:warning: Affected by nCLK4 (output is `nor(res,nCLK4)` instead `not(res)`|
+|x58| |CLK2|Bottom| |
+|x59| |CLK2|Bottom| |
+|x60| |CLK2|Bottom| |
+|x61|LoadSP|CLK2|Bottom (twice)|Load SP Register|
+|x62| |CLK2|Bottom| |
+|x63| |CLK2|Bottom| |
+|x64| |CLK2|internal| |
+|x65| |CLK2|Bottom| |
+|x66| |CLK2|internal| |
+|x67| |CLK2|Bottom| |
+|x68|LoadPC|CLK2|Bottom (twice)|Load PC Register|
 
 (Outputs not marked as `internal` can still be used internally, I just did not mark it unnecessarily).
 
 ## Nand Trees
 
-TBD.
+|Tree|Paths|
+|---|---|
+|x0|{nIR3,x20}<br/>{nIR3,nIR4,x17}|
+|x1|{x20}<br/>{x17}|
+|x2|{w24}<br/>{IR5,IR4,nIR3,w3}|
+|x3|{x10}<br/>{w37}<br/>{x11}<br/>{w8}<br/>{w9}<br/>{x22}<br/>{w23}|
+|x4|{w5}<br/>{d8}<br/>{d41}<br/>{x2}<br/>{d14}<br/>{x26}|
+|x5|{x20,nIR3,nIR4}|
+|x6|{x20,nIR3,IR4}|
+|x7|{x20,IR3,nIR4}|
+|x8|{x20,IR3,IR4}|
+|x9|{x17,IR3,nIR4}|
+|x10|{w23}<br/>{w15}<br/>{w19}<br/>{x23}|
+|x11|{x27}<br/>{x24}|
+|x12|{x24}<br/>{x27}<br/>{IR0,w37}|
+|x13|{d58}<br/>{d88}<br/>{w16}|
+|x14|{d41}<br/>{d14}<br/>{w37}|
+|x15|{d41}<br/>{w4}<br/>{d14}<br/>{d38}<br/>{w14}<br/>{w21}|
+|x16|{x17,nIR3,IR4}|
+|x17|{d42,IR5}|
+|x18|{w3,IR3,nIR4,IR5}|
+|x19|{w10}<br/>{nIR3,nIR4,IR5}|
+|x20|{d25}<br/>{d42,nIR5}|
+|x21|{d34,IR4,IR5}|
+|x22|{d34,nIR3,nIR4,IR5}|
+|x23|{w3,nIR4,nIR5}|
+|x24|{w3,IR4,nIR5}|
+|x25|{w12}<br/>{x24}<br/>{x26}<br/>{x27}|
+|x26|{d34,IR3,nIR4,IR5}|
+|x27|{w3,IR3,IR4,IR5}|
+|x28|{d34,w38}<br/>{d42,w38}<br/>{w3,w38}<br/>{IR4,IR5,d58,w38}<br/>{x10,w38}|
+|x29|{w12,w38}<br/>{x28,w38}<br/>{w37,w38}|
+|x30|{w9,nIR4}|
+|x31|{w23,nIR4}|
+|x32|{d34,nIR4}<br/>{d34,nIR5}|
+|x33|{IR0,w37}|
+|x34|{w3}<br/>{d4}<br/>{a3}|
+|x35|{x34,IR0,IR1,IR2}<br/>{w14}<br/>{w4}<br/>{w37,IR3,IR4,IR5}<br/>{d38,IR4,IR5}<br/>{x32}|
+|x36|{d42}<br/>{w10}<br/>{w24}|
+|x37|{w8}<br/>{w6,d42}<br/>{w6,w10}<br/>{w6,w37}<br/>{w6,w24}<br/>{x30}<br/>{x31}|
+|x38|{x32,w38}<br/>{x36,IR0,IR1,IR2}<br/>{w38,d8}<br/>{w38,w5}<br/>{w38,x14,IR3,IR4,IR5}<br/>{w38,d58,IR4,IR5}|
+|x39|{IR5,w13,w38}<br/>{x36,nIR0,nIR1,IR2}<br/>{w38,x64}<br/>{w38,w19}<br/>{w38,x14,nIR3,nIR4,IR5}<br/>{w38,x13,nIR4,IR5}|
+|x40|{IR5,w13,w38}<br/>{x36,IR0,nIR1,IR2}<br/>{w38,x66}<br/>{w38,w15}<br/>{w38,x14,IR3,nIR4,IR5}<br/>{w38,x13,nIR4,IR5}|
+|x41|{d83,IR0,IR4}|
+|x42|{w13,IR5}<br/>{w16,nIR4,IR5}<br/>{w22}|
+|x43|{x34,nIR0,nIR1,IR2}<br/>{IR5,nIR4,d38}<br/>{IR5,nIR4,w19}<br/>{IR5,nIR4,nIR3,w37}|
+|x44|{x34,IR0,nIR1,IR2}<br/>{IR5,nIR4,w21}<br/>{IR5,nIR4,w15}<br/>{IR5,nIR4,IR3,w37}|
+|x45|{IR4,nIR5,w16}<br/>{IR4,nIR5,w13}|
+|x46|{x34,nIR0,IR1,nIR2}<br/>{nIR5,IR4,d38}<br/>{nIR5,IR4,w19}<br/>{nIR5,IR4,nIR3,w37}|
+|x47|{x34,IR0,IR1,nIR2}<br/>{nIR5,IR4,w21}<br/>{nIR5,IR4,w15}<br/>{nIR5,IR4,IR3,w37}|
+|x48|{x36,nIR0,IR1,nIR2,w38}<br/>{IR4,nIR5,x13,w38}<br/>{x14,nIR3,w38}|
+|x49|{x36,nIR0,nIR1,nIR2,w38}<br/>{nIR4,nIR5,x13,w38}<br/>{x14,nIR3,w38}|
+|x50|{x36,IR0,IR1,nIR2,w38}<br/>{IR4,nIR5,x13,w38}<br/>{x14,IR3,w38}|
+|x51|{x36,IR0,nIR1,nIR2,w38}<br/>{nIR4,IR5,x13,w38}<br/>{x14,IR3,w38}|
+|x52|{w29}<br/>{nIR4,nIR5,w13}<br/>{nIR4,nIR5,w16}|
+|x53|{x34,nIR0,nIR1,nIR2}<br/>{nIR4,nIR5,d38}<br/>{nIR4,nIR5,w19}<br/>{nIR4,nIR5,nIR3,w37}|
+|x54|{x34,IR0,nIR1,nIR2}<br/>{nIR4,nIR5,w21}<br/>{nIR4,nIR5,w15}<br/>{nIR4,nIR5,IR3,w37}|
+|x55|{w13}<br/>{w16}|
+|x56|{d58}<br/>{d88}|
+|x57|{d42}<br/>{x64}<br/>{x66}<br/>{w5}<br/>{d8}<br/>{w15}<br/>{w19}<br/>{x14}<br/>{w10}<br/>{w24}<br/>{x32}<br/>{w3}|
+|x58|{w8}<br/>{nIR3,IR4,IR5,w37}<br/>{w23}<br/>{d8}<br/>{w5}<br/>{d14}<br/>{x34,nIR0,IR1,IR2}|
+|x59|{x30}<br/>{d60}<br/>{w18,SeqOut_2}<br/>{w8}|
+|x60|{w8}<br/>{w17}<br/>{w39,w18}<br/>{d60}<br/>{x31}|
+|x61|{x62}<br/>{x63}|
+|x62|{w16,IR4,IR5}<br/>{w30}<br/>{d62}|
+|x63|{d88,IR4,IR5}<br/>{d64}|
+|x64|{w9,IR4}|
+|x65|{w30}<br/>{w16,IR4,IR5}|
+|x66|{w23,IR4}|
+|x67|{d81}<br/>{w25}<br/>{w2}|
+|x68|{d93}<br/>{d92}<br/>{w36}<br/>{x67}|
