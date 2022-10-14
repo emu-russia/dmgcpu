@@ -1,5 +1,5 @@
 
-module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, BTT, d42, d58, w, x, bc, alu, bq4, bq5, bq7, ALU_to_bot, ALU_to_Thingy, ALU_L1, ALU_L2, ALU_L4, ALU_Out1, IR, nIR );
+module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc, alu, bq4, bq5, bq7, ALU_to_bot, ALU_to_Thingy, ALU_L1, ALU_L2, ALU_L4, BTT, ALU_Out1, IR, nIR );
 
 	input CLK2;
 	input CLK4;			// Used as LoadEnable for ALU_to_bot FF.
@@ -10,7 +10,6 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, BTT, d42, d58, w, 
 	input [7:0] DV; 		// ALU B
 	output [7:0] Res; 		// ALU Sums
 	input AllZeros;
-	input BTT;
 	input d42;
 	input d58;
 	input [40:0] w;
@@ -25,6 +24,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, BTT, d42, d58, w, 
 	input ALU_L1;
 	input ALU_L2;
 	input ALU_L4;
+	input BTT;
 	output ALU_Out1;
 	input [7:0] IR;
 	input [5:0] nIR;
