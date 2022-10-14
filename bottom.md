@@ -50,41 +50,41 @@ Latch with complementary set enable, complementary CLK.
 - So the written value becomes relevant when LD 1->0 changes (when the output latch opens and is updated with the value from FlipFlop).
 - The whole thing is complicated by the complementary layout of the LD and CLK signals.
 
-## Reg0 - IR
-
 ## Bottom Left (ALU bc/bq) Logic
 
-## Reg1 - ???
+## Reg0 - IR
+
+## Reg1 - A
 
 Reg1 to buses:
 
-## Reg2 - ???
+## Reg2 - L
 
-Reg 2 to buses:
+Reg2 to buses:
 
-## Reg3 - ???
+## Reg3 - H
 
-Reg 3 to buses:
+Reg3 to buses:
 
-## Reg4 - ???
+## Reg4 - E
 
-Reg 4 to buses:
+Reg4 to buses:
 
-## Reg5 - ???
+## Reg5 - D
 
-Reg 5 to buses:
+Reg5 to buses:
 
-## Reg6 - ???
+## Reg6 - C
 
-Reg 6 to buses:
+Reg6 to buses:
 
-## Reg7 - ???
+## Reg7 - B
 
-Reg 7 to buses:
+Reg7 to buses:
 
-## Reg8 - ???
+## Reg8 - (HL) Temp
 
-Reg 8 to buses:
+Reg8 to buses:
 
 ## w8+ALU Result Logic
 
