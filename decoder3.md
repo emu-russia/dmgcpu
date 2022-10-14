@@ -70,7 +70,7 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |x32| |CLK2|internal| |
 |x33| |CLK2|Bottom| |
 |x34| |CLK2|internal| |
-|x35| |CLK2|Bottom| |
+|x35| |CLK2|Bottom|Save A to bbus|
 |x36| |CLK2|internal| |
 |x37|DL_Control2, ALU_to_DL|:warning: CLK4|Data Latch|1: Save ALU result to DataLatch.|
 |x38| |:warning: CLK4|Bottom| |
@@ -78,22 +78,22 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |x40| |:warning: CLK4|Bottom| |
 |x41| |CLK2|Sequencer| |
 |x42| |CLK2|Bottom| |
-|x43| |CLK2|Bottom| |
-|x44| |CLK2|Bottom| |
+|x43| |CLK2|Bottom|Save H to bbus|
+|x44| |CLK2|Bottom|Save L to bbus|
 |x45| |CLK2|Bottom| |
-|x46| |CLK2|Bottom| |
-|x47| |CLK2|Bottom| |
+|x46| |CLK2|Bottom|Save D to bbus|
+|x47| |CLK2|Bottom|Save E to bbus|
 |x48| |:warning: CLK4|Bottom| |
 |x49| |:warning: CLK4|Bottom| |
 |x50| |:warning: CLK4|Bottom| |
 |x51| |:warning: CLK4|Bottom| |
 |x52| |CLK2|Bottom| |
-|x53| |CLK2|Bottom| |
-|x54| |CLK2|Bottom| |
+|x53| |CLK2|Bottom|Save B to bbus|
+|x54| |CLK2|Bottom|Save C to bbus|
 |x55| |CLK2|Bottom|:warning: Affected by CLK5 (output is `nor(res,CLK5)` instead `not(res)`|
 |x56| |:warning: CLK4|Bottom| |
 |x57| |CLK2|Bottom|:warning: Affected by nCLK4 (output is `nor(res,nCLK4)` instead `not(res)`|
-|x58| |CLK2|Bottom| |
+|x58| |CLK2|Bottom|Save HL_Temp to bbus|
 |x59| |CLK2|Bottom| |
 |x60| |CLK2|Bottom| |
 |x61|LoadSP|CLK2|Bottom (twice)|Load SP Register|
