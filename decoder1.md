@@ -2,7 +2,7 @@
 
 :warning: The section is in development.
 
-Status: Find out what are the 5 additional decoder inputs, except the IR value.
+Status: Find out what are the 5 additional decoder inputs, except the IR value. A double check of the correctness of the restored trees is required.
 
 ![locator_decoder1](/imgstore/locator_decoder1.png)
 

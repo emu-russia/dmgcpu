@@ -1,5 +1,7 @@
 # Decoder2
 
+Status: A double check of the correctness of the restored trees is required.
+
 ![locator_decoder2](/imgstore/locator_decoder2.png)
 
 Refines the decoded operation code and reduces the total number of outputs for Decoder3. Implemented as densely packed NOR trees.
