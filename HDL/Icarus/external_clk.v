@@ -121,7 +121,7 @@ module DFFR_B (clk, nres, d, q, nq);
 	reg val;
 	initial val <= 1'b0;
 
-	always @(*) begin
+	always @(posedge clk) begin
 		if (clk)
 			val <= d;
 		if (~nres)

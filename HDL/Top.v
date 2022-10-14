@@ -7,8 +7,7 @@ module SM83Core (
 	WAKE, RD, WR, Maybe1, MMIO_REQ, IPL_REQ, Maybe2, MREQ,
 	D, A, CPU_IRQ_TRIG, CPU_IRQ_ACK );
 
-	// TBD: Obviously, such a large number of dual CLKs is due to the four-cycle "slot" execution of the core.
-	// You need to somehow get the timing diagrams of these signals, but to do that you have to go higher, to the ASIC level.
+	// Obviously, such a large number of dual CLKs is due to the four-cycle "slot" execution of the core.
 
 	input CLK1;
 	input CLK2;
