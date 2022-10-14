@@ -22,10 +22,11 @@ module Decoder_Run();
 	Sequencer_Mock seq (.IR(counter), .a(a));
 
 	always @(posedge CLK) begin
-		$display ("IR: 0x%x", counter);
-		$display ("d: %b", decoder1.d);
-		$display ("w: %b", decoder2.w);
-		$display ("x: %b", decoder3.x);
+		$display ( "IR: 0x%x, d: %b, w: %b, x: %b",
+			counter,
+			decoder1.d,
+			decoder2.w,
+			decoder3.x );
 
 		counter = counter + 1;
 	end
