@@ -169,7 +169,7 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |d103|{0,2,4,6,8,11,13,14,16,18,23,24}<br/>{0,2,4,6,9,14,16,18,23,24}| | |
 |d104|{0,2,5,7,9,13,14,17,18,20,22,24}| | |
 |d105|{0,2,5,7,9,13,14,17,18,20,22,25}| | |
-|d106|{24,25}| |:warning: Not used|
+|d106|{24,25}|:warning: Not used| |
 
 The numbers in the tree path mark the inputs `a[25:0]`.
 
