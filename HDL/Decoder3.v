@@ -1,11 +1,12 @@
 
-module Decoder3( CLK2, CLK4, CLK5, nCLK4, d, w, x, IR, nIR, SeqOut_2 );
+module Decoder3( CLK2, CLK4, CLK5, nCLK4, a3, d, w, x, IR, nIR, SeqOut_2 );
 
 	input CLK2;
 	input CLK4;
 	input CLK5;
 	input nCLK4;
-
+	
+	input a3;
 	input [106:0] d;
 	input [40:0] w;
 	output [68:0] x;

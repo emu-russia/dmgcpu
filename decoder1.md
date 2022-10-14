@@ -51,6 +51,12 @@ Dynamic logic is used.
 |a24|Sequencer| ??? TBD. |
 |a25|Inplace|~a24|
 
+## Decoder1 Output Drivers
+
+![decoder1_drv](/imgstore/modules/decoder1_drv.jpg)
+
+The output drivers act as signal amplifiers and are also used as "domino" logic, to translate dynamic CMOS logic into conventional logic.
+
 ## Decoder1 Output Trees
 
 :warning: Some inputs are twisted, be careful (e.g. a9 for the first three values).
