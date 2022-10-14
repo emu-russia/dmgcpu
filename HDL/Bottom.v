@@ -57,4 +57,23 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 	wire [7:0] xbus;
 	wire [7:0] wbus;
 
+	// Haxo
+
+	assign bq4 = 1'b0;
+	assign bq5 = 1'b0;
+	assign bq7 = 1'b0;
+
+	assign ALU_L1 = 1'b0;
+	assign ALU_L2 = 1'b0;
+	assign ALU_L4 = 1'b0;
+	assign BTT = 1'b0;
+
+	assign DV = 0;
+	assign alu = 0;
+	assign IR = 0;
+
+	assign bot_to_Thingy = 1'b0;
+	assign SeqControl_1 = 1'b0;
+	assign SeqControl_2 = 1'b0;
+
 endmodule // Bottom
