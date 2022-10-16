@@ -22,16 +22,24 @@ There are minor differences between the lanes, such places are marked with a :wa
 
 ## Internal bottom buses
 
-- abus
-- bbus
-- cbus
-- dbus
-- ebus
-- fbus
-- gbus
-- kbus
-- xbus
-- wbus
+The names of buses are arbitrary (do not make sense).
+
+|Bus|To Reg|From Reg|Precharge|
+|---|---|---|---|
+|abus|alu\[7:0\] to top (no reg)|H, L, A, SPL, SPH, PCL|CLK2|
+|bbus|DV\[7:0\] to top (no reg)|B, C, D, E, H, L, A, SPL, SPH|CLK2|
+|cbus|ABL|C, E, L, G, SPL, PCL|CLK2|
+|dbus|ABH|B, D, H, K, SPH, PCH|CLK2|
+|ebus|C, E, L|Circuit (see below)| |
+|fbus|B, D, H, A|Circuit (see below)| |
+|gbus|SPL, PCL|G| |
+|kbus|SPH, PCH|K| |
+|xbus|SPL, PCL, G|ABL| |
+|wbus|SPH, PCH, K|ABH| |
+
+There are small pieces for Precharge scattered throughout the circuitry.
+
+![bus_precharge](/imgstore/bus_precharge.jpg)
 
 ## Register Bit
 
@@ -52,43 +60,38 @@ Latch with complementary set enable, complementary CLK.
 
 ## Bottom Left (ALU bc/bq) Logic
 
-## Reg0 - IR
+The circuit is on the left side in a spread out layout. The picture shows the parts of the circuit for the individual parts.
 
-## Reg1 - A
+![bcbq](/imgstore/modules/bcbq.jpg)
 
-Reg1 to buses:
+## Registers
 
-## Reg2 - L
+|Reg|Name|Input|Output|Load signal|
+|---|---|---|---|---|
+|0|IR|DL|IR\[7:0\]|w26|
+|1|A|fbus|abus, bbus|x38|
+|2|L|ebus|abus, bbus, cbus|x40|
+|3|H|fbus|abus, bbus, dbus|x39|
+|4|E|ebus|bbus, cbus|x50|
+|5|D|fbus|bbus, dbus|x48|
+|6|C|ebus|bbus, cbus|x51|
+|7|B|fbus|bbus, dbus|x49|
+|8|G ("Temp Low")|Circuit (see below)|gbus, cbus|x60|
+|9|K ("Temp High")|Circuit (see below)|kbus, dbus|x59|
 
-Reg2 to buses:
+The name of the temp registers G/K is chosen arbitrarily, by the names of the buses to which they output their values.
 
-## Reg3 - H
+## Regs To Buses
 
-Reg3 to buses:
+Between the registers scattered small logic for issuing their values to the buses.
 
-## Reg4 - E
+![regs_buses](/imgstore/modules/regs_buses.jpg)
 
-Reg4 to buses:
+## Temp Register vs Bus Logic
 
-## Reg5 - D
+The value on the temp registers (G/K) does not come directly from the buses, but using logic.
 
-Reg5 to buses:
-
-## Reg6 - C
-
-Reg6 to buses:
-
-## Reg7 - B
-
-Reg7 to buses:
-
-## Reg8 - (HL) Temp
-
-Reg8 to buses:
-
-## w8+ALU Result Logic
-
-## Reg9 - ???
+![gk](/imgstore/modules/gk.jpg)
 
 ## SP Register
 
@@ -99,6 +102,14 @@ Reg8 to buses:
 ![x68](/imgstore/modules/x68.jpg)
 
 ## Address Bus Logic
+
+ABL:
+
+![abl](/imgstore/modules/abl.jpg)
+
+ABH:
+
+![abh](/imgstore/modules/abh.jpg)
 
 ## Bottom Right (IRQ) Logic
 

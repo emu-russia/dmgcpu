@@ -8,6 +8,8 @@
 
 The purpose of this circuit is load DV bus value into DataLatch (DL bus).
 
+The DV value also goes "through" the DataBridge and is fed to the ALU input.
+
 It is quite possible that this is just part of the DataLatch, but the developers separated the two circuits to reduce the length of the wires.
 
 ![bridge_comb](/imgstore/modules/bridge_comb.jpg)
