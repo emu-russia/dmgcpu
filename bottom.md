@@ -16,6 +16,8 @@ For the SM83 the layout is slightly different: the ALU is on the top-left and at
 
 ![bottom](/imgstore/bottom.jpg)
 
+![Bottom](/HDL/Design/Bottom.png)
+
 The bottom part consists of 8 lanes, according to the number of registers bits. The numbering of the bits is from 0 from top to bottom.
 
 There are minor differences between the lanes, such places are marked with a :warning: sign.
@@ -60,6 +62,8 @@ Latch with complementary set enable, complementary CLK.
 
 ## Bottom Left (ALU bc/bq) Logic
 
+Presumably this is the logic of conditional jumps.
+
 The circuit is on the left side in a spread out layout. The picture shows the parts of the circuit for the individual parts.
 
 ![bcbq](/imgstore/modules/bcbq.jpg)
@@ -87,7 +91,7 @@ Between the registers scattered small logic for issuing their values to the buse
 
 ![regs_buses](/imgstore/modules/regs_buses.jpg)
 
-## Temp Register vs Bus Logic
+## Temp Registers vs Bus Logic
 
 The value on the temp registers (G/K) does not come directly from the buses, but using logic.
 
@@ -101,7 +105,7 @@ The value on the temp registers (G/K) does not come directly from the buses, but
 
 ![x68](/imgstore/modules/x68.jpg)
 
-## Address Bus Logic
+## Address Bus Counter
 
 ABL:
 
