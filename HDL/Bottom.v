@@ -63,17 +63,17 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 
 	// Implementation
 
-	// Precharge
-
-	assign DL = CLK2 ? 8'bz : 8'b1;
-	assign abus = CLK2 ? 8'bz : 8'b1;
-	assign bbus = CLK2 ? 8'bz : 8'b1;
-	assign cbus = CLK2 ? 8'bz : 8'b1;
-	assign dbus = CLK2 ? 8'bz : 8'b1;
+	BusPrecharge precharge (
+		.CLK2(CLK2),
+		.DL(DL),
+		.abus(abus),
+		.bbus(bbus),
+		.cbus(cbus),
+		.dbus(dbus) );
 
 	BottomLeftLogic branch_hmm (
 		.CLK2(CLK2),
-		.ALU_to_bot(),
+		.ALU_to_bot(ALU_to_bot),
 		.w(w),
 		.IR4(IR[4]),
 		.IR5(IR[5]),
@@ -83,18 +83,13 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 		.bq7(bq7),
 		.pq(Aout) );
 
-	regbit RegIR [7:0] (
-		.clk(CLK6),
-		.cclk(CLK5),
-		.d(DL),
-		.ld(w[26]),
-		.q(IR) );
-
-	RegsBuses regs [7:0] (
+	RegsBuses regs (
 		.CLK5(CLK5),
 		.CLK6(CLK6),
 		.w(w),
 		.x(x),
+		.DL(DL),
+		.IR(IR),
 		.abus(abus),
 		.bbus(bbus),
 		.cbus(cbus),
@@ -103,7 +98,7 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 		.fbus(fbus),
 		.Aout(Aout) );
 
-	TempRegsBuses temp_regs [7:0] (
+	TempRegsBuses temp_regs (
 		.CLK4(CLK4),
 		.CLK5(CLK5),
 		.CLK6(CLK6),
@@ -121,7 +116,7 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 		.ALU_L4(ALU_L4),
 		.BTT(BTT) );
 
-	SP sp [7:0] (
+	SP sp (
 		.CLK5(CLK5),
 		.CLK6(CLK6),
 		.CLK7(CLK7),
@@ -140,7 +135,7 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 		.xbus(xbus),
 		.wbus(wbus) );
 
-	PC pc [7:0] (
+	PC pc (
 		.CLK5(CLK5),
 		.CLK6(CLK6),
 		.CLK7(CLK7),
@@ -158,7 +153,7 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 		.IR(IR),
 		.bro(bro) );
 
-	AddressBus acnt [7:0] (
+	AddressBus acnt (
 		.CLK4(CLK4),
 		.TTB1(TTB1),
 		.TTB2(TTB2),
@@ -170,7 +165,7 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 		.wbus(wbus),
 		.AddrBus(A) );
 
-	IRQ_Logic irq [7:0] (
+	IRQ_Logic irq (
 		.CLK3(CLK3),
 		.CLK4(CLK4),
 		.CLK5(CLK5),
@@ -188,9 +183,27 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 		.SeqOut_1(SeqOut_1),
 		.d93(d[93]) );
 
+	assign alu = ~abus;
 	assign DV = ~bbus;
 
 endmodule // Bottom
+
+module BusPrecharge ( CLK2, DL, abus, bbus, cbus, dbus );
+
+	input CLK2;
+	inout [7:0] DL;
+	inout [7:0] abus;
+	inout [7:0] bbus;
+	inout [7:0] cbus;
+	inout [7:0] dbus;
+
+	assign DL = CLK2 ? 8'bz : 8'b1;
+	assign abus = CLK2 ? 8'bz : 8'b1;
+	assign bbus = CLK2 ? 8'bz : 8'b1;
+	assign cbus = CLK2 ? 8'bz : 8'b1;
+	assign dbus = CLK2 ? 8'bz : 8'b1;
+
+endmodule // BusPrecharge
 
 module BottomLeftLogic ( CLK2, ALU_to_bot, w, IR4, IR5, bc, bq4, bq5, bq7, pq );
 
@@ -209,12 +222,14 @@ module BottomLeftLogic ( CLK2, ALU_to_bot, w, IR4, IR5, bc, bq4, bq5, bq7, pq );
 
 endmodule // BottomLeftLogic
 
-module RegsBuses ( CLK5, CLK6, w, x, abus, bbus, cbus, dbus, ebus, fbus, Aout );
+module RegsBuses ( CLK5, CLK6, w, x, DL, IR, abus, bbus, cbus, dbus, ebus, fbus, Aout );
 
 	input CLK5;
 	input CLK6;
 	input [40:0] w;
 	input [68:0] x;
+	inout [7:0] DL;
+	output [7:0] IR;
 	inout [7:0] abus;
 	inout [7:0] bbus;
 	inout [7:0] cbus;
@@ -232,6 +247,8 @@ module RegsBuses ( CLK5, CLK6, w, x, abus, bbus, cbus, dbus, ebus, fbus, Aout );
 	wire [7:0] r5q;		// D
 	wire [7:0] r6q;		// C
 	wire [7:0] r7q;		// B
+
+	regbit RegIR [7:0] ( .clk(CLK6), .cclk(CLK5), .d(DL), .ld(w[26]), .q(IR) );
 
 	regbit RegA [7:0]( .clk(CLK6), .cclk(CLK5), .d(fbus), .ld(x[38]), .q(r1q) );
 	regbit RegL [7:0]( .clk(CLK6), .cclk(CLK5), .d(ebus), .ld(x[40]), .q(r2q) );
