@@ -129,7 +129,7 @@ Latch (no edge detection) with reset.
 
 ### IF
 
-Apparently, access to the IF in the DMG CPU has been removed.
+Program access ($FFFE) to the IF in the DMG CPU has been removed.
 
 ![module8](/imgstore/modules/module8.jpg)
 
