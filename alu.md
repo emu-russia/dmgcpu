@@ -17,37 +17,37 @@ See: https://www.youtube.com/watch?v=WItAXzrfPrE&list=PLBDB2c4Mp7hBLRcEpE19yyHB-
 |Signal|From|Description|
 |---|---|---|
 |CLK2|External| |
-|CLK4|External|Used as LoadEnable for ALU_to_bot FF.|
+|CLK4|External|Used as LoadEnable for ALU_to_bot FF|
 |CLK5|External| |
 |CLK6|External| |
 |CLK7|External| |
-|DV\[7:0\]|Bottom| |
+|DV\[7:0\]|Bottom|ALU Operand 2|
 |AllZeros|NOR-8|1: The result (`Res`) is 0.|
-|BTT|Bottom| |
 |d42|Decoder1| |
 |d58|Decoder1| |
-|w (many)|Decoder2| |
-|x (many)|Decoder3| |
-|alu\[7:0\]|Bottom| |
+|w (many)|Decoder2|Decoder2 outputs|
+|x (many)|Decoder3|Decoder3 outputs|
+|alu\[7:0\]|Bottom|ALU Operand 1|
 |bq4|Bottom Left| |
 |bq5|Bottom Left| |
 |bq7|Bottom Left| |
-|ALU_L1|Bottom| |
-|ALU_L2|Bottom| |
-|ALU_L4|Bottom| |
-|IR\[7:0\]|IR| |
-|nIR\[5:0\]|MightySix| |
+|ALU_L2|Bottom|Flag C from temp|
+|ALU_L1|Bottom|Flag H from temp|
+|ALU_L4|Bottom|Flag N from temp|
+|BTT|Bottom|Flag Z from temp|
+|IR\[7:0\]|IR|Current opcode|
+|nIR\[5:0\]|MightySix|Current opcode (complement)|
 
 ## ALU Outputs
 
 |Signal|To|Description|
 |---|---|---|
-|Res\[7:0\]|Bottom|ALU Sums|
+|Res\[7:0\]|Bottom|ALU Result|
 |bc1|Bottom Left| |
 |bc2|Bottom Left| |
 |bc3|Bottom Left| |
 |bc5|Bottom Left| |
-|ALU_to_bot|Bottom|BTT signal stored in the memory cell|
+|ALU_to_bot|Bottom|ALU Flag Z|
 |ALU_to_Thingy|Thingy|CarryOut|
 |ALU_Out1|Sequencer| |
 

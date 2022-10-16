@@ -101,7 +101,7 @@ The value on the temp registers (G/K) does not come directly from the buses, but
 
 ![x68](/imgstore/modules/x68.jpg)
 
-## Address Bus Logic
+## Address Bus Counter
 
 ABL:
 

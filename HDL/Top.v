@@ -59,13 +59,14 @@ module SM83Core (
 	wire bq4;
 	wire bq5;
 	wire bq7;
-	wire ALU_L1;
-	wire ALU_L2;
-	wire ALU_L4;
+	wire ALU_L2;			// Temp C flag
+	wire ALU_L1; 			// Temp H flag
+	wire ALU_L4;			// Temp N flag
+	wire BTT;				// Temp Z flag
 	wire ALU_Out1;
 	wire DL_Control1;
 	wire DL_Control2;
-	wire [7:0] IR;
+	wire [7:0] IR;			// Current opcode
 	wire [5:0] nIR;				// Inverse IR values are only used for the first 6 bits.
 
 	wire SeqOut_1;
@@ -76,12 +77,11 @@ module SM83Core (
 	wire nCLK4;					// It is obtained by inverting CLK4 inside the sequencer.
 
 	wire ALU_to_Thingy;
-	wire bot_to_Thingy;
-	wire BTT;
+	wire bot_to_Thingy;			// IE access detected (Address = 0xffff)
 	wire TTB1;
 	wire TTB2;
 	wire TTB3;
-	wire Thingy_to_bot;
+	wire Thingy_to_bot;			// Load a value into the IE register from the DL bus.
 
 	assign DL_Control1 = Maybe1;
 	assign DL_Control2 = x[37];
@@ -145,7 +145,6 @@ module SM83Core (
 		.DV(DV),
 		.Res(Res),
 		.AllZeros(AllZeros),
-		.BTT(BTT),
 		.d42(d[42]),
 		.d58(d[58]),
 		.w(w),
@@ -157,9 +156,10 @@ module SM83Core (
 		.bq7(bq7),
 		.ALU_to_bot(ALU_to_bot),
 		.ALU_to_Thingy(ALU_to_Thingy),
-		.ALU_L1(ALU_L1),
-		.ALU_L2(ALU_L2),
-		.ALU_L4(ALU_L4),
+		.Temp_C(ALU_L2),
+		.Temp_H(ALU_L1),
+		.Temp_N(ALU_L4),
+		.Temp_Z(BTT),
 		.ALU_Out1(ALU_Out1),
 		.IR(IR),
 		.nIR(nIR) );
@@ -222,8 +222,8 @@ module SM83Core (
 		.bq5(bq5),
 		.bq7(bq7),
 		.ALU_to_bot(ALU_to_bot),
-		.ALU_L1(ALU_L1),
 		.ALU_L2(ALU_L2),
+		.ALU_L1(ALU_L1),
 		.ALU_L4(ALU_L4),
 		.BTT(BTT),
 		.alu(alu),
@@ -244,6 +244,7 @@ module SM83Core (
 		.SeqOut_1(SeqOut_1),
 		.A(A),
 		.CPU_IRQ_ACK(CPU_IRQ_ACK),
-		.CPU_IRQ_TRIG(CPU_IRQ_TRIG) );
+		.CPU_IRQ_TRIG(CPU_IRQ_TRIG),
+		.RD(RD) );
 
 endmodule // SM83Core
