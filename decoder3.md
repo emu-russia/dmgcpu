@@ -52,7 +52,7 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |x12| |CLK2|ALU Bot| |
 |x13| |CLK2|internal| |
 |x14| |CLK2|internal| |
-|x15|DataOut|:warning: CLK4|Data Bridge| |
+|x15|DataOut|:warning: CLK4|Data Bridge|DV to DL|
 |x16| |CLK2|ALU AND combs| |
 |x17| |CLK2|internal| |
 |x18| |CLK2|ALU Top| |
@@ -70,42 +70,42 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |x30| |CLK2|internal| |
 |x31| |CLK2|internal| |
 |x32| |CLK2|internal| |
-|x33| |CLK2|Bottom| |
+|x33| |CLK2|Bottom|Set abus to 0|
 |x34| |CLK2|internal| |
 |x35| |CLK2|Bottom|Save A to bbus|
 |x36| |CLK2|internal| |
-|x37|DL_Control2, ALU_to_DL|:warning: CLK4|Data Latch|1: Save ALU result to DataLatch.|
-|x38| |:warning: CLK4|Bottom| |
-|x39| |:warning: CLK4|Bottom| |
-|x40| |:warning: CLK4|Bottom| |
+|x37|DL_Control2, ALU_to_DL|:warning: CLK4|Data Latch|1: Save ALU result to DataLatch|
+|x38| |:warning: CLK4|Bottom|Load A from fbus|
+|x39| |:warning: CLK4|Bottom|Load H from fbus|
+|x40| |:warning: CLK4|Bottom|Load L from ebus|
 |x41| |CLK2|Sequencer| |
-|x42| |CLK2|Bottom| |
+|x42| |CLK2|Bottom|H/L to dbus/cbus|
 |x43| |CLK2|Bottom|Save H to bbus|
 |x44| |CLK2|Bottom|Save L to bbus|
-|x45| |CLK2|Bottom| |
+|x45| |CLK2|Bottom|D/E to dbus/cbus|
 |x46| |CLK2|Bottom|Save D to bbus|
 |x47| |CLK2|Bottom|Save E to bbus|
-|x48| |:warning: CLK4|Bottom| |
-|x49| |:warning: CLK4|Bottom| |
-|x50| |:warning: CLK4|Bottom| |
-|x51| |:warning: CLK4|Bottom| |
-|x52| |CLK2|Bottom| |
+|x48| |:warning: CLK4|Bottom|Load D from fbus|
+|x49| |:warning: CLK4|Bottom|Load B from fbus|
+|x50| |:warning: CLK4|Bottom|Load E from ebus|
+|x51| |:warning: CLK4|Bottom|Load C from ebus|
+|x52| |CLK2|Bottom|B/C to dbus/cbus|
 |x53| |CLK2|Bottom|Save B to bbus|
 |x54| |CLK2|Bottom|Save C to bbus|
-|x55| |CLK2|Bottom|:warning: Affected by CLK5 (output is `nor(res,CLK5)` instead `not(res)`|
-|x56| |:warning: CLK4|Bottom| |
-|x57| |CLK2|Bottom|:warning: Affected by nCLK4 (output is `nor(res,nCLK4)` instead `not(res)`|
-|x58| |CLK2|Bottom|Save HL_Temp to bbus|
-|x59| |CLK2|Bottom| |
-|x60| |CLK2|Bottom| |
-|x61|LoadSP|CLK2|Bottom (twice)|Load SP Register|
-|x62| |CLK2|Bottom| |
-|x63| |CLK2|Bottom| |
+|x55| |CLK2|Bottom|:warning: Affected by CLK5 (output is `nor(res,CLK5)` instead `not(res)`. xbus/wbus -> ebus/fbus|
+|x56| |:warning: CLK4|Bottom|TempLow(G)/TempHigh(K) to ebus/fbus|
+|x57| |CLK2|Bottom|:warning: Affected by nCLK4 (output is `nor(res,nCLK4)` instead `not(res)`. ALU Res to ebus/fbus|
+|x58| |CLK2|Bottom|Save TempLow(G) to bbus|
+|x59| |CLK2|Bottom|Load TempHigh(K)|
+|x60| |CLK2|Bottom|Load TempLow(G)|
+|x61|LoadSP|CLK2|Bottom (twice)|Load SP Register. The signals x62 and x63 indicate exactly what to load.|
+|x62| |CLK2|Bottom|xbus/wbus to SPL/SPH|
+|x63| |CLK2|Bottom|gbus/kbus tp SPL/SPH|
 |x64| |CLK2|internal| |
-|x65| |CLK2|Bottom| |
+|x65| |CLK2|Bottom|SPL/SPH to cbus/dbus|
 |x66| |CLK2|internal| |
-|x67| |CLK2|Bottom| |
-|x68|LoadPC|CLK2|Bottom (twice)|Load PC Register|
+|x67| |CLK2|Bottom|xbus/wbus to PCL/PCH|
+|x68|LoadPC|CLK2|Bottom (twice)|Load PC Register. The signals w36 (:warning: w36!) and x67 indicate exactly what to load.|
 
 (Outputs not marked as `internal` can still be used internally, I just did not mark it unnecessarily).
 
