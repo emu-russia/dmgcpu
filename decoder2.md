@@ -32,42 +32,42 @@ All Decoder2 outputs are clocked by the `CLK2` signal.
 |Output|Name|To|Description|
 |---|---|---|---|
 |w0| | | |
-|w1| | | |
-|w2| |Bottom| |
-|w3| |ALU, Bottom| |
+|w1| |Bottom|TempLow/TempHigh to cbus/dbus|
+|w2| |Bottom|TempLow/TempHigh to cbus/dbus|
+|w3| |ALU, Bottom|A to abus|
 |w4| | | |
 |w5| | | |
-|w6|WR| |To external WR port|
+|w6|WR|External, Thingy|To external WR port|
 |w7|nIR7|Not connected|Not used|
-|w8| |Bottom, Thingy| |
-|w9| |ALU, Bottom| |
+|w8| |Bottom, Thingy|PCL/PCH to abus/dbus|
+|w9| |ALU, Bottom|SPH to abus; Also bc/bq Logic|
 |w10| |ALU| |
 |w11| |Sequencer (only)| |
 |w12| |ALU| |
 |w13| | | |
 |w14| | | |
-|w15| |ALU| |
+|w15| |ALU, Bottom|SPL to bbus (only if IR4=IR5=1); Set abus to 0|
 |w16| | | |
-|w17| |Bottom| |
-|w18| |Bottom, Sequencer| |
-|w19| |ALU, Bottom| |
+|w17| |Bottom|TempLow/0 to cbus/dbus|
+|w18| |Sequencer| |
+|w19| |ALU, Bottom|SPH to bbus (only if IR4=IR5=1); H to abus|
 |w20| |Sequencer (only)| |
-|w21| |Bottom| |
+|w21| |Bottom|bc/bq Logic|
 |w22| | | |
-|w23| |Bottom| |
+|w23| |Bottom|SPL to abus|
 |w24| | | |
-|w25| | | |
-|w26|LoadIR|Bottom, Sequencer, External| |
+|w25| |Bottom|PCL/PCH to cbus/dbus|
+|w26|LoadIR|Bottom, Sequencer, External|DL to IR|
 |w27| | | |
-|w28| | | |
-|w29| | | |
+|w28| |Bottom|PCH to DL|
+|w29| |Bottom|Set dbus to 0|
 |w30| | | |
-|w31| | | |
+|w31| |Thingy (only)| |
 |w32| |Sequencer (only)| |
 |w33| |Sequencer (only)| |
-|w34| |Bottom (only)| |
+|w34| |Bottom (only)|PCL to DL|
 |w35| |Thingy (only)| |
-|w36| | | |
+|w36| |Bottom|gbus/kbus to PCL/PCH|
 |w37| |ALU| |
 |w38| | | |
 |w39| | | |

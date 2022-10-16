@@ -27,7 +27,7 @@ The names of buses are arbitrary (do not make sense).
 |Bus|To Reg|From Reg|Precharge|
 |---|---|---|---|
 |abus|alu\[7:0\] to top (no reg)|H, L, A, SPL, SPH, PCL|CLK2|
-|bbus|DV\[7:0\] to top (no reg)|B, C, D, E, H, L, A, SPL, SPH|CLK2|
+|bbus|DV\[7:0\] to top (no reg)|B, C, D, E, H, L, A, G, SPL, SPH|CLK2|
 |cbus|ABL|C, E, L, G, SPL, PCL|CLK2|
 |dbus|ABH|B, D, H, K, SPH, PCH|CLK2|
 |ebus|C, E, L|Circuit (see below)| |
@@ -76,7 +76,7 @@ The circuit is on the left side in a spread out layout. The picture shows the pa
 |5|D|fbus|bbus, dbus|x48|
 |6|C|ebus|bbus, cbus|x51|
 |7|B|fbus|bbus, dbus|x49|
-|8|G ("Temp Low")|Circuit (see below)|gbus, cbus|x60|
+|8|G ("Temp Low")|Circuit (see below)|gbus, bbus, cbus|x60|
 |9|K ("Temp High")|Circuit (see below)|kbus, dbus|x59|
 
 The name of the temp registers G/K is chosen arbitrarily, by the names of the buses to which they output their values.
