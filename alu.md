@@ -144,7 +144,7 @@ Large Comb 1 (_14 NAND trees_):
 
 The result is an AND-to-NOR tree (using alu_0 as an example):
 
-![demo_alu_0](/imgstore/nandtrees/demo_alu_0.jpg)
+![demo_alu_0](/imgstore/demo_alu_0.jpg)
 
 (the dynamic part is not shown in the picture)
 

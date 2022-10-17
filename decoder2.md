@@ -125,6 +125,6 @@ The numbers in the path refer to Decoder1 outputs `d[106:0]`. Sometimes there ar
 
 The result is a multi-input NOR (the dynamic part is not shown in the picture):
 
-![demo_w1](/imgstore/nortrees/demo_w1.jpg)
+![demo_w1](/imgstore/demo_w1.jpg)
 
 To convert trees into a schematic, you can use a script to generate an HDL.

@@ -175,7 +175,7 @@ The numbers in the tree path mark the inputs `a[25:0]`.
 
 The result should be as follows (using d3 as an example, the dynamical part of the logic is not shown):
 
-![demo_d3](/imgstore/nandtrees/demo_d3.jpg)
+![demo_d3](/imgstore/demo_d3.jpg)
 
 The `To` outputs are marked only for those that go somewhere else besides Decoder2.
 
