@@ -45,6 +45,8 @@ The slides should be photographed evenly and with little overlap, so that it is 
 
 It is very important that the slides go evenly. The best way to do this is to build a motorized actuator for your microscope and a utility for automatically focusing and photographing slides. This will speed up the process tremendously and save you a lot of nerves (sometimes it happens that after 300 slides, you accidentally hit your heel on the table and the chip moves, so you have to redo the whole Run).
 
+:warning: Try not to use the oculars for long periods of time, but rather look at the picture through the camera. The metallographic microscope is designed in such a way that the focused light from the internal lamp will reflect from the chip surface directly onto the retina and can damage it.
+
 ## Stitching with Fiji
 
 Suppose we need to stitch such a dataset:
@@ -110,7 +112,7 @@ Do a polishing session (5-10 seconds), take the chip under the microscope and se
 
 With enough experience, you can learn how to carefully remove layers of 50-100 nm, which is enough to study old microchips.
 
-:warning: The chromium oxides contained in the GOI paste are mutagens and generally poisonous substances!
+:warning: The chromium oxides contained in the GOI paste are mutagens and generally poisonous substances! Also, remember to protect your eyes from getting paste particles or other chip pieces that have bounced off, as this can damage your eyes.
 
 ## Topology reconstruction
 
