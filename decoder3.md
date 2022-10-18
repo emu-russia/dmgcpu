@@ -100,7 +100,7 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |x60| |CLK2|Bottom|Load TempLow(G)|
 |x61|LoadSP|CLK2|Bottom (twice)|Load SP Register. The signals x62 and x63 indicate exactly what to load.|
 |x62| |CLK2|Bottom|adl/adh to SPL/SPH|
-|x63| |CLK2|Bottom|zbus/wbus tp SPL/SPH|
+|x63| |CLK2|Bottom|zbus/wbus to SPL/SPH|
 |x64| |CLK2|internal| |
 |x65| |CLK2|Bottom|SPL/SPH to cbus/dbus|
 |x66| |CLK2|internal| |
