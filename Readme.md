@@ -47,7 +47,7 @@ You may have heard other definitions on other sites/Wikipedia, but they are diff
 
 ## Signals Disclaimer
 
-I understand that everyone wants the signals to be called by xt and clear names. The SM83 study was conducted at different times, so sometimes you can see strange signal names.
+I understand that everyone wants the signals to be called by human-readble and proper names. The SM83 study was conducted at different times, so sometimes you can see strange signal names.
 
 Do not expect that all of them are quickly renamed to proper names. Such a process runs the risk of turning the study into signal renaming and nothing more.
 
