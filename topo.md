@@ -67,3 +67,13 @@ If some signals turn out to be in inverse polarity - this will be discussed on a
 ## Buried Contacts
 
 None. If you want to connect poly and diffusion side by side, a small bridge of M1 is used.
+
+## Perfectly Amount of Silicon
+
+The SM83 topology has one interesting property.
+
+Usually studying chips is a time-consuming process and in the process of studying some part you sometimes have to wonder - "When will it end?". Usually after zooming out the picture remains not even half done :smiley:
+
+But with SM83 it happens quite uniquely - you just have to think about it and the processing of the next section is immediately finished on time. Not sooner or later.
+
+I think this is an important feature, and it's worth mentioning here.
