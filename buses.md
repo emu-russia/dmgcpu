@@ -41,14 +41,14 @@ ALU result to bottom.
 |Bus|To Reg|From Reg|
 |---|---|---|
 |abus|alu\[7:0\] to top (no reg)|H, L, A, SPL, SPH, PCL|
-|bbus|DV\[7:0\] to top (no reg)|B, C, D, E, H, L, A, SPL, SPH|
-|cbus|ABL|C, E, L, G, SPL, PCL|
-|dbus|ABH|B, D, H, K, SPH, PCH|
+|bbus|DV\[7:0\] to top (no reg)|B, C, D, E, H, L, A, Z, SPL, SPH|
+|cbus|ABL|C, E, L, Z, SPL, PCL|
+|dbus|ABH|B, D, H, W, SPH, PCH|
 |ebus|C, E, L|Dedicated circuit|
 |fbus|B, D, H, A|Dedicated circuit|
-|gbus|SPL, PCL|G|
-|kbus|SPH, PCH|K|
-|xbus|SPL, PCL, G|ABL|
-|wbus|SPH, PCH, K|ABH|
+|zbus|SPL, PCL|Z|
+|wbus|SPH, PCH|W|
+|adl|SPL, PCL, Z|ABL|
+|adh|SPH, PCH, W|ABH|
 
-The names of internal bottom buses are arbitrary (do not make sense).
+The names of some internal bottom buses are arbitrary (do not make sense).

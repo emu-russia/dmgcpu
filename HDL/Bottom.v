@@ -53,10 +53,10 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 	wire [7:0] dbus;
 	wire [7:0] ebus;
 	wire [7:0] fbus;
-	wire [7:0] gbus;
-	wire [7:0] kbus;
-	wire [7:0] xbus;
+	wire [7:0] zbus;
 	wire [7:0] wbus;
+	wire [7:0] adl;
+	wire [7:0] adh;
 	wire [7:3] bro; 		// IRQ Logic
 
 	wire [7:0] Aout;	// Reg A out to bc/bq Logic
@@ -108,8 +108,8 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 		.DL(DL),
 		.ebus(ebus),
 		.fbus(fbus),
-		.gbus(gbus),
-		.kbus(kbus),
+		.zbus(zbus),
+		.wbus(wbus),
 		.Res(Res),
 		.ALU_L2(ALU_L2),
 		.ALU_L1(ALU_L1),
@@ -130,10 +130,10 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 		.bbus(bbus),
 		.cbus(cbus),
 		.dbus(dbus),
-		.gbus(gbus),
-		.kbus(kbus),
-		.xbus(xbus),
-		.wbus(wbus) );
+		.zbus(zbus),
+		.wbus(wbus),
+		.adl(adl),
+		.adh(adh) );
 
 	PC pc (
 		.CLK5(CLK5),
@@ -146,10 +146,10 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 		.abus(abus),
 		.cbus(cbus),
 		.dbus(dbus),
-		.gbus(gbus),
-		.kbus(kbus),
-		.xbus(xbus),
+		.zbus(zbus),
 		.wbus(wbus),
+		.adl(adl),
+		.adh(adh),
 		.IR(IR),
 		.bro(bro) );
 
@@ -161,8 +161,8 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 		.Maybe1(Maybe1),
 		.cbus(cbus),
 		.dbus(dbus),
-		.xbus(xbus),
-		.wbus(wbus),
+		.adl(adl),
+		.adh(adh),
 		.AddrBus(A) );
 
 	IRQ_Logic irq (
@@ -264,7 +264,7 @@ module RegsBuses ( CLK5, CLK6, w, x, DL, IR, abus, bbus, cbus, dbus, ebus, fbus,
 
 endmodule // RegsBuses
 
-module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, ebus, fbus, gbus, kbus, Res, ALU_L2, ALU_L1, ALU_L4, BTT );
+module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, ebus, fbus, zbus, wbus, Res, ALU_L2, ALU_L1, ALU_L4, BTT );
 
 	input CLK4;
 	input CLK5;
@@ -275,30 +275,30 @@ module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, ebus, fbus, gbus, kbus, 
 	inout [7:0] DL;
 	inout [7:0] ebus;
 	inout [7:0] fbus;
-	inout [7:0] gbus;
-	inout [7:0] kbus;
+	inout [7:0] zbus;
+	inout [7:0] wbus;
 	input [7:0] Res;
-	output ALU_L2; 			// Flag C from temp
-	output ALU_L1; 			// Flag H from temp
-	output ALU_L4; 			// Flag N from temp
-	output BTT; 			// Flag Z from temp
+	output ALU_L2; 			// Flag C from temp Z
+	output ALU_L1; 			// Flag H from temp Z
+	output ALU_L4; 			// Flag N from temp Z
+	output BTT; 			// Flag Z from temp Z
 
-	wire [7:0] G_in;
-	wire [7:0] K_in;
+	wire [7:0] Z_in;
+	wire [7:0] W_in;
 
-	regbit Reg_TempLo [7:0]( .clk(CLK6), .cclk(CLK5), .d(G_in), .ld(x[60]), .q(gbus) );	// G
-	regbit Reg_TempHi [7:0]( .clk(CLK6), .cclk(CLK5), .d(K_in), .ld(x[59]), .q(kbus) );	// K
+	regbit Z [7:0]( .clk(CLK6), .cclk(CLK5), .d(Z_in), .ld(x[60]), .q(zbus) );
+	regbit W [7:0]( .clk(CLK6), .cclk(CLK5), .d(W_in), .ld(x[59]), .q(wbus) );
 
 	// TBD
 
-	assign ALU_L2 = gbus[4];
-	assign ALU_L1 = gbus[5];
-	assign ALU_L4 = gbus[6];
-	assign BTT = gbus[7];
+	assign ALU_L2 = zbus[4];
+	assign ALU_L1 = zbus[5];
+	assign ALU_L4 = zbus[6];
+	assign BTT = zbus[7];
 
 endmodule // TempRegsBuses
 
-module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, abus, bbus, cbus, dbus, gbus, kbus, xbus, wbus );
+module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, abus, bbus, cbus, dbus, zbus, wbus, adl, adh );
 
 	input CLK5;
 	input CLK6;
@@ -313,16 +313,16 @@ module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, abus, bbus, cbus, dbus, 
 	inout [7:0] bbus;
 	inout [7:0] cbus;
 	inout [7:0] dbus;
-	inout [7:0] gbus;
-	inout [7:0] kbus;
-	inout [7:0] xbus;
+	inout [7:0] zbus;
 	inout [7:0] wbus;
+	inout [7:0] adl;
+	inout [7:0] adh;
 
 	// TBD
 
 endmodule // SP
 
-module PC ( CLK5, CLK6, CLK7, d92, w, x, DL, abus, cbus, dbus, gbus, kbus, xbus, wbus, IR, bro );
+module PC ( CLK5, CLK6, CLK7, d92, w, x, DL, abus, cbus, dbus, zbus, wbus, adl, adh, IR, bro );
 
 	input CLK5;
 	input CLK6;
@@ -334,10 +334,10 @@ module PC ( CLK5, CLK6, CLK7, d92, w, x, DL, abus, cbus, dbus, gbus, kbus, xbus,
 	inout [7:0] abus;
 	inout [7:0] cbus;
 	inout [7:0] dbus;
-	inout [7:0] gbus;
-	inout [7:0] kbus;
-	inout [7:0] xbus;
+	inout [7:0] zbus;
 	inout [7:0] wbus;
+	inout [7:0] adl;
+	inout [7:0] adh;
 	input [7:0] IR;
 	input [7:3] bro;
 
@@ -370,7 +370,7 @@ module regbit_res ( clk, cclk, d, ld, res, q );
 
 endmodule // regbit_res
 
-module AddressBus ( CLK4, TTB1, TTB2, TTB3, Maybe1, cbus, dbus, xbus, wbus, AddrBus );
+module AddressBus ( CLK4, TTB1, TTB2, TTB3, Maybe1, cbus, dbus, adl, adh, AddrBus );
 
 	input CLK4;
 	input TTB1;
@@ -379,8 +379,8 @@ module AddressBus ( CLK4, TTB1, TTB2, TTB3, Maybe1, cbus, dbus, xbus, wbus, Addr
 	input Maybe1;
 	input [7:0] cbus;
 	input [7:0] dbus;
-	input [7:0] xbus;
-	input [7:0] wbus;
+	input [7:0] adl;
+	input [7:0] adh;
 	output [15:0] AddrBus;
 
 	// TBD

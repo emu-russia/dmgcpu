@@ -24,20 +24,20 @@ There are minor differences between the lanes, such places are marked with a :wa
 
 ## Internal bottom buses
 
-The names of buses are arbitrary (do not make sense).
+The names of some buses are arbitrary (do not make sense).
 
 |Bus|To Reg|From Reg|Precharge|
 |---|---|---|---|
 |abus|alu\[7:0\] to top (no reg)|H, L, A, SPL, SPH, PCL|CLK2|
-|bbus|DV\[7:0\] to top (no reg)|B, C, D, E, H, L, A, G, SPL, SPH|CLK2|
-|cbus|ABL|C, E, L, G, SPL, PCL|CLK2|
-|dbus|ABH|B, D, H, K, SPH, PCH|CLK2|
-|ebus|C, E, L|Circuit (see below)| |
-|fbus|B, D, H, A|Circuit (see below)| |
-|gbus|SPL, PCL|G| |
-|kbus|SPH, PCH|K| |
-|xbus|SPL, PCL, G|ABL| |
-|wbus|SPH, PCH, K|ABH| |
+|bbus|DV\[7:0\] to top (no reg)|B, C, D, E, H, L, A, Z, SPL, SPH|CLK2|
+|cbus|ABL|C, E, L, Z, SPL, PCL|CLK2|
+|dbus|ABH|B, D, H, W, SPH, PCH|CLK2|
+|ebus|C, E, L|Dedicated circuit| |
+|fbus|B, D, H, A|Dedicated circuit| |
+|zbus|SPL, PCL|Z| |
+|wbus|SPH, PCH|W| |
+|adl|SPL, PCL, Z|ABL| |
+|adh|SPH, PCH, W|ABH| |
 
 There are small pieces for Precharge scattered throughout the circuitry.
 
@@ -80,10 +80,8 @@ The circuit is on the left side in a spread out layout. The picture shows the pa
 |5|D|fbus|bbus, dbus|x48|
 |6|C|ebus|bbus, cbus|x51|
 |7|B|fbus|bbus, dbus|x49|
-|8|G ("Temp Low")|Circuit (see below)|gbus, bbus, cbus|x60|
-|9|K ("Temp High")|Circuit (see below)|kbus, dbus|x59|
-
-The name of the temp registers G/K is chosen arbitrarily, by the names of the buses to which they output their values.
+|8|Z ("Temp Low")|Circuit (see below)|zbus, bbus, cbus|x60|
+|9|W ("Temp High")|Circuit (see below)|wbus, dbus|x59|
 
 ## Regs To Buses
 
@@ -93,7 +91,7 @@ Between the registers scattered small logic for issuing their values to the buse
 
 ## Temp Registers vs Bus Logic
 
-The value on the temp registers (G/K) does not come directly from the buses, but using logic.
+The value on the temp registers (Z/W) does not come directly from the buses, but using logic.
 
 ![gk](/imgstore/modules/gk.jpg)
 
@@ -105,15 +103,9 @@ The value on the temp registers (G/K) does not come directly from the buses, but
 
 ![x68](/imgstore/modules/x68.jpg)
 
-## Address Bus Counter
+## Incrementer/Decrementer
 
-ABL:
-
-![abl](/imgstore/modules/abl.jpg)
-
-ABH:
-
-![abh](/imgstore/modules/abh.jpg)
+![cntbit](/imgstore/modules/cntbit.jpg)
 
 ## Bottom Right (IRQ) Logic
 

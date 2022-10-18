@@ -44,3 +44,13 @@ You may have heard other definitions on other sites/Wikipedia, but they are diff
 
 - Static memory elements: they store their value always and "forever", regardless of whether the CLK changes or not
 - Dynamic memory elements: they store their value on the FET gate, so they can get "corrupted" if not refreshed for a long time
+
+## Signals Disclaimer
+
+I understand that everyone wants the signals to be called by xt and clear names. The SM83 study was conducted at different times, so sometimes you can see strange signal names.
+
+Do not expect that all of them are quickly renamed to proper names. Such a process runs the risk of turning the study into signal renaming and nothing more.
+
+From experience - frequent renaming of signals also contributes to various errors and confusion.
+
+Renaming a signal does not make it work differently :smiley:
