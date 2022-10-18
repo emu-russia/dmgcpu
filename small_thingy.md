@@ -8,12 +8,12 @@
 
 |Signal|Type|From/To|Description|
 |---|---|---|---|
-|w8|input|Decoder2| |
+|w8|input|Decoder2|PCL/PCH to abus/dbus|
 |w31|input|Decoder2| |
 |w35|input|Decoder2| |
 |w6|input|Decoder2|WR|
-|ALU_to_Thingy|input|ALU| |
-|BTT|input|Bottom| |
+|ALU_to_Thingy|input|ALU|ALU CarryOut|
+|BTT|input|Bottom|Flag Z from temp|
 |TTB1|output|Bottom| |
 |TTB2|output|Bottom| |
 |TTB3|output|Bottom| |

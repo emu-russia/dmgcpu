@@ -31,10 +31,10 @@ See: https://www.youtube.com/watch?v=WItAXzrfPrE&list=PLBDB2c4Mp7hBLRcEpE19yyHB-
 |bq4|Bottom Left| |
 |bq5|Bottom Left| |
 |bq7|Bottom Left| |
-|ALU_L2|Bottom|Flag C from temp|
-|ALU_L1|Bottom|Flag H from temp|
-|ALU_L4|Bottom|Flag N from temp|
-|BTT|Bottom|Flag Z from temp|
+|ALU_L2|Bottom|Flag C from temp Z register|
+|ALU_L1|Bottom|Flag H from temp Z register|
+|ALU_L4|Bottom|Flag N from temp Z register|
+|BTT|Bottom|Flag Z from temp Z register|
 |IR\[7:0\]|IR|Current opcode|
 |nIR\[5:0\]|MightySix|Current opcode (complement)|
 

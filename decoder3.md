@@ -92,19 +92,19 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |x52| |CLK2|Bottom|B/C to dbus/cbus|
 |x53| |CLK2|Bottom|Save B to bbus|
 |x54| |CLK2|Bottom|Save C to bbus|
-|x55| |CLK2|Bottom|:warning: Affected by CLK5 (output is `nor(res,CLK5)` instead `not(res)`. xbus/wbus -> ebus/fbus|
+|x55| |CLK2|Bottom|:warning: Affected by CLK5 (output is `nor(res,CLK5)` instead `not(res)`. adl/adh -> ebus/fbus|
 |x56| |:warning: CLK4|Bottom|TempLow(G)/TempHigh(K) to ebus/fbus|
 |x57| |CLK2|Bottom|:warning: Affected by nCLK4 (output is `nor(res,nCLK4)` instead `not(res)`. ALU Res to ebus/fbus|
 |x58| |CLK2|Bottom|Save TempLow(G) to bbus|
 |x59| |CLK2|Bottom|Load TempHigh(K)|
 |x60| |CLK2|Bottom|Load TempLow(G)|
 |x61|LoadSP|CLK2|Bottom (twice)|Load SP Register. The signals x62 and x63 indicate exactly what to load.|
-|x62| |CLK2|Bottom|xbus/wbus to SPL/SPH|
-|x63| |CLK2|Bottom|gbus/kbus tp SPL/SPH|
+|x62| |CLK2|Bottom|adl/adh to SPL/SPH|
+|x63| |CLK2|Bottom|zbus/wbus tp SPL/SPH|
 |x64| |CLK2|internal| |
 |x65| |CLK2|Bottom|SPL/SPH to cbus/dbus|
 |x66| |CLK2|internal| |
-|x67| |CLK2|Bottom|xbus/wbus to PCL/PCH|
+|x67| |CLK2|Bottom|adl/adh to PCL/PCH|
 |x68|LoadPC|CLK2|Bottom (twice)|Load PC Register. The signals w36 (:warning: w36!) and x67 indicate exactly what to load.|
 
 (Outputs not marked as `internal` can still be used internally, I just did not mark it unnecessarily).

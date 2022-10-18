@@ -67,7 +67,7 @@ All Decoder2 outputs are clocked by the `CLK2` signal.
 |w33| |Sequencer (only)| |
 |w34| |Bottom (only)|PCL to DL|
 |w35| |Thingy (only)| |
-|w36| |Bottom|gbus/kbus to PCL/PCH|
+|w36| |Bottom|zbus/wbus to PCL/PCH|
 |w37| |ALU| |
 |w38| | | |
 |w39| | | |
