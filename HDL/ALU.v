@@ -15,17 +15,17 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	input d58;
 	input [40:0] w;		// Decoder2 outputs
 	input [68:0] x;		// Decoder3 outputs
-	inout [5:0] bc;
+	output [5:0] bc;
 	input [7:0] alu;		// ALU Operand1
 	input bq4;
 	input bq5;
 	input bq7;
-	output ALU_to_bot;
-	output ALU_to_Thingy; 		// Carry Out
-	input Temp_C;		// Flag C from temp
-	input Temp_H;		// Flag H from temp
-	input Temp_N;		// Flag N from temp
-	input Temp_Z;			// Flag Z from temp
+	output ALU_to_bot;		// ALU Flag Z
+	output ALU_to_Thingy; 		// ALU Carry Out
+	input Temp_C;		// Flag C from temp Z register
+	input Temp_H;		// Flag H from temp Z register
+	input Temp_N;		// Flag N from temp Z register
+	input Temp_Z;			// Flag Z from temp Z register
 	output ALU_Out1;
 	input [7:0] IR;
 	input [5:0] nIR;
@@ -131,6 +131,12 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	bc bc2 ( .nd(azo[7]), .CLK(CLK6), .CCLK(CLK5), .Load(x[29]), .q(bc[2]), .nq(nbc[2]) );
 	bc bc3 ( .nd(azo[12]), .CLK(CLK6), .CCLK(CLK5), .Load(x[29]), .q(bc[3]), .nq(nbc[3]) );
 	ALU_to_bot_FF flag_z ( .d(Temp_Z), .CLK(CLK6), .CCLK(CLK5), .Load(CLK4), .q(ALU_to_bot) );
+
+	// Regarding "bc". I tend to think that even though bc0/bc4 is at the bottom, it is still part of the ALU.
+	// I'll probably move this circuit in my HDL inside the ALU instead of at the bottom. Then wire [5:0] bc; will become output.
+
+	assign bc[0] = (IR[4] & IR[5] & w[21]);
+	assign bc[4] = ALU_to_bot & w[9];
 
 endmodule // ALU
 

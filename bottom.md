@@ -143,7 +143,7 @@ Program access ($FFFE) to the IF in the DMG CPU has been removed.
 
 ![module8_tran](/imgstore/modules/module8_tran.jpg)
 
-It is a regular latch (no edge detection), to store the interrupt flag.
+It is a regular (transparent) latch (no edge detection), to store the interrupt flag.
 
 ### Breadcrumps
 

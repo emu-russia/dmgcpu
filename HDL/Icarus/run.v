@@ -111,7 +111,7 @@ module SM83_Run();
 		repeat (8) @ (posedge CLK);
 		ExternalRESET <= 1'b0;
 
-		repeat (32) @ (posedge CLK);
+		repeat (64) @ (posedge CLK);
 		$finish;
 	end	
 
