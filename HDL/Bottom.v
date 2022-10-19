@@ -1,5 +1,5 @@
 
-module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, ALU_to_bot, ALU_L2, ALU_L1, ALU_L4, BTT, alu, Res, IR, d, w, x, 
+module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, ALU_L2, ALU_L1, ALU_L4, BTT, alu, Res, IR, d, w, x, 
 	SYNC_RES, TTB1, TTB2, TTB3, Maybe1, Thingy_to_bot, bot_to_Thingy, SeqControl_1, SeqControl_2, SeqOut_1,
 	A, CPU_IRQ_ACK, CPU_IRQ_TRIG, RD );
 
@@ -16,7 +16,6 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 	output bq4;
 	output bq5;
 	output bq7;
-	input ALU_to_bot;
 	output ALU_L2;
 	output ALU_L1;
 	output ALU_L4;
@@ -73,10 +72,6 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 
 	BottomLeftLogic bottom_left (
 		.CLK2(CLK2),
-		.ALU_to_bot(ALU_to_bot),
-		.w(w),
-		.IR4(IR[4]),
-		.IR5(IR[5]),
 		.bc(bc),
 		.bq4(bq4),
 		.bq5(bq5),
@@ -206,13 +201,9 @@ module BusPrecharge ( CLK2, DL, abus, bbus, cbus, dbus );
 
 endmodule // BusPrecharge
 
-module BottomLeftLogic ( CLK2, ALU_to_bot, w, IR4, IR5, bc, bq4, bq5, bq7, pq, bbus, DV );
+module BottomLeftLogic ( CLK2, bc, bq4, bq5, bq7, pq, bbus, DV );
 
 	input CLK2;
-	input ALU_to_bot;
-	input [40:0] w;
-	input IR4;
-	input IR5;
 	input [5:0] bc;
 	output bq4;
 	output bq5;

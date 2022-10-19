@@ -3,7 +3,7 @@
 module SM83Core (
 	CLK1, CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, CLK8, CLK9, 
 	LoadIR,
-	Clock_WTF, XCK_Ena, RESET, SYNC_RESET, LongDescr, Unbonded,
+	OSC_STABLE, OSC_ENA, RESET, SYNC_RESET, CLK_ENA, Unbonded,
 	WAKE, RD, WR, Maybe1, MMIO_REQ, IPL_REQ, Maybe2, MREQ,
 	D, A, CPU_IRQ_TRIG, CPU_IRQ_ACK );
 
@@ -21,11 +21,11 @@ module SM83Core (
 
 	output LoadIR; 		// Analog to SYNC signal, which was typically used in old processors (right after the Fetch of the next opcode).
 
-	input Clock_WTF;	// Active-high crystal oscillator stablilized input?
-	output XCK_Ena;		// Crystal oscillator enable. When CPU drives this low, the crystal oscillator gets disabled to save power. This happens during STOP mode.
+	input OSC_STABLE;	// Active-high crystal oscillator stablilized input?  [previously Clock_WTF]
+	output OSC_ENA;		// Crystal oscillator enable. When CPU drives this low, the crystal oscillator gets disabled to save power. This happens during STOP mode. 	[previously XCK_Ena]
 	input RESET;		// Active-high asynchronous reset input. Fed directly from RST input pad.
 	input SYNC_RESET;	// Active-high synchronous reset input. Synchronized to CLK8/CLK9.
-	output LongDescr;
+	output CLK_ENA;		// [previously LongDescr]
 	input Unbonded;		// Directly connected to an input pad at the top of the die, which is not bonded.
 
 	input WAKE;			// Wakes CPU from STOP mode.
@@ -50,12 +50,11 @@ module SM83Core (
 	wire [68:0] x; 			// Decoder3 out
 
 	wire [7:0] DL;			// Current DataLatch value
-	wire [7:0] DV;
+	wire [7:0] DV;			// ALU Operand2
 	wire [7:0] Res;			// ALU Result
-	wire AllZeros;
-	wire ALU_to_bot;
+	wire AllZeros; 			// Res == 0
 	wire [5:0] bc;
-	wire [7:0] alu;
+	wire [7:0] alu; 		// ALU Operand1
 	wire bq4;
 	wire bq5;
 	wire bq7;
@@ -69,14 +68,14 @@ module SM83Core (
 	wire [7:0] IR;			// Current opcode
 	wire [5:0] nIR;				// Inverse IR values are only used for the first 6 bits.
 
-	wire SeqOut_1;
+	wire SeqOut_1; 		// IME? (to interrupt control)
 	wire SeqOut_2;
 	wire SeqOut_3; 		// N.C.
 	wire SeqControl_1;
 	wire SeqControl_2;
 	wire nCLK4;					// It is obtained by inverting CLK4 inside the sequencer.
 
-	wire ALU_to_Thingy;
+	wire ALU_to_Thingy; 		// ALU CarryOut
 	wire bot_to_Thingy;			// IE access detected (Address = 0xffff)
 	wire TTB1;
 	wire TTB2;
@@ -154,7 +153,6 @@ module SM83Core (
 		.bq4(bq4),
 		.bq5(bq5),
 		.bq7(bq7),
-		.ALU_to_bot(ALU_to_bot),
 		.ALU_to_Thingy(ALU_to_Thingy),
 		.Temp_C(ALU_L2),
 		.Temp_H(ALU_L1),
@@ -179,11 +177,11 @@ module SM83Core (
 		.x(x),
 		.ALU_Out1(ALU_Out1), 
 		.Unbonded(Unbonded),
-		.LongDescr(LongDescr),
-		.XCK_Ena(XCK_Ena),
+		.CLK_ENA(CLK_ENA),
+		.OSC_ENA(OSC_ENA),
 		.RESET(RESET),
 		.SYNC_RESET(SYNC_RESET),
-		.Clock_WTF(Clock_WTF),
+		.OSC_STABLE(OSC_STABLE),
 		.WAKE(WAKE),
 		.RD(RD),
 		.Maybe1(Maybe1),
@@ -221,7 +219,6 @@ module SM83Core (
 		.bq4(bq4),
 		.bq5(bq5),
 		.bq7(bq7),
-		.ALU_to_bot(ALU_to_bot),
 		.ALU_L2(ALU_L2),
 		.ALU_L1(ALU_L1),
 		.ALU_L4(ALU_L4),
