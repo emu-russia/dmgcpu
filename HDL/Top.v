@@ -96,7 +96,7 @@ module SM83Core (
 	DataLatch dl (
 		.CLK(CLK2), 
 		.DL_Control1(DL_Control1), 
-		.DL_Control2(x[37]), 
+		.DL_Control2(DL_Control2), 
 		.DataBus(D),
 		.DL(DL), 
 		.Res(Res) );
