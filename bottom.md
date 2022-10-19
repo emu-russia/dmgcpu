@@ -62,11 +62,11 @@ Latch with complementary set enable, complementary CLK.
 
 ## Bottom Left (ALU bc/bq) Logic
 
-Presumably this is the logic of conditional jumps.
-
 The circuit is on the left side in a spread out layout. The picture shows the parts of the circuit for the individual parts.
 
 ![bcbq](/imgstore/modules/bcbq.jpg)
+
+![bcbq_tran](/imgstore/modules/bcbq_tran.jpg)
 
 ## Registers
 
@@ -107,6 +107,18 @@ The value on the temp registers (Z/W) does not come directly from the buses, but
 
 ![cntbit](/imgstore/modules/cntbit.jpg)
 
+Counter bits:
+
+![cntbit_tran](/imgstore/modules/cntbit_tran.jpg)
+
+The bit designs are repeated between the lower part (A0-A7) and the upper part (A8-A15), the only difference being that the lower part is connected to cbus/adl and the upper part to dbus/adh.
+
+Counter carry chain:
+
+![cntbit_carry_chain](/imgstore/modules/cntbit_carry_chain.jpg)
+
+The carry chain is done as a "breadcrumped" layout.
+
 ## Bottom Right (IRQ) Logic
 
 The IRQ logic consists of the following parts:
@@ -141,4 +153,16 @@ I never tire of repeating: dear chip designers - please do not spread the logic 
 - breadcrumped aoi (green): sc2 (Priority encoder)
 - breadcrumped nand-9 (white): A0-A7 + AddrHi -> bot_to_Thingy (Addr = 0xffff)
 - breadcrumped nand-8 (red): A8-A15 (AddrHi)
-- breadcrumped nor-4 (**x3**): bro3, bro4, bro5 (Interrupt address?)
+- breadcrumped nor-4 (**x3**): bro3, bro4, bro5 (Interrupt address)
+
+Logic:
+
+![irq_logic_tran](/imgstore/modules/irq_logic_tran.jpg)
+
+Priority encoder:
+
+![irq_prio_tran](/imgstore/modules/irq_prio_tran.jpg)
+
+Interrupt address:
+
+![irq_address_tran](/imgstore/modules/irq_address_tran.jpg)
