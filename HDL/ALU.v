@@ -1,5 +1,5 @@
 
-module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc, alu, bq4, bq5, bq7, ALU_to_bot, ALU_to_Thingy,
+module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc, alu, bq4, bq5, bq7, ALU_to_Thingy,
 	Temp_C, Temp_H, Temp_N, Temp_Z, ALU_Out1, IR, nIR );
 
 	input CLK2;
@@ -20,7 +20,6 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	input bq4;
 	input bq5;
 	input bq7;
-	output ALU_to_bot;		// ALU Flag Z
 	output ALU_to_Thingy; 		// ALU Carry Out
 	input Temp_C;		// Flag C from temp Z register
 	input Temp_H;		// Flag H from temp Z register
@@ -48,6 +47,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	wire ALU_L0;
 	wire ALU_L3;
 	wire ALU_L5;
+	wire ALU_to_bot;		// ALU Flag Z.  As a result of the optimization and transposition of the `bc` derivation circuit, the signal became internal.
 
 	// Top part (CLA + Sum)
 

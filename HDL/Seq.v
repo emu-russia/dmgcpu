@@ -1,6 +1,6 @@
 
 module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, ALU_Out1, 
-	Unbonded, LongDescr, XCK_Ena, RESET, SYNC_RESET, Clock_WTF, WAKE, RD, Maybe1, MMIO_REQ, IPL_REQ, Maybe2, MREQ,
+	Unbonded, CLK_ENA, OSC_ENA, RESET, SYNC_RESET, OSC_STABLE, WAKE, RD, Maybe1, MMIO_REQ, IPL_REQ, Maybe2, MREQ,
 	SeqControl_1, SeqControl_2, SeqOut_1, SeqOut_2, SeqOut_3 );
 
 	input CLK1;
@@ -19,11 +19,11 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	input ALU_Out1;
 
 	input Unbonded;
-	output LongDescr;		// CLK_ENA
-	output XCK_Ena;			// OSC_ENA
+	output CLK_ENA;			// [previously LongDescr]
+	output OSC_ENA;			// [previously XCK_Ena]
 	input RESET;			// From Reset pad
 	input SYNC_RESET;
-	input Clock_WTF;		// OSC_STABLE
+	input OSC_STABLE;		// [previously Clock_WTF]
 	input WAKE;
 	output RD;
 	input Maybe1;			// aka DL_Control1
@@ -36,7 +36,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	input SeqControl_2;
 	output SeqOut_1;
 	output SeqOut_2;
-	output SeqOut_3;
+	output SeqOut_3;			// GND
 
 	// Automagically generated from seq.xmlz by GetVerilog exe (https://github.com/emu-russia/Deroute/tree/main/UserScripts)
 
@@ -59,7 +59,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	assign w20 = CLK4;
 	assign w22 = w[18];
 	assign w25 = WAKE;
-	assign XCK_Ena = w31;
+	assign OSC_ENA = w31;
 	assign a[0] = w48;
 	assign a[1] = w47;
 	assign a[2] = w49;
@@ -94,7 +94,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	assign w44 = IR[2];
 	assign w45 = IR[1];
 	assign w46 = IR[0];
-	assign LongDescr = w66;
+	assign CLK_ENA = w66;
 	assign w72 = SeqControl_2;
 	assign w112 = SeqControl_1;
 	assign w79 = d[99];
@@ -107,7 +107,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	assign w108 = RESET;
 	assign w111 = CLK2;
 	assign w110 = CLK1;
-	assign w118 = Clock_WTF;
+	assign w118 = OSC_STABLE;
 	assign w132 = d[101];
 	assign w136 = w[40];
 	assign w138 = CLK6;
@@ -363,11 +363,13 @@ endmodule // seq
 
 module seq_shielded ( a, b, c, d, x );
 
-	input wire a;
-	input wire b;	
-	input wire c;
-	input wire d;
-	output wire x;
+	input a;
+	input b;	
+	input c;
+	input d;
+	output x;
+
+	// The cell is so called because it has a Test Point that looks like a shield.
 
 	assign x = d ? ~((~a & c) | ~(a|b)) : 1'b1;
 
@@ -375,10 +377,10 @@ endmodule // seq_shielded
 
 module seq_module3 ( d, clk, cclk, q );
 
-	input wire d;	
-	input wire clk;
-	input wire cclk;
-	output wire q;
+	input d;	
+	input clk;
+	input cclk;
+	output q;
 
 	reg val;
 	initial val <= 1'b0;
@@ -393,8 +395,8 @@ endmodule // seq_module3
 
 module seq_not ( a, x );
 
-	input wire a;
-	output wire x;
+	input a;
+	output x;
 
 	assign x = ~a;
 
@@ -402,10 +404,10 @@ endmodule // seq_not
 
 module seq_nor3 ( a, b, c, x );
 
-	input wire a;
-	input wire b;
-	input wire c;
-	output wire x;
+	input a;
+	input b;
+	input c;
+	output x;
 
 	assign x = ~(a|b|c);
 
@@ -413,9 +415,9 @@ endmodule // seq_nor3
 
 module seq_nor ( a, b, x );
 
-	input wire a;
-	input wire b;
-	output wire x;
+	input a;
+	input b;
+	output x;
 
 	assign x = ~(a|b);
 
@@ -423,11 +425,11 @@ endmodule // seq_nor
 
 module seq_hmm2 ( a0, a1, a2, b, x );
 
-	input wire a0;
-	input wire a1;
-	input wire a2;
-	input wire b;
-	output wire x;
+	input a0;
+	input a1;
+	input a2;
+	input b;
+	output x;
 
 	assign x = ~( (a0&a1&a2) | b);
 
@@ -435,10 +437,10 @@ endmodule // seq_hmm2
 
 module seq_hmm1 ( a0, a1, b, x );
 
-	input wire a0;
-	input wire a1;
-	input wire b;
-	output wire x;
+	input a0;
+	input a1;
+	input b;
+	output x;
 
 	assign x = ~( (a0|a1) & b );
 
@@ -446,10 +448,12 @@ endmodule // seq_hmm1
 
 module seq_iwantsleep ( a0, a1, b, x );
 
-	input wire a0;	
-	input wire a1;
-	input wire b;	
-	output wire x;
+	input a0;	
+	input a1;
+	input b;	
+	output x;
+
+	// The cell is called that because I spent a long time drawing the Sequencer topology, got sleepy, and just had to come up with a name.
 
 	assign x = ~( (a0|a1) & b );
 
@@ -457,9 +461,9 @@ endmodule // seq_iwantsleep
 
 module seq_module4_2 ( nr, s, q );
 
-	input wire nr;
-	input wire s;
-	output wire q;
+	input nr;
+	input s;
+	output q;
 
 	reg val;
 	initial val <= 1'b0;
@@ -477,9 +481,9 @@ endmodule // seq_module4_2
 
 module seq_module4 ( nr, s, q );
 
-	input wire nr;
-	input wire s;
-	output wire q;
+	input nr;
+	input s;
+	output q;
 
 	reg val;
 	initial val <= 1'b0;
@@ -497,13 +501,13 @@ endmodule // seq_module4
 
 module seq_huge1 ( q, d, res, clk, cclk, ld, nld);
 
-	output wire q;
-	input wire d;
-	input wire res;
-	input wire clk;
-	input wire cclk;
-	input wire ld;
-	input wire nld;
+	output q;
+	input d;
+	input res;
+	input clk;
+	input cclk;
+	input ld;
+	input nld;
 
 	reg val;
 	initial val <= 1'b0;
@@ -521,9 +525,9 @@ endmodule // seq_huge1
 
 module seq_nand ( a, b, x );
 	
-	input wire a;
-	input wire b;
-	output wire x;
+	input a;
+	input b;
+	output x;
 
 	assign x = ~(a&b);
 
@@ -531,10 +535,10 @@ endmodule // seq_nand
 
 module seq_aoi_1 ( a0, a1, b, x );
 
-	input wire a0;
-	input wire a1;
-	input wire b;
-	output wire x;
+	input a0;
+	input a1;
+	input b;
+	output x;
 
 	assign x = ~( (a0&a1) | b);
 
@@ -542,10 +546,10 @@ endmodule // seq_aoi_1
 
 module seq_nand3 ( a, b, c, x );
 
-	input wire a;
-	input wire b;
-	input wire c;
-	output wire x;
+	input a;
+	input b;
+	input c;
+	output x;
 
 	assign x = ~(a&b&c);
 
@@ -553,11 +557,11 @@ endmodule // seq_nand3
 
 module seq_nor4 ( a, b, c, d, x );
 
-	input wire a;
-	input wire b;
-	input wire c;
-	input wire d;
-	output wire x;
+	input a;
+	input b;
+	input c;
+	input d;
+	output x;
 
 	assign x = ~(a|b|c|d);
 
@@ -565,10 +569,10 @@ endmodule // seq_nor4
 
 module seq_aoi_2 ( a0, a1, b, x );
 
-	input wire a0;
-	input wire a1;
-	input wire b;
-	output wire x;
+	input a0;
+	input a1;
+	input b;
+	output x;
 
 	assign x = ~( (a0&a1) | b);
 
@@ -576,10 +580,10 @@ endmodule // seq_aoi_2
 
 module seq_hmm3 ( d, clk, cclk, nq );
 
-	input wire d;
-	input wire clk;
-	input wire cclk;
-	output wire nq;
+	input d;
+	input clk;
+	input cclk;
+	output nq;
 
 	reg val;
 	initial val <= 1'b0;
@@ -595,12 +599,12 @@ endmodule // seq_hmm3
 
 module seq_comb5 ( clk, a0, a1, b0, b1, x );
 
-	input wire clk;
-	input wire a0;
-	input wire a1;
-	input wire b0;
-	input wire b1;
-	output wire x;
+	input clk;
+	input a0;
+	input a1;
+	input b0;
+	input b1;
+	output x;
 
 	assign x = clk ? ~( (a0&a1) | (b0&b1) ) : 1'b1;
 
@@ -608,13 +612,13 @@ endmodule // seq_comb5
 
 module seq_comb4 ( clk, a0, a1, b0, b1, c, x );
 
-	input wire clk;
-	input wire a0;
-	input wire a1;
-	input wire b0;
-	input wire b1;
-	input wire c;
-	output wire x;
+	input clk;
+	input a0;
+	input a1;
+	input b0;
+	input b1;
+	input c;
+	output x;
 
 	assign x = clk ? ~( (a0&a1) | (b0&b1) | c) : ~c;
 
