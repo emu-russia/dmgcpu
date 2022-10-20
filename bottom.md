@@ -97,11 +97,23 @@ The value on the temp registers (Z/W) does not come directly from the buses, but
 
 ## SP Register
 
+SP bits differ in that they have an additional complement output (`nq`).
+
 ![x61](/imgstore/modules/x61.jpg)
+
+SP vs Buses:
+
+![x61_tran](/imgstore/modules/x61_tran.jpg)
 
 ## PC Register
 
+The PC bits differ in that they have an additional complement (`nq`) and reset (`SYNC_RES`) output.
+
 ![x68](/imgstore/modules/x68.jpg)
+
+PC vs Buses:
+
+![x68_tran](/imgstore/modules/x68_tran.jpg)
 
 ## Incrementer/Decrementer
 
