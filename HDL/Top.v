@@ -58,10 +58,10 @@ module SM83Core (
 	wire bq4;
 	wire bq5;
 	wire bq7;
-	wire ALU_L2;			// Temp C flag
-	wire ALU_L1; 			// Temp H flag
-	wire ALU_L4;			// Temp N flag
-	wire BTT;				// Temp Z flag
+	wire Temp_C;			// Temp C flag
+	wire Temp_H; 			// Temp H flag
+	wire Temp_N;			// Temp N flag
+	wire Temp_Z;			// Temp Z flag
 	wire ALU_Out1;
 	wire DL_Control1;
 	wire DL_Control2;
@@ -154,10 +154,10 @@ module SM83Core (
 		.bq5(bq5),
 		.bq7(bq7),
 		.ALU_to_Thingy(ALU_to_Thingy),
-		.Temp_C(ALU_L2),
-		.Temp_H(ALU_L1),
-		.Temp_N(ALU_L4),
-		.Temp_Z(BTT),
+		.Temp_C(Temp_C),
+		.Temp_H(Temp_H),
+		.Temp_N(Temp_N),
+		.Temp_Z(Temp_Z),
 		.ALU_Out1(ALU_Out1),
 		.IR(IR),
 		.nIR(nIR) );
@@ -219,10 +219,10 @@ module SM83Core (
 		.bq4(bq4),
 		.bq5(bq5),
 		.bq7(bq7),
-		.ALU_L2(ALU_L2),
-		.ALU_L1(ALU_L1),
-		.ALU_L4(ALU_L4),
-		.BTT(BTT),
+		.Temp_C(Temp_C),
+		.Temp_H(Temp_H),
+		.Temp_N(Temp_N),
+		.Temp_Z(Temp_Z),
 		.alu(alu),
 		.Res(Res),
 		.IR(IR),

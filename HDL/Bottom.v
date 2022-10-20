@@ -1,5 +1,6 @@
+// TBD: Is it necessary to consider negedge for the ld signal when working with registers? I don't think it makes much sense.
 
-module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, ALU_L2, ALU_L1, ALU_L4, BTT, alu, Res, IR, d, w, x, 
+module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, Temp_C, Temp_H, Temp_N, Temp_Z, alu, Res, IR, d, w, x, 
 	SYNC_RES, TTB1, TTB2, TTB3, Maybe1, Thingy_to_bot, bot_to_Thingy, SeqControl_1, SeqControl_2, SeqOut_1,
 	A, CPU_IRQ_ACK, CPU_IRQ_TRIG, RD );
 
@@ -10,36 +11,36 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 	input CLK6;
 	input CLK7; 
 
-	inout [7:0] DL;
-	output [7:0] DV;
+	inout [7:0] DL;			// Internal databus
+	output [7:0] DV;		// ALU Operand2
 	input [5:0] bc;
 	output bq4;
 	output bq5;
 	output bq7;
-	output ALU_L2;
-	output ALU_L1;
-	output ALU_L4;
-	output BTT;
-	output [7:0] alu;
-	input [7:0] Res;
+	output Temp_C;		// Flag C from temp Z register
+	output Temp_H;		// Flag H from temp Z register
+	output Temp_N;		// Flag N from temp Z register
+	output Temp_Z;			// Flag Z from temp Z register
+	output [7:0] alu; 		// ALU Operand1
+	input [7:0] Res;		// ALU Result
 
-	output [7:0] IR;
-	input [106:0] d;
-	input [40:0] w;
-	input [68:0] x;
+	output [7:0] IR;		// Current opcode
+	input [106:0] d;		// Decoder1 output
+	input [40:0] w;			// Decoder2 output
+	input [68:0] x;			// Decoder3 output
 
 	input SYNC_RES;
 	input TTB1;
 	input TTB2;
 	input TTB3;
 	input Maybe1;
-	input Thingy_to_bot;
-	output bot_to_Thingy;
+	input Thingy_to_bot;		// Load a value into the IE register from the DL bus.	
+	output bot_to_Thingy;		// IE access detected (Address = 0xffff)
 	output SeqControl_1;
 	output SeqControl_2;
 	input SeqOut_1;
 
-	output [15:0] A;
+	output [15:0] A;		// External core address bus
 	output [7:0] CPU_IRQ_ACK;
 	input [7:0] CPU_IRQ_TRIG;
 	input RD;
@@ -56,7 +57,7 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 	wire [7:0] wbus;
 	wire [7:0] adl;
 	wire [7:0] adh;
-	wire [7:3] bro; 		// IRQ Logic
+	wire [7:3] bro; 		// IRQ Logic interrupt address
 
 	wire [7:0] Aout;	// Reg A out to bq Logic
 
@@ -106,11 +107,7 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 		.fbus(fbus),
 		.zbus(zbus),
 		.wbus(wbus),
-		.Res(Res),
-		.ALU_L2(ALU_L2),
-		.ALU_L1(ALU_L1),
-		.ALU_L4(ALU_L4),
-		.BTT(BTT) );
+		.Res(Res) );
 
 	SP sp (
 		.CLK5(CLK5),
@@ -122,6 +119,7 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 		.d66(d[66]),
 		.w(w),
 		.x(x),
+		.DL(DL),
 		.abus(abus),
 		.bbus(bbus),
 		.cbus(cbus),
@@ -181,6 +179,11 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, A
 		.A(A) );
 
 	assign alu = ~abus;
+
+	assign Temp_C = zbus[4];
+	assign Temp_H = zbus[5];
+	assign Temp_N = zbus[6];
+	assign Temp_Z = zbus[7];
 
 endmodule // Bottom
 
@@ -271,7 +274,7 @@ module RegsBuses ( CLK5, CLK6, w, x, DL, IR, abus, bbus, cbus, dbus, ebus, fbus,
 
 endmodule // RegsBuses
 
-module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, ebus, fbus, zbus, wbus, Res, ALU_L2, ALU_L1, ALU_L4, BTT );
+module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, ebus, fbus, zbus, wbus, Res );
 
 	input CLK4;
 	input CLK5;
@@ -285,10 +288,6 @@ module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, ebus, fbus, zbus, wbus, 
 	inout [7:0] zbus;
 	inout [7:0] wbus;
 	input [7:0] Res;
-	output ALU_L2; 			// Flag C from temp Z
-	output ALU_L1; 			// Flag H from temp Z
-	output ALU_L4; 			// Flag N from temp Z
-	output BTT; 			// Flag Z from temp Z
 
 	wire [7:0] Z_in;
 	wire [7:0] W_in;
@@ -298,14 +297,9 @@ module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, ebus, fbus, zbus, wbus, 
 
 	// TBD
 
-	assign ALU_L2 = zbus[4];
-	assign ALU_L1 = zbus[5];
-	assign ALU_L4 = zbus[6];
-	assign BTT = zbus[7];
-
 endmodule // TempRegsBuses
 
-module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, abus, bbus, cbus, dbus, zbus, wbus, adl, adh );
+module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, DL, abus, bbus, cbus, dbus, zbus, wbus, adl, adh );
 
 	input CLK5;
 	input CLK6;
@@ -316,6 +310,7 @@ module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, abus, bbus, cbus, dbus, 
 	input d66;
 	input [40:0] w;
 	input [68:0] x;
+	inout [7:0] DL;			// Internal databus
 	inout [7:0] abus;
 	inout [7:0] bbus;
 	inout [7:0] cbus;
@@ -325,7 +320,30 @@ module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, abus, bbus, cbus, dbus, 
 	inout [7:0] adl;
 	inout [7:0] adh;
 
-	// TBD
+	wire [7:0] spl_d;		// SPL input
+	wire [7:0] spl_q;		// SPL output
+	wire [7:0] spl_nq;		// SPL output (complement)
+	wire [7:0] sph_d;		// SPH input
+	wire [7:0] sph_q;		// SPH output 
+	wire [7:0] sph_nq;		// SPH output (complement)
+
+	regbit SPL [7:0] ( .clk(CLK6), .cclk(CLK5), .d(spl_d), .ld(x[61]), .q(spl_q), .nq(spl_nq) );
+	regbit SPH [7:0] ( .clk(CLK6), .cclk(CLK5), .d(sph_d), .ld(x[61]), .q(sph_q), .nq(sph_nq) );
+
+	// SP vs Buses
+
+	assign spl_d = CLK6 ? (~((adl & {8{x[62]}}) | (zbus & {8{x[63]}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
+	assign sph_d = CLK6 ? (~((adh & {8{x[62]}}) | (wbus & {8{x[63]}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
+
+	assign DL = ({8{d60}} & spl_q) ? 8'b00000000 : 8'bzzzzzzzz;
+	assign abus = ({8{w[23]}} & spl_nq) ? 8'b00000000 : 8'bzzzzzzzz;
+	assign bbus = ({8{w[15]}} & {8{IR4}} & {8{IR5}} & spl_nq) ? 8'b00000000 : 8'bzzzzzzzz;
+	assign cbus = ({8{x[65]}} & spl_nq) ? 8'b00000000 : 8'bzzzzzzzz;
+
+	assign DL = ({8{d66}} & sph_q) ? 8'b00000000 : 8'bzzzzzzzz;
+	assign abus = ({8{w[9]}} & sph_nq) ? 8'b00000000 : 8'bzzzzzzzz;
+	assign bbus = ({8{w[19]}} & {8{IR4}} & {8{IR5}} & sph_nq) ? 8'b00000000 : 8'bzzzzzzzz;
+	assign dbus = ({8{x[65]}} & sph_nq) ? 8'b00000000 : 8'bzzzzzzzz;
 
 endmodule // SP
 
@@ -337,7 +355,7 @@ module PC ( CLK5, CLK6, CLK7, d92, w, x, DL, abus, cbus, dbus, zbus, wbus, adl, 
 	input d92;
 	input [40:0] w;
 	input [68:0] x;
-	inout [7:0] DL;
+	inout [7:0] DL;			// Internal databus
 	inout [7:0] abus;
 	inout [7:0] cbus;
 	inout [7:0] dbus;
@@ -345,20 +363,45 @@ module PC ( CLK5, CLK6, CLK7, d92, w, x, DL, abus, cbus, dbus, zbus, wbus, adl, 
 	inout [7:0] wbus;
 	inout [7:0] adl;
 	inout [7:0] adh;
-	input [7:0] IR;
-	input [7:3] bro;
+	input [7:0] IR;			// Current opcode
+	input [7:3] bro;		// Interrupt address
 
-	// TBD
+	wire [7:0] pcl_d;		// PCL input
+	wire [7:0] pcl_q;		// PCL output
+	wire [7:0] pcl_nq;		// PCL output (complement)
+	wire [7:0] pch_d;		// PCH input
+	wire [7:0] pch_q;		// PCH output
+	wire [7:0] pch_nq;		// PCH output (complement)
+
+	regbit PCL [7:0] ( .clk(CLK6), .cclk(CLK5), .d(pcl_d), .ld(x[68]), .q(pcl_q), .nq(pcl_nq) );
+	regbit PCH [7:0] ( .clk(CLK6), .cclk(CLK5), .d(pch_d), .ld(x[68]), .q(pch_q), .nq(pch_nq) );
+
+	// PC vs Buses
+
+	assign pcl_d[2:0] = CLK6 ? (~((adl[2:0] & {3{x[67]}}) | (zbus[2:0] & {3{w[36]}}))) : (CLK7 ? 3'bzzz : 3'b111);
+	assign pcl_d[5:3] = CLK6 ? (~((adl[5:3] & {3{x[67]}}) | (zbus[5:3] & {3{w[36]}}) | ({3{d92}} & IR[5:3]) | bro[5:3])) : (CLK7 ? 3'bzzz : 3'b111);
+	assign pcl_d[7:6] = CLK6 ? (~((adl[7:6] & {2{x[67]}}) | (zbus[7:6] & {2{w[36]}}) | bro[7:6])) : (CLK7 ? 2'bzz : 2'b11);
+	assign pch_d = CLK6 ? (~((adh & {8{x[67]}}) | (wbus & {8{w[36]}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
+
+	assign DL = ({8{w[34]}} & pcl_q) ? 8'b00000000 : 8'bzzzzzzzz;
+	assign cbus = ({8{w[25]}} & pcl_nq) ? 8'b00000000 : 8'bzzzzzzzz;
+	assign abus = ({8{w[8]}} & pcl_nq) ? 8'b00000000 : 8'bzzzzzzzz;
+	assign abus = x[33] ? 8'b00000000 : 8'bzzzzzzzz;
+
+	assign DL = ({8{w[28]}} & pch_q) ? 8'b00000000 : 8'bzzzzzzzz;
+	assign dbus = ({8{w[25]}} & pch_nq) ? 8'b00000000 : 8'bzzzzzzzz;
+	assign dbus = ({8{w[8]}} & pch_nq) ? 8'b00000000 : 8'bzzzzzzzz;
 
 endmodule // PC
 
-module regbit ( clk, cclk, d, ld, q );
+module regbit ( clk, cclk, d, ld, q, nq );
 
 	input clk;
 	input cclk;
 	input d;
 	input ld;
 	output q;
+	output nq;
 
 	// Latch with complementary set enable, complementary CLK.
 
@@ -371,10 +414,11 @@ module regbit ( clk, cclk, d, ld, q );
 	end
 
 	assign q = val;
+	assign nq = ~q;
 
 endmodule // regbit
 
-module regbit_res ( clk, cclk, d, ld, res, q );
+module regbit_res ( clk, cclk, d, ld, res, q, nq );
 
 	input clk;
 	input cclk;
@@ -382,8 +426,22 @@ module regbit_res ( clk, cclk, d, ld, res, q );
 	input ld;
 	input res;
 	output q;
+	output nq;
 
-	// TBD
+	// Latch with complementary set enable, complementary CLK, active-high reset
+
+	reg val;
+	initial val <= 1'b0;
+
+	always @(*) begin
+		if (clk & ld)
+			val <= d;
+		if (res)
+			val <= 1'b0;
+	end
+
+	assign q = val;
+	assign nq = ~q;
 
 endmodule // regbit_res
 
