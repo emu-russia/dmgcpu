@@ -30,9 +30,9 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, T
 	input [68:0] x;			// Decoder3 output
 
 	input SYNC_RES;
-	input TTB1;
-	input TTB2;
-	input TTB3;
+	input TTB1;				// 1: Perform pairwise increment/decrement (simultaneously for two 8-bit IncDec halves)
+	input TTB2;				// 1: Perform increment
+	input TTB3;				// 1: Perform decrement
 	input Maybe1;
 	input Thingy_to_bot;		// Load a value into the IE register from the DL bus.	
 	output bot_to_Thingy;		// IE access detected (Address = 0xffff)

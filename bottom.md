@@ -35,9 +35,9 @@ There are minor differences between the lanes, such places are marked with a :wa
 |w|Decoder2|Decoder2 output|
 |x|Decoder3|Decoder3 output|
 |SYNC_RES|External| |
-|TTB1|Thingy| |
-|TTB2|Thingy| |
-|TTB3|Thingy| |
+|TTB1|Thingy|1: Perform pairwise increment/decrement (simultaneously for two 8-bit IncDec halves)|
+|TTB2|Thingy|1: Perform increment|
+|TTB3|Thingy|1: Perform decrement|
 |Maybe1|External| |
 |Thingy_to_bot|Thingy|Load a value into the IE register from the DL bus|
 |SeqOut_1|Sequencer|See `nso` signal in IRQ Logic|
@@ -159,17 +159,23 @@ PC vs Buses:
 
 ## Incrementer/Decrementer
 
+![IncDec](/logisim/IncDec.png)
+
 ![cntbit](/imgstore/modules/cntbit.jpg)
 
 Counter bits:
 
 ![cntbit_tran](/imgstore/modules/cntbit_tran.jpg)
 
+![IncDec_cntbit](/logisim/IncDec_cntbit.png)
+
 The bit designs are repeated between the lower part (A0-A7) and the upper part (A8-A15), the only difference being that the lower part is connected to cbus/adl and the upper part to dbus/adh.
 
 Counter carry chain:
 
 ![cntbit_carry_chain](/imgstore/modules/cntbit_carry_chain.jpg)
+
+![IncDec_carry_chain](/logisim/IncDec_carry_chain.png)
 
 The carry chain is done as a "breadcrumped" layout.
 
