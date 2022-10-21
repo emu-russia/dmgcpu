@@ -1,7 +1,5 @@
 # Decoder3
 
-Status: A double check of the correctness of the restored trees is required.
-
 ![locator_decoder3](/imgstore/locator_decoder3.png)
 
 The final stage of the decoder, which generates the `x[68:0]` control signals for the lower part and the ALU.

@@ -14,7 +14,7 @@ The core consists of the following main components:
 - The ALU (upper left corner), the flags setting logic and the flags register (most likely there too, but it's not certain)
 - A decoder of three levels. Each level outputs a bunch of signals (`d`, `w`, `x`) with a smaller number at each successive level. The main driving force for all the other parts is the set of `x` signals. Decoders are made as NAND/NOR trees + domino logic.
 - The sequencer occupies the right side and is built on "sort of" standard cells. Actually they are not cells in the usual sense, but "handmade" using standard modules and tweaking them a little bit in some places as required.
-- At the bottom is the branch logic, the registers block, the SP and the PC. Also obviously there is a small circuit for interrupt control and a small but important circuit called the "Thingy".
+- At the bottom is part of DAA logic, the registers block, the SP, the PC and Incrementer/Decrementer. Also obviously there is a small circuit for interrupt control and a small but important circuit called the "Thingy".
 
 ![sm83](/HDL/Design/sm83.png)
 
@@ -37,7 +37,7 @@ by @msinger (Discussion #13)
 On this site we use the following conventions for terminology:
 - Latch is a static memory element that responds to signal level (0/1)
 - DFF is a static memory element which reacts to level change (1->0 aka negedge, 0->1 aka posedge)
-- At the same time "FF" (FlipFlop, no D) - we call 2 elements (usually not or nor) cyclically closed to each other and used as a static memory cell.
+- At the same time "FF" (FlipFlop, no D) - we call 2 elements (usually `not` or `nor`) cyclically closed to each other and used as a static memory cell.
 - DLatch is a dynamic memory element, which is stored on the FET gate. If it is not refreshed periodically, the value "fades away".
 
 You may have heard other definitions on other sites/Wikipedia, but they are different everywhere (depending on the context), so we clearly define them.

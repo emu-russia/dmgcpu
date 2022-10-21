@@ -1,7 +1,5 @@
 # Sequencer
 
-Status: The circuit is fully restored as HDL.
-
 ![locator_seq](/imgstore/locator_seq.png)
 
 ![seq](/imgstore/seq.jpg)

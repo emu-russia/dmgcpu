@@ -24,11 +24,11 @@ Decoder3 outputs.
 
 The bus between the lower part and the DataLatch. Most likely it is actually just an internal data bus (`DB`), but already named as `DL`.
 
-## DV
+## DV - ALU Operand2
 
 The value from the bottom for the DataBridge/ALU.
 
-## alu
+## alu - ALU Operand1
 
 The value from the bottom for the ALU.
 
