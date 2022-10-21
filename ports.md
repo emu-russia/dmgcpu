@@ -16,11 +16,11 @@ By @msinger: http://iceboy.a-singer.de/doc/dmg_cpu_connections.html
 |T8	|I	|unlabeled	|CLK7|BUKE.q	|A gated 1 MiHz clock. The CPU can stop this clock by driving T11 low.|
 |T9	|I	|unlabeled	|CLK8|BOMA.q	|A gated 1 MiHz clock. The CPU can stop this clock by driving T14 low. This is the inverse of T10.|
 |T10	|I	|BOGA1MHZ	|CLK9|BOGA.q	|A gated 1 MiHz clock. The CPU can stop this clock by driving T14 low. This is the inverse of T9.|
-|T11	|O	|CLK_FROM_CPU	|LongDescr|ABOL.in, TUBO.in1	|Edited by org: See Sequencer g49|
+|T11	|O	|CLK_FROM_CPU	|CLK_ENA (LongDescr)|ABOL.in, TUBO.in1	|Edited by org: See Sequencer g49|
 |T12	|I	|unlabeled	|SYNC_RESET|AFER.q	|Active-high synchronous reset input. Synchronized to T9/T10.|
 |T13	|I	|RESET	|RESET|RST (ext. pad)	|Active-high asynchronous reset input. Fed directly from RST input pad.|
-|T14	|O	|CLKIN_A	|XCK_Ena|multiple	|:warning: _NOTE: The label used in the schematics is misleading. This is not a clock;_ nor is it an input! Crystal oscillator enable. When CPU drives this low, the crystal oscillator gets disabled to save power. This happens during STOP mode.|
-|T15	|I	|unlabeled	|Clock_WTF|TABA.q	|Active-high crystal oscillator stablilized input? After reset, this signal gets high after about 32 milliseconds. The CPU must not drive T11 high before T15 gets high. See description of T11.|
+|T14	|O	|CLKIN_A	|OSC_ENA (XCK_Ena)|multiple	|:warning: _NOTE: The label used in the schematics is misleading. This is not a clock;_ nor is it an input! Crystal oscillator enable. When CPU drives this low, the crystal oscillator gets disabled to save power. This happens during STOP mode.|
+|T15	|I	|unlabeled	|OSC_STABLE (Clock_WTF)|TABA.q	|Active-high crystal oscillator stablilized input? After reset, this signal gets high after about 32 milliseconds. The CPU must not drive T11 high before T15 gets high. See description of T11.|
 |T16	|I	|unlabeled	|Unbonded|(ext. pad)	|Directly connected to an input pad at the top of the die, which is not bonded.|
 |R1	|O	|CPU_RAW_RD	|RD|multiple	|Active-high memory RD signal from CPU.|
 |R2	|O	|FROM_CPU3	|WR|multiple	|Active-high memory WR signal from CPU.|
