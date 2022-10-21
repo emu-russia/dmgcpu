@@ -448,25 +448,80 @@ endmodule // regbit_res
 module IncDec ( CLK4, TTB1, TTB2, TTB3, Maybe1, cbus, dbus, adl, adh, AddrBus );
 
 	input CLK4;
-	input TTB1;
-	input TTB2;
-	input TTB3;
+	input TTB1;				// 1: Perform pairwise increment/decrement (simultaneously for two 8-bit IncDec halves)
+	input TTB2;				// 1: Perform increment
+	input TTB3;				// 1: Perform decrement
 	input Maybe1;
-	input [7:0] cbus;
-	input [7:0] dbus;
-	input [7:0] adl;
-	input [7:0] adh;
+	inout [7:0] cbus;
+	inout [7:0] dbus;
+	inout [7:0] adl;
+	inout [7:0] adh;
 	output [15:0] AddrBus;
 
-	// TBD
+	wire [7:0] mq_lo;		// carry_out
+	wire [7:0] mq_hi;
+	wire [7:0] xa_lo;		// carry_in
+	wire [7:0] xa_hi;
+
+	cntbit cnt_lo [7:0] ( .n_val_in(cbus), .cin(xa_lo), .val_out(adl), .cout(mq_lo), .TTB2(TTB2), .TTB3(TTB3) );
+	cntbit cnt_hi [7:0] ( .n_val_in(dbus), .cin(xa_hi), .val_out(adh), .cout(mq_hi), .TTB2(TTB2), .TTB3(TTB3) );
+	cntbit_carry_chain carry_chain ( .CLK4(CLK4), .TTB1(TTB1), .TTB2(TTB2), .TTB3(TTB3), .mq({mq_hi,mq_lo}), .xa({xa_hi,xa_lo}) );
+
+	assign AddrBus = ~Maybe1 ? {xa_hi,xa_lo} : 16'bz;
 
 endmodule // IncDec
 
-module cntbit ();
+module cntbit ( n_val_in, cin, val_out, cout, TTB2, TTB3 );
 
-	// TBD
+	input n_val_in;
+	input cin;
+	output val_out;
+	output cout;
+	input TTB2;
+	input TTB3;
+
+	assign val_out = ~n_val_in ^ cin;
+	assign cout = n_val_in ? TTB3 : TTB2;
 
 endmodule // cntbit
+
+module cntbit_carry_chain ( CLK4, TTB1, TTB2, TTB3, mq, xa );
+
+	input CLK4;
+	input TTB1;
+	input TTB2;
+	input TTB3;
+	input [15:0] mq;
+	output [15:0] xa;
+
+	wire [15:0] nxa;
+	wire ct;
+
+	assign nxa[0] = ~(TTB2 | TTB3);
+
+	assign nxa[1] = CLK4 ? (~(mq[0])) : 1'b1;
+	assign nxa[2] = CLK4 ? (~(mq[0] & mq[1])) : 1'b1;
+	assign nxa[3] = CLK4 ? (~(mq[0] & mq[1] & mq[2])) : 1'b1;
+	assign nxa[4] = CLK4 ? (~(mq[0] & mq[1] & mq[2] & mq[3])) : 1'b1;
+	assign nxa[5] = CLK4 ? (~(mq[0] & mq[1] & mq[2] & mq[3] & mq[4])) : 1'b1;
+	assign nxa[6] = CLK4 ? (~(mq[0] & mq[1] & mq[2] & mq[3] & mq[4] & mq[5])) : 1'b1;
+	assign nxa[7] = CLK4 ? (~(mq[0] & mq[1] & mq[2] & mq[3] & mq[4] & mq[5] & mq[6])) : 1'b1;
+
+	assign ct = (mq[7] & xa[7]) | TTB1;
+	assign nxa[8] = CLK4 ? (~(ct)) : 1'b1;
+	assign nxa[9] = CLK4 ? (~(ct & mq[8])) : 1'b1;
+	assign nxa[10] = CLK4 ? (~(ct & mq[8] & mq[9])) : 1'b1;
+	assign nxa[11] = CLK4 ? (~(ct & mq[8] & mq[9] & mq[10])) : 1'b1;
+	assign nxa[12] = CLK4 ? (~(ct & mq[8] & mq[9] & mq[10] & mq[11])) : 1'b1;
+	assign nxa[13] = CLK4 ? (~(ct & mq[8] & mq[9] & mq[10] & mq[11] & mq[12])) : 1'b1;
+	assign nxa[14] = CLK4 ? (~(ct & mq[8] & mq[9] & mq[10] & mq[11] & mq[12] & mq[13])) : 1'b1;
+	assign nxa[15] = CLK4 ? (~(ct & mq[8] & mq[9] & mq[10] & mq[11] & mq[12] & mq[13] & mq[14])) : 1'b1;
+
+	// The `xa` outputs are connected directly to AddrBus. If CLK4 is not updated long enough, the AddrBus value will be "corrupted".
+
+	assign xa = ~nxa;
+
+endmodule // cntbit_carry_chain
 
 module IRQ_Logic ( CLK3, CLK4, CLK5, CLK6, DL, RD, CPU_IRQ_ACK, CPU_IRQ_TRIG, bro, bot_to_Thingy, Thingy_to_bot, SYNC_RES,
 	SeqControl_1, SeqControl_2, SeqOut_1, d93, A );
