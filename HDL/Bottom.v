@@ -107,7 +107,9 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, T
 		.fbus(fbus),
 		.zbus(zbus),
 		.wbus(wbus),
-		.Res(Res) );
+		.Res(Res),
+		.adl(adl),
+		.adh(adh) );
 
 	SP sp (
 		.CLK5(CLK5),
@@ -268,13 +270,30 @@ module RegsBuses ( CLK5, CLK6, w, x, DL, IR, abus, bbus, cbus, dbus, ebus, fbus,
 	regbit RegC [7:0]( .clk(CLK6), .cclk(CLK5), .d(ebus), .ld(x[51]), .q(r6q) );
 	regbit RegB [7:0]( .clk(CLK6), .cclk(CLK5), .d(fbus), .ld(x[49]), .q(r7q) );
 
-	// TBD
+	assign abus = w[3] ? r1q : 8'bzzzzzzzz;
+	assign bbus = x[35] ? r1q : 8'bzzzzzzzz;
+	assign cbus = x[42] ? r2q : 8'bzzzzzzzz;
+	assign abus = w[15] ? r2q : 8'bzzzzzzzz;
+	assign bbus = x[44] ? r2q : 8'bzzzzzzzz;
+	assign abus = w[19] ? r3q : 8'bzzzzzzzz;
+	assign bbus = x[43] ? r3q : 8'bzzzzzzzz;
+	assign dbus = x[42] ? r3q : 8'bzzzzzzzz;
+	assign cbus = x[45] ? r4q : 8'bzzzzzzzz;
+	assign bbus = x[47] ? r4q : 8'bzzzzzzzz;
+	assign bbus = x[46] ? r5q : 8'bzzzzzzzz;
+	assign dbus = x[45] ? r5q : 8'bzzzzzzzz;
+	assign dbus = w[29] ? 8'b00000000 : 8'bzzzzzzzz;
+	assign dbus = w[17] ? 8'b00000000 : 8'bzzzzzzzz;
+	assign cbus = x[52] ? r6q : 8'bzzzzzzzz;
+	assign bbus = x[54] ? r6q : 8'bzzzzzzzz;
+	assign bbus = x[53] ? r7q : 8'bzzzzzzzz;
+	assign dbus = x[52] ? r7q : 8'bzzzzzzzz;
 
 	assign Aout = r1q;
 
 endmodule // RegsBuses
 
-module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, ebus, fbus, zbus, wbus, Res );
+module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, ebus, fbus, zbus, wbus, Res, adl, adh );
 
 	input CLK4;
 	input CLK5;
@@ -288,14 +307,29 @@ module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, ebus, fbus, zbus, wbus, 
 	inout [7:0] zbus;
 	inout [7:0] wbus;
 	input [7:0] Res;
+	inout [7:0] adl;
+	inout [7:0] adh;
 
 	wire [7:0] Z_in;
 	wire [7:0] W_in;
+	wire d60w8;
 
 	regbit Z [7:0]( .clk(CLK6), .cclk(CLK5), .d(Z_in), .ld(x[60]), .q(zbus) );
 	regbit W [7:0]( .clk(CLK6), .cclk(CLK5), .d(W_in), .ld(x[59]), .q(wbus) );
 
-	// TBD
+	assign abus = w[17] ? zbus : 8'bzzzzzzzz;
+	assign abus = w[1] ? zbus : 8'bzzzzzzzz;
+	assign abus = w[2] ? zbus : 8'bzzzzzzzz;
+	assign abus = x[58] ? zbus : 8'bzzzzzzzz;
+	assign abus = w[2] ? wbus : 8'bzzzzzzzz;
+	assign abus = w[1] ? wbus : 8'bzzzzzzzz;
+
+	assign fbus = ~(CLK4 ? ~(({8{x[55]}}&adh) | ({8{x[56]}}&wbus) | ({8{x[57]}}&Res)) : 8'b11111111);
+	assign ebus = ~(CLK4 ? ~(({8{x[55]}}&adl) | ({8{x[56]}}&zbus) | ({8{x[57]}}&Res)) : 8'b11111111);
+
+	assign d60w8 = ~(d60 | w[8]);
+	assign Z_in = ~(({8{d60}}&adl) | ({8{~d60}}&DL));
+	assign W_in = ~(({8{~d60w8}}&adh) | ({8{d60w8}}&DL));
 
 endmodule // TempRegsBuses
 
