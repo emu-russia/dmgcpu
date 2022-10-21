@@ -131,11 +131,15 @@ Between the registers scattered small logic for issuing their values to the buse
 
 ![regs_buses](/imgstore/modules/regs_buses.jpg)
 
+![regs_buses_tran](/imgstore/modules/regs_buses_tran.jpg)
+
 ## Temp Registers vs Bus Logic
 
 The value on the temp registers (Z/W) does not come directly from the buses, but using logic.
 
 ![gk](/imgstore/modules/gk.jpg)
+
+![gk_tran](/imgstore/modules/gk_tran.jpg)
 
 ## SP Register
 
