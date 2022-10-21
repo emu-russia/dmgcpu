@@ -1,9 +1,5 @@
 # Bottom
 
-:warning: The section is in development.
-
-Status: All topology obtained, circuit research in progress.
-
 ![locator_bottom](/imgstore/locator_bottom.png)
 
 The SM83 processor uses a typical layout from the 70-80's: the "brain" is on top and the registers and ALUs are on the bottom.
@@ -153,7 +149,7 @@ SP vs Buses:
 
 ## PC Register
 
-The PC bits differ in that they have an additional complement (`nq`) and reset (`SYNC_RES`) output.
+The PC bits differ in that they have an additional complement (`nq`) output and reset (`SYNC_RES`) input.
 
 ![x68](/imgstore/modules/x68.jpg)
 
