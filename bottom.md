@@ -22,6 +22,52 @@ The bottom part consists of 8 lanes, according to the number of registers bits. 
 
 There are minor differences between the lanes, such places are marked with a :warning: sign.
 
+## Bottom Inputs
+
+|Signal|From|Description|
+|---|---|---|
+|CLK2|External| |
+|CLK3|External| |
+|CLK4|External| |
+|CLK5|External| |
+|CLK6|External| |
+|CLK7|External| |
+|DL|DataLatch|Internal databus|
+|\[5:0\] bc|ALU| |
+|Res|ALU|ALU Result|
+|d|Decoder1|Decoder1 output|
+|w|Decoder2|Decoder2 output|
+|x|Decoder3|Decoder3 output|
+|SYNC_RES|External| |
+|TTB1|Thingy| |
+|TTB2|Thingy| |
+|TTB3|Thingy| |
+|Maybe1|External| |
+|Thingy_to_bot|Thingy|Load a value into the IE register from the DL bus|
+|SeqOut_1|Sequencer| |
+|CPU_IRQ_TRIG|External| |
+|RD|Sequencer| |
+
+## Bottom Outputs
+
+|Signal|To|Description|
+|---|---|---|
+|DV|ALU|ALU Operand2|
+|bq4|ALU| |
+|bq5|ALU| |
+|bq7|ALU| |
+|Temp_C|ALU|Flag C from temp Z register (zbus\[4\])|
+|Temp_H|ALU|Flag H from temp Z register (zbus\[5\])|
+|Temp_N|ALU|Flag N from temp Z register (zbus\[6\])|
+|Temp_Z|ALU, Thingy|Flag Z from temp Z register (zbus\[7\])|
+|alu|ALU|ALU Operand1|
+|IR|Many|Current opcode|
+|bot_to_Thingy|Thingy|IE access detected (Address = 0xffff)|
+|SeqControl_1|Sequencer| |
+|SeqControl_2|Sequencer| |
+|A|External|External core address bus|
+|CPU_IRQ_ACK|External| |
+
 ## Internal bottom buses
 
 The names of some buses are arbitrary (do not make sense).
