@@ -1,7 +1,5 @@
 # ALU
 
-Status: The circuit is fully restored as HDL.
-
 ![locator_alu](/imgstore/locator_alu.png)
 
 ![alu](/imgstore/alu.jpg)

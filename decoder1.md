@@ -1,9 +1,5 @@
 # Decoder1
 
-:warning: The section is in development.
-
-Status: Find out what are the 5 additional decoder inputs, except the IR value. A double check of the correctness of the restored trees is required.
-
 ![locator_decoder1](/imgstore/locator_decoder1.png)
 
 Decoder1 makes a preliminary decoding of the operation code, which will then be refined in Decoder2.
