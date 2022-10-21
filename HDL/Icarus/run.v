@@ -10,19 +10,12 @@ module SM83_Run();
 	reg ExternalRESET;
 
 	wire LoadIR; 		// T1
-
 	wire OSC_STABLE;		// T15
 	wire OSC_ENA;		// T14
 	wire CLK_ENA;		// T11
 	
-	reg Unbonded;
 	wire RD;
 	wire WR;
-	reg WakeUp;
-	reg Maybe1;
-	reg MmioReq;
-	reg IplReq;
-	reg Maybe2;
 	wire MemReq;
 
 	always #25 CLK = ~CLK;
@@ -39,6 +32,13 @@ module SM83_Run();
 
 	wire ASYNC_RESET;
 	wire SYNC_RESET;
+
+	Bogus_HW hw (
+		.MREQ(MemReq),
+		.RD(RD),
+		.WR(WR),
+		.databus(dbus),
+		.addrbus(abus) );
 
 	// The core requires a rather sophisticated CLK generation circuit.
 
@@ -76,14 +76,14 @@ module SM83_Run();
 		.RESET(ASYNC_RESET),
 		.SYNC_RESET(SYNC_RESET),
 		.CLK_ENA(CLK_ENA),
-		.Unbonded(Unbonded),
-		.WAKE(WakeUp),
+		.Unbonded(1'b0),
+		.WAKE(1'b0),
 		.RD(RD),
 		.WR(WR),
-		.Maybe1(Maybe1),
-		.MMIO_REQ(MmioReq),
-		.IPL_REQ(IplReq),
-		.Maybe2(Maybe2),
+		.Maybe1(1'b0),
+		.MMIO_REQ(1'b0),
+		.IPL_REQ(1'b0),
+		.Maybe2(1'b0),
 		.MREQ(MemReq),
 		.D(dbus),
 		.A(abus),
@@ -96,12 +96,6 @@ module SM83_Run();
 
 		ExternalRESET <= 1'b0;
 		CLK <= 1'b0;
-		Unbonded <= 1'b0;
-		WakeUp <= 1'b0;
-		Maybe1 <= 1'b0;
-		MmioReq <= 1'b0;
-		IplReq <= 1'b0;
-		Maybe2 <= 1'b0;
 
 		$dumpfile("dmg_waves.vcd");
 		$dumpvars(0, dmgcore);
@@ -115,3 +109,15 @@ module SM83_Run();
 	end	
 
 endmodule // SM83_Run
+
+module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
+
+	input MREQ;
+	input RD;
+	input WR;
+	inout [7:0] databus;
+	input [15:0] addrbus;
+
+	assign databus = (MREQ & RD) ? 8'b00000000 : 8'bzzzzzzzz;
+
+endmodule // Bogus_HW
