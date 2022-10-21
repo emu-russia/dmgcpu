@@ -40,7 +40,7 @@ There are minor differences between the lanes, such places are marked with a :wa
 |TTB3|Thingy| |
 |Maybe1|External| |
 |Thingy_to_bot|Thingy|Load a value into the IE register from the DL bus|
-|SeqOut_1|Sequencer| |
+|SeqOut_1|Sequencer|See `nso` signal in IRQ Logic|
 |CPU_IRQ_TRIG|External| |
 |RD|Sequencer| |
 
