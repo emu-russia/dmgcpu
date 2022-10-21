@@ -6,7 +6,6 @@ module SM83_Run();
 	reg CLK;
 	wire [7:0] dbus;
 	wire [15:0] abus;
-	reg [7:0] irq_trig;
 	wire [7:0] irq_ack;
 	reg ExternalRESET;
 
@@ -88,7 +87,7 @@ module SM83_Run();
 		.MREQ(MemReq),
 		.D(dbus),
 		.A(abus),
-		.CPU_IRQ_TRIG(irq_trig),
+		.CPU_IRQ_TRIG({8{1'b0}}),
 		.CPU_IRQ_ACK(irq_ack) );
 
 	initial begin
