@@ -31,10 +31,10 @@ See: https://www.youtube.com/watch?v=WItAXzrfPrE&list=PLBDB2c4Mp7hBLRcEpE19yyHB-
 |bq4|Bottom Left| |
 |bq5|Bottom Left| |
 |bq7|Bottom Left| |
-|ALU_L2|Bottom|Flag C from temp Z register|
-|ALU_L1|Bottom|Flag H from temp Z register|
-|ALU_L4|Bottom|Flag N from temp Z register|
-|BTT|Bottom|Flag Z from temp Z register|
+|TempC|Bottom|Flag C from temp Z register (zbus\[4\])|
+|TempH|Bottom|Flag H from temp Z register (zbus\[5\])|
+|TempN|Bottom|Flag N from temp Z register (zbus\[6\])|
+|TempZ|Bottom|Flag Z from temp Z register (zbus\[7\])|
 |IR\[7:0\]|IR|Current opcode|
 |nIR\[5:0\]|MightySix|Current opcode (complement)|
 
@@ -128,18 +128,18 @@ Large Comb 1 (_14 NAND trees_):
 |Tree|CLK|Issued as|Paths|
 |---|---|---|---|
 |alu_0|CLK2|e0|{alu0}<br/>{w24,nIR3,nIR4,nIR5}<br/>{w10,IR5}<br/>{w10,IR4}<br/>{w10,IR3}|
-|alu_1|CLK6|bc5|{nIR0,w37,ALU_L5}<br/>{x10,ALU_L5}<br/>{ALU_L3,x12}<br/>{w12}<br/>{x26}<br/>{x19}<br/>{ALU_L1,d58}|
-|alu_2|CLK6|bc1|{f0,x1}<br/>{ALU_L2,d58}<br/>{nbc1,IR3,x21}<br/>{x21,nIR3}<br/>{x10,ALU_to_Thingy}<br/>{nbc2,ALU_to_Thingy,x22}<br/>{bc1,x22}<br/>{bc1,x26}<br/>{x0,f7}</br>{ALU_L0,x11}|
+|alu_1|CLK6|bc5|{nIR0,w37,ALU_L5}<br/>{x10,ALU_L5}<br/>{ALU_L3,x12}<br/>{w12}<br/>{x26}<br/>{x19}<br/>{Temp_H,d58}|
+|alu_2|CLK6|bc1|{f0,x1}<br/>{Temp_C,d58}<br/>{nbc1,IR3,x21}<br/>{x21,nIR3}<br/>{x10,ALU_to_Thingy}<br/>{nbc2,ALU_to_Thingy,x22}<br/>{bc1,x22}<br/>{bc1,x26}<br/>{x0,f7}</br>{ALU_L0,x11}|
 |alu_3|CLK2|e1|{alu1}<br/>{w24,IR3,nIR4,nIR5}<br/>{w10,IR5}<br/>{w10,IR4}<br/>{w10,nIR3}<br/>{x22,bc5}<br/>{x22,nbc2,bq4}|
 |alu_4|CLK2|e2|{alu2}<br/>{x22,bq4,nbc2}<br/>{x22,bc5,nbc2}<br/>{w24,nIR3,IR4,nIR5}<br/>{w10,IR5}<br/>{w10,nIR4}<br/>{w10,IR3}|
 |alu_5|CLK2|e3|{alu3}<br/>{w24,IR3,IR4,nIR5}<br/>{w10,nIR3}<br/>{w10,nIR4}<br/>{w10,IR5}<br/>{x22,bc5,bc2}|
 |alu_6|CLK2|e4|{alu4}<br/>{x22,bc5,bc2}<br/>{w24,nIR3,nIR4,IR5}<br/>{w10,IR3}<br/>{w10,IR4}<br/>{w10,nIR5}|
-|alu_7|CLK6|bc2|{bc2,x22}<br/>{x12}<br/>{x26}<br/>{d58,ALU_L4}|
+|alu_7|CLK6|bc2|{bc2,x22}<br/>{x12}<br/>{x26}<br/>{d58,Temp_N}|
 |alu_8|CLK2|e5|{alu5}<br/>{w24,IR3,nIR4,IR5}<br/>{w10,nIR3}<br/>{w10,IR4}<br/>{w10,nIR5}<br/>{x22,nbc5,bc1,bc2}<br/>{x22,bc5,nbc1,bc2}<br/>{x22,bq5,nbc2}<br/>{x22,bc1,nbc2}<br/>{x22,bq7,bq4,nbc2}|
 |alu_9|CLK2|e6|{alu6}<br/>{w24,nIR3,IR4,IR5}<br/>{w10,IR3}<br/>{w10,nIR4}<br/>{w10,nIR5}<br/>{x22,bc5,nbc1,bc2}<br/>{x22,bq7,bq4,nbc2}<br/>{x22,bc1,nbc2}<br/>{x22,bq5,nbc2}|
 |alu_10|CLK2|e7|{alu7}<br/>{w24,IR3,IR4,IR5}<br/>{w10,nIR3}<br/>{w10,nIR4}<br/>{w10,nIR5}<br/>{x22,bc5,bc2}<br/>{x22,bc1,bc2}|
 |alu_11|CLK6|ALU_Out1|{w0,nIR3,IR4,bc1}<br/>{w0,IR3,IR4,nbc1}<br/>{w0,IR3,nIR4,nbc3}<br/>{w0,nIR3,nIR4,bc3}|
-|alu_12|CLK6|bc3|{f0,w12,nIR3,nIR4,nIR5}<br/>{f1,w12,IR3,nIR4,nIR5}<br/>{f2,w12,nIR3,IR4,nIR5}<br/>{f3,w12,IR3,IR4,nIR5}<br/>{f4,w12,nIR3,nIR4,IR5}<br/>{f5,w12,IR3,nIR4,IR5}<br/>{f6,w12,nIR3,IR4,IR5}<br/>{f7,w12,IR3,IR4,IR5}<br/>{d42,AllZeros}<br/>{w3,AllZeros}<br/>{w37,AllZeros}<br/>{x22,AllZeros}<br/>{BTT,d58}<br/>{bc3,w19}<br/>{bc3,x21}<br/>{bc3,w15}<br/>{bc3,x26}|
+|alu_12|CLK6|bc3|{f0,w12,nIR3,nIR4,nIR5}<br/>{f1,w12,IR3,nIR4,nIR5}<br/>{f2,w12,nIR3,IR4,nIR5}<br/>{f3,w12,IR3,IR4,nIR5}<br/>{f4,w12,nIR3,nIR4,IR5}<br/>{f5,w12,IR3,nIR4,IR5}<br/>{f6,w12,nIR3,IR4,IR5}<br/>{f7,w12,IR3,IR4,IR5}<br/>{d42,AllZeros}<br/>{w3,AllZeros}<br/>{w37,AllZeros}<br/>{x22,AllZeros}<br/>{Temp_Z,d58}<br/>{bc3,w19}<br/>{bc3,x21}<br/>{bc3,w15}<br/>{bc3,x26}|
 |alu_13|CLK2|ALU_to_top ("Carry In")|{w37,nIR0}<br/>{x27}<br/>{w9,bc1}<br/>{nbc1,x24}<br/>{nIR3,x24}<br/>{bc1,w19}<br/>{IR3,x23}|
 
 The result is an AND-to-NOR tree (using alu_0 as an example):
@@ -170,4 +170,4 @@ Regular memory cell (latch) with write enable (x28/x29). It also contains a Prec
 
 ![ALU_to_bot_tran](/imgstore/modules/ALU_to_bot_tran.jpg)
 
-A regular memory cell (latch), for storing the `BTT` signal. The signal CLK4 acts as WriteEnable.
+A regular memory cell (latch), for storing the `TempZ` signal. The signal CLK4 acts as WriteEnable.
