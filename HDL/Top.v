@@ -199,7 +199,7 @@ module SM83Core (
 		.w(w),
 		.ALU_to_Thingy(ALU_to_Thingy),
 		.WR(WR),
-		.BTT(BTT),
+		.Temp_Z(Temp_Z),
 		.TTB1(TTB1),
 		.TTB2(TTB2),
 		.TTB3(TTB3),
