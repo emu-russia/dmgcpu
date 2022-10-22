@@ -7,11 +7,14 @@ module TestRegbit();
 
 	wire q1;
 	wire q2;
+	wire [7:0] full_q;
 
 	reg reg_d;
+	reg [7:0] regFull_d;
 	reg Load;
 
 	regbit reg1 ( .clk(CLK), .cclk(~CLK), .d(reg_d), .ld(Load), .q(q1) );
+	regbit regFull [7:0] ( .clk(CLK), .cclk(~CLK), .d(regFull_d), .ld(Load), .q(full_q) );
 	Fair_regbit reg2 ( .clk(CLK), .cclk(~CLK), .d(reg_d), .ld(Load), .q(q2) );
 
 	always @(posedge CLK) begin
@@ -26,16 +29,20 @@ module TestRegbit();
 		$dumpfile("TestRegbit.vcd");
 		$dumpvars(0, reg1);
 		$dumpvars(1, reg2);
+		$dumpvars(2, regFull[0].d);
+		$dumpvars(3, regFull[0].q);
 
 		// Keep
 
 		reg_d <= 0;
+		regFull_d <= 0;
 		Load <= 0;
 		repeat (2) @ (posedge CLK);
 
 		// Load 1
 
 		reg_d <= 1;
+		regFull_d <= 8'haa;
 		Load <= 1;
 		repeat (1) @ (posedge CLK);
 		Load <= 0;
@@ -44,6 +51,7 @@ module TestRegbit();
 		// Load 0
 
 		reg_d <= 0;
+		regFull_d <= 8'h55;
 		Load <= 1;
 		repeat (1) @ (posedge CLK);
 		Load <= 0;

@@ -197,11 +197,11 @@ module BusPrecharge ( CLK2, DL, abus, bbus, cbus, dbus );
 	inout [7:0] cbus;
 	inout [7:0] dbus;
 
-	assign DL = CLK2 ? 8'bz : 8'b1;
-	assign abus = CLK2 ? 8'bz : 8'b1;
-	assign bbus = CLK2 ? 8'bz : 8'b1;
-	assign cbus = CLK2 ? 8'bz : 8'b1;
-	assign dbus = CLK2 ? 8'bz : 8'b1;
+	assign DL = CLK2 ? 8'bzzzzzzzz : 8'b11111111;
+	assign abus = CLK2 ? 8'bzzzzzzzz : 8'b11111111;
+	assign bbus = CLK2 ? 8'bzzzzzzzz : 8'b11111111;
+	assign cbus = CLK2 ? 8'bzzzzzzzz : 8'b11111111;
+	assign dbus = CLK2 ? 8'bzzzzzzzz : 8'b11111111;
 
 endmodule // BusPrecharge
 
@@ -259,15 +259,15 @@ module RegsBuses ( CLK5, CLK6, w, x, DL, IR, abus, bbus, cbus, dbus, ebus, fbus,
 	wire [7:0] r6q;		// C
 	wire [7:0] r7q;		// B
 
-	regbit RegIR [7:0] ( .clk(CLK6), .cclk(CLK5), .d(DL), .ld(w[26]), .q(IR) );
+	regbit RegIR [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(DL), .ld({8{w[26]}}), .q(IR) );
 
-	regbit RegA [7:0]( .clk(CLK6), .cclk(CLK5), .d(fbus), .ld(x[38]), .q(r1q) );
-	regbit RegL [7:0]( .clk(CLK6), .cclk(CLK5), .d(ebus), .ld(x[40]), .q(r2q) );
-	regbit RegH [7:0]( .clk(CLK6), .cclk(CLK5), .d(fbus), .ld(x[39]), .q(r3q) );
-	regbit RegE [7:0]( .clk(CLK6), .cclk(CLK5), .d(ebus), .ld(x[50]), .q(r4q) );
-	regbit RegD [7:0]( .clk(CLK6), .cclk(CLK5), .d(fbus), .ld(x[48]), .q(r5q) );
-	regbit RegC [7:0]( .clk(CLK6), .cclk(CLK5), .d(ebus), .ld(x[51]), .q(r6q) );
-	regbit RegB [7:0]( .clk(CLK6), .cclk(CLK5), .d(fbus), .ld(x[49]), .q(r7q) );
+	regbit RegA [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(fbus), .ld({8{x[38]}}), .q(r1q) );
+	regbit RegL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(ebus), .ld({8{x[40]}}), .q(r2q) );
+	regbit RegH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(fbus), .ld({8{x[39]}}), .q(r3q) );
+	regbit RegE [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(ebus), .ld({8{x[50]}}), .q(r4q) );
+	regbit RegD [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(fbus), .ld({8{x[48]}}), .q(r5q) );
+	regbit RegC [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(ebus), .ld({8{x[51]}}), .q(r6q) );
+	regbit RegB [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(fbus), .ld({8{x[49]}}), .q(r7q) );
 
 	assign abus = w[3] ? r1q : 8'bzzzzzzzz;
 	assign bbus = x[35] ? r1q : 8'bzzzzzzzz;
@@ -313,8 +313,8 @@ module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, ebus, fbus, zbus, wbus, 
 	wire [7:0] W_in;
 	wire d60w8;
 
-	regbit Z [7:0]( .clk(CLK6), .cclk(CLK5), .d(Z_in), .ld(x[60]), .q(zbus) );
-	regbit W [7:0]( .clk(CLK6), .cclk(CLK5), .d(W_in), .ld(x[59]), .q(wbus) );
+	regbit Z [7:0]( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(Z_in), .ld({8{x[60]}}), .q(zbus) );
+	regbit W [7:0]( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(W_in), .ld({8{x[59]}}), .q(wbus) );
 
 	assign abus = w[17] ? zbus : 8'bzzzzzzzz;
 	assign abus = w[1] ? zbus : 8'bzzzzzzzz;
@@ -360,8 +360,8 @@ module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, DL, abus, bbus, cbus, db
 	wire [7:0] sph_q;		// SPH output 
 	wire [7:0] sph_nq;		// SPH output (complement)
 
-	regbit SPL [7:0] ( .clk(CLK6), .cclk(CLK5), .d(spl_d), .ld(x[61]), .q(spl_q), .nq(spl_nq) );
-	regbit SPH [7:0] ( .clk(CLK6), .cclk(CLK5), .d(sph_d), .ld(x[61]), .q(sph_q), .nq(sph_nq) );
+	regbit SPL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(spl_d), .ld({8{x[61]}}), .q(spl_q), .nq(spl_nq) );
+	regbit SPH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(sph_d), .ld({8{x[61]}}), .q(sph_q), .nq(sph_nq) );
 
 	// SP vs Buses
 
@@ -406,8 +406,8 @@ module PC ( CLK5, CLK6, CLK7, d92, w, x, DL, abus, cbus, dbus, zbus, wbus, adl, 
 	wire [7:0] pch_q;		// PCH output
 	wire [7:0] pch_nq;		// PCH output (complement)
 
-	regbit PCL [7:0] ( .clk(CLK6), .cclk(CLK5), .d(pcl_d), .ld(x[68]), .q(pcl_q), .nq(pcl_nq) );
-	regbit PCH [7:0] ( .clk(CLK6), .cclk(CLK5), .d(pch_d), .ld(x[68]), .q(pch_q), .nq(pch_nq) );
+	regbit PCL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(pcl_d), .ld({8{x[68]}}), .q(pcl_q), .nq(pcl_nq) );
+	regbit PCH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(pch_d), .ld({8{x[68]}}), .q(pch_q), .nq(pch_nq) );
 
 	// PC vs Buses
 
@@ -508,8 +508,8 @@ module IncDec ( CLK4, TTB1, TTB2, TTB3, Maybe1, cbus, dbus, adl, adh, AddrBus );
 	wire [7:0] xa_lo;		// carry_in
 	wire [7:0] xa_hi;
 
-	cntbit cnt_lo [7:0] ( .n_val_in(cbus), .cin(xa_lo), .val_out(adl), .cout(mq_lo), .TTB2(TTB2), .TTB3(TTB3) );
-	cntbit cnt_hi [7:0] ( .n_val_in(dbus), .cin(xa_hi), .val_out(adh), .cout(mq_hi), .TTB2(TTB2), .TTB3(TTB3) );
+	cntbit cnt_lo [7:0] ( .n_val_in(cbus), .cin(xa_lo), .val_out(adl), .cout(mq_lo), .TTB2({8{TTB2}}), .TTB3({8{TTB3}}) );
+	cntbit cnt_hi [7:0] ( .n_val_in(dbus), .cin(xa_hi), .val_out(adh), .cout(mq_hi), .TTB2({8{TTB2}}), .TTB3({8{TTB3}}) );
 	cntbit_carry_chain carry_chain ( .CLK4(CLK4), .TTB1(TTB1), .TTB2(TTB2), .TTB3(TTB3), .mq({mq_hi,mq_lo}), .xa({xa_hi,xa_lo}) );
 
 	assign AddrBus = ~Maybe1 ? {xa_hi,xa_lo} : 16'bz;
@@ -601,8 +601,8 @@ module IRQ_Logic ( CLK3, CLK4, CLK5, CLK6, DL, RD, CPU_IRQ_ACK, CPU_IRQ_TRIG, br
 	wire [7:0] ack; 	// Acknowledged
 
 	// IE/IF
-	module7 IE [7:0] ( .clk(CLK6), .cclk(CLK5), .d(DL), .ld(Thingy_to_bot), .res(SYNC_RES), .q(ieq), .nq(ienq) );
-	module8 IF [7:0] ( .clk(CLK3), .cclk(CLK4), .d(~(ienq&CPU_IRQ_TRIG)), .q(ifq), .nq(ifnq) );
+	module7 IE [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(DL), .ld({8{Thingy_to_bot}}), .res({8{SYNC_RES}}), .q(ieq), .nq(ienq) );
+	module8 IF [7:0] ( .clk({8{CLK3}}), .cclk({8{CLK4}}), .d(~(ienq&CPU_IRQ_TRIG)), .q(ifq), .nq(ifnq) );
 	assign DL = ({8{RD}} & {8{bot_to_Thingy}} & ieq) ? 8'b0 : 8'bz; 	// znand3.
 
 	// Breadcrumps
