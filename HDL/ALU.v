@@ -307,15 +307,21 @@ module bc ( nd, CLK, CCLK, Load, q, nq );
 	output q;
 	output nq;
 
-	reg reg_val;
-	initial reg_val <= 1'b0;
+	reg val_in;
+	reg val_out;
+	initial val_in <= 1'b0;
+	initial val_out <= 1'b0;
 
-	always @(negedge Load) begin
-		if (CLK)
-			reg_val <= ~nd;
+	always @(*) begin
+		if (CLK && Load)
+			val_in <= ~nd;
 	end
 
-	assign q = reg_val;
+	always @(negedge Load) begin
+		val_out <= val_in;
+	end
+
+	assign q = val_out;
 	assign nq = ~q;
 
 endmodule // bc
@@ -328,14 +334,20 @@ module ALU_to_bot_FF ( d, CLK, CCLK, Load, q );
 	input Load; 
 	output q;
 
-	reg reg_val;
-	initial reg_val <= 1'b0;
+	reg val_in;
+	reg val_out;
+	initial val_in <= 1'b0;
+	initial val_out <= 1'b0;
 
-	always @(negedge Load) begin
-		if (CLK)
-			reg_val <= d;
+	always @(*) begin
+		if (CLK && Load)
+			val_in <= d;
 	end
 
-	assign q = reg_val;
+	always @(negedge Load) begin
+		val_out <= val_in;
+	end
+
+	assign q = val_out;
 
 endmodule // ALU_to_bot_FF
