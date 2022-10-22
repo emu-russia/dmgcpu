@@ -3,7 +3,7 @@
 module SM83Core (
 	CLK1, CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, CLK8, CLK9, 
 	LoadIR,
-	OSC_STABLE, OSC_ENA, RESET, SYNC_RESET, CLK_ENA, Unbonded,
+	OSC_STABLE, OSC_ENA, RESET, SYNC_RESET, CLK_ENA, NMI,
 	WAKE, RD, WR, Maybe1, MMIO_REQ, IPL_REQ, Maybe2, MREQ,
 	D, A, CPU_IRQ_TRIG, CPU_IRQ_ACK );
 
@@ -26,7 +26,7 @@ module SM83Core (
 	input RESET;		// Active-high asynchronous reset input. Fed directly from RST input pad.
 	input SYNC_RESET;	// Active-high synchronous reset input. Synchronized to CLK8/CLK9.
 	output CLK_ENA;		// [previously LongDescr]
-	input Unbonded;		// Directly connected to an input pad at the top of the die, which is not bonded.
+	input NMI;			// Directly connected to an input pad at the top of the die, which is not bonded.  [previously Unbonded]
 
 	input WAKE;			// Wakes CPU from STOP mode.
 	output RD;
@@ -175,7 +175,7 @@ module SM83Core (
 		.w(w),
 		.x(x),
 		.ALU_Out1(ALU_Out1), 
-		.Unbonded(Unbonded),
+		.NMI(NMI),
 		.CLK_ENA(CLK_ENA),
 		.OSC_ENA(OSC_ENA),
 		.RESET(RESET),

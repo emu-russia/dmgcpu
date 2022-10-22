@@ -1,7 +1,7 @@
 `timescale 1ns/1ns
 
 module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, ALU_Out1, 
-	Unbonded, CLK_ENA, OSC_ENA, RESET, SYNC_RESET, OSC_STABLE, WAKE, RD, Maybe1, MMIO_REQ, IPL_REQ, Maybe2, MREQ,
+	NMI, CLK_ENA, OSC_ENA, RESET, SYNC_RESET, OSC_STABLE, WAKE, RD, Maybe1, MMIO_REQ, IPL_REQ, Maybe2, MREQ,
 	SeqControl_1, SeqControl_2, SeqOut_1, SeqOut_2, SeqOut_3 );
 
 	input CLK1;
@@ -19,7 +19,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	input [68:0] x;
 	input ALU_Out1;
 
-	input Unbonded;
+	input NMI;				// [previously Unbonded]
 	output CLK_ENA;			// [previously LongDescr]
 	output OSC_ENA;			// [previously XCK_Ena]
 	input RESET;			// From Reset pad
@@ -188,7 +188,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	assign w1 = d[102];
 	assign w2 = w[26];
 	assign w4 = x[41];
-	assign w38 = Unbonded;
+	assign w38 = NMI;
 	assign w10 = Maybe1;
 	assign w34 = MMIO_REQ;
 	assign w35 = IPL_REQ;

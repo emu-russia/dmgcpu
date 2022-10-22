@@ -76,7 +76,7 @@ module SM83_Run();
 		.RESET(ASYNC_RESET),
 		.SYNC_RESET(SYNC_RESET),
 		.CLK_ENA(CLK_ENA),
-		.Unbonded(1'b0),
+		.NMI(1'b0),
 		.WAKE(1'b0),
 		.RD(RD),
 		.WR(WR),
