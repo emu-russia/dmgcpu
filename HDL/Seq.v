@@ -478,8 +478,6 @@ module seq_module4_2 ( nr, s, q );
 			val <= 1'b0;
 		else if (s)
 			val <= 1'b1;
-		else
-			val <= val;
 	end
 
 	assign q = val;
@@ -502,8 +500,6 @@ module seq_module4 ( nr, s, q );
 			val <= 1'b0;
 		else if (s)
 			val <= 1'b1;
-		else
-			val <= val;
 	end
 
 	assign q = val;
