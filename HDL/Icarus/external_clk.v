@@ -1,5 +1,7 @@
 // Based on https://github.com/msinger/dmg-schematics
 
+`timescale 1ns/1ns
+
 module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, INC_CLK_N, INC_CLK_P, LATCH_CLK, MAIN_CLK_N, MAIN_CLK_P, CLK_ENA, OSC_ENA, OSC_STABLE, ASYNC_RESET, SYNC_RESET );
 
 	input CLK;
@@ -67,8 +69,9 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 
 	wire DATA_VALID;
 	assign DATA_VALID = (BALY_out & CLK_ENA);
-	assign ADR_CLK_P = DATA_VALID;
-	assign ADR_CLK_N = ~DATA_VALID;
+	// The ADR has 2 additional inverters, which increases the propagation delay, relative to the MAIN.
+	assign #2 ADR_CLK_P = DATA_VALID;
+	assign #2 ADR_CLK_N = ~DATA_VALID;
 
 	assign MAIN_CLK_P = ~BALY_out;
 	assign MAIN_CLK_N = ~MAIN_CLK_P;
