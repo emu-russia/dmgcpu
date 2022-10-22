@@ -19,6 +19,8 @@ DataLatch consists of 8 such chunks:
 
 ![module1_tran](/imgstore/modules/module1_tran.jpg)
 
+![DataLatch](/logisim/DataLatch.png)
+
 |Port|Dir|Description|
 |---|---|---|
 |a|input|DL_Control1|

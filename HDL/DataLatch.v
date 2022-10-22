@@ -10,37 +10,51 @@ module DataLatch ( CLK, DL_Control1, DL_Control2, DataBus, DL, Res );
 
 	module1 DL_Bits [7:0] (
 		.clk(CLK), 
-		.a(DL_Control1), 
-		.b(DL_Control2), 
-		.c(Res), 
-		.x(DL), 
-		.Dat(DataBus) );
+		.Test1(DL_Control1), 
+		.Res_to_DL(DL_Control2), 
+		.Res(Res), 
+		.Int_bus(DL), 
+		.Ext_bus(DataBus) );
 
 endmodule // DataLatch
 
-module module1 ( clk, a, b, c, x, Dat );
+module module1 ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus );
 	
 	input clk; 
-	input a; 
-	input b; 
-	input c; 
-	inout x;
-	inout Dat;
+	input Test1;
+	input Res_to_DL;
+	input Res;
+	inout Int_bus; 	// DL[n] (internal databus)
+	inout Ext_bus; 	// D[n] (external databus)
 
-	// TBD: WTF is here??!!!11
+	wire int_to_ext_q;
+	wire ext_to_int_q;
 
-	reg x_val;
-	reg Dat_val;
+	Transp_DLatch int_to_ext ( .d(Int_bus), .q(int_to_ext_q) );
+	Transp_DLatch ext_to_int ( .d(Ext_bus), .q(ext_to_int_q) );
 
-	initial x_val <= 1'b0;
-	initial Dat_val <= 1'b0;
-
-	assign Dat = ~(a | x_val) ? 1'b0 : (a | clk ? 1'bz : 1'b1);
-	assign x = (clk ? ~(clk & ~(a | Dat_val)) : 1'b1) & ~(b & ~c);
-
-	always @(*) begin
-		x_val <= x;
-		Dat_val <= Dat;
-	end
+	assign Ext_bus = ~(Test1 | ext_to_int_q) ? 1'b0 : ((Test1 | clk) ? 1'bz : 1'b1);
+	assign Int_bus = clk ? (~((~(Test1 | ext_to_int_q)) | (~Res & Res_to_DL))) : ~(~Res & Res_to_DL);
 
 endmodule // module1
+
+module Transp_DLatch (d, q);
+
+	input d;
+	output q;
+
+	reg val;
+	initial val <= 1'b0;
+
+	always @(*) begin
+		if (d == 1'b1)
+			val <= 1'b1;
+		if (d == 1'b0)
+			val <= 1'b0;
+		if (d == 1'bz)
+			val <= val;
+	end
+
+	assign q = val;
+
+endmodule // Transp_DLatch
