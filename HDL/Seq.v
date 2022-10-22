@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 
 module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, ALU_Out1, 
 	Unbonded, CLK_ENA, OSC_ENA, RESET, SYNC_RESET, OSC_STABLE, WAKE, RD, Maybe1, MMIO_REQ, IPL_REQ, Maybe2, MREQ,

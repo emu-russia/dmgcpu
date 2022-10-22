@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 
 module Thingy ( w, ALU_to_Thingy, WR, Temp_Z, TTB1, TTB2, TTB3, Thingy_to_bot, bot_to_Thingy );
 
