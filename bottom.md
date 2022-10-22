@@ -102,6 +102,8 @@ Latch with complementary set enable, complementary CLK.
 - So the written value becomes relevant when LD 1->0 changes aka negedge (when the output latch opens and is updated with the value from FlipFlop).
 - The whole thing is complicated by the complementary layout of the LD and CLK signals.
 
+![regbit_waves](/imgstore/modules/regbit_waves.jpg)
+
 ## Bottom Left (ALU bc/bq) Logic
 
 The circuit is on the left side in a spread out layout. The picture shows the parts of the circuit for the individual parts.
