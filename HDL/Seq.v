@@ -511,17 +511,23 @@ module seq_huge1 ( q, d, res, clk, cclk, ld, nld);
 	input ld;
 	input nld;
 
-	reg val;
-	initial val <= 1'b0;
+	reg val_in;
+	reg val_out;
+	initial val_in <= 1'b0;
+	initial val_out <= 1'b0;
 
-	always @(negedge ld) begin
-		if (clk)
-			val <= d;
+	always @(*) begin
+		if (clk && ld)
+			val_in <= d;
 		if (res)
-			val <= 1'b0;
+			val_in <= 1'b0;
 	end
 
-	assign q = val;
+	always @(negedge ld) begin
+		val_out <= val_in;
+	end
+
+	assign q = val_out;
 
 endmodule // seq_huge1
 

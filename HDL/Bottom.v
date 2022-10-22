@@ -438,15 +438,21 @@ module regbit ( clk, cclk, d, ld, q, nq );
 
 	// Latch with complementary set enable, complementary CLK.
 
-	reg val;
-	initial val <= 1'b0;
+	reg val_in;
+	reg val_out;
+	initial val_in <= 1'b0;
+	initial val_out <= 1'b0;
 
-	always @(negedge ld) begin
-		if (clk)
-			val <= d;
+	always @(*) begin
+		if (clk && ld)
+			val_in <= d;
 	end
 
-	assign q = val;
+	always @(negedge ld) begin
+		val_out <= val_in;
+	end
+
+	assign q = val_out;
 	assign nq = ~q;
 
 endmodule // regbit
@@ -463,17 +469,23 @@ module regbit_res ( clk, cclk, d, ld, res, q, nq );
 
 	// Latch with complementary set enable, complementary CLK, active-high reset
 
-	reg val;
-	initial val <= 1'b0;
+	reg val_in;
+	reg val_out;
+	initial val_in <= 1'b0;
+	initial val_out <= 1'b0;
 
-	always @(negedge ld) begin
-		if (clk)
-			val <= d;
+	always @(*) begin
+		if (clk && ld)
+			val_in <= d;
 		if (res)
-			val <= 1'b0;
+			val_in <= 1'b0;
 	end
 
-	assign q = val;
+	always @(negedge ld) begin
+		val_out <= val_in;
+	end
+
+	assign q = val_out;
 	assign nq = ~q;
 
 endmodule // regbit_res
@@ -634,17 +646,23 @@ module module7 ( clk, cclk, d, ld, res, q, nq );
 
 	// Latch (no CLK edge detection, yes ld edge detection) with reset.
 
-	reg val;
-	initial val <= 1'b0;
+	reg val_in;
+	reg val_out;
+	initial val_in <= 1'b0;
+	initial val_out <= 1'b0;
 
-	always @(negedge ld) begin
-		if (clk)
-			val <= d;
+	always @(*) begin
+		if (clk && ld)
+			val_in <= d;
 		if (res)
-			val <= 1'b0;
+			val_in <= 1'b0;
 	end
 
-	assign q = val;
+	always @(negedge ld) begin
+		val_out <= val_in;
+	end
+
+	assign q = val_out;
 	assign nq = ~q;
 
 endmodule // module7
