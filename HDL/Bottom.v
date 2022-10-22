@@ -550,11 +550,11 @@ module IncDec ( CLK4, TTB1, TTB2, TTB3, Maybe1, cbus, dbus, adl, adh, AddrBus );
 	BusKeeper cbus_keepers [7:0] ( .d(cbus), .q(cbq) );
 	BusKeeper dbus_keepers [7:0] ( .d(dbus), .q(dbq) );
 
-	cntbit cnt_lo [7:0] ( .n_val_in(cbq), .cin(xa_lo), .val_out(adl), .cout(mq_lo), .TTB2({8{TTB2}}), .TTB3({8{TTB3}}) );
-	cntbit cnt_hi [7:0] ( .n_val_in(dbq), .cin(xa_hi), .val_out(adh), .cout(mq_hi), .TTB2({8{TTB2}}), .TTB3({8{TTB3}}) );
+	cntbit cnt_lo [7:0] ( .n_val_in(~cbq), .cin(xa_lo), .val_out(adl), .cout(mq_lo), .TTB2({8{TTB2}}), .TTB3({8{TTB3}}) );
+	cntbit cnt_hi [7:0] ( .n_val_in(~dbq), .cin(xa_hi), .val_out(adh), .cout(mq_hi), .TTB2({8{TTB2}}), .TTB3({8{TTB3}}) );
 	cntbit_carry_chain carry_chain ( .CLK4(CLK4), .TTB1(TTB1), .TTB2(TTB2), .TTB3(TTB3), .mq({mq_hi,mq_lo}), .xa({xa_hi,xa_lo}) );
 
-	assign AddrBus = ~Maybe1 ? {xa_hi,xa_lo} : 16'bz;
+	assign AddrBus = ~Maybe1 ? {~dbq,~cbq} : 16'bz;
 
 endmodule // IncDec
 
@@ -567,8 +567,8 @@ module cntbit ( n_val_in, cin, val_out, cout, TTB2, TTB3 );
 	input TTB2;
 	input TTB3;
 
-	assign val_out = ~n_val_in ^ cin;
-	assign cout = n_val_in ? TTB3 : TTB2;
+	assign val_out = n_val_in ^ cin;
+	assign cout = ~n_val_in ? TTB3 : TTB2;
 
 endmodule // cntbit
 
