@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project source="3.7.2" version="1.0">
+  This file is intended to be loaded by Logisim-evolution v3.7.2(https://github.com/logisim-evolution/).
+
+  <lib desc="#Wiring" name="0">
+    <tool name="Pin">
+      <a name="appearance" val="classic"/>
+    </tool>
+  </lib>
+  <lib desc="#Gates" name="1"/>
+  <lib desc="#Plexers" name="2"/>
+  <lib desc="#Arithmetic" name="3"/>
+  <lib desc="#Memory" name="4"/>
+  <lib desc="#I/O" name="5"/>
+  <lib desc="#TTL" name="6"/>
+  <lib desc="#TCL" name="7"/>
+  <lib desc="#Base" name="8"/>
+  <lib desc="#BFH-Praktika" name="9"/>
+  <lib desc="#Input/Output-Extra" name="10"/>
+  <lib desc="#Soc" name="11"/>
+  <main name="main"/>
+  <options>
+    <a name="gateUndefined" val="ignore"/>
+    <a name="simlimit" val="1000"/>
+    <a name="simrand" val="0"/>
+  </options>
+  <mappings>
+    <tool lib="8" map="Button2" name="Menu Tool"/>
+    <tool lib="8" map="Button3" name="Menu Tool"/>
+    <tool lib="8" map="Ctrl Button1" name="Menu Tool"/>
+  </mappings>
+  <toolbar>
+    <tool lib="8" name="Poke Tool"/>
+    <tool lib="8" name="Edit Tool"/>
+    <tool lib="8" name="Wiring Tool"/>
+    <tool lib="8" name="Text Tool"/>
+    <sep/>
+    <tool lib="0" name="Pin"/>
+    <tool lib="0" name="Pin">
+      <a name="facing" val="west"/>
+      <a name="output" val="true"/>
+    </tool>
+    <sep/>
+    <tool lib="1" name="NOT Gate"/>
+    <tool lib="1" name="AND Gate"/>
+    <tool lib="1" name="OR Gate"/>
+    <tool lib="1" name="XOR Gate"/>
+    <tool lib="1" name="NAND Gate"/>
+    <tool lib="1" name="NOR Gate"/>
+    <sep/>
+    <tool lib="4" name="D Flip-Flop"/>
+    <tool lib="4" name="Register"/>
+  </toolbar>
+  <circuit name="main">
+    <a name="appearance" val="logisim_evolution"/>
+    <a name="circuit" val="main"/>
+    <a name="circuitnamedboxfixedsize" val="true"/>
+    <a name="simulationFrequency" val="256.0"/>
+    <comp lib="0" loc="(130,40)" name="Pin">
+      <a name="appearance" val="NewPins"/>
+      <a name="label" val="dv_bit"/>
+    </comp>
+    <comp lib="0" loc="(130,70)" name="Pin">
+      <a name="appearance" val="NewPins"/>
+      <a name="label" val="DataOut"/>
+    </comp>
+    <comp lib="0" loc="(180,110)" name="Transistor">
+      <a name="facing" val="west"/>
+      <a name="type" val="n"/>
+    </comp>
+    <comp lib="0" loc="(220,110)" name="Transistor">
+      <a name="facing" val="west"/>
+      <a name="type" val="n"/>
+    </comp>
+    <comp lib="0" loc="(260,110)" name="Ground"/>
+    <comp lib="0" loc="(340,110)" name="Ground"/>
+    <comp lib="0" loc="(380,110)" name="Transistor">
+      <a name="type" val="n"/>
+    </comp>
+    <comp lib="0" loc="(410,110)" name="Transistor">
+      <a name="facing" val="west"/>
+    </comp>
+    <comp lib="0" loc="(430,190)" name="Pin">
+      <a name="appearance" val="NewPins"/>
+      <a name="facing" val="west"/>
+      <a name="label" val="dl_bit"/>
+      <a name="output" val="true"/>
+    </comp>
+    <comp lib="0" loc="(450,110)" name="Power"/>
+    <wire from="(130,40)" to="(390,40)"/>
+    <wire from="(130,70)" to="(240,70)"/>
+    <wire from="(170,110)" to="(170,190)"/>
+    <wire from="(170,110)" to="(180,110)"/>
+    <wire from="(170,190)" to="(430,190)"/>
+    <wire from="(200,60)" to="(200,90)"/>
+    <wire from="(200,60)" to="(290,60)"/>
+    <wire from="(240,70)" to="(240,90)"/>
+    <wire from="(290,140)" to="(390,140)"/>
+    <wire from="(290,60)" to="(290,140)"/>
+    <wire from="(360,80)" to="(360,90)"/>
+    <wire from="(360,80)" to="(390,80)"/>
+    <wire from="(380,110)" to="(390,110)"/>
+    <wire from="(390,110)" to="(390,140)"/>
+    <wire from="(390,110)" to="(410,110)"/>
+    <wire from="(390,40)" to="(390,80)"/>
+    <wire from="(390,80)" to="(430,80)"/>
+    <wire from="(430,80)" to="(430,90)"/>
+  </circuit>
+</project>

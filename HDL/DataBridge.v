@@ -1,27 +1,24 @@
 `timescale 1ns/1ns
 
-module DataBridge( CLK2, DataOut, DV, DL );
+module DataBridge( DataOut, DV, DL );
 
-	input CLK2;
 	input DataOut;		// DV -> DL
 	input [7:0] DV;		// ALU Operand2
 	inout [7:0] DL;		// Internal databus
 
 	bridge_comb bridge_bits [7:0] (
-		.clk({8{CLK2}}), 
 		.dl_bit(DL),
 		.dv_bit(DV),
 		.DataOut({8{DataOut}}) );
 
 endmodule // DataBridge
 
-module bridge_comb ( clk, dl_bit, dv_bit, DataOut );
+module bridge_comb ( dl_bit, dv_bit, DataOut );
 
-	input clk;
-	output dl_bit;
+	inout dl_bit;
 	input dv_bit;
 	input DataOut;
 
-	assign dl_bit = clk ? ~(~dv_bit & DataOut) : 1'b1;
+	assign dl_bit = DataOut && ~dv_bit ? 1'b0 : 1'bz;
 
 endmodule // bridge_comb
