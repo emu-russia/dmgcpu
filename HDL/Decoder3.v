@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-`define delay 1
+`define delay 0
 
 module Decoder3( CLK2, CLK4, CLK5, nCLK4, a3, d, w, x, IR, nIR, SeqOut_2 );
 

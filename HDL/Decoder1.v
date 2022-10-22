@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-`define delay 1
+`define delay 0
 
 module Decoder1 (CLK2, a, d);
 
