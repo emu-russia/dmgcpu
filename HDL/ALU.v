@@ -40,7 +40,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	wire [7:0] bh;		// module2 h out
 	wire [7:0] bw;		// module2 w out
 	wire [7:0] ao; 		// G/P ands outputs to module6
-	wire [7:0] na; 		// CLA nots outputs to module6
+	wire [7:1] na; 		// CLA nots outputs to module6
 	wire [7:0] q; 		// CLA outputs (0-3: left, 4-7: right)
 	wire [5:0] nbc; 	// #bc
 	wire [13:0] azo;	// LargeComb1 results
@@ -138,6 +138,8 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 
 	assign bc[0] = (IR[4] & IR[5] & w[21]);
 	assign bc[4] = ALU_to_bot & w[9];
+	assign nbc[0] = ~bc[0];
+	assign nbc[4] = ~bc[4];
 
 endmodule // ALU
 
