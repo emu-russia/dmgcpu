@@ -1,5 +1,7 @@
 `timescale 1ns/1ns
 
+`define ALU_Ops_delay 0
+
 module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, Temp_C, Temp_H, Temp_N, Temp_Z, alu, Res, IR, d, w, x, 
 	SYNC_RES, TTB1, TTB2, TTB3, Maybe1, Thingy_to_bot, bot_to_Thingy, SeqControl_1, SeqControl_2, SeqOut_1,
 	A, CPU_IRQ_ACK, CPU_IRQ_TRIG, RD );
@@ -78,6 +80,9 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, T
 		.bq5(bq5),
 		.bq7(bq7),
 		.pq(Aout),
+		.abus(abus),
+		.bbus(bbus),
+		.alu(alu),
 		.DV(DV) );
 
 	RegsBuses regs (
@@ -180,8 +185,6 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, T
 		.d93(d[93]),
 		.A(A) );
 
-	assign alu = ~abus;
-
 	assign Temp_C = zbus[4];
 	assign Temp_H = zbus[5];
 	assign Temp_N = zbus[6];
@@ -198,7 +201,7 @@ module BusPrecharge ( CLK2, DL, abus, bbus, cbus, dbus );
 	inout [7:0] cbus;
 	inout [7:0] dbus;
 
-	assign DL = CLK2 ? 8'bzzzzzzzz : 8'b11111111;
+	assign   DL = CLK2 ? 8'bzzzzzzzz : 8'b11111111;
 	assign abus = CLK2 ? 8'bzzzzzzzz : 8'b11111111;
 	assign bbus = CLK2 ? 8'bzzzzzzzz : 8'b11111111;
 	assign cbus = CLK2 ? 8'bzzzzzzzz : 8'b11111111;
@@ -206,7 +209,7 @@ module BusPrecharge ( CLK2, DL, abus, bbus, cbus, dbus );
 
 endmodule // BusPrecharge
 
-module BottomLeftLogic ( CLK2, bc, bq4, bq5, bq7, pq, bbus, DV );
+module BottomLeftLogic ( CLK2, bc, bq4, bq5, bq7, pq, abus, bbus, alu, DV );
 
 	input CLK2;
 	input [5:0] bc;
@@ -214,25 +217,58 @@ module BottomLeftLogic ( CLK2, bc, bq4, bq5, bq7, pq, bbus, DV );
 	output bq5;
 	output bq7;
 	input [7:0] pq;
+	inout [7:0] abus;
 	inout [7:0] bbus;
+	output [7:0] alu;
 	output [7:0] DV;
+
+	wire [7:0] abq; 	// abus Bus keepers outputs
+	wire [7:0] bbq; 	// bbus Bus keepers outputs
 
 	assign bq4 = pq[1] | pq[2] | pq[3];
 	assign bq5 = pq[5] | pq[6] | pq[7];
 	assign bq7 = pq[4] | pq[7];
 	
-	assign DV[0] = ~(CLK2 ? (bbus[0] & ~bc[4]) : 1'b1);
-	assign DV[1] = ~(CLK2 ? (bbus[1] & ~bc[4]) : 1'b1);
-	assign DV[2] = ~(CLK2 ? (bbus[2] & ~bc[4]) : 1'b1);
-	assign DV[3] = ~(CLK2 ? (bbus[3] & ~bc[4]) : 1'b1);
-	assign DV[4] = ~(CLK2 ? (bbus[4] & ~(bc[4] | (bc[0] & bc[1])) ) : 1'b1);
-	assign DV[5] = ~(CLK2 ? (bbus[4] & ~(bc[4] | (bc[0] & bc[5])) ) : 1'b1);
-	assign DV[6] = ~(CLK2 ? (bbus[4] & ~(bc[4] | (bc[0] & bc[2])) ) : 1'b1);
-	assign DV[7] = ~(CLK2 ? (bbus[4] & ~(bc[4] | (bc[0] & bc[3])) ) : 1'b1);
+	// This requires transparent latches, since nobody could set up a abus/bbus. On the actual circuit, they are also present as a memory on the `not` gate.
+	BusKeeper abus_keepers [7:0] ( .d(abus), .q(abq) );
+	BusKeeper bbus_keepers [7:0] ( .d(bbus), .q(bbq) );
+
+	assign #`ALU_Ops_delay DV[0] = ~(CLK2 ? (bbq[0] & ~bc[4]) : 1'b1);
+	assign #`ALU_Ops_delay DV[1] = ~(CLK2 ? (bbq[1] & ~bc[4]) : 1'b1);
+	assign #`ALU_Ops_delay DV[2] = ~(CLK2 ? (bbq[2] & ~bc[4]) : 1'b1);
+	assign #`ALU_Ops_delay DV[3] = ~(CLK2 ? (bbq[3] & ~bc[4]) : 1'b1);
+	assign #`ALU_Ops_delay DV[4] = ~(CLK2 ? (bbq[4] & ~(bc[4] | (bc[0] & bc[1])) ) : 1'b1);
+	assign #`ALU_Ops_delay DV[5] = ~(CLK2 ? (bbq[5] & ~(bc[4] | (bc[0] & bc[5])) ) : 1'b1);
+	assign #`ALU_Ops_delay DV[6] = ~(CLK2 ? (bbq[6] & ~(bc[4] | (bc[0] & bc[2])) ) : 1'b1);
+	assign #`ALU_Ops_delay DV[7] = ~(CLK2 ? (bbq[7] & ~(bc[4] | (bc[0] & bc[3])) ) : 1'b1);
+
+	assign #`ALU_Ops_delay alu = ~abq;
 
 	// I decided to put the bc0/bc4 generation in the ALU, so that the bc signals would be made as output from the ALU (for beauty).
 
 endmodule // BottomLeftLogic
+
+// Transparent latch used as a bus keeper.
+module BusKeeper (d, q);
+
+	input d;
+	output q;
+
+	reg val;
+	initial val <= 1'b0;
+
+	always @(*) begin
+		if (d == 1'b1)
+			val <= 1'b1;
+		if (d == 1'b0)
+			val <= 1'b0;
+		if (d == 1'bz)
+			val <= val;
+	end
+
+	assign q = val;
+
+endmodule // BusKeeper
 
 module RegsBuses ( CLK5, CLK6, w, x, DL, IR, abus, bbus, cbus, dbus, ebus, fbus, Aout );
 
