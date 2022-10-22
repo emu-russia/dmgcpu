@@ -195,7 +195,9 @@ module SM83Core (
 		.SeqOut_3(SeqOut_3) );
 
 	Thingy thingy (
-		.w(w),
+		.w8(w8),
+		.w31(w31),
+		.w35(w35),
 		.ALU_to_Thingy(ALU_to_Thingy),
 		.WR(WR),
 		.Temp_Z(Temp_Z),
