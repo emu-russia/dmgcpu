@@ -2,9 +2,9 @@
 module DataBridge( CLK2, DataOut, DV, DL );
 
 	input CLK2;
-	input DataOut;
-	input [7:0] DV;
-	inout [7:0] DL;
+	input DataOut;		// DV -> DL
+	input [7:0] DV;		// ALU Operand2
+	inout [7:0] DL;		// Internal databus
 
 	bridge_comb bridge_bits [7:0] (
 		.clk(CLK2), 

@@ -99,7 +99,7 @@ Latch with complementary set enable, complementary CLK.
 - Input value can be written to FlipFlop only if CLK=1 and LD=1
 - When LD=0 the FlipFlop value is updated with the old value
 - The output contains a DLatch with a gate memory that opens when LD=0 (so that the old value is returned during the write (LD=1))
-- So the written value becomes relevant when LD 1->0 changes (when the output latch opens and is updated with the value from FlipFlop).
+- So the written value becomes relevant when LD 1->0 changes aka negedge (when the output latch opens and is updated with the value from FlipFlop).
 - The whole thing is complicated by the complementary layout of the LD and CLK signals.
 
 ## Bottom Left (ALU bc/bq) Logic
@@ -197,7 +197,7 @@ The IRQ logic consists of the following parts:
 
 ![module7_tran](/imgstore/modules/module7_tran.jpg)
 
-Latch (no edge detection) with reset.
+Latch (no CLK edge detection, yes ld edge detection) with reset.
 
 ### IF
 

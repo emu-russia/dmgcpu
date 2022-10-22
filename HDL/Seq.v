@@ -363,6 +363,7 @@ endmodule // seq
 
 // Module Definitions [It is possible to wrap here on your primitives]
 
+// The cell is so called because it has a Test Point that looks like a shield.
 module seq_shielded ( a, b, c, d, x );
 
 	input a;
@@ -371,12 +372,11 @@ module seq_shielded ( a, b, c, d, x );
 	input d;
 	output x;
 
-	// The cell is so called because it has a Test Point that looks like a shield.
-
 	assign x = d ? ~((~a & c) | ~(a|b)) : 1'b1;
 
 endmodule // seq_shielded
 
+// Regular posedge DFF
 module seq_module3 ( d, clk, cclk, q );
 
 	input d;	
@@ -448,14 +448,13 @@ module seq_hmm1 ( a0, a1, b, x );
 
 endmodule // seq_hmm1
 
+// The cell is called that because I spent a long time drawing the Sequencer topology, got sleepy, and just had to come up with a name.
 module seq_iwantsleep ( a0, a1, b, x );
 
 	input a0;	
 	input a1;
 	input b;	
 	output x;
-
-	// The cell is called that because I spent a long time drawing the Sequencer topology, got sleepy, and just had to come up with a name.
 
 	assign x = ~( (a0|a1) & b );
 
@@ -501,6 +500,7 @@ module seq_module4 ( nr, s, q );
 
 endmodule // seq_module4
 
+// DFF with negedged enable.
 module seq_huge1 ( q, d, res, clk, cclk, ld, nld);
 
 	output q;
@@ -514,8 +514,8 @@ module seq_huge1 ( q, d, res, clk, cclk, ld, nld);
 	reg val;
 	initial val <= 1'b0;
 
-	always @(*) begin
-		if (clk & ld)
+	always @(negedge ld) begin
+		if (clk)
 			val <= d;
 		if (res)
 			val <= 1'b0;
@@ -580,6 +580,7 @@ module seq_aoi_2 ( a0, a1, b, x );
 
 endmodule // seq_aoi_2
 
+// Regular transparent latch
 module seq_hmm3 ( d, clk, cclk, nq );
 
 	input d;

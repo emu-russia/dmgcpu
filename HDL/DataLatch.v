@@ -27,6 +27,8 @@ module module1 ( clk, a, b, c, x, Dat );
 	inout x;
 	inout Dat;
 
+	// TBD: WTF is here??!!!11
+
 	reg x_val;
 	reg Dat_val;
 

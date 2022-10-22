@@ -1,4 +1,3 @@
-// TBD: Is it necessary to consider negedge for the ld signal when working with registers? I don't think it makes much sense.
 
 module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, Temp_C, Temp_H, Temp_N, Temp_Z, alu, Res, IR, d, w, x, 
 	SYNC_RES, TTB1, TTB2, TTB3, Maybe1, Thingy_to_bot, bot_to_Thingy, SeqControl_1, SeqControl_2, SeqOut_1,
@@ -442,8 +441,8 @@ module regbit ( clk, cclk, d, ld, q, nq );
 	reg val;
 	initial val <= 1'b0;
 
-	always @(*) begin
-		if (clk & ld)
+	always @(negedge ld) begin
+		if (clk)
 			val <= d;
 	end
 
@@ -467,8 +466,8 @@ module regbit_res ( clk, cclk, d, ld, res, q, nq );
 	reg val;
 	initial val <= 1'b0;
 
-	always @(*) begin
-		if (clk & ld)
+	always @(negedge ld) begin
+		if (clk)
 			val <= d;
 		if (res)
 			val <= 1'b0;
@@ -633,13 +632,13 @@ module module7 ( clk, cclk, d, ld, res, q, nq );
 	output q;
 	output nq;
 
-	// Latch (no edge detection) with reset.
+	// Latch (no CLK edge detection, yes ld edge detection) with reset.
 
 	reg val;
 	initial val <= 1'b0;
 
-	always @(*) begin
-		if (clk & ld)
+	always @(negedge ld) begin
+		if (clk)
 			val <= d;
 		if (res)
 			val <= 1'b0;
