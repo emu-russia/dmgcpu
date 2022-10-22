@@ -262,8 +262,6 @@ module BusKeeper (d, q);
 			val <= 1'b1;
 		if (d == 1'b0)
 			val <= 1'b0;
-		if (d == 1'bz)
-			val <= val;
 	end
 
 	assign q = val;
