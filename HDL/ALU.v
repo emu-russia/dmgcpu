@@ -85,7 +85,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 		.w(bw) );
 
 	Comb3 bit_lsb ( .clk(CLK2), .x(ca[0]), .a({x[5],DV[7]}), .b({x[1],DV[1]}), .c({x[16],DV[4]}), .d({x[6],bc[1]}) );
-	Comb2 bits_mid [6:1] ( .clk(CLK2), .x(ca[6:1]), 
+	Comb2 bits_mid [6:1] ( .clk({6{CLK2}}), .x(ca[6:1]), 
 		.a({{x[0],DV[5]},{x[0],DV[4]},{x[0],DV[3]},{x[0],DV[2]},{x[0],DV[1]},{x[0],DV[0]}}), 
 		.b({{x[1],DV[7]},{x[1],DV[6]},{x[1],DV[5]},{x[1],DV[4]},{x[1],DV[3]},{x[1],DV[2]}}), 
 		.c({{x[16],DV[2]},{x[16],DV[1]},{x[16],DV[0]},{x[16],DV[7]},{x[16],DV[6]},{x[16],DV[5]}}) );
