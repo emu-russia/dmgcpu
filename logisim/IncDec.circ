@@ -238,16 +238,8 @@
     <comp lib="8" loc="(1077,165)" name="Text">
       <a name="text" val="A8-A15"/>
     </comp>
-    <comp lib="8" loc="(179,312)" name="Text">
-      <a name="font" val="SansSerif bold 10"/>
-      <a name="text" val="Keep in mind that the value on the cbus/dbus is stored in inverted form."/>
-    </comp>
     <comp lib="8" loc="(556,169)" name="Text">
       <a name="text" val="A0-A7"/>
-    </comp>
-    <comp lib="8" loc="(94,330)" name="Text">
-      <a name="font" val="SansSerif bold 10"/>
-      <a name="text" val="Therefore, the output val is inverted."/>
     </comp>
     <comp loc="(1130,210)" name="cntbit"/>
     <comp loc="(1130,290)" name="cntbit"/>
