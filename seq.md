@@ -19,7 +19,7 @@
 |SYNC_RESET|External|Port T12|
 |RESET|External|Port T13|
 |Clock_WTF (OSC_STABLE)|External|Port T15. To nand g59|
-|Unbonded|External|Port T16|
+|Unbonded|External|Port T16. NMI|
 |WAKE|External|Port B25|
 |Maybe1 (DL_Control1)|External|Port R3 (_Maybe used to disable all bus..._)|
 |MMIO_REQ|External|Port R4. See `shielded` module|
