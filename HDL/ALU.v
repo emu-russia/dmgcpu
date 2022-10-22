@@ -310,8 +310,8 @@ module bc ( nd, CLK, CCLK, Load, q, nq );
 	reg reg_val;
 	initial reg_val <= 1'b0;
 
-	always @(*) begin
-		if (Load && CLK)
+	always @(negedge Load) begin
+		if (CLK)
 			reg_val <= ~nd;
 	end
 
@@ -331,8 +331,8 @@ module ALU_to_bot_FF ( d, CLK, CCLK, Load, q );
 	reg reg_val;
 	initial reg_val <= 1'b0;
 
-	always @(*) begin
-		if (Load && CLK)
+	always @(negedge Load) begin
+		if (CLK)
 			reg_val <= d;
 	end
 

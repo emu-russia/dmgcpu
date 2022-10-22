@@ -2,7 +2,7 @@
 module DataLatch ( CLK, DL_Control1, DL_Control2, DataBus, DL, Res );
 
 	input CLK;
-	input DL_Control1;			// Most likely #CPU_CS. When #CPU_CS = 1 - the core is completely disconnected from the ASIC data bus
+	input DL_Control1;			// Test1 (1: disable all buses)
 	input DL_Control2;			// x37. ALU Result -> DL.
 	inout [7:0] DataBus;		// External databus
 	inout [7:0] DL;				// Internal databus
@@ -26,6 +26,8 @@ module module1 ( clk, a, b, c, x, Dat );
 	input c; 
 	inout x;
 	inout Dat;
+
+	// TBD: WTF is here??!!!11
 
 	reg x_val;
 	reg Dat_val;
