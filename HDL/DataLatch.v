@@ -9,9 +9,9 @@ module DataLatch ( CLK, DL_Control1, DL_Control2, DataBus, DL, Res );
 	input [7:0] Res;			// ALU Result
 
 	module1 DL_Bits [7:0] (
-		.clk(CLK), 
-		.Test1(DL_Control1), 
-		.Res_to_DL(DL_Control2), 
+		.clk({8{CLK}}), 
+		.Test1({8{DL_Control1}}), 
+		.Res_to_DL({8{DL_Control2}}), 
 		.Res(Res), 
 		.Int_bus(DL), 
 		.Ext_bus(DataBus) );

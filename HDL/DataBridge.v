@@ -7,10 +7,10 @@ module DataBridge( CLK2, DataOut, DV, DL );
 	inout [7:0] DL;		// Internal databus
 
 	bridge_comb bridge_bits [7:0] (
-		.clk(CLK2), 
+		.clk({8{CLK2}}), 
 		.dl_bit(DL),
 		.dv_bit(DV),
-		.DataOut(DataOut) );
+		.DataOut({8{DataOut}}) );
 
 endmodule // DataBridge
 
