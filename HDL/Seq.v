@@ -462,6 +462,7 @@ module seq_iwantsleep ( a0, a1, b, x );
 
 endmodule // seq_iwantsleep
 
+// This is essentially the same seq_module4, but with the inputs rearranged.
 module seq_module4_2 ( nr, s, q );
 
 	input nr;
@@ -471,17 +472,21 @@ module seq_module4_2 ( nr, s, q );
 	reg val;
 	initial val <= 1'b0;
 
+	// The module design is such that reset overrides set if both are set at the same time.
 	always @(*) begin
 		if (~nr)
 			val <= 1'b0;
-		if (s)
+		else if (s)
 			val <= 1'b1;
+		else
+			val <= val;
 	end
 
 	assign q = val;
 
 endmodule // seq_module4_2
 
+// rs_latch
 module seq_module4 ( nr, s, q );
 
 	input nr;
@@ -491,11 +496,14 @@ module seq_module4 ( nr, s, q );
 	reg val;
 	initial val <= 1'b0;
 
+	// The module design is such that reset overrides set if both are set at the same time.
 	always @(*) begin
 		if (~nr)
 			val <= 1'b0;
-		if (s)
+		else if (s)
 			val <= 1'b1;
+		else
+			val <= val;
 	end
 
 	assign q = val;

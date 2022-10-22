@@ -95,6 +95,8 @@ A typical static latch, but made quite compact. The impressive gates on the Flip
 
 Also: reset input in inverse polarity (`#RESET`).
 
+:warning: The module design is such that reset overrides set if both are set at the same time. Keep this in mind when making your HDL implementation.
+
 ![module4](/imgstore/modules/module4.jpg)
 
 ![module4_tran](/imgstore/modules/module4_tran.jpg)
