@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 
 module DataLatch ( CLK, DL_Control1, DL_Control2, DataBus, DL, Res );
 

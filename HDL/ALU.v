@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 
 module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc, alu, bq4, bq5, bq7, ALU_to_Thingy,
 	Temp_C, Temp_H, Temp_N, Temp_Z, ALU_Out1, IR, nIR );
