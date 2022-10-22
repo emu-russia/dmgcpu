@@ -540,13 +540,20 @@ module IncDec ( CLK4, TTB1, TTB2, TTB3, Maybe1, cbus, dbus, adl, adh, AddrBus );
 	inout [7:0] adh;
 	output [15:0] AddrBus;
 
+	wire [7:0] cbq; 	// cbus Bus keepers outputs
+	wire [7:0] dbq; 	// dbus Bus keepers outputs
+
 	wire [7:0] mq_lo;		// carry_out
 	wire [7:0] mq_hi;
 	wire [7:0] xa_lo;		// carry_in
 	wire [7:0] xa_hi;
 
-	cntbit cnt_lo [7:0] ( .n_val_in(cbus), .cin(xa_lo), .val_out(adl), .cout(mq_lo), .TTB2({8{TTB2}}), .TTB3({8{TTB3}}) );
-	cntbit cnt_hi [7:0] ( .n_val_in(dbus), .cin(xa_hi), .val_out(adh), .cout(mq_hi), .TTB2({8{TTB2}}), .TTB3({8{TTB3}}) );
+	// This requires transparent latches, since nobody could set up a cbus/dbus. On the actual circuit, they are also present as a memory on the `not` gate.
+	BusKeeper cbus_keepers [7:0] ( .d(cbus), .q(cbq) );
+	BusKeeper dbus_keepers [7:0] ( .d(dbus), .q(dbq) );
+
+	cntbit cnt_lo [7:0] ( .n_val_in(cbq), .cin(xa_lo), .val_out(adl), .cout(mq_lo), .TTB2({8{TTB2}}), .TTB3({8{TTB3}}) );
+	cntbit cnt_hi [7:0] ( .n_val_in(dbq), .cin(xa_hi), .val_out(adh), .cout(mq_hi), .TTB2({8{TTB2}}), .TTB3({8{TTB3}}) );
 	cntbit_carry_chain carry_chain ( .CLK4(CLK4), .TTB1(TTB1), .TTB2(TTB2), .TTB3(TTB3), .mq({mq_hi,mq_lo}), .xa({xa_hi,xa_lo}) );
 
 	assign AddrBus = ~Maybe1 ? {xa_hi,xa_lo} : 16'bz;
