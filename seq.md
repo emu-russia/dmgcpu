@@ -21,7 +21,7 @@
 |Clock_WTF (OSC_STABLE)|External|Port T15. To nand g59|
 |Unbonded|External|Port T16. NMI|
 |WAKE|External|Port B25|
-|Maybe1 (DL_Control1)|External|Port R3 (_Maybe used to disable all bus..._)|
+|Maybe1|External|Port R3. 1: Bus disable|
 |MMIO_REQ|External|Port R4. See `shielded` module|
 |IPL_REQ|External|Port R5. See `shielded` module|
 |Maybe2|External|Port R6. See `shielded` module|

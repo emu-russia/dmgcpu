@@ -35,7 +35,7 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, T
 	input TTB1;				// 1: Perform pairwise increment/decrement (simultaneously for two 8-bit IncDec halves)
 	input TTB2;				// 1: Perform increment
 	input TTB3;				// 1: Perform decrement
-	input Maybe1;
+	input Maybe1;			// 1: Bus disable
 	input Thingy_to_bot;		// Load a value into the IE register from the DL bus.	
 	output bot_to_Thingy;		// IE access detected (Address = 0xffff)
 	output SeqControl_1;
@@ -554,6 +554,8 @@ module IncDec ( CLK4, TTB1, TTB2, TTB3, Maybe1, cbus, dbus, adl, adh, AddrBus );
 	cntbit cnt_hi [7:0] ( .n_val_in(~dbq), .cin(xa_hi), .val_out(adh), .cout(mq_hi), .TTB2({8{TTB2}}), .TTB3({8{TTB3}}) );
 	cntbit_carry_chain carry_chain ( .CLK4(CLK4), .TTB1(TTB1), .TTB2(TTB2), .TTB3(TTB3), .mq({mq_hi,mq_lo}), .xa({xa_hi,xa_lo}) );
 
+	// The AddrBus value is formed on the basis of the bus keeper values of the cbus/dbus.
+
 	assign AddrBus = ~Maybe1 ? {~dbq,~cbq} : 16'bz;
 
 endmodule // IncDec
@@ -603,8 +605,6 @@ module cntbit_carry_chain ( CLK4, TTB1, TTB2, TTB3, mq, xa );
 	assign nxa[13] = CLK4 ? (~(ct & mq[8] & mq[9] & mq[10] & mq[11] & mq[12])) : 1'b1;
 	assign nxa[14] = CLK4 ? (~(ct & mq[8] & mq[9] & mq[10] & mq[11] & mq[12] & mq[13])) : 1'b1;
 	assign nxa[15] = CLK4 ? (~(ct & mq[8] & mq[9] & mq[10] & mq[11] & mq[12] & mq[13] & mq[14])) : 1'b1;
-
-	// The `xa` outputs are connected directly to AddrBus. If CLK4 is not updated long enough, the AddrBus value will be "corrupted".
 
 	assign xa = ~nxa;
 

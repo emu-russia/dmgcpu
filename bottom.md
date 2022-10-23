@@ -38,7 +38,7 @@ There are minor differences between the lanes, such places are marked with a :wa
 |TTB1|Thingy|1: Perform pairwise increment/decrement (simultaneously for two 8-bit IncDec halves)|
 |TTB2|Thingy|1: Perform increment|
 |TTB3|Thingy|1: Perform decrement|
-|Maybe1|External| |
+|Maybe1|External|1: Bus disable|
 |Thingy_to_bot|Thingy|Load a value into the IE register from the DL bus|
 |SeqOut_1|Sequencer|See `nso` signal in IRQ Logic|
 |CPU_IRQ_TRIG|External| |
