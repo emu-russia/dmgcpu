@@ -62,7 +62,7 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |d0|{0,2,5,7,9,10,13,14,17,18,20,23,24}| | |
 |d1|{0,2,5,7,9,11,13,14,17,18,20,23,24}| | |
 |d2|{0,2,5,7,9,11,13,14,17,18,20,23,25}| | |
-|d3|{0,2,({5,6},{5,7,15,17,18})| |All ALU opcodes in range 0x80-0xbf + ALU opcodes 0xc6/0xce, 0xd6/0xde, 0xe6/0xee, 0xf6/0xfe ("bottom yellow")|
+|d3|{0,2,({5,6},{5,7,15,17,18})}| |All ALU opcodes in range 0x80-0xbf + ALU opcodes 0xc6/0xce, 0xd6/0xde, 0xe6/0xee, 0xf6/0xfe ("bottom yellow")|
 |d4|{0,2,5,7,8,14,17,18,22,25}| | |
 |d5|{0,2,5,7,8,15,16,18,22,25}| | |
 |d6|{0,2,5,7,8,14,16,18,22,24}| | |
