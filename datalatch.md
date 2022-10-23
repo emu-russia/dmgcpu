@@ -23,7 +23,7 @@ DataLatch consists of 8 such chunks:
 
 |Port|Dir|Description|
 |---|---|---|
-|a|input|DL_Control1|
+|a|input|DL_Control1. 1: Bus disable|
 |b|input|DL_Control2 (x37). ALU Result -> DL|
 |c|input|Result from ALU (Res\[n\])|
 |clk|input|CLK2|

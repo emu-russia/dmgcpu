@@ -24,7 +24,7 @@ By @msinger: http://iceboy.a-singer.de/doc/dmg_cpu_connections.html
 |T16	|I	|unlabeled	|Unbonded|(ext. pad)	|Directly connected to an input pad at the top of the die, which is not bonded.|
 |R1	|O	|CPU_RAW_RD	|RD|multiple	|Active-high memory RD signal from CPU.|
 |R2	|O	|FROM_CPU3	|WR|multiple	|Active-high memory WR signal from CPU.|
-|R3	|I	|T1T2	|Maybe1=DL_Control1|UNOR.q	|Maybe used to disable all bus drivers in the CPU when test mode is active. @org: After analyzing DataLatch circuit it became clear that the external port `Maybe1` (signal `DL_Control1`) is in fact most likely `#CPU_ChipSelect`. When #CPU_CS = 1 - the core is completely disconnected from the ASIC data bus.|
+|R3	|I	|T1T2	|Maybe1|UNOR.q	|1: Disable all bus drivers (databus, addrbus) in the CPU when test mode is active.|
 |R4	|I	|unlabeled	|MMIO_REQ|SYRO.q	|High when address bus is 0xfexx or 0xffxx. When high, it suppresses R7, so that the data bus can be driven by an internal component (HRAM, OAM, FFxx registers). I suspect this is also used by the CPU to decode the address for the interrupt enable register (0xffff), but I'm not sure yet.|
 |R5	|I	|unlabeled	|IPL_REQ|TUTU.q	|High when address bus is 0x00xx and boot ROM is still visible. When high, it suppresses R7, so that the data bus can be driven by the internal boot ROM.|
 |R6	|I	|T1T2	|Maybe2|UMUT.q	|Maybe used to disable all bus drivers in the CPU when test mode is active.|

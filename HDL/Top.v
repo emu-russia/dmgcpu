@@ -31,7 +31,7 @@ module SM83Core (
 	input WAKE;			// Wakes CPU from STOP mode.
 	output RD;
 	output WR;
-	input Maybe1;		// TBD: Maybe used to disable all bus drivers in the CPU when test mode is active.
+	input Maybe1;		// 1: Disable all bus drivers in the CPU when test mode is active.
 	input MMIO_REQ;		// High when address bus is 0xfexx or 0xffxx.
 	input IPL_REQ;		// High when address bus is 0x00xx and boot ROM is still visible.
 	input Maybe2;		// TBD: Maybe used to disable all bus drivers in the CPU when test mode is active.
@@ -63,8 +63,6 @@ module SM83Core (
 	wire Temp_N;			// Temp N flag
 	wire Temp_Z;			// Temp Z flag
 	wire ALU_Out1;
-	wire DL_Control1;
-	wire DL_Control2;
 	wire [7:0] IR;			// Current opcode
 	wire [5:0] nIR;				// Inverse IR values are only used for the first 6 bits.
 
@@ -82,8 +80,6 @@ module SM83Core (
 	wire TTB3;
 	wire Thingy_to_bot;			// Load a value into the IE register from the DL bus.
 
-	assign DL_Control1 = Maybe1;
-	assign DL_Control2 = x[37];
 	assign LoadIR = w[26];
 	assign nCLK4 = ~CLK4;
 	assign WR = w[6];
@@ -94,8 +90,8 @@ module SM83Core (
 
 	DataLatch dl (
 		.CLK(CLK2), 
-		.DL_Control1(DL_Control1), 
-		.DL_Control2(DL_Control2), 
+		.DL_Control1(Maybe1), 
+		.DL_Control2(x[37]), 
 		.DataBus(D),
 		.DL(DL), 
 		.Res(Res) );

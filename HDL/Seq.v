@@ -27,7 +27,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	input OSC_STABLE;		// [previously Clock_WTF]
 	input WAKE;
 	output RD;
-	input Maybe1;			// aka DL_Control1
+	input Maybe1;			// 1: Bus disable
 	input MMIO_REQ;
 	input IPL_REQ;
 	input Maybe2; 			// See shielded module.
