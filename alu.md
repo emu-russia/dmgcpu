@@ -133,7 +133,7 @@ Large Comb 1 (_14 NAND trees_):
 |alu_5|CLK2|e3|`alu3 | (w24&IR3&IR4&nIR5) | (w10&(nIR3|nIR4|IR5)) | (x22&bc2&bc5)`|
 |alu_6|CLK2|e4|`alu4 | (w24&nIR3&nIR4&IR5) | (w10&(IR3|IR4|nIR5)) | (x22&bc2&bc5)`|
 |alu_7|CLK6|bc2|`(bc2&x22) | x12 | x26 | (TempN&d58)`|
-|alu_8|CLK2|e5|`alu5 | (w24&IR3&nIR4&IR5) | (w10&(nIR3|IR4|nIR5)) | (bc2&x22&((bc1&~bc5)|(bc1&bc5))) | (~bc2&x22&((bq5)|(bc1)|(bq4&bq7)))`|
+|alu_8|CLK2|e5|`alu5 | (w24&IR3&nIR4&IR5) | (w10&(nIR3|IR4|nIR5)) | (bc2&x22&((bc1&~bc5)|(~bc1&bc5))) | (~bc2&x22&((bq5)|(bc1)|(bq4&bq7)))`|
 |alu_9|CLK2|e6|`alu6 | (w24&nIR3&IR4&IR5) | (w10&(IR3|nIR4|nIR5)) | (bc2&x22&(~bc1&bc5)) | (~bc2&x22&((bq4&bq7)|(bc1)|(bq5)))`|
 |alu_10|CLK2|e7|`alu7 | (w24&IR3&IR4&IR5) | (w10&(nIR3|nIR4|nIR5)) | (bc2&x22&(bc1|bc5))`|
 |alu_11|CLK6|ALU_Out1|`w0 & ((nIR3&IR4&bc1) | (IR3&IR4&~bc1) | (IR3&nIR4&~bc3) | (nIR3&nIR4&bc3))`|

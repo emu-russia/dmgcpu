@@ -275,7 +275,7 @@ module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR,
 	assign az[5] = ~( alu[3] | (w[24]&IR[3]&IR[4]&nIR[5]) | (w[10]&(nIR[3]|nIR[4]|IR[5])) | (x[22]&bc[2]&bc[5]) );
 	assign az[6] = ~( alu[4] | (w[24]&nIR[3]&nIR[4]&IR[5]) | (w[10]&(IR[3]|IR[4]|nIR[5])) | (x[22]&bc[2]&bc[5]) );
 	assign az[7] = ~( (bc[2]&x[22]) | x[12] | x[26] | (Temp_N&d58) );
-	assign az[8] = ~( alu[5] | (w[24]&IR[3]&nIR[4]&IR[5]) | (w[10]&(nIR[3]|IR[4]|nIR[5])) | (bc[2]&x[22]&((bc[1]&nbc[5])|(bc[1]&bc[5]))) | (nbc[2]&x[22]&((bq5)|(bc[1])|(bq4&bq7))) );
+	assign az[8] = ~( alu[5] | (w[24]&IR[3]&nIR[4]&IR[5]) | (w[10]&(nIR[3]|IR[4]|nIR[5])) | (bc[2]&x[22]&((bc[1]&nbc[5])|(nbc[1]&bc[5]))) | (nbc[2]&x[22]&((bq5)|(bc[1])|(bq4&bq7))) );
 	assign az[9] = ~( alu[6] | (w[24]&nIR[3]&IR[4]&IR[5]) | (w[10]&(IR[3]|nIR[4]|nIR[5])) | (bc[2]&x[22]&(nbc[1]&bc[5])) | (nbc[2]&x[22]&((bq4&bq7)|(bc[1])|(bq5))) );
 	assign az[10] = ~( alu[7] | (w[24]&IR[3]&IR[4]&IR[5]) | (w[10]&(nIR[3]|nIR[4]|nIR[5])) | (bc[2]&x[22]&(bc[1]|bc[5])) );
 	assign az[11] = ~( w[0] & ((nIR[3]&IR[4]&bc[1]) | (IR[3]&IR[4]&nbc[1]) | (IR[3]&nIR[4]&nbc[3]) | (nIR[3]&nIR[4]&bc[3])) );
