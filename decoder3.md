@@ -126,7 +126,7 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |x12|{x24}<br/>{x27}<br/>{IR0,w37}|
 |x13|{d58}<br/>{d88}<br/>{w16}|
 |x14|{d41}<br/>{d14}<br/>{w37}|
-|x15|{w6}<br/>{d41}<br/>{w4}<br/>{d14}<br/>{d38}<br/>{w14}<br/>{w21}|
+|x15|{w6,d41}<br/>{w6,w4}<br/>{w6,d14}<br/>{w6,d38}<br/>{w6,w14}<br/>{w6,w21}|
 |x16|{x17,nIR3,IR4}|
 |x17|{d42,IR5}|
 |x18|{w3,IR3,nIR4,IR5}|
