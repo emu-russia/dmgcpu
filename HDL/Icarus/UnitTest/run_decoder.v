@@ -33,7 +33,7 @@ module Decoder_Run();
 			counter[13],	// cb_mode
 			counter[12:5],	// IR
 			counter[4:2],	// {state2,state1,state0}
-			counter[0],		// writeback?
+			counter[0],		// writeback = CLK5
 			counter[1],		// data_lsb
 			stage1,
 			stage2,
@@ -47,7 +47,8 @@ module Decoder_Run();
 		$display("Dump all Decoder outputs for each opcode (0x00-0xff)");
 
 		f = $fopen("decoder_org.csv","w");
-		$fwrite(f, "a1(intr_dispatch),a3(cb_mode),ir_reg,{state2,state1,state0},CLK5?(writeback),~SeqOut_2(data_lsb),decoder1_out,decoder2_out,decoder3_out,not_used\n" );
+		//$fwrite(f, "a1(intr_dispatch),a3(cb_mode),ir_reg,{state2,state1,state0},CLK5?(writeback),~SeqOut_2(data_lsb),decoder1_out,decoder2_out,decoder3_out,not_used\n" );
+		$fwrite(f, "intr_dispatch,cb_mode,ir_reg,state,writeback,data_lsb,stage1,stage2,stage3,outputs\n");
 
 		CLK <= 1'b0;
 		counter <= 0;
