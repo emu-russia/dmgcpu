@@ -112,7 +112,7 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |Tree|Paths|
 |---|---|
 |x0|{nIR3,x20}<br/>{nIR3,nIR4,x17}|
-|x1|{x20}<br/>{x17}|
+|x1|{IR3,x20}<br/>{IR3,x17}|
 |x2|{w24}<br/>{IR5,IR4,nIR3,w3}|
 |x3|{x10}<br/>{w37}<br/>{x11}<br/>{w8}<br/>{w9}<br/>{x22}<br/>{w23}|
 |x4|{w5}<br/>{d8}<br/>{d41}<br/>{x2}<br/>{d14}<br/>{x26}|
@@ -149,7 +149,7 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |x35|{x34,IR0,IR1,IR2}<br/>{w14}<br/>{w4}<br/>{w37,IR3,IR4,IR5}<br/>{d38,IR4,IR5}<br/>{x32}|
 |x36|{d42}<br/>{w10}<br/>{w24}|
 |x37|{w8}<br/>{w6,d42}<br/>{w6,w10}<br/>{w6,w37}<br/>{w6,w24}<br/>{x30}<br/>{x31}|
-|x38|{x32,w38}<br/>{x36,IR0,IR1,IR2}<br/>{w38,d8}<br/>{w38,w5}<br/>{w38,x14,IR3,IR4,IR5}<br/>{w38,d58,IR4,IR5}|
+|x38|{x32,w38}<br/>{x36,IR0,IR1,IR2}<br/>{w38,d8}<br/>{w38,w5}<br/>{w38,x14,IR3,IR4,IR5}<br/>{w38,d58,IR4,IR5}<br/>{w38,w3,nIR5}<br/>{w38,w3,nIR4}<br/>{w38,w3,nIR3}|
 |x39|{IR5,w13,w38}<br/>{x36,nIR0,nIR1,IR2}<br/>{w38,x64}<br/>{w38,w19}<br/>{w38,x14,nIR3,nIR4,IR5}<br/>{w38,x13,nIR4,IR5}|
 |x40|{IR5,w13,w38}<br/>{x36,IR0,nIR1,IR2}<br/>{w38,x66}<br/>{w38,w15}<br/>{w38,x14,IR3,nIR4,IR5}<br/>{w38,x13,nIR4,IR5}|
 |x41|{d83,IR0,IR4}|
@@ -159,10 +159,10 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |x45|{IR4,nIR5,w16}<br/>{IR4,nIR5,w13}|
 |x46|{x34,nIR0,IR1,nIR2}<br/>{nIR5,IR4,d38}<br/>{nIR5,IR4,w19}<br/>{nIR5,IR4,nIR3,w37}|
 |x47|{x34,IR0,IR1,nIR2}<br/>{nIR5,IR4,w21}<br/>{nIR5,IR4,w15}<br/>{nIR5,IR4,IR3,w37}|
-|x48|{x36,nIR0,IR1,nIR2,w38}<br/>{IR4,nIR5,x13,w38}<br/>{x14,nIR3,w38}|
-|x49|{x36,nIR0,nIR1,nIR2,w38}<br/>{nIR4,nIR5,x13,w38}<br/>{x14,nIR3,w38}|
-|x50|{x36,IR0,IR1,nIR2,w38}<br/>{IR4,nIR5,x13,w38}<br/>{x14,IR3,w38}|
-|x51|{x36,IR0,nIR1,nIR2,w38}<br/>{nIR4,IR5,x13,w38}<br/>{x14,IR3,w38}|
+|x48|{x36,nIR0,IR1,nIR2,w38}<br/>{IR4,nIR5,x13,w38}<br/>{IR4,nIR5,x14,nIR3,w38}|
+|x49|{x36,nIR0,nIR1,nIR2,w38}<br/>{nIR4,nIR5,x13,w38}<br/>{nIR4,nIR5,x14,nIR3,w38}|
+|x50|{x36,IR0,IR1,nIR2,w38}<br/>{IR4,nIR5,x13,w38}<br/>{IR4,nIR5,x14,IR3,w38}|
+|x51|{x36,IR0,nIR1,nIR2,w38}<br/>{nIR4,nIR5,x13,w38}<br/>{nIR4,nIR5,x14,IR3,w38}|
 |x52|{w29}<br/>{nIR4,nIR5,w13}<br/>{nIR4,nIR5,w16}|
 |x53|{x34,nIR0,nIR1,nIR2}<br/>{nIR4,nIR5,d38}<br/>{nIR4,nIR5,w19}<br/>{nIR4,nIR5,nIR3,w37}|
 |x54|{x34,IR0,nIR1,nIR2}<br/>{nIR4,nIR5,w21}<br/>{nIR4,nIR5,w15}<br/>{nIR4,nIR5,IR3,w37}|
