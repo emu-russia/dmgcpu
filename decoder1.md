@@ -21,9 +21,9 @@ Dynamic logic is used.
 |Input|From|Meaning|
 |---|---|---|
 |a0|Inplace|~a1|
-|a1|Sequencer| ??? TBD. |
+|a1|Sequencer|1: IRQ sequence in progress (@gekkio: intr_dispatch)|
 |a2|Inplace|~a3|
-|a3|Sequencer| ??? TBD. |
+|a3|Sequencer|1: CB Opcode prefix (@gekkio: cb_mode)|
 |a4|Inplace|~a5|
 |a5|IR|IR\[7\]|
 |a6|Inplace|~a7|
@@ -160,7 +160,7 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |d98|{0,2,4,6,15,16}| |INC/DEC reg/(HL)|
 |d99|{0,2,5,7,9,11,14,17,19,20}|Sequencer (also)| |
 |d100|{0,2,4,7,9,11,12,15,17,18,20}|Sequencer (also)| |
-|d101|{0,2,4,6,8,12,14,16,18,20}|Sequencer (also)| |
+|d101|{0,2,4,6,8,12,14,16,18,20}|Sequencer (also)|NOP/STOP|
 |d102|{0,2,5,7,8,10,13,14,17,19,20}|Sequencer (also)| |
 |d103|{0,2,4,6,({8,11,13,14,16,18},{9,14,16,18}),23,24}| | |
 |d104|{0,2,5,7,9,13,14,17,18,20,22,24}| | |
