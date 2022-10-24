@@ -149,9 +149,9 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |x35|{x34,IR0,IR1,IR2}<br/>{w14}<br/>{w4}<br/>{w37,IR3,IR4,IR5}<br/>{d38,IR4,IR5}<br/>{x32}|
 |x36|{d42}<br/>{w10}<br/>{w24}|
 |x37|{w8}<br/>{w6,d42}<br/>{w6,w10}<br/>{w6,w37}<br/>{w6,w24}<br/>{x30}<br/>{x31}|
-|x38|{x32,w38}<br/>{x36,IR0,IR1,IR2}<br/>{w38,d8}<br/>{w38,w5}<br/>{w38,x14,IR3,IR4,IR5}<br/>{w38,d58,IR4,IR5}<br/>{w38,w3,nIR5}<br/>{w38,w3,nIR4}<br/>{w38,w3,nIR3}|
-|x39|{IR5,w13,w38}<br/>{x36,nIR0,nIR1,IR2}<br/>{w38,x64}<br/>{w38,w19}<br/>{w38,x14,nIR3,nIR4,IR5}<br/>{w38,x13,nIR4,IR5}|
-|x40|{IR5,w13,w38}<br/>{x36,IR0,nIR1,IR2}<br/>{w38,x66}<br/>{w38,w15}<br/>{w38,x14,IR3,nIR4,IR5}<br/>{w38,x13,nIR4,IR5}|
+|x38|{x32,w38}<br/>{x36,IR0,IR1,IR2,w38}<br/>{w38,d8}<br/>{w38,w5}<br/>{w38,x14,IR3,IR4,IR5}<br/>{w38,d58,IR4,IR5}<br/>{w38,w3,nIR5}<br/>{w38,w3,nIR4}<br/>{w38,w3,nIR3}|
+|x39|{IR5,w13,w38}<br/>{x36,nIR0,nIR1,IR2,w38}<br/>{w38,x64}<br/>{w38,w19}<br/>{w38,x14,nIR3,nIR4,IR5}<br/>{w38,x13,nIR4,IR5}|
+|x40|{IR5,w13,w38}<br/>{x36,IR0,nIR1,IR2,w38}<br/>{w38,x66}<br/>{w38,w15}<br/>{w38,x14,IR3,nIR4,IR5}<br/>{w38,x13,nIR4,IR5}|
 |x41|{d83,IR0,IR4}|
 |x42|{w13,IR5}<br/>{w16,nIR4,IR5}<br/>{w22}|
 |x43|{x34,nIR0,nIR1,IR2}<br/>{IR5,nIR4,d38}<br/>{IR5,nIR4,w19}<br/>{IR5,nIR4,nIR3,w37}|
