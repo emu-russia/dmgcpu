@@ -37,12 +37,12 @@ module Decoder3( CLK2, CLK4, CLK5, nCLK4, a3, d, w, x, IR, nIR, SeqOut_2 );
 	assign #`delay x[14] = ~(CLK2 ? ~((d[41]) | (d[14]) | (w[37])) : 1'b1);
 
 	// CLK4 [!]
-	assign #`delay x[15] = ~(CLK4 ? ~((d[41]) | (w[4]) | (d[14]) | (d[38]) | (w[14]) | (w[21])) : 1'b1);
+	assign #`delay x[15] = ~(CLK4 ? ~((w[6]) | (d[41]) | (w[4]) | (d[14]) | (d[38]) | (w[14]) | (w[21])) : 1'b1);
 
 	assign #`delay x[16] = ~(CLK2 ? ~((x[17]&nIR[3]&IR[4])) : 1'b1);
 	assign #`delay x[17] = ~(CLK2 ? ~((d[42]&IR[5])) : 1'b1);
 	assign #`delay x[18] = ~(CLK2 ? ~((w[3]&IR[3]&nIR[4]&IR[5])) : 1'b1);
-	assign #`delay x[19] = ~(CLK2 ? ~((w[10]) | (nIR[3]&nIR[4]&IR[5])) : 1'b1);
+	assign #`delay x[19] = ~(CLK2 ? ~((w[10]) | (nIR[3]&nIR[4]&IR[5]&w[3])) : 1'b1);
 	assign #`delay x[20] = ~(CLK2 ? ~((d[25]) | (d[42]&nIR[5])) : 1'b1);
 	assign #`delay x[21] = ~(CLK2 ? ~((d[34]&IR[4]&IR[5])) : 1'b1);
 	assign #`delay x[22] = ~(CLK2 ? ~((d[34]&nIR[3]&nIR[4]&IR[5])) : 1'b1);
@@ -66,9 +66,9 @@ module Decoder3( CLK2, CLK4, CLK5, nCLK4, a3, d, w, x, IR, nIR, SeqOut_2 );
 
 	// CLK4 [!]
 	assign #`delay x[37] = ~(CLK4 ? ~((w[8]) | (w[6]&d[42]) | (w[6]&w[10]) | (w[6]&w[37]) | (w[6]&w[24]) | (x[30]) | (x[31])) : 1'b1);
-	assign #`delay x[38] = ~(CLK4 ? ~((x[32]&w[38]) | (x[36]&IR[0]&IR[1]&IR[2]) | (w[38]&d[8]) | (w[38]&w[5]) | (w[38]&x[14]&IR[3]&IR[4]&IR[5]) | (w[38]&d[58]&IR[4]&IR[5]) | (w[38]&w[3]&nIR[5]) | (w[38]&w[3]&nIR[4]) | (w[38]&w[3]&nIR[3])) : 1'b1);
-	assign #`delay x[39] = ~(CLK4 ? ~((IR[5]&w[13]&w[38]) | (x[36]&nIR[0]&nIR[1]&IR[2]) | (w[38]&x[64]) | (w[38]&w[19]) | (w[38]&x[14]&nIR[3]&nIR[4]&IR[5]) | (w[38]&x[13]&nIR[4]&IR[5])) : 1'b1);
-	assign #`delay x[40] = ~(CLK4 ? ~((IR[5]&w[13]&w[38]) | (x[36]&IR[0]&nIR[1]&IR[2]) | (w[38]&x[66]) | (w[38]&w[15]) | (w[38]&x[14]&IR[3]&nIR[4]&IR[5]) | (w[38]&x[13]&nIR[4]&IR[5])) : 1'b1);
+	assign #`delay x[38] = ~(CLK4 ? ~((x[32]&w[38]) | (x[36]&IR[0]&IR[1]&IR[2]&w[38]) | (w[38]&d[8]) | (w[38]&w[5]) | (w[38]&x[14]&IR[3]&IR[4]&IR[5]) | (w[38]&d[58]&IR[4]&IR[5]) | (w[38]&w[3]&nIR[5]) | (w[38]&w[3]&nIR[4]) | (w[38]&w[3]&nIR[3])) : 1'b1);
+	assign #`delay x[39] = ~(CLK4 ? ~((IR[5]&w[13]&w[38]) | (x[36]&nIR[0]&nIR[1]&IR[2]&w[38]) | (w[38]&x[64]) | (w[38]&w[19]) | (w[38]&x[14]&nIR[3]&nIR[4]&IR[5]) | (w[38]&x[13]&nIR[4]&IR[5])) : 1'b1);
+	assign #`delay x[40] = ~(CLK4 ? ~((IR[5]&w[13]&w[38]) | (x[36]&IR[0]&nIR[1]&IR[2]&w[38]) | (w[38]&x[66]) | (w[38]&w[15]) | (w[38]&x[14]&IR[3]&nIR[4]&IR[5]) | (w[38]&x[13]&nIR[4]&IR[5])) : 1'b1);
 
 	assign #`delay x[41] = ~(CLK2 ? ~((d[83]&IR[0]&IR[4])) : 1'b1);
 	assign #`delay x[42] = ~(CLK2 ? ~((w[13]&IR[5]) | (w[16]&nIR[4]&IR[5]) | (w[22])) : 1'b1);

@@ -35,7 +35,7 @@ module Decoder1 (CLK2, a, d);
 	assign #`delay d[24] = ~(CLK2 ? ~(a[0]&a[3]&a[5]&a[6]&a[15]&a[17]&a[18]&a[22]&a[25]) : 1'b1);
 	assign #`delay d[25] = ~(CLK2 ? ~(a[0]&a[2]&a[4]&a[6]&a[8]&a[15]&a[17]&a[19]) : 1'b1);
 	assign #`delay d[26] = ~(CLK2 ? ~(a[0]&a[2]&a[4]&a[6]&a[13]&a[14]&a[17]&a[18]&a[22]&a[25]) : 1'b1);
-	assign #`delay d[27] = ~(CLK2 ? ~(a[0]&a[2]&a[3]&a[4]&a[7]) : 1'b1);
+	assign #`delay d[27] = ~(CLK2 ? ~(a[0]&a[3]&a[4]&a[7]) : 1'b1);
 	assign #`delay d[28] = ~(CLK2 ? ~(a[0]&a[2]&a[4]&a[6]&a[12]&a[14]&a[17]&a[18]&a[22]&a[24]) : 1'b1);
 	assign #`delay d[29] = ~(CLK2 ? ~(a[0]&a[2]&a[4]&a[6]&a[13]&a[14]&a[17]&a[18]&a[22]&a[24]) : 1'b1);
 	assign #`delay d[30] = ~(CLK2 ? ~(a[0]&a[2]&a[5]&a[7]&a[9]&a[10]&a[12]&a[14]&a[17]&a[18]&a[22]&a[24]) : 1'b1);

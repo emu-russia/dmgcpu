@@ -18,11 +18,11 @@ py -3 MakeNandTree.py --tree {x27}{x24} --output_name "x[11]" >> decoder3_trees.
 py -3 MakeNandTree.py --tree {x24}{x27}{IR0,w37} --output_name "x[12]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {d58}{d88}{w16} --output_name "x[13]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {d41}{d14}{w37} --output_name "x[14]" >> decoder3_trees.v
-py -3 MakeNandTree.py --tree {d41}{w4}{d14}{d38}{w14}{w21} --output_name "x[15]" >> decoder3_trees.v
+py -3 MakeNandTree.py --tree {w6}{d41}{w4}{d14}{d38}{w14}{w21} --output_name "x[15]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {x17,nIR3,IR4} --output_name "x[16]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {d42,IR5} --output_name "x[17]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {w3,IR3,nIR4,IR5} --output_name "x[18]" >> decoder3_trees.v
-py -3 MakeNandTree.py --tree {w10}{nIR3,nIR4,IR5} --output_name "x[19]" >> decoder3_trees.v
+py -3 MakeNandTree.py --tree {w10}{nIR3,nIR4,IR5,w3} --output_name "x[19]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {d25}{d42,nIR5} --output_name "x[20]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {d34,IR4,IR5} --output_name "x[21]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {d34,nIR3,nIR4,IR5} --output_name "x[22]" >> decoder3_trees.v
@@ -41,9 +41,9 @@ py -3 MakeNandTree.py --tree {w3}{d4}{a3} --output_name "x[34]" >> decoder3_tree
 py -3 MakeNandTree.py --tree {x34,IR0,IR1,IR2}{w14}{w4}{w37,IR3,IR4,IR5}{d38,IR4,IR5}{x32} --output_name "x[35]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {d42}{w10}{w24} --output_name "x[36]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {w8}{w6,d42}{w6,w10}{w6,w37}{w6,w24}{x30}{x31} --output_name "x[37]" >> decoder3_trees.v
-py -3 MakeNandTree.py --tree {x32,w38}{x36,IR0,IR1,IR2}{w38,d8}{w38,w5}{w38,x14,IR3,IR4,IR5}{w38,d58,IR4,IR5}{w38,w3,nIR5}{w38,w3,nIR4}{w38,w3,nIR3} --output_name "x[38]" >> decoder3_trees.v
-py -3 MakeNandTree.py --tree {IR5,w13,w38}{x36,nIR0,nIR1,IR2}{w38,x64}{w38,w19}{w38,x14,nIR3,nIR4,IR5}{w38,x13,nIR4,IR5} --output_name "x[39]" >> decoder3_trees.v
-py -3 MakeNandTree.py --tree {IR5,w13,w38}{x36,IR0,nIR1,IR2}{w38,x66}{w38,w15}{w38,x14,IR3,nIR4,IR5}{w38,x13,nIR4,IR5} --output_name "x[40]" >> decoder3_trees.v
+py -3 MakeNandTree.py --tree {x32,w38}{x36,IR0,IR1,IR2,w38}{w38,d8}{w38,w5}{w38,x14,IR3,IR4,IR5}{w38,d58,IR4,IR5}{w38,w3,nIR5}{w38,w3,nIR4}{w38,w3,nIR3} --output_name "x[38]" >> decoder3_trees.v
+py -3 MakeNandTree.py --tree {IR5,w13,w38}{x36,nIR0,nIR1,IR2,w38}{w38,x64}{w38,w19}{w38,x14,nIR3,nIR4,IR5}{w38,x13,nIR4,IR5} --output_name "x[39]" >> decoder3_trees.v
+py -3 MakeNandTree.py --tree {IR5,w13,w38}{x36,IR0,nIR1,IR2,w38}{w38,x66}{w38,w15}{w38,x14,IR3,nIR4,IR5}{w38,x13,nIR4,IR5} --output_name "x[40]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {d83,IR0,IR4} --output_name "x[41]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {w13,IR5}{w16,nIR4,IR5}{w22} --output_name "x[42]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {x34,nIR0,nIR1,IR2}{IR5,nIR4,d38}{IR5,nIR4,w19}{IR5,nIR4,nIR3,w37} --output_name "x[43]" >> decoder3_trees.v

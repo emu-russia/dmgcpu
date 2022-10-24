@@ -10,7 +10,7 @@ py -3 MakeNorTree.py --tree {d2,d26} --output_name "w[5]" >> decoder2_trees.v
 py -3 MakeNorTree.py --tree {d0,d12,d13,d24,d28,d30,d32,d38,d47,d50,d56,d60,d66,d68,d70,d73,d75,d92,d93,d97} --output_name "w[6]" >> decoder2_trees.v
 py -3 MakeNorTree.py --tree {d21,d22} --output_name "w[9]" >> decoder2_trees.v
 py -3 MakeNorTree.py --tree {d23,d24} --output_name "w[10]" >> decoder2_trees.v
-py -3 MakeNorTree.py --tree {d32,d59,d0,d1,d2,d9,d10,d12,d13,d15,d16,d17,d18,d20,d22,d23,d24,d26,d28,d29,d30,d31,d33,d34,d38,d40,d43,d44,d46,d47,d50,d51,d52,d55,d56,d57,d58,d60,d61,d63,d64,d65,d66,d67,d68,d69,d70,d71,d72,d73,d75,d78,d79,d80,d81,d82,d86,d87,d88,d89,d90,d91,d92,d93,d94,d95,d96,d97,d98,d99,d100,d101,d102,d103,d104,d105} --output_name "w[11]" >> decoder2_trees.v
+py -3 MakeNorTree.py --tree {d32,d59,d0,d1,d2,d9,d10,d12,d13,d15,d16,d17,d18,d20,d22,d23,d24,d26,d28,d29,d30,d31,d33,d34,d38,d40,d43,d44,d46,d47,d50,d51,d52,d55,d56,d57,d58,d60,d61,d63,d64,d65,d66,d67,d68,d69,d70,d71,d72,d73,d75,d78,d79,d80,d81,d82,d86,d87,d88,d89,d90,d91,d92,d93,d94,d95,d96,d97,d99,d100,d101,d102,d103,d104,d105} --output_name "w[11]" >> decoder2_trees.v
 py -3 MakeNorTree.py --tree {d28,d29} --output_name "w[13]" >> decoder2_trees.v
 py -3 MakeNorTree.py --tree {d30,d32} --output_name "w[14]" >> decoder2_trees.v
 py -3 MakeNorTree.py --tree {d36,d37} --output_name "w[16]" >> decoder2_trees.v
@@ -26,7 +26,7 @@ py -3 MakeNorTree.py --tree {d60,d66} --output_name "w[27]" >> decoder2_trees.v
 py -3 MakeNorTree.py --tree {d12,d73,d75} --output_name "w[28]" >> decoder2_trees.v
 py -3 MakeNorTree.py --tree {d30,d71} --output_name "w[29]" >> decoder2_trees.v
 py -3 MakeNorTree.py --tree {d11,d12,d13,d38,d39,d50,d51,d52,d73,d74,d75,d76,d79,d80,d82,d92,d93} --output_name "w[30]" >> decoder2_trees.v
-py -3 MakeNorTree.py --tree {d2,d9,d10,d15,d16,d17,d18,d20,d22,d23,d26,d31,d34,d37,d40,d43,d44,d46,d51,d52,d55,d58,d60,d61,d63,d64,d65,d67,d72,d79,d80,d81,d82,d84,d87,d88,d89,d91,d94,d96,d99,d101,d102,d103,d104,d105} --output_name "w[31]" >> decoder2_trees.v
+py -3 MakeNorTree.py --tree {d2,d9,d10,d15,d16,d17,d18,d20,d22,d23,d26,d31,d34,d37,d40,d43,d44,d46,d51,d52,d55,d58,d60,d61,d63,d64,d65,d67,d72,d78,d79,d80,d81,d82,d84,d86,d87,d88,d89,d91,d94,d96,d99,d101,d102,d103,d104,d105} --output_name "w[31]" >> decoder2_trees.v
 py -3 MakeNorTree.py --tree {d0,d12,d13,d24,d28,d30,d32,d33,d36,d37,d45,d47,d50,d56,d59,d62,d66,d68,d70,d71,d75,d76,d77,d83,d90,d91,d92,d93,d97} --output_name "w[32]" >> decoder2_trees.v
 py -3 MakeNorTree.py --tree {d0,d1,d10,d11,d13,d19,d21,d24,d28,d30,d32,d33,d36,d37,d38,d44,d45,d47,d50,d52,d53,d54,d56,d59,d60,d62,d66,d67,d68,d70,d71,d73,d75,d79,d80,d82,d83,d87,d90,d91,d92,d93,d97,d105} --output_name "w[33]" >> decoder2_trees.v
 py -3 MakeNorTree.py --tree {d13,d92,d93} --output_name "w[34]" >> decoder2_trees.v
