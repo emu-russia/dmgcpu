@@ -99,6 +99,7 @@ module SM83_Run();
 
 		$dumpfile("dmg_waves.vcd");
 		$dumpvars(0, dmgcore);
+		$dumpvars(1, clkgen);
 
 		//ExternalRESET <= 1'b1;
 		//repeat (8) @ (posedge CLK);
