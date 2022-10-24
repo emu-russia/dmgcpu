@@ -403,15 +403,15 @@ module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, DL, abus, bbus, cbus, db
 	assign spl_d = CLK6 ? (~((adl & {8{x[62]}}) | (zbus & {8{x[63]}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
 	assign sph_d = CLK6 ? (~((adh & {8{x[62]}}) | (wbus & {8{x[63]}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
 
-	assign DL = ({8{d60}} & spl_q) ? 8'b00000000 : 8'bzzzzzzzz;
-	assign abus = ({8{w[23]}} & spl_nq) ? 8'b00000000 : 8'bzzzzzzzz;
-	assign bbus = ({8{w[15]}} & {8{IR4}} & {8{IR5}} & spl_nq) ? 8'b00000000 : 8'bzzzzzzzz;
-	assign cbus = ({8{x[65]}} & spl_nq) ? 8'b00000000 : 8'bzzzzzzzz;
+	assign DL = d60 ? ~spl_q : 8'bzzzzzzzz;
+	assign abus = w[23] ? ~spl_nq : 8'bzzzzzzzz;
+	assign bbus = (w[15] & IR4 & IR5) ? ~spl_nq : 8'bzzzzzzzz;
+	assign cbus = x[65] ? ~spl_nq : 8'bzzzzzzzz;
 
-	assign DL = ({8{d66}} & sph_q) ? 8'b00000000 : 8'bzzzzzzzz;
-	assign abus = ({8{w[9]}} & sph_nq) ? 8'b00000000 : 8'bzzzzzzzz;
-	assign bbus = ({8{w[19]}} & {8{IR4}} & {8{IR5}} & sph_nq) ? 8'b00000000 : 8'bzzzzzzzz;
-	assign dbus = ({8{x[65]}} & sph_nq) ? 8'b00000000 : 8'bzzzzzzzz;
+	assign DL = d66 ? ~sph_q : 8'bzzzzzzzz;
+	assign abus = w[9] ? ~sph_nq : 8'bzzzzzzzz;
+	assign bbus = (w[19] & IR4 & IR5) ? ~sph_nq : 8'bzzzzzzzz;
+	assign dbus = x[65] ? ~sph_nq : 8'bzzzzzzzz;
 
 endmodule // SP
 
@@ -451,14 +451,14 @@ module PC ( CLK5, CLK6, CLK7, d92, w, x, DL, abus, cbus, dbus, zbus, wbus, adl, 
 	assign pcl_d[7:6] = CLK6 ? (~((adl[7:6] & {2{x[67]}}) | (zbus[7:6] & {2{w[36]}}) | bro[7:6])) : (CLK7 ? 2'bzz : 2'b11);
 	assign pch_d = CLK6 ? (~((adh & {8{x[67]}}) | (wbus & {8{w[36]}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
 
-	assign DL = ({8{w[34]}} & pcl_q) ? 8'b00000000 : 8'bzzzzzzzz;
-	assign cbus = ({8{w[25]}} & pcl_nq) ? 8'b00000000 : 8'bzzzzzzzz;
-	assign abus = ({8{w[8]}} & pcl_nq) ? 8'b00000000 : 8'bzzzzzzzz;
+	assign DL = w[34] ? ~pcl_q : 8'bzzzzzzzz;
+	assign cbus = w[25] ? ~pcl_nq : 8'bzzzzzzzz;
+	assign abus = w[8] ? ~pcl_nq : 8'bzzzzzzzz;
 	assign abus = x[33] ? 8'b00000000 : 8'bzzzzzzzz;
 
-	assign DL = ({8{w[28]}} & pch_q) ? 8'b00000000 : 8'bzzzzzzzz;
-	assign dbus = ({8{w[25]}} & pch_nq) ? 8'b00000000 : 8'bzzzzzzzz;
-	assign dbus = ({8{w[8]}} & pch_nq) ? 8'b00000000 : 8'bzzzzzzzz;
+	assign DL = w[28] ? ~pch_q : 8'bzzzzzzzz;
+	assign dbus = w[25] ? ~pch_nq : 8'bzzzzzzzz;
+	assign dbus = w[8] ? ~pch_nq : 8'bzzzzzzzz;
 
 endmodule // PC
 
@@ -570,7 +570,7 @@ module cntbit ( n_val_in, cin, val_out, cout, TTB2, TTB3 );
 	input TTB3;
 
 	assign val_out = n_val_in ^ cin;
-	assign cout = ~n_val_in ? TTB3 : TTB2;
+	assign cout = ~n_val_in ? TTB2 : TTB3;
 
 endmodule // cntbit
 
