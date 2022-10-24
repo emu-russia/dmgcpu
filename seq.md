@@ -215,8 +215,8 @@ TBD.
 
 |Extra Decoder1 Input|Meaning|
 |---|---|
-|a1|??? TBD. |
-|a3|??? TBD. |
+|a1|1: IRQ sequence in progress (@gekkio: intr_dispatch)|
+|a3|1: CB Opcode prefix (@gekkio: cb_mode)|
 |a20|??? TBD. |
 |a22|??? TBD. |
 |a24|??? TBD. |
