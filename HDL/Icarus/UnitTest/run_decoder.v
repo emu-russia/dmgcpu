@@ -112,6 +112,9 @@ module org_to_gekkio (d, w, x, stage1, stage2, stage3);
 	output [37:0] stage2; 		// w[7,39,40] -- ignored
 	output [68:0] stage3;		// 1=1
 
+	// Also: org order: w[20] -> w[18] -> w[19]    (w20 is crooked in topo)
+	// gekkio order: org w20 -> org w18 -> org w19
+
 	for (i=0; i<=47; i=i+1) begin
 		assign stage1[103-i] = d[i];
 	end
@@ -122,7 +125,14 @@ module org_to_gekkio (d, w, x, stage1, stage2, stage3);
 	for (i=0; i<=6; i=i+1) begin
 		assign stage2[37-i] = w[i];
 	end
-	for (i=8; i<39; i=i+1) begin
+	for (i=8; i<18; i=i+1) begin
+		assign stage2[(37+1)-i] = w[i]; 	// +1 skipped
+	end
+	// 18-20
+	assign stage2[(37+1) - 18] = w[20];
+	assign stage2[(37+1) - 19] = w[18];
+	assign stage2[(37+1) - 20] = w[19];
+	for (i=21; i<39; i=i+1) begin
 		assign stage2[(37+1)-i] = w[i]; 	// +1 skipped
 	end
 
