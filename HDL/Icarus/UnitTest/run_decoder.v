@@ -15,9 +15,15 @@ module Decoder_Run();
 	wire [40:0] w; 			// Decoder2 out
 	wire [68:0] x; 			// Decoder3 out
 
+	wire [103:0] stage1;
+	wire [37:0] stage2;
+	wire [68:0] stage3;
+
 	Decoder1 decoder1 (.CLK2(1'b1), .a(a), .d(d));
 	Decoder2 decoder2 (.CLK2(1'b1), .d(d), .w(w), .SeqOut_2(~counter[1]), .IR7(counter[12]) );
 	Decoder3 decoder3 (.CLK2(1'b1), .CLK4(1'b1), .CLK5(counter[0]), .nCLK4(1'b0), .a3(a[3]), .d(d), .w(w), .x(x), .IR(counter[12:5]), .nIR(~counter[10:5]), .SeqOut_2(~counter[1]) );
+
+	org_to_gekkio otg ( .d(decoder1.d), .w(decoder2.w), .x(decoder3.x), .stage1(stage1), .stage2(stage2), .stage3(stage3) );
 
 	Sequencer_Mock seq (.counter(counter), .a(a));
 
@@ -29,9 +35,9 @@ module Decoder_Run();
 			counter[4:2],	// {state2,state1,state0}
 			counter[0],		// writeback?
 			counter[1],		// data_lsb
-			decoder1.d, 	// msb first  (@gekkio: lsb first)
-			decoder2.w,		// msb first  (@gekkio: lsb first)
-			decoder3.x );	// msb first  (@gekkio: lsb first)
+			stage1,
+			stage2,
+			stage3 );
 
 		counter = counter + 1;
 	end
@@ -53,7 +59,7 @@ module Decoder_Run();
 		//$dumpvars(0, decoder3);
 		//$dumpvars(1, seq);
 
-		repeat (/*32768*/256) @ (posedge CLK);
+		repeat (32768) @ (posedge CLK);
 		$fclose (f);
 		$finish;
 	end
@@ -93,3 +99,35 @@ module Sequencer_Mock (counter, a);
 	assign a[25] = ~a[24];		// @gekkio: state[0]
 
 endmodule // Sequencer_Mock
+
+module org_to_gekkio (d, w, x, stage1, stage2, stage3);
+
+	input [106:0] d;
+	input [40:0] w;
+	input [68:0] x;
+	genvar i;
+
+	// @gekkio: lsb first
+	output [103:0] stage1; 		// d[48,49,106] -- ignored
+	output [37:0] stage2; 		// w[7,39,40] -- ignored
+	output [68:0] stage3;		// 1=1
+
+	for (i=0; i<=47; i=i+1) begin
+		assign stage1[103-i] = d[i];
+	end
+	for (i=50; i<106; i=i+1) begin
+		assign stage1[(103+2)-i] = d[i]; 	// +2 skipped
+	end
+
+	for (i=0; i<=6; i=i+1) begin
+		assign stage2[37-i] = w[i];
+	end
+	for (i=8; i<39; i=i+1) begin
+		assign stage2[(37+1)-i] = w[i]; 	// +1 skipped
+	end
+
+	for (i=0; i<=68; i=i+1) begin
+		assign stage3[68-i] = x[i];
+	end
+
+endmodule // org_to_gekkio
