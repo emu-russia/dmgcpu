@@ -130,7 +130,7 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |x16|{x17,nIR3,IR4}|
 |x17|{d42,IR5}|
 |x18|{w3,IR3,nIR4,IR5}|
-|x19|{w10}<br/>{nIR3,nIR4,IR5}|
+|x19|{w10}<br/>{nIR3,nIR4,IR5,w3}|
 |x20|{d25}<br/>{d42,nIR5}|
 |x21|{d34,IR4,IR5}|
 |x22|{d34,nIR3,nIR4,IR5}|
