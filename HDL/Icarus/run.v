@@ -100,9 +100,9 @@ module SM83_Run();
 		$dumpfile("dmg_waves.vcd");
 		$dumpvars(0, dmgcore);
 
-		ExternalRESET <= 1'b1;
-		repeat (8) @ (posedge CLK);
-		ExternalRESET <= 1'b0;
+		//ExternalRESET <= 1'b1;
+		//repeat (8) @ (posedge CLK);
+		//ExternalRESET <= 1'b0;
 
 		repeat (64) @ (posedge CLK);
 		$finish;
