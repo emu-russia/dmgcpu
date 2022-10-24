@@ -37,7 +37,7 @@ module Decoder3( CLK2, CLK4, CLK5, nCLK4, a3, d, w, x, IR, nIR, SeqOut_2 );
 	assign #`delay x[14] = ~(CLK2 ? ~((d[41]) | (d[14]) | (w[37])) : 1'b1);
 
 	// CLK4 [!]
-	assign #`delay x[15] = ~(CLK4 ? ~(((w[6]) | (d[41]) | (w[4]) | (d[14]) | (d[38]) | (w[14]) | (w[21])) : 1'b1);
+	assign #`delay x[15] = ~(CLK4 ? ~((w[6]) | (d[41]) | (w[4]) | (d[14]) | (d[38]) | (w[14]) | (w[21])) : 1'b1);
 
 	assign #`delay x[16] = ~(CLK2 ? ~((x[17]&nIR[3]&IR[4])) : 1'b1);
 	assign #`delay x[17] = ~(CLK2 ? ~((d[42]&IR[5])) : 1'b1);

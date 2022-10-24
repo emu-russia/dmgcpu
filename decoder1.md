@@ -86,7 +86,7 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |d24|{0,3,5,6,15,17,18,22,25}| | |
 |d25|{0,2,4,6,8,15,17,19}|Decoder3 (not used in Decoder2)|Rotate instructions (RLCA/RRCA/RLA/RRA)|
 |d26|{0,2,4,6,13,14,17,18,22,25}| | |
-|d27|{0,2,3,4,7}| | |
+|d27|{0,3,4,7}| | |
 |d28|{0,2,4,6,12,14,17,18,22,24}| | |
 |d29|{0,2,4,6,13,14,17,18,22,24}| | |
 |d30|{0,2,5,7,9,10,12,14,17,18,22,24}| | |
