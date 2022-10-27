@@ -163,7 +163,7 @@ PC vs Buses:
 
 ![x68_tran](/imgstore/modules/x68_tran.jpg)
 
-## Incrementer/Decrementer
+## Increment/Decrement Unit
 
 ![IncDec](/logisim/IncDec.png)
 
