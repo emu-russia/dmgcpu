@@ -211,12 +211,18 @@ This module is essentially used to generate the `#MREQ` signal. Below is `not` t
 
 ## Logic behind additional Decoder inputs
 
-TBD.
+From @Gekkio's research we know the purpose of additional inputs of Decoder1.
+
+The first two are obvious: Sequencer is in interrupt sequence mode or in opcode processing state from `CB` table.
+
+The other three are "State\[3\]", encoding a timestamp for executing long instructions. Initially it appeared to be a counter, but it turns out that setting the states is more complicated and so the bits are simply called State0-2.
 
 |Extra Decoder1 Input|Meaning|
 |---|---|
-|a1|1: IRQ sequence in progress (@gekkio: intr_dispatch)|
-|a3|1: CB Opcode prefix (@gekkio: cb_mode)|
-|a20|??? TBD. |
-|a22|??? TBD. |
-|a24|??? TBD. |
+|a1|1: IRQ sequence in progress (Gekkio: intr_dispatch)|
+|a3|1: CB Opcode prefix (Gekkio: cb_mode)|
+|a20|#State2 (0: state2 active)|
+|a22|#State1 (0: state1 active)|
+|a24|#State0 (0: state0 active)|
+
+(the names of the states are in inverse polarity, because Gekkio takes their values from the corresponding DFFs and they go to the specified decoder inputs in inverse polarity).

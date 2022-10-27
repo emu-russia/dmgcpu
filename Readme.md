@@ -18,6 +18,12 @@ The core consists of the following main components:
 
 ![sm83](/HDL/Design/sm83.png)
 
+## Gekkio Research
+
+There is also an SM83 study by @Gekkio: https://github.com/Gekkio/gb-research/tree/main/sm83-cpu-core
+
+All places where there is any parallel with his study (signal names) are marked as `Gekkio`.
+
 ## Latest Progress
 
 At the moment, the entire topology have been obtained. The basic circuit principles are understood and the transistor circuits of most of the modules are obtained. The main emphasis was made on the sequencer circuit, as the most demanded one.
