@@ -84,7 +84,7 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 	wire ASOL_nq;
 	wire SixteenHz;
 
-	assign SixteenHz = 1'b1; 		// From DIV
+	assign SixteenHz = 1'b0; 		// From DIV
 
 	NOR_LATCH TUBO (.set(CLK_ENA), .res(RESET | ~OSC_ENA), .nq(TUBO_nq));
 	assign OSC_STABLE = (T1_nT2 | nT1_T2 | (TUBO_nq & SixteenHz));
@@ -103,11 +103,12 @@ module NOR_LATCH (set, res, q, nq);
 	reg val;
 	initial val <= 1'bx;
 
+	// res above set.
 	always @(*) begin
-		if (set)
-			val <= 1'b1;
 		if (res)
 			val <= 1'b0;
+		else if (set)
+			val <= 1'b1;
 	end
 
 	assign q = val;
