@@ -6,15 +6,15 @@ The CPU receives 9 (!) CLK signals.
 
 |CLK Signal|dmg-schematics Name|Gekkio|
 |---|---|---|
-|CLK1|ADR_CLK_N|~clk|
-|CLK2|ADR_CLK_P|clk|
-|CLK3|DATA_CLK_N :warning: Mixed up?|phi|
-|CLK4|DATA_CLK_P :warning: Mixed up?|~phi|
-|CLK5|INC_CLK_N|~writeback|
-|CLK6|INC_CLK_P|writeback|
-|CLK7|LATCH_CLK|writeback_ext|
-|CLK8|MAIN_CLK_N|~mclk_pulse|
-|CLK9|MAIN_CLK_P|mclk_pulse|
+|CLK1|T2 / ADR_CLK_N|~clk|
+|CLK2|T3 / ADR_CLK_P|clk|
+|CLK3|T4 / DATA_CLK_P|phi|
+|CLK4|T5 / DATA_CLK_N|~phi|
+|CLK5|T6 / INC_CLK_N|~writeback|
+|CLK6|T7 / INC_CLK_P|writeback|
+|CLK7|T8 / LATCH_CLK|writeback_ext|
+|CLK8|T9 / MAIN_CLK_N|~mclk_pulse|
+|CLK9|T10 / MAIN_CLK_P|mclk_pulse|
 
 All CLKs use an approach called `Dual Rails`, where a single CLK is split into two complementary signals (or "phases"). One phase has a value of `1` when CLK=0 (and is called `Clock Complement`) and the other phase has a value of `1` when CLK=1 (same as CLK).
 
@@ -38,8 +38,8 @@ Based on: https://github.com/msinger/dmg-schematics
 |---|---|
 |CLK1 / ADR_CLK_N / ~clk          | `10000000` |
 |CLK2 / ADR_CLK_P / clk           | `01111111` |
-|CLK3 / DATA_CLK_P(?) / phi       | `11110000` |
-|CLK4 / DATA_CLK_N(?) / ~phi      | `00001111` |
+|CLK3 / DATA_CLK_P / phi          | `11110000` |
+|CLK4 / DATA_CLK_N / ~phi         | `00001111` |
 |CLK5 / INC_CLK_N / ~writeback    | `11111100` |
 |CLK6 / INC_CLK_P / writeback     | `00000011` |
 |CLK7 / LATCH_CLK / writeback_ext | `10000011` |
