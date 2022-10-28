@@ -6,15 +6,15 @@ The CPU receives 9 (!) CLK signals.
 
 |CLK Signal|dmg-schematics Name|Gekkio|
 |---|---|---|
-|CLK1|ADR_CLK_N| |
-|CLK2|ADR_CLK_P| |
-|CLK3|DATA_CLK_N| |
-|CLK4|DATA_CLK_P| |
-|CLK5|INC_CLK_N| |
-|CLK6|INC_CLK_P| |
-|CLK7|LATCH_CLK| |
-|CLK8|MAIN_CLK_N| |
-|CLK9|MAIN_CLK_P| |
+|CLK1|ADR_CLK_N|~clk|
+|CLK2|ADR_CLK_P|clk|
+|CLK3|DATA_CLK_N|~phi|
+|CLK4|DATA_CLK_P|phi|
+|CLK5|INC_CLK_N|~writeback|
+|CLK6|INC_CLK_P|writeback|
+|CLK7|LATCH_CLK|writeback_ext|
+|CLK8|MAIN_CLK_N|~mclk_pulse|
+|CLK9|MAIN_CLK_P|mclk_pulse|
 
 All CLKs use an approach called `Dual Rails`, where a single CLK is split into two complementary signals (or "phases"). One phase has a value of `1` when CLK=0 (and is called `Clock Complement`) and the other phase has a value of `1` when CLK=1 (same as CLK).
 
@@ -30,6 +30,18 @@ Based on: https://github.com/msinger/dmg-schematics
 
 ![clk_waves](/imgstore/clk_waves.png)
 
-TBD: The picture shows that some signals are wrongly named or the simulation/schematic is incorrect (mixed up names for: MAIN_CLK_P/MAIN_CLK_N, DATA_CLK_N/DATA_CLK_P). Check with @msinger.
+TBD: Definitely need to be fixed (see Gekkio Waves).
 
-It's always such a headache with clocks, it's normal.
+## Gekkio Waves
+
+|CLK|Pattern|
+|---|---|
+|CLK1 / ADR_CLK_N / ~clk          | `10000000` |
+|CLK2 / ADR_CLK_P / clk           | `01111111` |
+|CLK3 / DATA_CLK_N / ~phi         | `00001111` |
+|CLK4 / DATA_CLK_P/ phi           | `11110000` |
+|CLK5 / INC_CLK_N / ~writeback    | `11111100` |
+|CLK6 / INC_CLK_P / writeback     | `00000011` |
+|CLK7 / LATCH_CLK / writeback_ext | `10000011` |
+|CLK8 / MAIN_CLK_N / ~mclk_pulse  | `01111111` |
+|CLK9 / MAIN_CLK_P / mclk_pulse   | `10000000` |

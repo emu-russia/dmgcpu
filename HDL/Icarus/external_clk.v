@@ -70,7 +70,7 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 	assign DATA_CLK_P = ~DATA_CLK_N;
 
 	wire BALY_out;
-	assign BALY_out = ~(~(~((INC_CLK_N & DATA_CLK_P) & ~drnq[1] & ~drnq[2])) | ~OSC_ENA);
+	assign BALY_out = ~(((INC_CLK_N & DATA_CLK_P) & ~drnq[1] & ~drnq[2]) | ~OSC_ENA);
 
 	wire DATA_VALID;
 	assign DATA_VALID = (BALY_out & CLK_ENA);
