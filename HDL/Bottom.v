@@ -147,7 +147,8 @@ module Bottom ( CLK2, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, Temp_C,
 		.adl(adl),
 		.adh(adh),
 		.IR(IR),
-		.bro(bro) );
+		.bro(bro),
+		.SYNC_RES(SYNC_RES) );
 
 	IncDec incdec (
 		.CLK4(CLK4),
