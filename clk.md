@@ -32,6 +32,8 @@ Based on: https://github.com/msinger/dmg-schematics
 
 ## Gekkio Waves
 
+![clks_gekkio](/imgstore/clks_gekkio.png)
+
 |CLK|Pattern|
 |---|---|
 |CLK1 / ADR_CLK_N / ~clk          | `10000000` |
