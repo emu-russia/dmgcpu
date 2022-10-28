@@ -30,8 +30,6 @@ Based on: https://github.com/msinger/dmg-schematics
 
 ![clk_waves](/imgstore/clk_waves.png)
 
-TBD: Definitely need to be fixed (see Gekkio Waves).
-
 ## Gekkio Waves
 
 |CLK|Pattern|
