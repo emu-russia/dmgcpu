@@ -231,6 +231,7 @@ module SM83Core (
 		.TTB2(TTB2),
 		.TTB3(TTB3),
 		.Maybe1(Maybe1),
+		.bro(bro),
 		.A(A) );
 
 	IRQ_Logic irq (
