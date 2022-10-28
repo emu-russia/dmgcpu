@@ -21,14 +21,6 @@ Latch with complementary set enable, complementary CLK.
 
 ![regbit_waves](/imgstore/modules/regbit_waves.jpg)
 
-## Bottom Left (ALU bc/bq) Logic
-
-The circuit is on the left side in a spread out layout. The picture shows the parts of the circuit for the individual parts.
-
-![bcbq](/imgstore/modules/bcbq.jpg)
-
-![bcbq_tran](/imgstore/modules/bcbq_tran.jpg)
-
 ## Registers
 
 |Reg|Name|Input|Output|Load signal|

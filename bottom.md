@@ -68,3 +68,13 @@ The components of the bottom are divided into subsections to make it easier to u
 |SeqControl_2|Sequencer| |
 |A|External|External core address bus|
 |CPU_IRQ_ACK|External| |
+
+## Bottom Left (ALU bc/bq) Logic
+
+The circuit is on the left side in a spread out layout. The picture shows the parts of the circuit for the individual parts.
+
+It is very difficult to put this circuit into any category. It belongs to both ALU and registers at the same time, and is generally at the bottom. So it's going to stay here untouched for now.
+
+![bcbq](/imgstore/modules/bcbq.jpg)
+
+![bcbq_tran](/imgstore/modules/bcbq_tran.jpg)
