@@ -63,8 +63,8 @@ module SM83_Run();
 	SM83Core dmgcore (
 		.CLK1(ADR_CLK_N),
 		.CLK2(ADR_CLK_P),
-		.CLK3(DATA_CLK_N),
-		.CLK4(DATA_CLK_P),
+		.CLK3(DATA_CLK_P), 		// Mixed up?? https://github.com/emu-russia/dmgcpu/discussions/197
+		.CLK4(DATA_CLK_N), 		// Mixed up??
 		.CLK5(INC_CLK_N),
 		.CLK6(INC_CLK_P),
 		.CLK7(LATCH_CLK),

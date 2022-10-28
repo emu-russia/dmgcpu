@@ -8,8 +8,8 @@ The CPU receives 9 (!) CLK signals.
 |---|---|---|
 |CLK1|ADR_CLK_N|~clk|
 |CLK2|ADR_CLK_P|clk|
-|CLK3|DATA_CLK_N|~phi|
-|CLK4|DATA_CLK_P|phi|
+|CLK3|DATA_CLK_N :warning: Mixed up?|phi|
+|CLK4|DATA_CLK_P :warning: Mixed up?|~phi|
 |CLK5|INC_CLK_N|~writeback|
 |CLK6|INC_CLK_P|writeback|
 |CLK7|LATCH_CLK|writeback_ext|
@@ -36,8 +36,8 @@ Based on: https://github.com/msinger/dmg-schematics
 |---|---|
 |CLK1 / ADR_CLK_N / ~clk          | `10000000` |
 |CLK2 / ADR_CLK_P / clk           | `01111111` |
-|CLK3 / DATA_CLK_N / ~phi         | `00001111` |
-|CLK4 / DATA_CLK_P/ phi           | `11110000` |
+|CLK3 / DATA_CLK_P(?) / phi       | `11110000` |
+|CLK4 / DATA_CLK_N(?) / ~phi      | `00001111` |
 |CLK5 / INC_CLK_N / ~writeback    | `11111100` |
 |CLK6 / INC_CLK_P / writeback     | `00000011` |
 |CLK7 / LATCH_CLK / writeback_ext | `10000011` |
