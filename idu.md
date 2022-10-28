@@ -1,5 +1,7 @@
 # Increment/Decrement Unit (IDU)
 
+![locator_idu](/imgstore/locator_idu.png)
+
 ![IncDec](/logisim/IncDec.png)
 
 ![cntbit](/imgstore/modules/cntbit.jpg)

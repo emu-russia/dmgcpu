@@ -1,5 +1,7 @@
 # Bottom Right (IRQ) Logic
 
+![locator_irq](/imgstore/locator_irq.png)
+
 The IRQ logic consists of the following parts:
 - IE
 - IF
