@@ -36,24 +36,24 @@ module RegsBuses ( CLK5, CLK6, w, x, DL, IR, abus, bbus, cbus, dbus, ebus, fbus,
 	regbit RegC [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(ebus), .ld({8{x[51]}}), .q(r6q) );
 	regbit RegB [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(fbus), .ld({8{x[49]}}), .q(r7q) );
 
-	assign abus = w[3] ? r1q : 8'bzzzzzzzz;
-	assign bbus = x[35] ? r1q : 8'bzzzzzzzz;
-	assign cbus = x[42] ? r2q : 8'bzzzzzzzz;
-	assign abus = w[15] ? r2q : 8'bzzzzzzzz;
-	assign bbus = x[44] ? r2q : 8'bzzzzzzzz;
-	assign abus = w[19] ? r3q : 8'bzzzzzzzz;
-	assign bbus = x[43] ? r3q : 8'bzzzzzzzz;
-	assign dbus = x[42] ? r3q : 8'bzzzzzzzz;
-	assign cbus = x[45] ? r4q : 8'bzzzzzzzz;
-	assign bbus = x[47] ? r4q : 8'bzzzzzzzz;
-	assign bbus = x[46] ? r5q : 8'bzzzzzzzz;
-	assign dbus = x[45] ? r5q : 8'bzzzzzzzz;
+	assign abus = w[3] ? ~r1q : 8'bzzzzzzzz;
+	assign bbus = x[35] ? ~r1q : 8'bzzzzzzzz;
+	assign cbus = x[42] ? ~r2q : 8'bzzzzzzzz;
+	assign abus = w[15] ? ~r2q : 8'bzzzzzzzz;
+	assign bbus = x[44] ? ~r2q : 8'bzzzzzzzz;
+	assign abus = w[19] ? ~r3q : 8'bzzzzzzzz;
+	assign bbus = x[43] ? ~r3q : 8'bzzzzzzzz;
+	assign dbus = x[42] ? ~r3q : 8'bzzzzzzzz;
+	assign cbus = x[45] ? ~r4q : 8'bzzzzzzzz;
+	assign bbus = x[47] ? ~r4q : 8'bzzzzzzzz;
+	assign bbus = x[46] ? ~r5q : 8'bzzzzzzzz;
+	assign dbus = x[45] ? ~r5q : 8'bzzzzzzzz;
 	assign dbus = w[29] ? 8'b00000000 : 8'bzzzzzzzz;
 	assign dbus = w[17] ? 8'b00000000 : 8'bzzzzzzzz;
-	assign cbus = x[52] ? r6q : 8'bzzzzzzzz;
-	assign bbus = x[54] ? r6q : 8'bzzzzzzzz;
-	assign bbus = x[53] ? r7q : 8'bzzzzzzzz;
-	assign dbus = x[52] ? r7q : 8'bzzzzzzzz;
+	assign cbus = x[52] ? ~r6q : 8'bzzzzzzzz;
+	assign bbus = x[54] ? ~r6q : 8'bzzzzzzzz;
+	assign bbus = x[53] ? ~r7q : 8'bzzzzzzzz;
+	assign dbus = x[52] ? ~r7q : 8'bzzzzzzzz;
 
 	assign Aout = r1q;
 
@@ -83,12 +83,12 @@ module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, ebus, fbus, zbus, wbus, 
 	regbit Z [7:0]( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(Z_in), .ld({8{x[60]}}), .q(zbus) );
 	regbit W [7:0]( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(W_in), .ld({8{x[59]}}), .q(wbus) );
 
-	assign abus = w[17] ? zbus : 8'bzzzzzzzz;
-	assign abus = w[1] ? zbus : 8'bzzzzzzzz;
-	assign abus = w[2] ? zbus : 8'bzzzzzzzz;
-	assign abus = x[58] ? zbus : 8'bzzzzzzzz;
-	assign abus = w[2] ? wbus : 8'bzzzzzzzz;
-	assign abus = w[1] ? wbus : 8'bzzzzzzzz;
+	assign cbus = w[17] ? ~zbus : 8'bzzzzzzzz;
+	assign cbus = w[1] ? ~zbus : 8'bzzzzzzzz;
+	assign cbus = w[2] ? ~zbus : 8'bzzzzzzzz;
+	assign bbus = x[58] ? ~zbus : 8'bzzzzzzzz;
+	assign dbus = w[2] ? ~wbus : 8'bzzzzzzzz;
+	assign dbus = w[1] ? ~wbus : 8'bzzzzzzzz;
 
 	assign fbus = ~(CLK4 ? ~(({8{x[55]}}&adh) | ({8{x[56]}}&wbus) | ({8{x[57]}}&Res)) : 8'b11111111);
 	assign ebus = ~(CLK4 ? ~(({8{x[55]}}&adl) | ({8{x[56]}}&zbus) | ({8{x[57]}}&Res)) : 8'b11111111);

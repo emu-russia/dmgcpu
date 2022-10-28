@@ -1,5 +1,8 @@
 `timescale 1ns/1ns
 
+// This circuit combines two functions - generating control signals for the IDU and generating an IE load command for the IRQ logic.
+// We will not distribute the functionality among the modules in order to be authentic to the SM83 topology. We will leave the architectural solution as an appendix to the developers of the SM83.
+
 module Thingy ( w8, w31, w35, ALU_to_Thingy, WR, Temp_Z, TTB1, TTB2, TTB3, Thingy_to_bot, bot_to_Thingy );
 
 	input w8;
