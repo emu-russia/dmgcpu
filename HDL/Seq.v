@@ -470,7 +470,8 @@ module seq_module4_2 ( nr, s, q );
 	output q;
 
 	reg val;
-	initial val <= 1'bx;
+	// Let's lower the difficulty level and use 0 here instead of `x`.
+	initial val <= 1'b0;
 
 	// The module design is such that reset overrides set if both are set at the same time.
 	always @(*) begin
@@ -492,7 +493,8 @@ module seq_module4 ( nr, s, q );
 	output q;
 
 	reg val;
-	initial val <= 1'bx;
+	// Let's lower the difficulty level and use 0 here instead of `x`.
+	initial val <= 1'b0;
 
 	// The module design is such that reset overrides set if both are set at the same time.
 	always @(*) begin

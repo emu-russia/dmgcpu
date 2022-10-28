@@ -147,14 +147,29 @@ module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, DL, abus, bbus, cbus, db
 
 endmodule // SP
 
-module PC ( CLK5, CLK6, CLK7, d92, w, x, DL, abus, cbus, dbus, zbus, wbus, adl, adh, IR, bro );
+module PC ( CLK5, CLK6, CLK7, d92,
+	load_pc,
+	idu_to_pc,
+	zwbus_to_pc,
+	pcl_to_databus,
+	pch_to_databus,
+	pc_to_cdbus,
+	pc_to_adbus,
+	zero_to_abus,
+	DL, abus, cbus, dbus, zbus, wbus, adl, adh, IR, bro );
 
 	input CLK5;
 	input CLK6;
 	input CLK7;
 	input d92;
-	input [40:0] w;
-	input [68:0] x;
+	input load_pc; 			// x68
+	input idu_to_pc; 		// x67
+	input zwbus_to_pc; 		// w36
+	input pcl_to_databus;	// w34
+	input pch_to_databus; 	// w28
+	input pc_to_cdbus; 		// w25
+	input pc_to_adbus; 		// w8
+	input zero_to_abus;		// x33
 	inout [7:0] DL;			// Internal databus
 	inout [7:0] abus;
 	inout [7:0] cbus;
@@ -173,24 +188,24 @@ module PC ( CLK5, CLK6, CLK7, d92, w, x, DL, abus, cbus, dbus, zbus, wbus, adl, 
 	wire [7:0] pch_q;		// PCH output
 	wire [7:0] pch_nq;		// PCH output (complement)
 
-	regbit PCL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(pcl_d), .ld({8{x[68]}}), .q(pcl_q), .nq(pcl_nq) );
-	regbit PCH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(pch_d), .ld({8{x[68]}}), .q(pch_q), .nq(pch_nq) );
+	regbit PCL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(pcl_d), .ld({8{load_pc}}), .q(pcl_q), .nq(pcl_nq) );
+	regbit PCH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(pch_d), .ld({8{load_pc}}), .q(pch_q), .nq(pch_nq) );
 
 	// PC vs Buses
 
-	assign pcl_d[2:0] = CLK6 ? (~((adl[2:0] & {3{x[67]}}) | (zbus[2:0] & {3{w[36]}}))) : (CLK7 ? 3'bzzz : 3'b111);
-	assign pcl_d[5:3] = CLK6 ? (~((adl[5:3] & {3{x[67]}}) | (zbus[5:3] & {3{w[36]}}) | ({3{d92}} & IR[5:3]) | bro[5:3])) : (CLK7 ? 3'bzzz : 3'b111);
-	assign pcl_d[7:6] = CLK6 ? (~((adl[7:6] & {2{x[67]}}) | (zbus[7:6] & {2{w[36]}}) | bro[7:6])) : (CLK7 ? 2'bzz : 2'b11);
-	assign pch_d = CLK6 ? (~((adh & {8{x[67]}}) | (wbus & {8{w[36]}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
+	assign pcl_d[2:0] = CLK6 ? (~((adl[2:0] & {3{idu_to_pc}}) | (zbus[2:0] & {3{zwbus_to_pc}}))) : (CLK7 ? 3'bzzz : 3'b111);
+	assign pcl_d[5:3] = CLK6 ? (~((adl[5:3] & {3{idu_to_pc}}) | (zbus[5:3] & {3{zwbus_to_pc}}) | ({3{d92}} & IR[5:3]) | bro[5:3])) : (CLK7 ? 3'bzzz : 3'b111);
+	assign pcl_d[7:6] = CLK6 ? (~((adl[7:6] & {2{idu_to_pc}}) | (zbus[7:6] & {2{zwbus_to_pc}}) | bro[7:6])) : (CLK7 ? 2'bzz : 2'b11);
+	assign pch_d = CLK6 ? (~((adh & {8{idu_to_pc}}) | (wbus & {8{zwbus_to_pc}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
 
-	assign DL = w[34] ? ~pcl_q : 8'bzzzzzzzz;
-	assign cbus = w[25] ? ~pcl_nq : 8'bzzzzzzzz;
-	assign abus = w[8] ? ~pcl_nq : 8'bzzzzzzzz;
-	assign abus = x[33] ? 8'b00000000 : 8'bzzzzzzzz;
+	assign DL = pcl_to_databus ? ~pcl_q : 8'bzzzzzzzz;
+	assign cbus = pc_to_cdbus ? ~pcl_nq : 8'bzzzzzzzz;
+	assign abus = pc_to_adbus ? ~pcl_nq : 8'bzzzzzzzz;
+	assign abus = zero_to_abus ? 8'b00000000 : 8'bzzzzzzzz;
 
-	assign DL = w[28] ? ~pch_q : 8'bzzzzzzzz;
-	assign dbus = w[25] ? ~pch_nq : 8'bzzzzzzzz;
-	assign dbus = w[8] ? ~pch_nq : 8'bzzzzzzzz;
+	assign DL = pch_to_databus ? ~pch_q : 8'bzzzzzzzz;
+	assign dbus = pc_to_cdbus ? ~pch_nq : 8'bzzzzzzzz;
+	assign dbus = pc_to_adbus ? ~pch_nq : 8'bzzzzzzzz;
 
 endmodule // PC
 

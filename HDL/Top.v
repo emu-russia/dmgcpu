@@ -231,6 +231,7 @@ module SM83Core (
 		.TTB2(TTB2),
 		.TTB3(TTB3),
 		.Maybe1(Maybe1),
+		.bro(bro),
 		.A(A) );
 
 	IRQ_Logic irq (
@@ -261,7 +262,8 @@ module BusKeeper (d, q);
 	output q;
 
 	reg val;
-	initial val <= 1'bx;
+	// The BusKeeper value is stored on the FET gate. We assume that initially there is no charge there, i.e. the value is 0.
+	initial val <= 1'b0;
 
 	always @(*) begin
 		if (d == 1'b1)
