@@ -80,8 +80,8 @@ module module7 ( clk, cclk, d, ld, res, q, nq );
 
 	reg val_in;
 	reg val_out;
-	initial val_in <= 1'bx;
-	initial val_out <= 1'bx;
+	initial val_in <= 1'b0;
+	initial val_out <= 1'b0;
 
 	always @(*) begin
 		if (clk && ld)

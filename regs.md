@@ -89,6 +89,10 @@ The PC bits differ in that they have an additional complement (`nq`) output and 
 
 ![x68](/imgstore/modules/x68.jpg)
 
+PC Regbit:
+
+![x68_reg_tran](/imgstore/modules/x68_reg_tran.jpg)
+
 PC vs Buses:
 
 ![x68_tran](/imgstore/modules/x68_tran.jpg)

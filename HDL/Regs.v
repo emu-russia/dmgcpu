@@ -120,30 +120,30 @@ module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, DL, abus, bbus, cbus, db
 	inout [7:0] adl;
 	inout [7:0] adh;
 
-	wire [7:0] spl_d;		// SPL input
+	wire [7:0] spl_nd;		// SPL input (inverse)
 	wire [7:0] spl_q;		// SPL output
 	wire [7:0] spl_nq;		// SPL output (complement)
-	wire [7:0] sph_d;		// SPH input
+	wire [7:0] sph_nd;		// SPH input (inverse)
 	wire [7:0] sph_q;		// SPH output 
 	wire [7:0] sph_nq;		// SPH output (complement)
 
-	regbit SPL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(spl_d), .ld({8{x[61]}}), .q(spl_q), .nq(spl_nq) );
-	regbit SPH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(sph_d), .ld({8{x[61]}}), .q(sph_q), .nq(sph_nq) );
+	sp_regbit SPL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(spl_nd), .ld({8{x[61]}}), .q(spl_q), .nq(spl_nq) );
+	sp_regbit SPH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(sph_nd), .ld({8{x[61]}}), .q(sph_q), .nq(sph_nq) );
 
 	// SP vs Buses
 
-	assign spl_d = CLK6 ? (~((adl & {8{x[62]}}) | (zbus & {8{x[63]}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
-	assign sph_d = CLK6 ? (~((adh & {8{x[62]}}) | (wbus & {8{x[63]}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
+	assign spl_nd = CLK6 ? (~((adl & {8{x[62]}}) | (zbus & {8{x[63]}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
+	assign sph_nd = CLK6 ? (~((adh & {8{x[62]}}) | (wbus & {8{x[63]}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
 
-	assign DL = d60 ? ~spl_q : 8'bzzzzzzzz;
-	assign abus = w[23] ? ~spl_nq : 8'bzzzzzzzz;
-	assign bbus = (w[15] & IR4 & IR5) ? ~spl_nq : 8'bzzzzzzzz;
-	assign cbus = x[65] ? ~spl_nq : 8'bzzzzzzzz;
+	assign DL = d60 ? ~spl_nq : 8'bzzzzzzzz;
+	assign abus = w[23] ? ~spl_q : 8'bzzzzzzzz;
+	assign bbus = (w[15] & IR4 & IR5) ? ~spl_q : 8'bzzzzzzzz;
+	assign cbus = x[65] ? ~spl_q : 8'bzzzzzzzz;
 
-	assign DL = d66 ? ~sph_q : 8'bzzzzzzzz;
-	assign abus = w[9] ? ~sph_nq : 8'bzzzzzzzz;
-	assign bbus = (w[19] & IR4 & IR5) ? ~sph_nq : 8'bzzzzzzzz;
-	assign dbus = x[65] ? ~sph_nq : 8'bzzzzzzzz;
+	assign DL = d66 ? ~sph_nq : 8'bzzzzzzzz;
+	assign abus = w[9] ? ~sph_q : 8'bzzzzzzzz;
+	assign bbus = (w[19] & IR4 & IR5) ? ~sph_q : 8'bzzzzzzzz;
+	assign dbus = x[65] ? ~sph_q : 8'bzzzzzzzz;
 
 endmodule // SP
 
@@ -182,49 +182,48 @@ module PC ( CLK5, CLK6, CLK7, d92,
 	input [7:3] bro;		// Interrupt address
 	input SYNC_RES;
 
-	wire [7:0] pcl_d;		// PCL input
+	wire [7:0] pcl_nd;		// PCL input (inverse)
 	wire [7:0] pcl_q;		// PCL output
 	wire [7:0] pcl_nq;		// PCL output (complement)
-	wire [7:0] pch_d;		// PCH input
+	wire [7:0] pch_nd;		// PCH input (inverse)
 	wire [7:0] pch_q;		// PCH output
 	wire [7:0] pch_nq;		// PCH output (complement)
 
-	regbit_res PCL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .d(pcl_d), .ld({8{load_pc}}), .q(pcl_q), .nq(pcl_nq) );
-	regbit_res PCH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .d(pch_d), .ld({8{load_pc}}), .q(pch_q), .nq(pch_nq) );
+	pc_regbit PCL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .nd(pcl_nd), .ld({8{load_pc}}), .q(pcl_q), .nq(pcl_nq) );
+	pc_regbit PCH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .nd(pch_nd), .ld({8{load_pc}}), .q(pch_q), .nq(pch_nq) );
 
 	// PC vs Buses
 
-	assign pcl_d[2:0] = CLK6 ? (~((adl[2:0] & {3{idu_to_pc}}) | (zbus[2:0] & {3{zwbus_to_pc}}))) : (CLK7 ? 3'bzzz : 3'b111);
-	assign pcl_d[5:3] = CLK6 ? (~((adl[5:3] & {3{idu_to_pc}}) | (zbus[5:3] & {3{zwbus_to_pc}}) | ({3{d92}} & IR[5:3]) | bro[5:3])) : (CLK7 ? 3'bzzz : 3'b111);
-	assign pcl_d[7:6] = CLK6 ? (~((adl[7:6] & {2{idu_to_pc}}) | (zbus[7:6] & {2{zwbus_to_pc}}) | bro[7:6])) : (CLK7 ? 2'bzz : 2'b11);
-	assign pch_d = CLK6 ? (~((adh & {8{idu_to_pc}}) | (wbus & {8{zwbus_to_pc}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
+	assign pcl_nd[2:0] = CLK6 ? (~((adl[2:0] & {3{idu_to_pc}}) | (zbus[2:0] & {3{zwbus_to_pc}}))) : (CLK7 ? 3'bzzz : 3'b111);
+	assign pcl_nd[5:3] = CLK6 ? (~((adl[5:3] & {3{idu_to_pc}}) | (zbus[5:3] & {3{zwbus_to_pc}}) | ({3{d92}} & IR[5:3]) | bro[5:3])) : (CLK7 ? 3'bzzz : 3'b111);
+	assign pcl_nd[7:6] = CLK6 ? (~((adl[7:6] & {2{idu_to_pc}}) | (zbus[7:6] & {2{zwbus_to_pc}}) | bro[7:6])) : (CLK7 ? 2'bzz : 2'b11);
+	assign pch_nd = CLK6 ? (~((adh & {8{idu_to_pc}}) | (wbus & {8{zwbus_to_pc}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
 
-	assign DL = pcl_to_databus ? ~pcl_q : 8'bzzzzzzzz;
-	assign cbus = pc_to_cdbus ? ~pcl_nq : 8'bzzzzzzzz;
-	assign abus = pc_to_adbus ? ~pcl_nq : 8'bzzzzzzzz;
+	assign DL = pcl_to_databus ? ~pcl_nq : 8'bzzzzzzzz;
+	assign cbus = pc_to_cdbus ? ~pcl_q : 8'bzzzzzzzz;
+	assign abus = pc_to_adbus ? ~pcl_q : 8'bzzzzzzzz;
 	assign abus = zero_to_abus ? 8'b00000000 : 8'bzzzzzzzz;
 
-	assign DL = pch_to_databus ? ~pch_q : 8'bzzzzzzzz;
-	assign dbus = pc_to_cdbus ? ~pch_nq : 8'bzzzzzzzz;
-	assign dbus = pc_to_adbus ? ~pch_nq : 8'bzzzzzzzz;
+	assign DL = pch_to_databus ? ~pch_nq : 8'bzzzzzzzz;
+	assign dbus = pc_to_cdbus ? ~pch_q : 8'bzzzzzzzz;
+	assign dbus = pc_to_adbus ? ~pch_q : 8'bzzzzzzzz;
 
 endmodule // PC
 
-module regbit ( clk, cclk, d, ld, q, nq );
+module regbit ( clk, cclk, d, ld, q );
 
 	input clk;
 	input cclk;
 	input d;
 	input ld;
 	output q;
-	output nq;
 
 	// Latch with complementary set enable, complementary CLK.
 
 	reg val_in;
 	reg val_out;
-	initial val_in <= 1'bx;
-	initial val_out <= 1'bx;
+	initial val_in <= 1'b0;
+	initial val_out <= 1'b0;
 
 	always @(*) begin
 		if (clk && ld)
@@ -236,21 +235,20 @@ module regbit ( clk, cclk, d, ld, q, nq );
 	end
 
 	assign q = val_out;
-	assign nq = ~q;
 
 endmodule // regbit
 
-module regbit_res ( clk, cclk, d, ld, nres, q, nq );
+module sp_regbit ( clk, cclk, nd, ld, q, nq );
 
 	input clk;
 	input cclk;
-	input d;
+	input nd;
 	input ld;
-	input nres;
 	output q;
 	output nq;
 
-	// Latch with complementary set enable, complementary CLK, active-high reset
+	// Latch with complementary set enable, complementary CLK.
+	// Inverse hold.
 
 	reg val_in;
 	reg val_out;
@@ -259,16 +257,48 @@ module regbit_res ( clk, cclk, d, ld, nres, q, nq );
 
 	always @(*) begin
 		if (clk && ld)
-			val_in <= d;
-		if (~nres)
-			val_in <= 1'b0;
+			val_in <= nd;
 	end
 
 	always @(negedge ld) begin
 		val_out <= val_in;
 	end
 
-	assign q = val_out;
+	assign q = ~val_out;
+	assign nq = ~q;
+
+endmodule // regbit
+
+module pc_regbit ( clk, cclk, nd, ld, nres, q, nq );
+
+	input clk;
+	input cclk;
+	input nd;
+	input ld;
+	input nres;
+	output q;
+	output nq;
+
+	// Latch with complementary set enable, complementary CLK, active-low reset
+	// Inverse hold.
+
+	reg val_in;
+	reg val_out;
+	initial val_in <= 1'bx;
+	initial val_out <= 1'bx;
+
+	always @(*) begin
+		if (clk && ld)
+			val_in <= nd;
+		if (~nres)
+			val_in <= 1'b1;
+	end
+
+	always @(negedge ld) begin
+		val_out <= val_in;
+	end
+
+	assign q = ~val_out;
 	assign nq = ~q;
 
 endmodule // regbit_res
