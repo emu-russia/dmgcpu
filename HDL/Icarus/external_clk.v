@@ -8,8 +8,8 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 
 	input CLK;
 	input RESET;
-	output ADR_CLK_N;
-	output ADR_CLK_P;
+	output ADR_CLK_N;	// #DATA_VALID
+	output ADR_CLK_P; 	// DATA_VALID
 	output DATA_CLK_N;	// #CPU_PHI
 	output DATA_CLK_P;	// CPU_PHI
 	output INC_CLK_N;	// #CPU_T4
@@ -40,8 +40,11 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 
 	// Phase Splitter
 
+	wire ck; 	// CK1/2 Pad out
+	assign ck = OSC_ENA ? CLK : 1'b0;
+
 	wire phase_splitter_out;
-	assign phase_splitter_out = ~(~(CLK & phase_splitter_out) & ~(CLK));
+	assign phase_splitter_out = ~(~(ck & phase_splitter_out) & ~ck);
 	wire ATAL_4mhz;
 	assign ATAL_4mhz = ~phase_splitter_out;
 
@@ -52,7 +55,7 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 
 	DR_LATCH div [3:0] (
 		.ena({ATAL_4mhz,~ATAL_4mhz,ATAL_4mhz,~ATAL_4mhz}),
-		.nres(T1T2),
+		.nres({4{T1T2}}),
 		.d({drq[2],drq[1],drnq[0],drq[3]}),
 		.q(drq),
 		.nq(drnq));
@@ -67,7 +70,7 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 	assign DATA_CLK_P = ~DATA_CLK_N;
 
 	wire BALY_out;
-	assign BALY_out = ~(~(~((INC_CLK_N & DATA_CLK_P) & ~drnq[1] & ~drnq[2])) | ~OSC_ENA);
+	assign BALY_out = ~(((INC_CLK_N & DATA_CLK_P) & ~drnq[1] & ~drnq[2]) | ~OSC_ENA);
 
 	wire DATA_VALID;
 	assign DATA_VALID = (BALY_out & CLK_ENA);
@@ -84,7 +87,8 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 	wire ASOL_nq;
 	wire SixteenHz;
 
-	assign SixteenHz = 1'b1; 		// From DIV
+	// I don't know what this thing is for, but if you make it 1, SYNC_RESET never appears. Some kind of internal DIV kitchen, I didn't bother to figure it out.
+	assign SixteenHz = 1'b0; 		// From DIV
 
 	NOR_LATCH TUBO (.set(CLK_ENA), .res(RESET | ~OSC_ENA), .nq(TUBO_nq));
 	assign OSC_STABLE = (T1_nT2 | nT1_T2 | (TUBO_nq & SixteenHz));
@@ -103,11 +107,12 @@ module NOR_LATCH (set, res, q, nq);
 	reg val;
 	initial val <= 1'bx;
 
+	// res above set.
 	always @(*) begin
-		if (set)
-			val <= 1'b1;
 		if (res)
 			val <= 1'b0;
+		else if (set)
+			val <= 1'b1;
 	end
 
 	assign q = val;
@@ -129,6 +134,9 @@ module DFFR_B (clk, nres, d, q, nq);
 	always @(posedge clk) begin
 		if (clk)
 			val <= d;
+	end
+
+	always @(*) begin
 		if (~nres)
 			val <= 1'b0;
 	end
