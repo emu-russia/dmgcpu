@@ -1,4 +1,4 @@
-// Separated from Bottom.v to make it easier to scroll through the source.
+// Separated from Bottom.v to Top.v
 
 module IRQ_Logic ( CLK3, CLK4, CLK5, CLK6, DL, RD, CPU_IRQ_ACK, CPU_IRQ_TRIG, bro, bot_to_Thingy, Thingy_to_bot, SYNC_RES,
 	SeqControl_1, SeqControl_2, SeqOut_1, d93, A );
