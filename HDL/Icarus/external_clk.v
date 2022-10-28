@@ -84,6 +84,7 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 	wire ASOL_nq;
 	wire SixteenHz;
 
+	// I don't know what this thing is for, but if you make it 1, SYNC_RESET never appears. Some kind of internal DIV kitchen, I didn't bother to figure it out.
 	assign SixteenHz = 1'b0; 		// From DIV
 
 	NOR_LATCH TUBO (.set(CLK_ENA), .res(RESET | ~OSC_ENA), .nq(TUBO_nq));
