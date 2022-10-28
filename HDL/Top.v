@@ -65,6 +65,7 @@ module SM83Core (
 	wire ALU_Out1;
 	wire [7:0] IR;			// Current opcode
 	wire [5:0] nIR;				// Inverse IR values are only used for the first 6 bits.
+	wire [7:3] bro; 		// IRQ Logic interrupt address
 
 	wire SeqOut_1; 		// IME? (to interrupt control)
 	wire SeqOut_2;
@@ -205,7 +206,6 @@ module SM83Core (
 
 	Bottom bot (
 		.CLK2(CLK2),
-		.CLK3(CLK3),
 		.CLK4(CLK4),
 		.CLK5(CLK5),
 		.CLK6(CLK6),
@@ -231,15 +231,26 @@ module SM83Core (
 		.TTB2(TTB2),
 		.TTB3(TTB3),
 		.Maybe1(Maybe1),
-		.Thingy_to_bot(Thingy_to_bot),
+		.A(A) );
+
+	IRQ_Logic irq (
+		.CLK3(CLK3),
+		.CLK4(CLK4),
+		.CLK5(CLK5),
+		.CLK6(CLK6),
+		.DL(DL),
+		.RD(RD),
+		.CPU_IRQ_ACK(CPU_IRQ_ACK),
+		.CPU_IRQ_TRIG(CPU_IRQ_TRIG),
+		.bro(bro),
 		.bot_to_Thingy(bot_to_Thingy),
+		.Thingy_to_bot(Thingy_to_bot),
+		.SYNC_RES(SYNC_RES),
 		.SeqControl_1(SeqControl_1),
 		.SeqControl_2(SeqControl_2),
 		.SeqOut_1(SeqOut_1),
-		.A(A),
-		.CPU_IRQ_ACK(CPU_IRQ_ACK),
-		.CPU_IRQ_TRIG(CPU_IRQ_TRIG),
-		.RD(RD) );
+		.d93(d[93]),
+		.A(A) );
 
 endmodule // SM83Core
 

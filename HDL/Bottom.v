@@ -2,12 +2,10 @@
 
 `define ALU_Ops_delay 0
 
-module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, Temp_C, Temp_H, Temp_N, Temp_Z, alu, Res, IR, d, w, x, 
-	SYNC_RES, TTB1, TTB2, TTB3, Maybe1, Thingy_to_bot, bot_to_Thingy, SeqControl_1, SeqControl_2, SeqOut_1,
-	A, CPU_IRQ_ACK, CPU_IRQ_TRIG, RD );
+module Bottom ( CLK2, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, Temp_C, Temp_H, Temp_N, Temp_Z, alu, Res, IR, d, w, x, 
+	SYNC_RES, TTB1, TTB2, TTB3, Maybe1, bro, A );
 
 	input CLK2;
-	input CLK3;
 	input CLK4;
 	input CLK5;
 	input CLK6;
@@ -36,16 +34,8 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, T
 	input TTB2;				// 1: Perform increment
 	input TTB3;				// 1: Perform decrement
 	input Maybe1;			// 1: Bus disable
-	input Thingy_to_bot;		// Load a value into the IE register from the DL bus.	
-	output bot_to_Thingy;		// IE access detected (Address = 0xffff)
-	output SeqControl_1;
-	output SeqControl_2;
-	input SeqOut_1;
-
+	input [7:3] bro; 		// IRQ Logic interrupt address
 	output [15:0] A;		// External core address bus
-	output [7:0] CPU_IRQ_ACK;
-	input [7:0] CPU_IRQ_TRIG;
-	input RD;
 
 	// Internal bottom buses
 
@@ -59,7 +49,6 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, T
 	wire [7:0] wbus;
 	wire [7:0] adl;
 	wire [7:0] adh;
-	wire [7:3] bro; 		// IRQ Logic interrupt address
 
 	wire [7:0] Aout;	// Reg A out to bq Logic
 
@@ -165,25 +154,6 @@ module Bottom ( CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, T
 		.adl(adl),
 		.adh(adh),
 		.AddrBus(A) );
-
-	IRQ_Logic irq (
-		.CLK3(CLK3),
-		.CLK4(CLK4),
-		.CLK5(CLK5),
-		.CLK6(CLK6),
-		.DL(DL),
-		.RD(RD),
-		.CPU_IRQ_ACK(CPU_IRQ_ACK),
-		.CPU_IRQ_TRIG(CPU_IRQ_TRIG),
-		.bro(bro),
-		.bot_to_Thingy(bot_to_Thingy),
-		.Thingy_to_bot(Thingy_to_bot),
-		.SYNC_RES(SYNC_RES),
-		.SeqControl_1(SeqControl_1),
-		.SeqControl_2(SeqControl_2),
-		.SeqOut_1(SeqOut_1),
-		.d93(d[93]),
-		.A(A) );
 
 	assign Temp_C = zbus[4];
 	assign Temp_H = zbus[5];
