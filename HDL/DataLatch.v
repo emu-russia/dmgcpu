@@ -31,29 +31,10 @@ module module1 ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus );
 	wire int_to_ext_q;
 	wire ext_to_int_q;
 
-	Transp_DLatch int_to_ext ( .d(Int_bus), .q(int_to_ext_q) );
-	Transp_DLatch ext_to_int ( .d(Ext_bus), .q(ext_to_int_q) );
+	BusKeeper int_to_ext ( .d(Int_bus), .q(int_to_ext_q) );
+	BusKeeper ext_to_int ( .d(Ext_bus), .q(ext_to_int_q) );
 
 	assign Ext_bus = ~(Test1 | ext_to_int_q) ? 1'b0 : ((Test1 | clk) ? 1'bz : 1'b1);
 	assign Int_bus = clk ? (~((~(Test1 | ext_to_int_q)) | (~Res & Res_to_DL))) : ~(~Res & Res_to_DL);
 
 endmodule // module1
-
-module Transp_DLatch (d, q);
-
-	input d;
-	output q;
-
-	reg val;
-	initial val <= 1'b0;
-
-	always @(*) begin
-		if (d == 1'b1)
-			val <= 1'b1;
-		if (d == 1'b0)
-			val <= 1'b0;
-	end
-
-	assign q = val;
-
-endmodule // Transp_DLatch

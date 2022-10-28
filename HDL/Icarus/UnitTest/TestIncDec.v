@@ -56,3 +56,23 @@ module Reg16 (clk, d, q);
 	assign q = val;
 
 endmodule // Reg16
+
+// Transparent latch used as a bus keeper.
+module BusKeeper (d, q);
+
+	input d;
+	output q;
+
+	reg val;
+	initial val <= 1'b0;
+
+	always @(*) begin
+		if (d == 1'b1)
+			val <= 1'b1;
+		if (d == 1'b0)
+			val <= 1'b0;
+	end
+
+	assign q = val;
+
+endmodule // BusKeeper

@@ -1,2 +1,2 @@
-iverilog -D ICARUS -o TestRegbit.run ../../Bottom.v TestRegbit.v
+iverilog -D ICARUS -o TestRegbit.run ../../Regs.v TestRegbit.v
 vvp TestRegbit.run
