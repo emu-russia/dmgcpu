@@ -1,5 +1,7 @@
 # Registers Block
 
+![locator_regs](/imgstore/locator_regs.png)
+
 ## Register Bit
 
 All registers use a common module.
