@@ -8,8 +8,8 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 
 	input CLK;
 	input RESET;
-	output ADR_CLK_N;
-	output ADR_CLK_P;
+	output ADR_CLK_N;	// #DATA_VALID
+	output ADR_CLK_P; 	// DATA_VALID
 	output DATA_CLK_N;	// #CPU_PHI
 	output DATA_CLK_P;	// CPU_PHI
 	output INC_CLK_N;	// #CPU_T4
@@ -40,8 +40,11 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 
 	// Phase Splitter
 
+	wire ck; 	// CK1/2 Pad out
+	assign ck = OSC_ENA ? CLK : 1'b0;
+
 	wire phase_splitter_out;
-	assign phase_splitter_out = ~(~(CLK & phase_splitter_out) & ~(CLK));
+	assign phase_splitter_out = ~(~(ck & phase_splitter_out) & ~ck);
 	wire ATAL_4mhz;
 	assign ATAL_4mhz = ~phase_splitter_out;
 
@@ -52,7 +55,7 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 
 	DR_LATCH div [3:0] (
 		.ena({ATAL_4mhz,~ATAL_4mhz,ATAL_4mhz,~ATAL_4mhz}),
-		.nres(T1T2),
+		.nres({4{T1T2}}),
 		.d({drq[2],drq[1],drnq[0],drq[3]}),
 		.q(drq),
 		.nq(drnq));
