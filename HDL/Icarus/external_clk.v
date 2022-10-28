@@ -31,11 +31,11 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 	wire T1_nT2;
 	wire nT1_T2;
 
-	assign T1 = 1'b1;
-	assign T2 = 1'b1;
-	assign T1T2 = ~(T1 & T2 & RESET);
-	assign T1_nT2 = (T1 & ~T2);
-	assign nT1_T2 = (~T1 & T2);
+	assign nT1 = 1'b1;
+	assign nT2 = 1'b1;
+	assign T1T2 = ~(~nT1 & ~nT2 & RESET);
+	assign T1_nT2 = (~nT1 & nT2);
+	assign nT1_T2 = (nT1 & ~nT2);
 	assign ASYNC_RESET = RESET;
 
 	// Phase Splitter
@@ -87,8 +87,8 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 	wire ASOL_nq;
 	wire SixteenHz;
 
-	// I don't know what this thing is for, but if you make it 1, SYNC_RESET never appears. Some kind of internal DIV kitchen, I didn't bother to figure it out.
-	assign SixteenHz = 1'b0; 		// From DIV
+	// I don't know what this thing is for, but if you make it 0, SYNC_RESET never disappears. Some kind of internal DIV kitchen, I didn't bother to figure it out.
+	assign SixteenHz = 1'b1; 		// From DIV
 
 	NOR_LATCH TUBO (.set(CLK_ENA), .res(RESET | ~OSC_ENA), .nq(TUBO_nq));
 	assign OSC_STABLE = (T1_nT2 | nT1_T2 | (TUBO_nq & SixteenHz));
@@ -155,7 +155,7 @@ module DR_LATCH (ena, nres, d, q, nq);
 	output nq;
 
 	reg val;
-	initial val <= 1'bx;
+	initial val <= 1'b0;
 
 	always @(*) begin
 		if (ena)

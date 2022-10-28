@@ -156,7 +156,7 @@ module PC ( CLK5, CLK6, CLK7, d92,
 	pc_to_cdbus,
 	pc_to_adbus,
 	zero_to_abus,
-	DL, abus, cbus, dbus, zbus, wbus, adl, adh, IR, bro );
+	DL, abus, cbus, dbus, zbus, wbus, adl, adh, IR, bro, SYNC_RES );
 
 	input CLK5;
 	input CLK6;
@@ -180,6 +180,7 @@ module PC ( CLK5, CLK6, CLK7, d92,
 	inout [7:0] adh;
 	input [7:0] IR;			// Current opcode
 	input [7:3] bro;		// Interrupt address
+	input SYNC_RES;
 
 	wire [7:0] pcl_d;		// PCL input
 	wire [7:0] pcl_q;		// PCL output
@@ -188,8 +189,8 @@ module PC ( CLK5, CLK6, CLK7, d92,
 	wire [7:0] pch_q;		// PCH output
 	wire [7:0] pch_nq;		// PCH output (complement)
 
-	regbit PCL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(pcl_d), .ld({8{load_pc}}), .q(pcl_q), .nq(pcl_nq) );
-	regbit PCH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(pch_d), .ld({8{load_pc}}), .q(pch_q), .nq(pch_nq) );
+	regbit_res PCL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .d(pcl_d), .ld({8{load_pc}}), .q(pcl_q), .nq(pcl_nq) );
+	regbit_res PCH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .d(pch_d), .ld({8{load_pc}}), .q(pch_q), .nq(pch_nq) );
 
 	// PC vs Buses
 
@@ -239,13 +240,13 @@ module regbit ( clk, cclk, d, ld, q, nq );
 
 endmodule // regbit
 
-module regbit_res ( clk, cclk, d, ld, res, q, nq );
+module regbit_res ( clk, cclk, d, ld, nres, q, nq );
 
 	input clk;
 	input cclk;
 	input d;
 	input ld;
-	input res;
+	input nres;
 	output q;
 	output nq;
 
@@ -259,7 +260,7 @@ module regbit_res ( clk, cclk, d, ld, res, q, nq );
 	always @(*) begin
 		if (clk && ld)
 			val_in <= d;
-		if (res)
+		if (~nres)
 			val_in <= 1'b0;
 	end
 
