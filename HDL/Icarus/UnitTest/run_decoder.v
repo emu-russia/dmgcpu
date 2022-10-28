@@ -21,7 +21,7 @@ module Decoder_Run();
 
 	Decoder1 decoder1 (.CLK2(1'b1), .a(a), .d(d));
 	Decoder2 decoder2 (.CLK2(1'b1), .d(d), .w(w), .SeqOut_2(~counter[1]), .IR7(counter[12]) );
-	Decoder3 decoder3 (.CLK2(1'b1), .CLK4(1'b1), .CLK5(counter[0]), .nCLK4(1'b0), .a3(a[3]), .d(d), .w(w), .x(x), .IR(counter[12:5]), .nIR(~counter[10:5]), .SeqOut_2(~counter[1]) );
+	Decoder3 decoder3 (.CLK2(1'b1), .CLK4(1'b1), .CLK5(~counter[0]), .nCLK4(1'b0), .a3(a[3]), .d(d), .w(w), .x(x), .IR(counter[12:5]), .nIR(~counter[10:5]), .SeqOut_2(~counter[1]) );
 
 	org_to_gekkio otg ( .d(decoder1.d), .w(decoder2.w), .x(decoder3.x), .stage1(stage1), .stage2(stage2), .stage3(stage3) );
 
@@ -33,7 +33,7 @@ module Decoder_Run();
 			counter[13],	// cb_mode
 			counter[12:5],	// IR
 			counter[4:2],	// {state2,state1,state0}
-			counter[0],		// writeback = CLK5
+			counter[0],		// writeback = ~CLK5
 			counter[1],		// data_lsb
 			stage1,
 			stage2,
