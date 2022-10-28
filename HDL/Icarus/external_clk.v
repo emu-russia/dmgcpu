@@ -129,6 +129,9 @@ module DFFR_B (clk, nres, d, q, nq);
 	always @(posedge clk) begin
 		if (clk)
 			val <= d;
+	end
+
+	always @(*) begin
 		if (~nres)
 			val <= 1'b0;
 	end
