@@ -127,8 +127,16 @@ module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, DL, abus, bbus, cbus, db
 	wire [7:0] sph_q;		// SPH output 
 	wire [7:0] sph_nq;		// SPH output (complement)
 
-	sp_regbit SPL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(spl_nd), .ld({8{x[61]}}), .q(spl_q), .nq(spl_nq) );
-	sp_regbit SPH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(sph_nd), .ld({8{x[61]}}), .q(sph_q), .nq(sph_nq) );
+	wire [7:0] spl_bnd;		// SPL input buskeeper output
+	wire [7:0] sph_bnd;		// SPH input buskeeper output
+
+	sp_regbit SPL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(spl_bnd), .ld({8{x[61]}}), .q(spl_q), .nq(spl_nq) );
+	sp_regbit SPH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(sph_bnd), .ld({8{x[61]}}), .q(sph_q), .nq(sph_nq) );
+
+	// Another bus keeper - which stores the input value for the SPL/SPH registers.
+	// It is "recharged" during CLK7=0 and updated during CLK6=1. Between these two cutoffs - the input is in a floating state.
+	BusKeeper SPL_KeepInput [7:0] ( .d(spl_nd), .q(spl_bnq) );
+	BusKeeper SPH_KeepInput [7:0] ( .d(sph_nd), .q(sph_bnq) );
 
 	// SP vs Buses
 
@@ -189,8 +197,16 @@ module PC ( CLK5, CLK6, CLK7, d92,
 	wire [7:0] pch_q;		// PCH output
 	wire [7:0] pch_nq;		// PCH output (complement)
 
-	pc_regbit PCL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .nd(pcl_nd), .ld({8{load_pc}}), .q(pcl_q), .nq(pcl_nq) );
-	pc_regbit PCH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .nd(pch_nd), .ld({8{load_pc}}), .q(pch_q), .nq(pch_nq) );
+	wire [7:0] pcl_bnq;		// PCL input buskeeper output
+	wire [7:0] pch_bnq;		// PCH input buskeeper output
+
+	pc_regbit PCL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .nd(pcl_bnq), .ld({8{load_pc}}), .q(pcl_q), .nq(pcl_nq) );
+	pc_regbit PCH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .nd(pch_bnq), .ld({8{load_pc}}), .q(pch_q), .nq(pch_nq) );
+
+	// Another bus keeper - which stores the input value for the PCL/PCH registers.
+	// It is "recharged" during CLK7=0 and updated during CLK6=1. Between these two cutoffs - the input is in a floating state.
+	BusKeeper PCL_KeepInput [7:0] ( .d(pcl_nd), .q(pcl_bnq) );
+	BusKeeper PCH_KeepInput [7:0] ( .d(pch_nd), .q(pch_bnq) );
 
 	// PC vs Buses
 
