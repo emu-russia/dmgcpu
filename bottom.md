@@ -41,8 +41,8 @@ The components of the bottom are divided into subsections to make it easier to u
 |x|Decoder3|Decoder3 output|
 |SYNC_RES|External| |
 |TTB1|Thingy|1: Perform pairwise increment/decrement (simultaneously for two 8-bit IncDec halves)|
-|TTB2|Thingy|1: Perform increment|
-|TTB3|Thingy|1: Perform decrement|
+|TTB2|Thingy|1: Perform decrement|
+|TTB3|Thingy|1: Perform increment|
 |Maybe1|External|1: Bus disable|
 |Thingy_to_bot|Thingy|Load a value into the IE register from the DL bus|
 |SeqOut_1|Sequencer|See `nso` signal in IRQ Logic|

@@ -2,6 +2,8 @@
 
 ![locator_regs](/imgstore/locator_regs.png)
 
+:warning: Read and double-check everything here very thoughtfully. Complementary logic can blow your mind.
+
 ## Register Bit
 
 All registers use a common module.
@@ -75,7 +77,7 @@ The value on the temp registers (Z/W) does not come directly from the buses, but
 
 ## SP Register
 
-SP bits differ in that they have an additional complement output (`nq`).
+:warning: A distinctive feature of the SP register bits is that the value on them is loaded and kept in the inverse polarity. In addition to the regular output the register also has a complement output.
 
 ![x61](/imgstore/modules/x61.jpg)
 
@@ -85,9 +87,13 @@ SP vs Buses:
 
 ## PC Register
 
-The PC bits differ in that they have an additional complement (`nq`) output and reset (`SYNC_RES`) input.
+:warning: A distinctive feature of the PC register bits is that the value on them is loaded and kept in the inverse polarity. In addition to the regular output the register also has a complement output. The register also has an Active-low input for resetting.
 
 ![x68](/imgstore/modules/x68.jpg)
+
+PC Regbit:
+
+![x68_reg_tran](/imgstore/modules/x68_reg_tran.jpg)
 
 PC vs Buses:
 

@@ -31,8 +31,8 @@ module Bottom ( CLK2, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, Temp_C,
 
 	input SYNC_RES;
 	input TTB1;				// 1: Perform pairwise increment/decrement (simultaneously for two 8-bit IncDec halves)
-	input TTB2;				// 1: Perform increment
-	input TTB3;				// 1: Perform decrement
+	input TTB2;				// 1: Perform decrement
+	input TTB3;				// 1: Perform increment
 	input Maybe1;			// 1: Bus disable
 	input [7:3] bro; 		// IRQ Logic interrupt address
 	output [15:0] A;		// External core address bus

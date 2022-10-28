@@ -17,8 +17,8 @@ The circuit deals with the following things:
 |ALU_to_Thingy|input|ALU|ALU CarryOut|
 |TempZ|input|Bottom|Flag Z from temp Z register (zbus\[7\])|
 |TTB1|output|Bottom|1: Perform pairwise increment/decrement (simultaneously for two 8-bit IncDec halves)|
-|TTB2|output|Bottom|1: Perform increment|
-|TTB3|output|Bottom|1: Perform decrement|
+|TTB2|output|Bottom|1: Perform decrement|
+|TTB3|output|Bottom|1: Perform increment|
 |bot_to_Thingy|input|Bottom|IE access detected (Address = 0xffff)|
 |Thingy_to_bot|output|Bottom|Load a value into the IE register from the DL bus.|
 

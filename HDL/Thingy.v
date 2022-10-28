@@ -12,8 +12,8 @@ module Thingy ( w8, w31, w35, ALU_to_Thingy, WR, Temp_Z, TTB1, TTB2, TTB3, Thing
 	input WR;
 	input Temp_Z;		// Flag Z from temp Z register (zbus[7])
 	output TTB1;		// 1: Perform pairwise increment/decrement (simultaneously for two 8-bit IncDec halves)
-	output TTB2;		// 1: Perform increment
-	output TTB3;		// 1: Perform decrement
+	output TTB2;		// 1: Perform decrement
+	output TTB3;		// 1: Perform increment
 	input bot_to_Thingy;		// IE access detected (Address = 0xffff)
 	output Thingy_to_bot;		// Load a value into the IE register from the DL bus.	
 
