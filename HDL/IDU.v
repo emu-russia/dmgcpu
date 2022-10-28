@@ -1,16 +1,22 @@
 // Separated from Bottom.v to make it easier to scroll through the source.
 
+// The value on the cbus/dbus contains a ~val of register (register `q` output inversion).
+// This value is stored on the BusKeeper. From the BusKeeper inverted value of ~val as `val` is fed to the IDU.
+// At the output of the IDU the value is fed to the adl/adh buses as `val`.
+// There is an inverter on the register input that loads ~val into the register.
+// In the register the value is stored as ~val (inverse hold)
+
 module IncDec ( CLK4, TTB1, TTB2, TTB3, Maybe1, cbus, dbus, adl, adh, AddrBus );
 
 	input CLK4;
 	input TTB1;				// 1: Perform pairwise increment/decrement (simultaneously for two 8-bit IncDec halves)
-	input TTB2;				// 1: Perform increment
-	input TTB3;				// 1: Perform decrement
+	input TTB2;				// 1: Perform decrement
+	input TTB3;				// 1: Perform increment
 	input Maybe1;
-	inout [7:0] cbus;
-	inout [7:0] dbus;
-	inout [7:0] adl;
-	inout [7:0] adh;
+	inout [7:0] cbus;		// ~val_lo
+	inout [7:0] dbus;		// ~val_hi
+	inout [7:0] adl;		// res_lo
+	inout [7:0] adh;		// res_hi
 	output [15:0] AddrBus;
 
 	wire [7:0] cbq; 	// cbus Bus keepers outputs
@@ -25,8 +31,8 @@ module IncDec ( CLK4, TTB1, TTB2, TTB3, Maybe1, cbus, dbus, adl, adh, AddrBus );
 	BusKeeper cbus_keepers [7:0] ( .d(cbus), .q(cbq) );
 	BusKeeper dbus_keepers [7:0] ( .d(dbus), .q(dbq) );
 
-	cntbit cnt_lo [7:0] ( .n_val_in(~cbq), .cin(xa_lo), .val_out(adl), .cout(mq_lo), .TTB2({8{TTB2}}), .TTB3({8{TTB3}}) );
-	cntbit cnt_hi [7:0] ( .n_val_in(~dbq), .cin(xa_hi), .val_out(adh), .cout(mq_hi), .TTB2({8{TTB2}}), .TTB3({8{TTB3}}) );
+	cntbit cnt_lo [7:0] ( .val_in(~cbq), .cin(xa_lo), .val_out(adl), .cout(mq_lo), .TTB2({8{TTB2}}), .TTB3({8{TTB3}}) );
+	cntbit cnt_hi [7:0] ( .val_in(~dbq), .cin(xa_hi), .val_out(adh), .cout(mq_hi), .TTB2({8{TTB2}}), .TTB3({8{TTB3}}) );
 	cntbit_carry_chain carry_chain ( .CLK4(CLK4), .TTB1(TTB1), .TTB2(TTB2), .TTB3(TTB3), .mq({mq_hi,mq_lo}), .xa({xa_hi,xa_lo}) );
 
 	// The AddrBus value is formed on the basis of the bus keeper values of the cbus/dbus.
@@ -35,17 +41,17 @@ module IncDec ( CLK4, TTB1, TTB2, TTB3, Maybe1, cbus, dbus, adl, adh, AddrBus );
 
 endmodule // IncDec
 
-module cntbit ( n_val_in, cin, val_out, cout, TTB2, TTB3 );
+module cntbit ( val_in, cin, val_out, cout, TTB2, TTB3 );
 
-	input n_val_in;
+	input val_in;
 	input cin;
 	output val_out;
 	output cout;
 	input TTB2;
 	input TTB3;
 
-	assign val_out = n_val_in ^ cin;
-	assign cout = ~n_val_in ? TTB2 : TTB3;
+	assign val_out = val_in ^ cin;
+	assign cout = ~val_in ? TTB2 : TTB3;
 
 endmodule // cntbit
 
