@@ -386,7 +386,7 @@ module seq_module3 ( d, clk, cclk, q );
 	output q;
 
 	reg val;
-	initial val <= 1'b0;
+	initial val <= 1'bx;
 
 	// XXX: Initially, clk and cclk were mixed up when parsing the netlist. So read here cclk as clk. Not a very nice mix-up, but this is always the case with clk.
 	always @(posedge cclk) begin
@@ -470,7 +470,7 @@ module seq_module4_2 ( nr, s, q );
 	output q;
 
 	reg val;
-	initial val <= 1'b0;
+	initial val <= 1'bx;
 
 	// The module design is such that reset overrides set if both are set at the same time.
 	always @(*) begin
@@ -492,7 +492,7 @@ module seq_module4 ( nr, s, q );
 	output q;
 
 	reg val;
-	initial val <= 1'b0;
+	initial val <= 1'bx;
 
 	// The module design is such that reset overrides set if both are set at the same time.
 	always @(*) begin
@@ -519,8 +519,8 @@ module seq_huge1 ( q, d, res, clk, cclk, ld, nld);
 
 	reg val_in;
 	reg val_out;
-	initial val_in <= 1'b0;
-	initial val_out <= 1'b0;
+	initial val_in <= 1'bx;
+	initial val_out <= 1'bx;
 
 	always @(*) begin
 		if (clk && ld)

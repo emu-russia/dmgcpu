@@ -101,7 +101,7 @@ module NOR_LATCH (set, res, q, nq);
 	output nq;
 
 	reg val;
-	initial val <= 1'b0;
+	initial val <= 1'bx;
 
 	always @(*) begin
 		if (set)
@@ -124,7 +124,7 @@ module DFFR_B (clk, nres, d, q, nq);
 	output nq;
 
 	reg val;
-	initial val <= 1'b0;
+	initial val <= 1'bx;
 
 	always @(posedge clk) begin
 		if (clk)
@@ -147,7 +147,7 @@ module DR_LATCH (ena, nres, d, q, nq);
 	output nq;
 
 	reg val;
-	initial val <= 1'b0;
+	initial val <= 1'bx;
 
 	always @(*) begin
 		if (ena)

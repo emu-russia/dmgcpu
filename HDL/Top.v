@@ -261,7 +261,7 @@ module BusKeeper (d, q);
 	output q;
 
 	reg val;
-	initial val <= 1'b0;
+	initial val <= 1'bx;
 
 	always @(*) begin
 		if (d == 1'b1)

@@ -207,8 +207,8 @@ module regbit ( clk, cclk, d, ld, q, nq );
 
 	reg val_in;
 	reg val_out;
-	initial val_in <= 1'b0;
-	initial val_out <= 1'b0;
+	initial val_in <= 1'bx;
+	initial val_out <= 1'bx;
 
 	always @(*) begin
 		if (clk && ld)
@@ -238,8 +238,8 @@ module regbit_res ( clk, cclk, d, ld, res, q, nq );
 
 	reg val_in;
 	reg val_out;
-	initial val_in <= 1'b0;
-	initial val_out <= 1'b0;
+	initial val_in <= 1'bx;
+	initial val_out <= 1'bx;
 
 	always @(*) begin
 		if (clk && ld)
