@@ -245,7 +245,7 @@ module SM83Core (
 		.bro(bro),
 		.bot_to_Thingy(bot_to_Thingy),
 		.Thingy_to_bot(Thingy_to_bot),
-		.SYNC_RES(SYNC_RES),
+		.SYNC_RES(SYNC_RESET),
 		.SeqControl_1(SeqControl_1),
 		.SeqControl_2(SeqControl_2),
 		.SeqOut_1(SeqOut_1),
