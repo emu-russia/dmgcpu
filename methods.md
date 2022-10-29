@@ -2,7 +2,7 @@
 
 ## Thermal opening method
 
-To get the circuits, you must first extract the ASIC chip.
+To get the circuits, you must first extract the chip.
 
 The following tools are required for the subsequent operation:
 - Gas torch
