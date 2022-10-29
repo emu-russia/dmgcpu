@@ -208,7 +208,7 @@ module BottomLeftLogic ( CLK2, bc, bq4, bq5, bq7, pq, abus, bbus, alu, DV );
 
 	assign bq4 = pq[1] | pq[2] | pq[3];
 	assign bq5 = pq[5] | pq[6] | pq[7];
-	assign bq7 = pq[4] | pq[7];
+	assign bq7 = pq[4] & pq[7];
 	
 	// This requires transparent latches, since nobody could set up a abus/bbus. On the actual circuit, they are also present as a memory on the `not` gate.
 	BusKeeper abus_keepers [7:0] ( .d(abus), .q(abq) );
