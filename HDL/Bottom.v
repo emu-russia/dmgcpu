@@ -68,7 +68,7 @@ module Bottom ( CLK2, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, Temp_C,
 		.bq4(bq4),
 		.bq5(bq5),
 		.bq7(bq7),
-		.pq(Aout),
+		.Aout(Aout),
 		.abus(abus),
 		.bbus(bbus),
 		.alu(alu),
@@ -190,14 +190,14 @@ module BusPrecharge ( CLK2, DL, abus, bbus, cbus, dbus );
 endmodule // BusPrecharge
 
 // It is very difficult to put this circuit into any category. It belongs to both ALU and registers at the same time, and is generally at the bottom. So it's going to stay here untouched for now.
-module BottomLeftLogic ( CLK2, bc, bq4, bq5, bq7, pq, abus, bbus, alu, DV );
+module BottomLeftLogic ( CLK2, bc, bq4, bq5, bq7, Aout, abus, bbus, alu, DV );
 
 	input CLK2;
 	input [5:0] bc;
 	output bq4;
 	output bq5;
 	output bq7;
-	input [7:0] pq;
+	input [7:0] Aout; 		// Current value of the `A` register.
 	inout [7:0] abus;
 	inout [7:0] bbus;
 	output [7:0] alu;
@@ -206,9 +206,9 @@ module BottomLeftLogic ( CLK2, bc, bq4, bq5, bq7, pq, abus, bbus, alu, DV );
 	wire [7:0] abq; 	// abus Bus keepers outputs
 	wire [7:0] bbq; 	// bbus Bus keepers outputs
 
-	assign bq4 = pq[1] | pq[2] | pq[3];
-	assign bq5 = pq[5] | pq[6] | pq[7];
-	assign bq7 = pq[4] & pq[7];
+	assign bq4 = Aout[1] | Aout[2] | Aout[3];
+	assign bq5 = Aout[5] | Aout[6] | Aout[7];
+	assign bq7 = Aout[4] & Aout[7];
 	
 	// This requires transparent latches, since nobody could set up a abus/bbus. On the actual circuit, they are also present as a memory on the `not` gate.
 	BusKeeper abus_keepers [7:0] ( .d(abus), .q(abq) );
