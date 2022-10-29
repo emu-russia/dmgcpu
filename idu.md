@@ -24,7 +24,7 @@ The carry chain is done as a "breadcrumped" layout.
 
 ## IDU Path
 
-To make the movements between registers and IDUs clearer, here is a short description (the process is quite confusing with inverters).
+To make the movements between registers and IDU clearer, here is a short description (the process is quite confusing with inverters).
 
 - The value on the cbus/dbus contains a `~val` of register (register `q` output inversion).
 - This value is stored on the BusKeeper (tranparent DLatch). From the BusKeeper inverted value of `~val` as `val` is fed to the IDU.
