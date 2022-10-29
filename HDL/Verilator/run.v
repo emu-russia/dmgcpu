@@ -3,6 +3,7 @@
 
 module SM83_Run();
 
+	/* verilator lint_off UNOPTFLAT */
 	reg CLK;
 	wire [7:0] dbus;
 	wire [15:0] abus;
@@ -18,7 +19,7 @@ module SM83_Run();
 	wire WR;
 	wire MemReq;
 
-	always #25 CLK = ~CLK;
+	always CLK = ~CLK;
 
 	wire ADR_CLK_N;
 	wire ADR_CLK_P;
@@ -97,15 +98,16 @@ module SM83_Run();
 		ExternalRESET = 1'b0;
 		CLK = 1'b0;
 
-		$dumpfile("dmg_waves.vcd");
-		$dumpvars(0, dmgcore);
-		$dumpvars(1, clkgen);
+		// Unsupported in Verilator
+		//$dumpfile("dmg_waves.vcd");
+		//$dumpvars(0, dmgcore);
+		//$dumpvars(1, clkgen);
 
-		ExternalRESET = 1'b1;
-		repeat (8) @ (posedge CLK);
-		ExternalRESET = 1'b0;
+		//ExternalRESET <= 1'b1;
+		//repeat (8) @ (posedge CLK);
+		//ExternalRESET <= 1'b0;
 
-		repeat (256) @ (posedge CLK);
+		//repeat (256) @ (posedge CLK);
 		$finish;
 	end	
 

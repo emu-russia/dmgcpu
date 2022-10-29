@@ -25,8 +25,8 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 
 	// T1/T2, RESET Pads
 
-	wire T1;
-	wire T2;
+	wire nT1;
+	wire nT2;
 	wire T1T2;
 	wire T1_nT2;
 	wire nT1_T2;
@@ -43,6 +43,7 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 	wire ck; 	// CK1/2 Pad out
 	assign ck = OSC_ENA ? CLK : 1'b0;
 
+	/* verilator lint_off UNOPTFLAT */
 	wire phase_splitter_out;
 	assign phase_splitter_out = ~(~(ck & phase_splitter_out) & ~ck);
 	wire ATAL_4mhz;
@@ -83,17 +84,20 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 
 	// Sync Reset to CPU
 
+	wire TUBO_q;
 	wire TUBO_nq;
+	wire ASOL_q;
 	wire ASOL_nq;
 	wire SixteenHz;
+	wire AFER_nq;
 
 	// I don't know what this thing is for, but if you make it 0, SYNC_RESET never disappears. Some kind of internal DIV kitchen, I didn't bother to figure it out.
 	assign SixteenHz = 1'b1; 		// From DIV
 
-	NOR_LATCH TUBO (.set(CLK_ENA), .res(RESET | ~OSC_ENA), .nq(TUBO_nq));
+	NOR_LATCH TUBO (.set(CLK_ENA), .res(RESET | ~OSC_ENA), .q(TUBO_q), .nq(TUBO_nq));
 	assign OSC_STABLE = (T1_nT2 | nT1_T2 | (TUBO_nq & SixteenHz));
-	NOR_LATCH ASOL (.set(~(~OSC_STABLE | RESET)), .res(RESET), .nq(ASOL_nq));
-	DFFR_B AFER (.clk(MAIN_CLK_P), .nres(T1T2), .d(ASOL_nq), .q(SYNC_RESET) );
+	NOR_LATCH ASOL (.set(~(~OSC_STABLE | RESET)), .res(RESET), .q(ASOL_q), .nq(ASOL_nq));
+	DFFR_B AFER (.clk(MAIN_CLK_P), .nres(T1T2), .d(ASOL_nq), .q(SYNC_RESET), .nq(AFER_nq) );
 
 endmodule // External_CLK
 
@@ -105,14 +109,14 @@ module NOR_LATCH (set, res, q, nq);
 	output nq;
 
 	reg val;
-	initial val <= 1'bx;
+	initial val = 1'bx;
 
 	// res above set.
 	always @(*) begin
 		if (res)
-			val <= 1'b0;
+			val = 1'b0;
 		else if (set)
-			val <= 1'b1;
+			val = 1'b1;
 	end
 
 	assign q = val;
@@ -129,7 +133,7 @@ module DFFR_B (clk, nres, d, q, nq);
 	output nq;
 
 	reg val;
-	initial val <= 1'bx;
+	initial val = 1'bx;
 
 	always @(posedge clk) begin
 		if (clk)
@@ -155,13 +159,13 @@ module DR_LATCH (ena, nres, d, q, nq);
 	output nq;
 
 	reg val;
-	initial val <= 1'b0;
+	initial val = 1'b0;
 
 	always @(*) begin
 		if (ena)
-			val <= d;
+			val = d;
 		if (~nres)
-			val <= 1'b0;
+			val = 1'b0;
 	end
 
 	assign q = val;

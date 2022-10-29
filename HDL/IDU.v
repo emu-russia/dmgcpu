@@ -64,7 +64,9 @@ module cntbit_carry_chain ( CLK4, TTB1, TTB2, TTB3, mq, xa );
 	input [15:0] mq;
 	output [15:0] xa;
 
+	/* verilator lint_off UNOPTFLAT */
 	wire [15:0] nxa;
+	/* verilator lint_off UNOPTFLAT */
 	wire ct;
 
 	assign nxa[0] = ~(TTB2 | TTB3);

@@ -6,6 +6,7 @@ module DataLatch ( CLK, DL_Control1, DL_Control2, DataBus, DL, Res );
 	input DL_Control1;			// 1: Bus disable
 	input DL_Control2;			// x37. ALU Result -> DL.
 	inout [7:0] DataBus;		// External databus
+	/* verilator lint_off UNOPTFLAT */
 	inout [7:0] DL;				// Internal databus
 	input [7:0] Res;			// ALU Result
 

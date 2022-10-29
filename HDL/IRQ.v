@@ -80,14 +80,14 @@ module module7 ( clk, cclk, d, ld, res, q, nq );
 
 	reg val_in;
 	reg val_out;
-	initial val_in <= 1'b0;
-	initial val_out <= 1'b0;
+	initial val_in = 1'b0;
+	initial val_out = 1'b0;
 
 	always @(*) begin
 		if (clk && ld)
-			val_in <= d;
+			val_in = d;
 		if (res)
-			val_in <= 1'b0;
+			val_in = 1'b0;
 	end
 
 	always @(negedge ld) begin
@@ -110,11 +110,11 @@ module module8 ( clk, cclk, d, q, nq );
 	// Regular (transparent) latch (no edge detection), to store the interrupt flag.
 
 	reg val;
-	initial val <= 1'bx;
+	initial val = 1'bx;
 
 	always @(*) begin
 		if (clk)
-			val <= d;
+			val = d;
 	end
 
 	assign q = val;

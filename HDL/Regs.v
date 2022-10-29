@@ -59,7 +59,7 @@ module RegsBuses ( CLK5, CLK6, w, x, DL, IR, abus, bbus, cbus, dbus, ebus, fbus,
 
 endmodule // RegsBuses
 
-module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, ebus, fbus, zbus, wbus, Res, adl, adh );
+module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, bbus, cbus, dbus, ebus, fbus, zbus, wbus, Res, adl, adh );
 
 	input CLK4;
 	input CLK5;
@@ -68,6 +68,9 @@ module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, ebus, fbus, zbus, wbus, 
 	input [40:0] w;
 	input [68:0] x;
 	inout [7:0] DL;
+	inout [7:0] bbus;
+	inout [7:0] cbus;
+	inout [7:0] dbus;
 	inout [7:0] ebus;
 	inout [7:0] fbus;
 	inout [7:0] zbus;
@@ -127,11 +130,11 @@ module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, DL, abus, bbus, cbus, db
 	wire [7:0] sph_q;		// SPH output 
 	wire [7:0] sph_nq;		// SPH output (complement)
 
-	wire [7:0] spl_bnd;		// SPL input buskeeper output
-	wire [7:0] sph_bnd;		// SPH input buskeeper output
+	wire [7:0] spl_bnq;		// SPL input buskeeper output
+	wire [7:0] sph_bnq;		// SPH input buskeeper output
 
-	sp_regbit SPL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(spl_bnd), .ld({8{x[61]}}), .q(spl_q), .nq(spl_nq) );
-	sp_regbit SPH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(sph_bnd), .ld({8{x[61]}}), .q(sph_q), .nq(sph_nq) );
+	sp_regbit SPL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(spl_bnq), .ld({8{x[61]}}), .q(spl_q), .nq(spl_nq) );
+	sp_regbit SPH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(sph_bnq), .ld({8{x[61]}}), .q(sph_q), .nq(sph_nq) );
 
 	// Another bus keeper - which stores the input value for the SPL/SPH registers.
 	// It is "recharged" during CLK7=0 and updated during CLK6=1. Between these two cutoffs - the input is in a floating state.
@@ -238,12 +241,12 @@ module regbit ( clk, cclk, d, ld, q );
 
 	reg val_in;
 	reg val_out;
-	initial val_in <= 1'b0;
-	initial val_out <= 1'b0;
+	initial val_in = 1'b0;
+	initial val_out = 1'b0;
 
 	always @(*) begin
 		if (clk && ld)
-			val_in <= d;
+			val_in = d;
 	end
 
 	always @(negedge ld) begin
@@ -268,12 +271,12 @@ module sp_regbit ( clk, cclk, nd, ld, q, nq );
 
 	reg val_in;
 	reg val_out;
-	initial val_in <= 1'bx;
-	initial val_out <= 1'bx;
+	initial val_in = 1'bx;
+	initial val_out = 1'bx;
 
 	always @(*) begin
 		if (clk && ld)
-			val_in <= nd;
+			val_in = nd;
 	end
 
 	always @(negedge ld) begin
@@ -300,14 +303,14 @@ module pc_regbit ( clk, cclk, nd, ld, nres, q, nq );
 
 	reg val_in;
 	reg val_out;
-	initial val_in <= 1'bx;
-	initial val_out <= 1'bx;
+	initial val_in = 1'bx;
+	initial val_out = 1'bx;
 
 	always @(*) begin
 		if (clk && ld)
-			val_in <= nd;
+			val_in = nd;
 		if (~nres)
-			val_in <= 1'b1;
+			val_in = 1'b1;
 	end
 
 	always @(negedge ld) begin
