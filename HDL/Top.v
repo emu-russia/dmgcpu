@@ -1,3 +1,5 @@
+`timescale 1ns/1ns
+
 // Definition of the SM83 CPU top level.
 
 module SM83Core (

@@ -1,3 +1,5 @@
+`timescale 1ns/1ns
+
 // Separated from Bottom.v to make it easier to scroll through the source.
 
 module RegsBuses ( CLK5, CLK6, w, x, DL, IR, abus, bbus, cbus, dbus, ebus, fbus, Aout );

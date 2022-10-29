@@ -1,3 +1,5 @@
+`timescale 1ns/1ns
+
 // Separated from Bottom.v to make it easier to scroll through the source.
 
 // The value on the cbus/dbus contains a ~val of register (register `q` output inversion).

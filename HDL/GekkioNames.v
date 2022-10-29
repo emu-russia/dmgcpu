@@ -1,3 +1,5 @@
+`timescale 1ns/1ns
+
 // If you somehow want to use the signal names from the Gekkio study (https://github.com/Gekkio/gb-research/tree/main/sm83-cpu-core)
 
 // CLKs
