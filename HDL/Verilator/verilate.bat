@@ -1,0 +1,1 @@
+verilator --top-module SM83_Run --cc ../*.v ../Icarus/external_clk.v run.v

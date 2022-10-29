@@ -149,6 +149,7 @@ module module5 ( m, h, c, q );
 	input [3:0] m; 		// G
 	input [3:0] h;		// P
 	input c;			// CarryIn
+	/* verilator lint_off UNOPTFLAT */
 	output [3:0] q; 	// C1...C4  (inverted)
 
 	assign q[0] = ~(m[0] | (h[0] & c)); 		// ~Carry1 out
@@ -321,12 +322,12 @@ module bc ( nd, CLK, CCLK, Load, q, nq );
 
 	reg val_in;
 	reg val_out;
-	initial val_in <= 1'b0;
-	initial val_out <= 1'b0;
+	initial val_in = 1'b0;
+	initial val_out = 1'b0;
 
 	always @(*) begin
 		if (CLK && Load)
-			val_in <= ~nd;
+			val_in = ~nd;
 	end
 
 	always @(negedge Load) begin
@@ -348,12 +349,12 @@ module ALU_to_bot_FF ( d, CLK, CCLK, Load, q );
 
 	reg val_in;
 	reg val_out;
-	initial val_in <= 1'b0;
-	initial val_out <= 1'b0;
+	initial val_in = 1'b0;
+	initial val_out = 1'b0;
 
 	always @(*) begin
 		if (CLK && Load)
-			val_in <= d;
+			val_in = d;
 	end
 
 	always @(negedge Load) begin

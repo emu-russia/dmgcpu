@@ -386,7 +386,7 @@ module seq_module3 ( d, clk, cclk, q );
 	output q;
 
 	reg val;
-	initial val <= 1'bx;
+	initial val = 1'bx;
 
 	// XXX: Initially, clk and cclk were mixed up when parsing the netlist. So read here cclk as clk. Not a very nice mix-up, but this is always the case with clk.
 	always @(posedge cclk) begin
@@ -471,14 +471,14 @@ module seq_module4_2 ( nr, s, q );
 
 	reg val;
 	// Let's lower the difficulty level and use 0 here instead of `x`.
-	initial val <= 1'b0;
+	initial val = 1'b0;
 
 	// The module design is such that reset overrides set if both are set at the same time.
 	always @(*) begin
 		if (~nr)
-			val <= 1'b0;
+			val = 1'b0;
 		else if (s)
-			val <= 1'b1;
+			val = 1'b1;
 	end
 
 	assign q = val;
@@ -494,14 +494,14 @@ module seq_module4 ( nr, s, q );
 
 	reg val;
 	// Let's lower the difficulty level and use 0 here instead of `x`.
-	initial val <= 1'b0;
+	initial val = 1'b0;
 
 	// The module design is such that reset overrides set if both are set at the same time.
 	always @(*) begin
 		if (~nr)
-			val <= 1'b0;
+			val = 1'b0;
 		else if (s)
-			val <= 1'b1;
+			val = 1'b1;
 	end
 
 	assign q = val;
@@ -520,15 +520,16 @@ module seq_huge1 ( q, d, res, clk, cclk, ld, nld);
 	input nld;
 
 	reg val_in;
+	/* verilator lint_off UNOPTFLAT */
 	reg val_out;
-	initial val_in <= 1'bx;
-	initial val_out <= 1'bx;
+	initial val_in = 1'bx;
+	initial val_out = 1'bx;
 
 	always @(*) begin
 		if (clk && ld)
-			val_in <= d;
+			val_in = d;
 		if (res)
-			val_in <= 1'b0;
+			val_in = 1'b0;
 	end
 
 	always @(negedge ld) begin
@@ -603,11 +604,11 @@ module seq_hmm3 ( d, clk, cclk, nq );
 	output nq;
 
 	reg val;
-	initial val <= 1'b0;
+	initial val = 1'b0;
 
 	always @(*) begin
 		if (clk)
-			val <= d;
+			val = d;
 	end
 
 	assign nq = ~val;
