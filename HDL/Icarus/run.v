@@ -119,6 +119,8 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 	inout [7:0] databus;
 	input [15:0] addrbus;
 
-	assign databus = (MREQ & RD) ? 8'b00000000 : 8'bzzzzzzzz;
+	// Now the hardware is configured to give out single-byte opcodes for checking.
+
+	assign databus = (MREQ & RD) ? 8'b00111100 : 8'bzzzzzzzz;	// INC A (0x3c)
 
 endmodule // Bogus_HW
