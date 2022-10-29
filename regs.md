@@ -85,6 +85,8 @@ SP vs Buses:
 
 ![x61_tran](/imgstore/modules/x61_tran.jpg)
 
+Between CLK6 and CLK7 there is a short period (1 half-cycle) when the SPH/SPL register input is in a floating state. To maintain this "floater" it is recommended to use a transparent latch in your implementation for the SPH/SPL inputs.
+
 ## PC Register
 
 :warning: A distinctive feature of the PC register bits is that the value on them is loaded and kept in the inverse polarity. In addition to the regular output the register also has a complement output. The register also has an Active-low input for resetting.
@@ -98,3 +100,5 @@ PC Regbit:
 PC vs Buses:
 
 ![x68_tran](/imgstore/modules/x68_tran.jpg)
+
+Between CLK6 and CLK7 there is a short period (1 half-cycle) when the PCH/PCL register input is in a floating state. To maintain this "floater" it is recommended to use a transparent latch in your implementation for the PCH/PCL inputs.
