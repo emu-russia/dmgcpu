@@ -28,34 +28,34 @@ module RegsBuses ( CLK5, CLK6, w, x, DL, IR, abus, bbus, cbus, dbus, ebus, fbus,
 	wire [7:0] r6q;		// C
 	wire [7:0] r7q;		// B
 
-	regbit RegIR [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(DL), .ld({8{w[26]}}), .q(IR) );
+	regbit RegIR [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(DL), .ld({8{`s2_m1}}), .q(IR) );
 
-	regbit RegA [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(fbus), .ld({8{x[38]}}), .q(r1q) );
-	regbit RegL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(ebus), .ld({8{x[40]}}), .q(r2q) );
-	regbit RegH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(fbus), .ld({8{x[39]}}), .q(r3q) );
-	regbit RegE [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(ebus), .ld({8{x[50]}}), .q(r4q) );
-	regbit RegD [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(fbus), .ld({8{x[48]}}), .q(r5q) );
-	regbit RegC [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(ebus), .ld({8{x[51]}}), .q(r6q) );
-	regbit RegB [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(fbus), .ld({8{x[49]}}), .q(r7q) );
+	regbit RegA [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(fbus), .ld({8{`s3_wren_a}}), .q(r1q) );
+	regbit RegL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(ebus), .ld({8{`s3_wren_l}}), .q(r2q) );
+	regbit RegH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(fbus), .ld({8{`s3_wren_h}}), .q(r3q) );
+	regbit RegE [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(ebus), .ld({8{`s3_wren_e}}), .q(r4q) );
+	regbit RegD [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(fbus), .ld({8{`s3_wren_d}}), .q(r5q) );
+	regbit RegC [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(ebus), .ld({8{`s3_wren_c}}), .q(r6q) );
+	regbit RegB [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(fbus), .ld({8{`s3_wren_b}}), .q(r7q) );
 
-	assign abus = w[3] ? ~r1q : 8'bzzzzzzzz;
-	assign bbus = x[35] ? ~r1q : 8'bzzzzzzzz;
-	assign cbus = x[42] ? ~r2q : 8'bzzzzzzzz;
-	assign abus = w[15] ? ~r2q : 8'bzzzzzzzz;
-	assign bbus = x[44] ? ~r2q : 8'bzzzzzzzz;
-	assign abus = w[19] ? ~r3q : 8'bzzzzzzzz;
-	assign bbus = x[43] ? ~r3q : 8'bzzzzzzzz;
-	assign dbus = x[42] ? ~r3q : 8'bzzzzzzzz;
-	assign cbus = x[45] ? ~r4q : 8'bzzzzzzzz;
-	assign bbus = x[47] ? ~r4q : 8'bzzzzzzzz;
-	assign bbus = x[46] ? ~r5q : 8'bzzzzzzzz;
-	assign dbus = x[45] ? ~r5q : 8'bzzzzzzzz;
-	assign dbus = w[29] ? 8'b00000000 : 8'bzzzzzzzz;
-	assign dbus = w[17] ? 8'b00000000 : 8'bzzzzzzzz;
-	assign cbus = x[52] ? ~r6q : 8'bzzzzzzzz;
-	assign bbus = x[54] ? ~r6q : 8'bzzzzzzzz;
-	assign bbus = x[53] ? ~r7q : 8'bzzzzzzzz;
-	assign dbus = x[52] ? ~r7q : 8'bzzzzzzzz;
+	assign abus = `s2_op_alu8 ? ~r1q : 8'bzzzzzzzz;
+	assign bbus = `s3_oe_areg_to_rbus ? ~r1q : 8'bzzzzzzzz;
+	assign cbus = `s3_oe_hlreg_to_idu ? ~r2q : 8'bzzzzzzzz;
+	assign abus = `s2_op_add_hl_sxx0 ? ~r2q : 8'bzzzzzzzz;
+	assign bbus = `s3_oe_lreg_to_rbus ? ~r2q : 8'bzzzzzzzz;
+	assign abus = `s2_op_add_hl_sx01 ? ~r3q : 8'bzzzzzzzz;
+	assign bbus = `s3_oe_hreg_to_rbus ? ~r3q : 8'bzzzzzzzz;
+	assign dbus = `s3_oe_hlreg_to_idu ? ~r3q : 8'bzzzzzzzz;
+	assign cbus = `s3_oe_dereg_to_idu ? ~r4q : 8'bzzzzzzzz;
+	assign bbus = `s3_oe_ereg_to_rbus ? ~r4q : 8'bzzzzzzzz;
+	assign bbus = `s3_oe_dreg_to_rbus ? ~r5q : 8'bzzzzzzzz;
+	assign dbus = `s3_oe_dereg_to_idu ? ~r5q : 8'bzzzzzzzz;
+	assign dbus = `s2_op_ldh_c_sx00 ? 8'b00000000 : 8'bzzzzzzzz;
+	assign dbus = `s2_op_ldh_imm_sx01 ? 8'b00000000 : 8'bzzzzzzzz;
+	assign cbus = `s3_oe_bcreg_to_idu ? ~r6q : 8'bzzzzzzzz;
+	assign bbus = `s3_oe_creg_to_rbus ? ~r6q : 8'bzzzzzzzz;
+	assign bbus = `s3_oe_breg_to_rbus ? ~r7q : 8'bzzzzzzzz;
+	assign dbus = `s3_oe_bcreg_to_idu ? ~r7q : 8'bzzzzzzzz;
 
 	assign Aout = r1q;
 
@@ -85,20 +85,20 @@ module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, bbus, cbus, dbus, ebus, 
 	wire [7:0] W_in;
 	wire d60w8;
 
-	regbit Z [7:0]( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(Z_in), .ld({8{x[60]}}), .q(zbus) );
-	regbit W [7:0]( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(W_in), .ld({8{x[59]}}), .q(wbus) );
+	regbit Z [7:0]( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(Z_in), .ld({8{`s3_wren_z}}), .q(zbus) );
+	regbit W [7:0]( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(W_in), .ld({8{`s3_wren_w}}), .q(wbus) );
 
-	assign cbus = w[17] ? ~zbus : 8'bzzzzzzzz;
-	assign cbus = w[1] ? ~zbus : 8'bzzzzzzzz;
-	assign cbus = w[2] ? ~zbus : 8'bzzzzzzzz;
-	assign bbus = x[58] ? ~zbus : 8'bzzzzzzzz;
-	assign dbus = w[2] ? ~wbus : 8'bzzzzzzzz;
-	assign dbus = w[1] ? ~wbus : 8'bzzzzzzzz;
+	assign cbus = `s2_op_ldh_imm_sx01 ? ~zbus : 8'bzzzzzzzz;
+	assign cbus = `s2_oe_wzreg_to_idu ? ~zbus : 8'bzzzzzzzz;
+	assign cbus = `s2_op_jr_any_sx10 ? ~zbus : 8'bzzzzzzzz;
+	assign bbus = `s3_oe_zreg_to_rbus ? ~zbus : 8'bzzzzzzzz;
+	assign dbus = `s2_op_jr_any_sx10 ? ~wbus : 8'bzzzzzzzz;
+	assign dbus = `s2_oe_wzreg_to_idu ? ~wbus : 8'bzzzzzzzz;
 
-	assign fbus = ~(CLK4 ? ~(({8{x[55]}}&adh) | ({8{x[56]}}&wbus) | ({8{x[57]}}&Res)) : 8'b11111111);
-	assign ebus = ~(CLK4 ? ~(({8{x[55]}}&adl) | ({8{x[56]}}&zbus) | ({8{x[57]}}&Res)) : 8'b11111111);
+	assign fbus = ~(CLK4 ? ~(({8{`s3_oe_idu_to_uhlbus}}&adh) | ({8{`s3_oe_wzreg_to_uhlbus}}&wbus) | ({8{`s3_oe_ubus_to_uhlbus}}&Res)) : 8'b11111111);
+	assign ebus = ~(CLK4 ? ~(({8{`s3_oe_idu_to_uhlbus}}&adl) | ({8{`s3_oe_wzreg_to_uhlbus}}&zbus) | ({8{`s3_oe_ubus_to_uhlbus}}&Res)) : 8'b11111111);
 
-	assign d60w8 = ~(d60 | w[8]);
+	assign d60w8 = ~(d60 | `s2_op_jr_any_sx01);
 	assign Z_in = ~(({8{d60}}&adl) | ({8{~d60}}&DL));
 	assign W_in = ~(({8{~d60w8}}&adh) | ({8{d60w8}}&DL));
 
@@ -135,8 +135,8 @@ module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, DL, abus, bbus, cbus, db
 	wire [7:0] spl_bnq;		// SPL input buskeeper output
 	wire [7:0] sph_bnq;		// SPH input buskeeper output
 
-	sp_regbit SPL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(spl_bnq), .ld({8{x[61]}}), .q(spl_q), .nq(spl_nq) );
-	sp_regbit SPH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(sph_bnq), .ld({8{x[61]}}), .q(sph_q), .nq(sph_nq) );
+	sp_regbit SPL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(spl_bnq), .ld({8{`s3_wren_sp}}), .q(spl_q), .nq(spl_nq) );
+	sp_regbit SPH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(sph_bnq), .ld({8{`s3_wren_sp}}), .q(sph_q), .nq(sph_nq) );
 
 	// Another bus keeper - which stores the input value for the SPL/SPH registers.
 	// It is "recharged" during CLK7=0 and updated during CLK6=1. Between these two cutoffs - the input is in a floating state.
@@ -145,18 +145,18 @@ module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, DL, abus, bbus, cbus, db
 
 	// SP vs Buses
 
-	assign spl_nd = CLK6 ? (~((adl & {8{x[62]}}) | (zbus & {8{x[63]}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
-	assign sph_nd = CLK6 ? (~((adh & {8{x[62]}}) | (wbus & {8{x[63]}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
+	assign spl_nd = CLK6 ? (~((adl & {8{`s3_oe_idu_to_spreg}}) | (zbus & {8{`s3_oe_wzreg_to_spreg}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
+	assign sph_nd = CLK6 ? (~((adh & {8{`s3_oe_idu_to_spreg}}) | (wbus & {8{`s3_oe_wzreg_to_spreg}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
 
 	assign DL = d60 ? ~spl_nq : 8'bzzzzzzzz;
-	assign abus = w[23] ? ~spl_q : 8'bzzzzzzzz;
-	assign bbus = (w[15] & IR4 & IR5) ? ~spl_q : 8'bzzzzzzzz;
-	assign cbus = x[65] ? ~spl_q : 8'bzzzzzzzz;
+	assign abus = `s2_op_sp_e_s001 ? ~spl_q : 8'bzzzzzzzz;
+	assign bbus = (`s2_op_add_hl_sxx0 & IR4 & IR5) ? ~spl_q : 8'bzzzzzzzz;
+	assign cbus = `s3_oe_spreg_to_idu ? ~spl_q : 8'bzzzzzzzz;
 
 	assign DL = d66 ? ~sph_nq : 8'bzzzzzzzz;
-	assign abus = w[9] ? ~sph_q : 8'bzzzzzzzz;
-	assign bbus = (w[19] & IR4 & IR5) ? ~sph_q : 8'bzzzzzzzz;
-	assign dbus = x[65] ? ~sph_q : 8'bzzzzzzzz;
+	assign abus = `s2_op_sp_e_sx10 ? ~sph_q : 8'bzzzzzzzz;
+	assign bbus = (`s2_op_add_hl_sx01 & IR4 & IR5) ? ~sph_q : 8'bzzzzzzzz;
+	assign dbus = `s3_oe_spreg_to_idu ? ~sph_q : 8'bzzzzzzzz;
 
 endmodule // SP
 
@@ -190,8 +190,8 @@ module PC ( CLK5, CLK6, CLK7, d92, w, x, DL, abus, cbus, dbus, zbus, wbus, adl, 
 	wire [7:0] pcl_bnq;		// PCL input buskeeper output
 	wire [7:0] pch_bnq;		// PCH input buskeeper output
 
-	pc_regbit PCL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .nd(pcl_bnq), .ld({8{x[68]}}), .q(pcl_q), .nq(pcl_nq) );
-	pc_regbit PCH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .nd(pch_bnq), .ld({8{x[68]}}), .q(pch_q), .nq(pch_nq) );
+	pc_regbit PCL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .nd(pcl_bnq), .ld({8{`s3_wren_pc}}), .q(pcl_q), .nq(pcl_nq) );
+	pc_regbit PCH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .nd(pch_bnq), .ld({8{`s3_wren_pc}}), .q(pch_q), .nq(pch_nq) );
 
 	// Another bus keeper - which stores the input value for the PCL/PCH registers.
 	// It is "recharged" during CLK7=0 and updated during CLK6=1. Between these two cutoffs - the input is in a floating state.
@@ -200,19 +200,19 @@ module PC ( CLK5, CLK6, CLK7, d92, w, x, DL, abus, cbus, dbus, zbus, wbus, adl, 
 
 	// PC vs Buses
 
-	assign pcl_nd[2:0] = CLK6 ? (~((adl[2:0] & {3{x[67]}}) | (zbus[2:0] & {3{w[36]}}))) : (CLK7 ? 3'bzzz : 3'b111);
-	assign pcl_nd[5:3] = CLK6 ? (~((adl[5:3] & {3{x[67]}}) | (zbus[5:3] & {3{w[36]}}) | ({3{d92}} & IR[5:3]) | bro[5:3])) : (CLK7 ? 3'bzzz : 3'b111);
-	assign pcl_nd[7:6] = CLK6 ? (~((adl[7:6] & {2{x[67]}}) | (zbus[7:6] & {2{w[36]}}) | bro[7:6])) : (CLK7 ? 2'bzz : 2'b11);
-	assign pch_nd = CLK6 ? (~((adh & {8{x[67]}}) | (wbus & {8{w[36]}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
+	assign pcl_nd[2:0] = CLK6 ? (~((adl[2:0] & {3{`s3_oe_idu_to_pcreg}}) | (zbus[2:0] & {3{`s2_oe_wzreg_to_pcreg}}))) : (CLK7 ? 3'bzzz : 3'b111);
+	assign pcl_nd[5:3] = CLK6 ? (~((adl[5:3] & {3{`s3_oe_idu_to_pcreg}}) | (zbus[5:3] & {3{`s2_oe_wzreg_to_pcreg}}) | ({3{d92}} & IR[5:3]) | bro[5:3])) : (CLK7 ? 3'bzzz : 3'b111);
+	assign pcl_nd[7:6] = CLK6 ? (~((adl[7:6] & {2{`s3_oe_idu_to_pcreg}}) | (zbus[7:6] & {2{`s2_oe_wzreg_to_pcreg}}) | bro[7:6])) : (CLK7 ? 2'bzz : 2'b11);
+	assign pch_nd = CLK6 ? (~((adh & {8{`s3_oe_idu_to_pcreg}}) | (wbus & {8{`s2_oe_wzreg_to_pcreg}}))) : (CLK7 ? 8'bzzzzzzzz : 8'b11111111);
 
-	assign DL = w[34] ? ~pcl_nq : 8'bzzzzzzzz;
-	assign cbus = w[25] ? ~pcl_q : 8'bzzzzzzzz;
-	assign abus = w[8] ? ~pcl_q : 8'bzzzzzzzz;
-	assign abus = x[33] ? 8'b00000000 : 8'bzzzzzzzz;
+	assign DL = `s2_oe_pclreg_to_pbus ? ~pcl_nq : 8'bzzzzzzzz;
+	assign cbus = `s2_addr_pc ? ~pcl_q : 8'bzzzzzzzz;
+	assign abus = `s2_op_jr_any_sx01 ? ~pcl_q : 8'bzzzzzzzz;
+	assign abus = `s3_op_dec8 ? 8'b00000000 : 8'bzzzzzzzz;
 
-	assign DL = w[28] ? ~pch_nq : 8'bzzzzzzzz;
-	assign dbus = w[25] ? ~pch_q : 8'bzzzzzzzz;
-	assign dbus = w[8] ? ~pch_q : 8'bzzzzzzzz;
+	assign DL = `s2_oe_pchreg_to_pbus ? ~pch_nq : 8'bzzzzzzzz;
+	assign dbus = `s2_addr_pc ? ~pch_q : 8'bzzzzzzzz;
+	assign dbus = `s2_op_jr_any_sx01 ? ~pch_q : 8'bzzzzzzzz;
 
 endmodule // PC
 
