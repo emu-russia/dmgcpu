@@ -2,7 +2,7 @@
 
 The CPU receives 9 (!) CLK signals.
 
-![clks](/imgstore/clks.png)
+![clks](/imgstore/clks.jpg)
 
 |CLK Signal|dmg-schematics Name|Gekkio|
 |---|---|---|

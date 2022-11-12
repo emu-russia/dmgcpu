@@ -6,7 +6,7 @@ By @msinger: http://iceboy.a-singer.de/doc/dmg_cpu_connections.html
 
 |N|I/O|Wire|This Repo|Cell|Description|
 |---|---|---|---|---|---|
-|T1	|O	|FROM_CPU6	|LoadIR (w26)|LEXY.in	|The output of the inverter LEXY ends at an output pad at the bottom of the die, which is not bonded.|
+|T1	|O	|FROM_CPU6	|M1 (w26)|LEXY.in	|The M1 signal is 1 when the next opcode is fetched.|
 |T2	|I	|TO_CPU	|CLK1|BOWA.q	|A gated 1 MiHz clock. The CPU can stop this clock by driving T11 or T14 low. This is the inverse of T3.|
 |T3	|I	|unlabeled	|CLK2|BEDO.q	|A gated 1 MiHz clock. The CPU can stop this clock by driving T11 or T14 low. This is the inverse of T2.|
 |T4	|I	|unlabeled	|CLK3|BEKO.q, BAVY.q	|A gated 1 MiHz clock. The CPU can stop this clock by driving T11 low. This is the inverse of T5.|

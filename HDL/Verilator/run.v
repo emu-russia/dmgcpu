@@ -10,7 +10,7 @@ module SM83_Run();
 	wire [7:0] irq_ack;
 	reg ExternalRESET;
 
-	wire LoadIR; 		// T1
+	wire M1; 			// T1
 	wire OSC_STABLE;		// T15
 	wire OSC_ENA;		// T14
 	wire CLK_ENA;		// T11
@@ -71,7 +71,7 @@ module SM83_Run();
 		.CLK7(LATCH_CLK),
 		.CLK8(MAIN_CLK_N),
 		.CLK9(MAIN_CLK_P),
-		.LoadIR(LoadIR),
+		.M1(M1),
 		.OSC_STABLE(OSC_STABLE),
 		.OSC_ENA(OSC_ENA),
 		.RESET(ASYNC_RESET),
