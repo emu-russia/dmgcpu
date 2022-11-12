@@ -2,6 +2,8 @@
 
 // If you somehow want to use the signal names from the Gekkio study (https://github.com/Gekkio/gb-research/tree/main/sm83-cpu-core)
 
+// The file is named with the prefix `_` so that it is parsed first when the mask of the files to be added is set to `*.v`.
+
 // CLKs
 
 `define CLK_N CLK1

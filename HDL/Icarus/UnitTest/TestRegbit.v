@@ -85,3 +85,23 @@ module Fair_regbit ( clk, cclk, d, ld, q, nq );
 	assign nq = ~q;
 
 endmodule // Fair_regbit
+
+// Transparent latch used as a bus keeper.
+module BusKeeper (d, q);
+
+	input d;
+	output q;
+
+	reg val;
+	initial val <= 1'b0;
+
+	always @(*) begin
+		if (d == 1'b1)
+			val <= 1'b1;
+		if (d == 1'b0)
+			val <= 1'b0;
+	end
+
+	assign q = val;
+
+endmodule // BusKeeper
