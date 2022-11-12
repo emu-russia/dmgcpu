@@ -55,8 +55,8 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	module6 Sums [7:0] (
 		.a({na[7:1],ALU_to_top}),
 		.b(ao),
-		.c({8{x[18]}}),
-		.d({8{x[3]}}),
+		.c({8{`s3_alu_xor}}),
+		.d({8{`s3_alu_sum}}),
 		.e(bw),
 		.x(Res) );
 
@@ -73,23 +73,23 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 
 	module2 GP_Terms [7:0] (
 		.a(ca), 
-		.b({8{x[19]}}), 
-		.c({8{x[4]}}), 
+		.b({8{`s3_alu_logic_and}}), 
+		.c({8{`s3_alu_logic_or}}), 
 		.e(e), 
 		.f(f), 
-		.g({8{x[25]}}), 
+		.g({8{`s3_alu_b_complement}}), 
 		.h(bh), 
 		.k(DV), 
 		.m(bm), 
 		.x(bx), 
 		.w(bw) );
 
-	Comb3 bit_lsb ( .clk(CLK2), .x(ca[0]), .a({x[5],DV[7]}), .b({x[1],DV[1]}), .c({x[16],DV[4]}), .d({x[6],bc[1]}) );
+	Comb3 bit_lsb ( .clk(CLK2), .x(ca[0]), .a({`s3_alu_rlc,DV[7]}), .b({`s3_alu_rotate_shift_right,DV[1]}), .c({`s3_alu_swap,DV[4]}), .d({`s3_alu_rl,bc[1]}) );
 	Comb2 bits_mid [6:1] ( .clk({6{CLK2}}), .x(ca[6:1]), 
-		.a({{x[0],DV[5]},{x[0],DV[4]},{x[0],DV[3]},{x[0],DV[2]},{x[0],DV[1]},{x[0],DV[0]}}), 
-		.b({{x[1],DV[7]},{x[1],DV[6]},{x[1],DV[5]},{x[1],DV[4]},{x[1],DV[3]},{x[1],DV[2]}}), 
-		.c({{x[16],DV[2]},{x[16],DV[1]},{x[16],DV[0]},{x[16],DV[7]},{x[16],DV[6]},{x[16],DV[5]}}) );
-	Comb1 bit_msb ( .clk(CLK2), .x(ca[7]), .a({x[0],DV[6]}), .b({x[8],bc[1]}), .c({x[9],DV[7]}), .d({x[7],DV[0]}), .e({x[16],DV[3]}) );
+		.a({{`s3_alu_rotate_shift_left,DV[5]},{`s3_alu_rotate_shift_left,DV[4]},{`s3_alu_rotate_shift_left,DV[3]},{`s3_alu_rotate_shift_left,DV[2]},{`s3_alu_rotate_shift_left,DV[1]},{`s3_alu_rotate_shift_left,DV[0]}}), 
+		.b({{`s3_alu_rotate_shift_right,DV[7]},{`s3_alu_rotate_shift_right,DV[6]},{`s3_alu_rotate_shift_right,DV[5]},{`s3_alu_rotate_shift_right,DV[4]},{`s3_alu_rotate_shift_right,DV[3]},{`s3_alu_rotate_shift_right,DV[2]}}), 
+		.c({{`s3_alu_swap,DV[2]},{`s3_alu_swap,DV[1]},{`s3_alu_swap,DV[0]},{`s3_alu_swap,DV[7]},{`s3_alu_swap,DV[6]},{`s3_alu_swap,DV[5]}}) );
+	Comb1 bit_msb ( .clk(CLK2), .x(ca[7]), .a({`s3_alu_rotate_shift_left,DV[6]}), .b({`s3_alu_rr,bc[1]}), .c({`s3_alu_sra,DV[7]}), .d({`s3_alu_rrc,DV[0]}), .e({`s3_alu_swap,DV[3]}) );
 
 	// Large spaghetti at the bottom
 
@@ -127,17 +127,17 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	assign ALU_to_top = ~azo[13];
 	assign ALU_Out1 = ~azo[11];
 
-	bc bc5 ( .nd(azo[1]), .CLK(CLK6), .CCLK(CLK5), .Load(x[29]), .q(bc[5]), .nq(nbc[5]) );
-	bc bc1 ( .nd(azo[2]), .CLK(CLK6), .CCLK(CLK5), .Load(x[28]), .q(bc[1]), .nq(nbc[1]) );
-	bc bc2 ( .nd(azo[7]), .CLK(CLK6), .CCLK(CLK5), .Load(x[29]), .q(bc[2]), .nq(nbc[2]) );
-	bc bc3 ( .nd(azo[12]), .CLK(CLK6), .CCLK(CLK5), .Load(x[29]), .q(bc[3]), .nq(nbc[3]) );
+	bc bc5 ( .nd(azo[1]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_hf_nf_zf), .q(bc[5]), .nq(nbc[5]) );
+	bc bc1 ( .nd(azo[2]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_cf), .q(bc[1]), .nq(nbc[1]) );
+	bc bc2 ( .nd(azo[7]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_hf_nf_zf), .q(bc[2]), .nq(nbc[2]) );
+	bc bc3 ( .nd(azo[12]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_hf_nf_zf), .q(bc[3]), .nq(nbc[3]) );
 	ALU_to_bot_FF flag_z ( .d(Temp_Z), .CLK(CLK6), .CCLK(CLK5), .Load(CLK4), .q(ALU_to_bot) );
 
 	// Regarding "bc". I tend to think that even though bc0/bc4 is at the bottom, it is still part of the ALU.
 	// I'll probably move this circuit in my HDL inside the ALU instead of at the bottom. Then wire [5:0] bc; will become output.
 
-	assign bc[0] = (IR[4] & IR[5] & w[21]);
-	assign bc[4] = ALU_to_bot & w[9];
+	assign bc[0] = (IR[4] & IR[5] & `s2_op_push_sx10);
+	assign bc[4] = ALU_to_bot & `s2_op_sp_e_sx10;
 	assign nbc[0] = ~bc[0];
 	assign nbc[4] = ~bc[4];
 
@@ -268,29 +268,29 @@ module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR,
 
 	// ALU Trees (by hand)
 
-	assign az[0] = ~( alu[0] | (w[24]&nIR[3]&nIR[4]&nIR[5]) | (w[10]&(IR[3]|IR[4]|IR[5])) );
-	assign az[1] = ~( (ALU_L5&((nIR[0]&w[37])|x[10])) | (ALU_L3&x[12]) | x[26] | w[12] | x[19] | (Temp_H&d58) );
-	assign az[2] = ~( (f[0]&x[1]) | (Temp_C&d58) | (nbc[1]&IR[3]&x[21]) | (x[21]&nIR[3]) | (x[10]&ALU_to_Thingy) | (x[22]&(bc[1]|(nbc[2]&ALU_to_Thingy))) | (bc[1]&x[26]) | (f[7]&x[0]) | (ALU_L0&x[11]) );
-	assign az[3] = ~( alu[1] | (w[24]&IR[3]&nIR[4]&nIR[5]) | (w[10]&(nIR[3]|IR[4]|IR[5])) | (x[22]&(bc[5]|(nbc[2]&bq4))) );
-	assign az[4] = ~( alu[2] | (w[24]&nIR[3]&IR[4]&nIR[5]) | (w[10]&(IR[3]|nIR[4]|IR[5])) | (x[22]&nbc[2]&(bq4|bc[5])) );
-	assign az[5] = ~( alu[3] | (w[24]&IR[3]&IR[4]&nIR[5]) | (w[10]&(nIR[3]|nIR[4]|IR[5])) | (x[22]&bc[2]&bc[5]) );
-	assign az[6] = ~( alu[4] | (w[24]&nIR[3]&nIR[4]&IR[5]) | (w[10]&(IR[3]|IR[4]|nIR[5])) | (x[22]&bc[2]&bc[5]) );
-	assign az[7] = ~( (bc[2]&x[22]) | x[12] | x[26] | (Temp_N&d58) );
-	assign az[8] = ~( alu[5] | (w[24]&IR[3]&nIR[4]&IR[5]) | (w[10]&(nIR[3]|IR[4]|nIR[5])) | (bc[2]&x[22]&((bc[1]&nbc[5])|(nbc[1]&bc[5]))) | (nbc[2]&x[22]&((bq5)|(bc[1])|(bq4&bq7))) );
-	assign az[9] = ~( alu[6] | (w[24]&nIR[3]&IR[4]&IR[5]) | (w[10]&(IR[3]|nIR[4]|nIR[5])) | (bc[2]&x[22]&(nbc[1]&bc[5])) | (nbc[2]&x[22]&((bq4&bq7)|(bc[1])|(bq5))) );
-	assign az[10] = ~( alu[7] | (w[24]&IR[3]&IR[4]&IR[5]) | (w[10]&(nIR[3]|nIR[4]|nIR[5])) | (bc[2]&x[22]&(bc[1]|bc[5])) );
-	assign az[11] = ~( w[0] & ((nIR[3]&IR[4]&bc[1]) | (IR[3]&IR[4]&nbc[1]) | (IR[3]&nIR[4]&nbc[3]) | (nIR[3]&nIR[4]&bc[3])) );
+	assign az[0] = ~( alu[0] | (`s2_alu_set&nIR[3]&nIR[4]&nIR[5]) | (`s2_alu_res&(IR[3]|IR[4]|IR[5])) );
+	assign az[1] = ~( (ALU_L5&((nIR[0]&`s2_op_incdec8)|`s3_alu_sum_pos_hf_cf)) | (ALU_L3&`s3_alu_sum_neg_hf_nf) | `s3_alu_cpl | `s2_cb_bit | `s3_alu_logic_and | (Temp_H&d58) );
+	assign az[2] = ~( (f[0]&`s3_alu_rotate_shift_right) | (Temp_C&d58) | (nbc[1]&IR[3]&`s3_alu_ccf_scf) | (`s3_alu_ccf_scf&nIR[3]) | (`s3_alu_sum_pos_hf_cf&ALU_to_Thingy) | (`s3_alu_daa&(bc[1]|(nbc[2]&ALU_to_Thingy))) | (bc[1]&`s3_alu_cpl) | (f[7]&`s3_alu_rotate_shift_left) | (ALU_L0&`s3_alu_sum_neg_cf) );
+	assign az[3] = ~( alu[1] | (`s2_alu_set&IR[3]&nIR[4]&nIR[5]) | (`s2_alu_res&(nIR[3]|IR[4]|IR[5])) | (`s3_alu_daa&(bc[5]|(nbc[2]&bq4))) );
+	assign az[4] = ~( alu[2] | (`s2_alu_set&nIR[3]&IR[4]&nIR[5]) | (`s2_alu_res&(IR[3]|nIR[4]|IR[5])) | (`s3_alu_daa&nbc[2]&(bq4|bc[5])) );
+	assign az[5] = ~( alu[3] | (`s2_alu_set&IR[3]&IR[4]&nIR[5]) | (`s2_alu_res&(nIR[3]|nIR[4]|IR[5])) | (`s3_alu_daa&bc[2]&bc[5]) );
+	assign az[6] = ~( alu[4] | (`s2_alu_set&nIR[3]&nIR[4]&IR[5]) | (`s2_alu_res&(IR[3]|IR[4]|nIR[5])) | (`s3_alu_daa&bc[2]&bc[5]) );
+	assign az[7] = ~( (bc[2]&`s3_alu_daa) | `s3_alu_sum_neg_hf_nf | `s3_alu_cpl | (Temp_N&d58) );
+	assign az[8] = ~( alu[5] | (`s2_alu_set&IR[3]&nIR[4]&IR[5]) | (`s2_alu_res&(nIR[3]|IR[4]|nIR[5])) | (bc[2]&`s3_alu_daa&((bc[1]&nbc[5])|(nbc[1]&bc[5]))) | (nbc[2]&`s3_alu_daa&((bq5)|(bc[1])|(bq4&bq7))) );
+	assign az[9] = ~( alu[6] | (`s2_alu_set&nIR[3]&IR[4]&IR[5]) | (`s2_alu_res&(IR[3]|nIR[4]|nIR[5])) | (bc[2]&`s3_alu_daa&(nbc[1]&bc[5])) | (nbc[2]&`s3_alu_daa&((bq4&bq7)|(bc[1])|(bq5))) );
+	assign az[10] = ~( alu[7] | (`s2_alu_set&IR[3]&IR[4]&IR[5]) | (`s2_alu_res&(nIR[3]|nIR[4]|nIR[5])) | (bc[2]&`s3_alu_daa&(bc[1]|bc[5])) );
+	assign az[11] = ~( `s2_cc_check & ((nIR[3]&IR[4]&bc[1]) | (IR[3]&IR[4]&nbc[1]) | (IR[3]&nIR[4]&nbc[3]) | (nIR[3]&nIR[4]&bc[3])) );
 	assign az[12] = ~(
-		(f[0]&w[12]&nIR[3]&nIR[4]&nIR[5]) |
-		(f[1]&w[12]&IR[3]&nIR[4]&nIR[5]) |
-		(f[2]&w[12]&nIR[3]&IR[4]&nIR[5]) |
-		(f[3]&w[12]&IR[3]&IR[4]&nIR[5]) |
-		(f[4]&w[12]&nIR[3]&nIR[4]&IR[5]) |
-		(f[5]&w[12]&IR[3]&nIR[4]&IR[5]) |
-		(f[6]&w[12]&nIR[3]&IR[4]&IR[5]) |
-		(f[7]&w[12]&IR[3]&IR[4]&IR[5]) |
-		(AllZeros&(d42|w[3]|w[37]|x[22])) | (d58&Temp_Z) | (bc[3]&(x[26]|w[15]|x[21]|w[19])) );
-	assign az[13] = ~( x[27] | (w[37]&nIR[0]) | (w[9]&bc[1]) | (x[24]&(nIR[3]|nbc[1])) | (w[19]&bc[1]) | (x[23]&IR[3]) );
+		(f[0]&`s2_cb_bit&nIR[3]&nIR[4]&nIR[5]) |
+		(f[1]&`s2_cb_bit&IR[3]&nIR[4]&nIR[5]) |
+		(f[2]&`s2_cb_bit&nIR[3]&IR[4]&nIR[5]) |
+		(f[3]&`s2_cb_bit&IR[3]&IR[4]&nIR[5]) |
+		(f[4]&`s2_cb_bit&nIR[3]&nIR[4]&IR[5]) |
+		(f[5]&`s2_cb_bit&IR[3]&nIR[4]&IR[5]) |
+		(f[6]&`s2_cb_bit&nIR[3]&IR[4]&IR[5]) |
+		(f[7]&`s2_cb_bit&IR[3]&IR[4]&IR[5]) |
+		(AllZeros&(d42|`s2_op_alu8|`s2_op_incdec8|`s3_alu_daa)) | (d58&Temp_Z) | (bc[3]&(`s3_alu_cpl|`s2_op_add_hl_sxx0|`s3_alu_ccf_scf|`s2_op_add_hl_sx01)) );
+	assign az[13] = ~( `s3_alu_cp | (`s2_op_incdec8&nIR[0]) | (`s2_op_sp_e_sx10&bc[1]) | (`s3_alu_sub_sbc&(nIR[3]|nbc[1])) | (`s2_op_add_hl_sx01&bc[1]) | (`s3_alu_add_adc&IR[3]) );
 
 	// Dynamic part
 
