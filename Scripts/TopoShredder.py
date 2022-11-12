@@ -36,6 +36,7 @@ if __name__ == '__main__':
 	CropImage (FusedTopo, "../imgstore/rails2", [1657, 2817, 5385, 864] )
 	CropImage (FusedTopo, "../imgstore/seq", [6461, 341, 1029, 3076] )
 	CropImage (FusedTopo, "../imgstore/thingy", [6395, 3275, 386, 333] )
+	CropImage (FusedTopo, "../imgstore/clks", [1064, 261, 1441, 372] )
 	# Modules
 	CropImage (FusedTopo, "../imgstore/modules/ALU_to_bot", [2830, 2670, 184, 219] )
 	CropImage (FusedTopo, "../imgstore/modules/bc", [2445, 2671, 226, 218] )

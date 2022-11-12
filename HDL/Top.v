@@ -4,7 +4,7 @@
 
 module SM83Core (
 	CLK1, CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, CLK8, CLK9, 
-	LoadIR,
+	M1,
 	OSC_STABLE, OSC_ENA, RESET, SYNC_RESET, CLK_ENA, NMI,
 	WAKE, RD, WR, Maybe1, MMIO_REQ, IPL_REQ, Maybe2, MREQ,
 	D, A, CPU_IRQ_TRIG, CPU_IRQ_ACK );
@@ -21,7 +21,7 @@ module SM83Core (
 	input CLK8;
 	input CLK9;
 
-	output LoadIR; 		// Analog to SYNC signal, which was typically used in old processors (right after the Fetch of the next opcode).
+	output M1; 			// Analog to SYNC signal, which was typically used in old processors (right after the Fetch of the next opcode).
 
 	input OSC_STABLE;	// Active-high crystal oscillator stablilized input?  [previously Clock_WTF]
 	output OSC_ENA;		// Crystal oscillator enable. When CPU drives this low, the crystal oscillator gets disabled to save power. This happens during STOP mode. 	[previously XCK_Ena]
@@ -83,7 +83,7 @@ module SM83Core (
 	wire TTB3;
 	wire Thingy_to_bot;			// Load a value into the IE register from the DL bus.
 
-	assign LoadIR = w[26];
+	assign M1 = w[26];
 	assign nCLK4 = ~CLK4;
 	assign WR = w[6];
 
