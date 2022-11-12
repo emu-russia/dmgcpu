@@ -185,9 +185,9 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 
 	// Assigns  (Issue #134)
 
-	assign w1 = d[102];
-	assign w2 = w[26];
-	assign w4 = x[41];
+	assign w1 = `s1_op_cb_s0xx;
+	assign w2 = `s2_m1;
+	assign w4 = `s3_op_reti_s011;
 	assign w38 = NMI;
 	assign w10 = Maybe1;
 	assign w34 = MMIO_REQ;
@@ -198,11 +198,11 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	assign w7 = CLK8;
 	assign SeqOut_2 = w8;
 	assign RD = w9;
-	assign w11 = w[11];
+	assign w11 = `s2_addr_valid;
 	assign SeqOut_3 = 1'b0;
 	assign w16 = SYNC_RESET;
 	assign w20 = CLK4;
-	assign w22 = w[18];
+	assign w22 = `s2_data_fetch_cycle;
 	assign w25 = WAKE;
 	assign OSC_ENA = w31;
 	assign a[0] = w48;
@@ -242,18 +242,18 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	assign CLK_ENA = w66;
 	assign w72 = SeqControl_2;
 	assign w112 = SeqControl_1;
-	assign w79 = d[99];
-	assign w91 = d[93];
+	assign w79 = `s1_op_di_ei_s0xx;
+	assign w91 = `s1_int_s110;
 	assign w3 = CLK9;
-	assign w100 = w[32];
-	assign w101 = w[33];
-	assign w104 = w[20];
-	assign w107 = d[100];
+	assign w100 = `s2_state2_next;
+	assign w101 = `s2_state1_next;
+	assign w104 = `s2_state0_next;
+	assign w107 = `s1_op_halt_s0xx;
 	assign w108 = RESET;
 	assign w111 = CLK2;
 	assign w110 = CLK1;
 	assign w118 = OSC_STABLE;
-	assign w132 = d[101];
+	assign w132 = `s1_op_nop_stop_s0xx;
 	assign w136 = w[40];
 	assign w138 = CLK6;
 	assign w140 = ALU_Out1;

@@ -2,6 +2,8 @@
 
 `define delay 0
 
+// Here we do not use GekkioNames on purpose, so that we can make cross checks without engagement.
+
 module Decoder3( CLK2, CLK4, CLK5, nCLK4, a3, d, w, x, IR, nIR, SeqOut_2 );
 
 	input CLK2;

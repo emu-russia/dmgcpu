@@ -2,6 +2,8 @@
 
 `define delay 0
 
+// Here we do not use GekkioNames on purpose, so that we can make cross checks without engagement.
+
 module Decoder1 (CLK2, a, d);
 
 	input CLK2;

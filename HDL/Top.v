@@ -83,9 +83,9 @@ module SM83Core (
 	wire TTB3;
 	wire Thingy_to_bot;			// Load a value into the IE register from the DL bus.
 
-	assign M1 = w[26];
+	assign M1 = `s2_m1;
 	assign nCLK4 = ~CLK4;
-	assign WR = w[6];
+	assign WR = `s2_wr;
 
 	// Instances
 
@@ -94,13 +94,13 @@ module SM83Core (
 	DataLatch dl (
 		.CLK(CLK2), 
 		.DL_Control1(Maybe1), 
-		.DL_Control2(x[37]), 
+		.DL_Control2(`s3_oe_alu_to_pbus), 
 		.DataBus(D),
 		.DL(DL), 
 		.Res(Res) );
 
 	DataBridge bridge (
-		.DataOut(x[15]),
+		.DataOut(`s3_oe_rbus_to_pbus),
 		.DV(DV),
 		.DL(DL) );
 
@@ -194,9 +194,9 @@ module SM83Core (
 		.SeqOut_3(SeqOut_3) );
 
 	Thingy thingy (
-		.w8(w[8]),
-		.w31(w[31]),
-		.w35(w[35]),
+		.w8(`s2_op_jr_any_sx01),
+		.w31(`s2_idu_inc),
+		.w35(`s2_idu_dec),
 		.ALU_to_Thingy(ALU_to_Thingy),
 		.WR(WR),
 		.Temp_Z(Temp_Z),
