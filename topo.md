@@ -6,7 +6,7 @@
 
 Topo Sources: https://drive.google.com/drive/u/2/folders/1deuhwmRb-PVv-K7pEllSLKQda2ft94Mk
 
-(PhotoShop required)
+:warning: A pedantic circuit engineer will suffer a lot and probably cry from the quality of the masks. But it happened this way, because in several stages of polishing I was not able to fully combine all the layers due to optical distortions and uneven stitching of the slides. Therefore, if you need to do something else with the masks other than thoughtful observation, additional "rectification" will be required.
 
 - The main part of the ASIC is based on standard cells, CMOS, 2 layers of metal
 - The embedded CPU core is "Hand-made" CMOS, using 1 layer of metal.

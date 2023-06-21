@@ -18,8 +18,8 @@
 |CLK9|External| |
 |SYNC_RESET|External|Port T12|
 |RESET|External|Port T13|
-|Clock_WTF (OSC_STABLE)|External|Port T15. To nand g59|
-|Unbonded|External|Port T16. NMI|
+|OSC_STABLE (_deprecated signal name Clock_WTF_)|External|Port T15. To nand g59|
+|NMI (_deprecated signal name Unbonded_)|External|Port T16. NMI|
 |WAKE|External|Port B25|
 |Maybe1|External|Port R3. 1: Bus disable|
 |MMIO_REQ|External|Port R4. See `shielded` module|
@@ -49,10 +49,10 @@
 |Signal|To|Description|
 |---|---|---|
 |a\[25:0\]|Decoder1|Decoder1 inputs|
-|LongDescr (CLK_ENA)|External|See g49|
-|XCK_Ena (OSC_ENA)|External|Port T14|
+|CLK_ENA (_deprecated signal name LongDescr_)|External|See g49|
+|OSC_ENA (_deprecated signal name XCK_Ena_)|External|Port T14|
 |RD|External|Port R1|
-|WR|External|Port R2|
+|WR = w6|External|Port R2|
 |MREQ|External|Port R7|
 |nCLK4| |~CLK4|
 |SeqOut_1|Bottom| |
