@@ -30,7 +30,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	input Maybe1;			// 1: Bus disable
 	input MMIO_REQ;
 	input IPL_REQ;
-	input Maybe2; 			// See shielded module.
+	input Maybe2; 			// See seq_mreq module.
 	output MREQ;
 
 	input SeqControl_1;
@@ -261,39 +261,39 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 
 	// Instances
 
-	seq_shielded g72 (.d(w11), .b(w35), .a(w34), .c(w36), .x(w33) );
-	seq_module3 g38 (.q(w8), .clk(w7), .cclk(w3), .d(w136) );
+	seq_mreq g72 (.d(w11), .b(w35), .a(w34), .c(w36), .x(w33) );
+	seq_dff_posedge_comp g38 (.q(w8), .clk(w7), .cclk(w3), .d(w136) );
 	seq_not g66 (.a(w16), .x(w15) );
 	seq_nor3 g50 (.a(w28), .b(w16), .c(1'b0), .x(w17) );
 	seq_not g27 (.a(w24), .x(w9) );
 	seq_not g73 (.a(w33), .x(w12) );
 	seq_nor g97 (.a(w16), .b(w108), .x(w14) );
 	seq_not g96 (.a(w14), .x(w26) );
-	seq_hmm2 g39 (.a0(w19), .a1(w2), .x(w135), .b(w18), .a2(w20) );
+	seq_aoi_31 g39 (.a0(w19), .a1(w2), .x(w135), .b(w18), .a2(w20) );
 	seq_not g51 (.a(w17), .x(w18) );
 	seq_not g41 (.a(w1), .x(w19) );
 	seq_not g40 (.a(w135), .x(w71) );
 	seq_nor g25 (.b(w21), .a(w10), .x(w23) );
-	seq_hmm1 g26 (.a1(w22), .b(w23), .x(w24), .a0(w2) );
+	seq_oai_21 g26 (.a1(w22), .b(w23), .x(w24), .a0(w2) );
 	seq_nor g60 (.a(w25), .b(w26), .x(w29) );
-	seq_iwantsleep g43 (.b(w14), .a1(w114), .a0(w113), .x(w27) );
-	seq_module4_2 g49 (.q(w28), .s(w27), .nr(w122) );
-	seq_module4 g62 (.nr(w29), .s(w109), .q(w30) );
+	seq_oai_21 g43 (.b(w14), .a1(w114), .a0(w113), .x(w27) );
+	seq_rs_latch2 g49 (.q(w28), .s(w27), .nr(w122) );
+	seq_rs_latch g62 (.nr(w29), .s(w109), .q(w30) );
 	seq_not g61 (.a(w30), .x(w31) );
-	seq_module3 g37 (.clk(w7), .cclk(w3), .d(w95), .q(w96) );
-	seq_module3 g36 (.clk(w7), .cclk(w3), .d(w103), .q(w137) );
-	seq_module3 g35 (.clk(w7), .cclk(w3), .q(w94), .d(w99) );
-	seq_huge1 g33 (.q(w124), .d(w1), .res(w28), .clk(w138), .cclk(w139), .ld(w2), .nld(w123) );
-	seq_module3 g42 (.cclk(w3), .clk(w7), .d(w112), .q(w113) );
-	seq_module3 g46 (.clk(w7), .cclk(w3), .d(w107), .q(w120) );
-	seq_module3 g54 (.clk(w7), .cclk(w3), .d(w39), .q(w90) );
-	seq_module3 g57 (.clk(w7), .cclk(w3), .d(w117), .q(w115) );
-	seq_module3 g58 (.clk(w7), .cclk(w3), .d(w119), .q(w117) );
-	seq_module3 g63 (.clk(w7), .cclk(w3), .d(w134), .q(w109) );
-	seq_module3 g67 (.clk(w7), .cclk(w3), .d(w5), .q(w6) );
-	seq_module3 g74 (.clk(w7), .cclk(w3), .d(w131), .q(w126) );
-	seq_module3 g84 (.clk(w111), .cclk(w110), .d(w74), .q(w83) );
-	seq_module3 g85 (.clk(w7), .cclk(w3), .d(w75), .q(w68) );
+	seq_dff_posedge_comp g37 (.clk(w7), .cclk(w3), .d(w95), .q(w96) );
+	seq_dff_posedge_comp g36 (.clk(w7), .cclk(w3), .d(w103), .q(w137) );
+	seq_dff_posedge_comp g35 (.clk(w7), .cclk(w3), .q(w94), .d(w99) );
+	seq_latchr_comp g33 (.q(w124), .d(w1), .res(w28), .clk(w138), .cclk(w139), .ld(w2), .nld(w123) );
+	seq_dff_posedge_comp g42 (.cclk(w3), .clk(w7), .d(w112), .q(w113) );
+	seq_dff_posedge_comp g46 (.clk(w7), .cclk(w3), .d(w107), .q(w120) );
+	seq_dff_posedge_comp g54 (.clk(w7), .cclk(w3), .d(w39), .q(w90) );
+	seq_dff_posedge_comp g57 (.clk(w7), .cclk(w3), .d(w117), .q(w115) );
+	seq_dff_posedge_comp g58 (.clk(w7), .cclk(w3), .d(w119), .q(w117) );
+	seq_dff_posedge_comp g63 (.clk(w7), .cclk(w3), .d(w134), .q(w109) );
+	seq_dff_posedge_comp g67 (.clk(w7), .cclk(w3), .d(w5), .q(w6) );
+	seq_dff_posedge_comp g74 (.clk(w7), .cclk(w3), .d(w131), .q(w126) );
+	seq_dff_posedge_comp g84 (.clk(w111), .cclk(w110), .d(w74), .q(w83) );
+	seq_dff_posedge_comp g85 (.clk(w7), .cclk(w3), .d(w75), .q(w68) );
 	seq_not g0 (.a(w47), .x(w48) );
 	seq_not g1 (.a(w106), .x(w47) );
 	seq_not g2 (.a(w37), .x(w52) );
@@ -318,7 +318,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	seq_nand g23 (.b(w97), .a(w105), .x(w95) );
 	seq_nand g21 (.b(w97), .a(w102), .x(w103) );
 	seq_nand g19 (.a(w98), .b(w97), .x(w99) );
-	seq_aoi_1 g30 (.b(1'b0), .a0(w125), .a1(w124), .x(w51) );
+	seq_aoi_21 g30 (.b(1'b0), .a0(w125), .a1(w124), .x(w51) );
 	seq_nor3 g28 (.a(w126), .b(w18), .x(w106), .c(1'b0) );
 	seq_not g29 (.a(w61), .x(w125) );
 	seq_not g31 (.a(w28), .x(w66) );
@@ -348,296 +348,16 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	seq_not g88 (.a(w81), .x(w80) );
 	seq_nor3 g47 (.a(w120), .b(w109), .c(w108), .x(w121) );
 	seq_nor g45 (.a(w116), .b(w117), .x(w114) );
-	seq_aoi_2 g52 (.a0(w6), .a1(w91), .b(w16), .x(w92) );
+	seq_aoi_21 g52 (.a0(w6), .a1(w91), .b(w16), .x(w92) );
 	seq_nor g24 (.x(w97), .a(w140), .b(w18) );
 	seq_nor g56 (.a(w89), .b(w39), .x(w88) );
-	seq_hmm3 g55 (.cclk(w3), .clk(w7), .d(w90), .nq(w89) );
-	seq_module4 g71 (.q(w69), .nr(w92), .s(w88) );
-	seq_module4 g77 (.nr(w128), .s(w127), .q(w129) );
-	seq_module4 g89 (.nr(w82), .s(w80), .q(w75) );
-	seq_module4 g92 (.nr(w76), .s(w77), .q(w73) );
-	seq_comb5 g94 (.clk(w20), .a0(w68), .a1(w4), .b0(w79), .b1(extra_IR3), .x(w78) );
-	seq_comb4 g91 (.clk(w20), .c(w16), .a0(w126), .a1(w68), .b0(w79), .b1(w67), .x(w76) );
-	seq_module4 g68 (.q(w5), .nr(w92), .s(w93) );
+	seq_latch_comp g55 (.cclk(w3), .clk(w7), .d(w90), .nq(w89) );
+	seq_rs_latch g71 (.q(w69), .nr(w92), .s(w88) );
+	seq_rs_latch g77 (.nr(w128), .s(w127), .q(w129) );
+	seq_rs_latch g89 (.nr(w82), .s(w80), .q(w75) );
+	seq_rs_latch g92 (.nr(w76), .s(w77), .q(w73) );
+	seq_aoi_22_dyn g94 (.clk(w20), .a0(w68), .a1(w4), .b0(w79), .b1(extra_IR3), .x(w78) );
+	seq_aoi_221_dyn g91 (.clk(w20), .c(w16), .a0(w126), .a1(w68), .b0(w79), .b1(w67), .x(w76) );
+	seq_rs_latch g68 (.q(w5), .nr(w92), .s(w93) );
 
 endmodule // seq
-
-// Module Definitions [It is possible to wrap here on your primitives]
-
-// The cell is so called because it has a Test Point that looks like a shield.
-module seq_shielded ( a, b, c, d, x );
-
-	input a;
-	input b;	
-	input c;
-	input d;
-	output x;
-
-	assign x = d ? ~((~a & c) | ~(a|b)) : 1'b1;
-
-endmodule // seq_shielded
-
-// Regular posedge DFF
-module seq_module3 ( d, clk, cclk, q );
-
-	input d;	
-	input clk;
-	input cclk;
-	output q;
-
-	reg val;
-	initial val = 1'bx;
-
-	// XXX: Initially, clk and cclk were mixed up when parsing the netlist. So read here cclk as clk. Not a very nice mix-up, but this is always the case with clk.
-	always @(posedge cclk) begin
-		val <= d;
-	end
-
-	assign q = val;
-
-endmodule // seq_module3
-
-module seq_not ( a, x );
-
-	input a;
-	output x;
-
-	assign x = ~a;
-
-endmodule // seq_not
-
-module seq_nor3 ( a, b, c, x );
-
-	input a;
-	input b;
-	input c;
-	output x;
-
-	assign x = ~(a|b|c);
-
-endmodule // seq_nor3
-
-module seq_nor ( a, b, x );
-
-	input a;
-	input b;
-	output x;
-
-	assign x = ~(a|b);
-
-endmodule // seq_nor
-
-module seq_hmm2 ( a0, a1, a2, b, x );
-
-	input a0;
-	input a1;
-	input a2;
-	input b;
-	output x;
-
-	assign x = ~( (a0&a1&a2) | b);
-
-endmodule // seq_hmm2
-
-module seq_hmm1 ( a0, a1, b, x );
-
-	input a0;
-	input a1;
-	input b;
-	output x;
-
-	assign x = ~( (a0|a1) & b );
-
-endmodule // seq_hmm1
-
-// The cell is called that because I spent a long time drawing the Sequencer topology, got sleepy, and just had to come up with a name.
-module seq_iwantsleep ( a0, a1, b, x );
-
-	input a0;	
-	input a1;
-	input b;	
-	output x;
-
-	assign x = ~( (a0|a1) & b );
-
-endmodule // seq_iwantsleep
-
-// This is essentially the same seq_module4, but with the inputs rearranged.
-module seq_module4_2 ( nr, s, q );
-
-	input nr;
-	input s;
-	output q;
-
-	reg val;
-	// Let's lower the difficulty level and use 0 here instead of `x`.
-	initial val = 1'b0;
-
-	// The module design is such that reset overrides set if both are set at the same time.
-	always @(*) begin
-		if (~nr)
-			val = 1'b0;
-		else if (s)
-			val = 1'b1;
-	end
-
-	assign q = val;
-
-endmodule // seq_module4_2
-
-// rs_latch
-module seq_module4 ( nr, s, q );
-
-	input nr;
-	input s;
-	output q;
-
-	reg val;
-	// Let's lower the difficulty level and use 0 here instead of `x`.
-	initial val = 1'b0;
-
-	// The module design is such that reset overrides set if both are set at the same time.
-	always @(*) begin
-		if (~nr)
-			val = 1'b0;
-		else if (s)
-			val = 1'b1;
-	end
-
-	assign q = val;
-
-endmodule // seq_module4
-
-// DFF with negedged enable.
-module seq_huge1 ( q, d, res, clk, cclk, ld, nld);
-
-	output q;
-	input d;
-	input res;
-	input clk;
-	input cclk;
-	input ld;
-	input nld;
-
-	reg val_in;
-	/* verilator lint_off UNOPTFLAT */
-	reg val_out;
-	initial val_in = 1'bx;
-	initial val_out = 1'bx;
-
-	always @(*) begin
-		if (clk && ld)
-			val_in = d;
-		if (res)
-			val_in = 1'b0;
-	end
-
-	always @(negedge ld) begin
-		val_out <= val_in;
-	end
-
-	assign q = val_out;
-
-endmodule // seq_huge1
-
-module seq_nand ( a, b, x );
-	
-	input a;
-	input b;
-	output x;
-
-	assign x = ~(a&b);
-
-endmodule // seq_nand
-
-module seq_aoi_1 ( a0, a1, b, x );
-
-	input a0;
-	input a1;
-	input b;
-	output x;
-
-	assign x = ~( (a0&a1) | b);
-
-endmodule // seq_aoi_1
-
-module seq_nand3 ( a, b, c, x );
-
-	input a;
-	input b;
-	input c;
-	output x;
-
-	assign x = ~(a&b&c);
-
-endmodule // seq_nand3
-
-module seq_nor4 ( a, b, c, d, x );
-
-	input a;
-	input b;
-	input c;
-	input d;
-	output x;
-
-	assign x = ~(a|b|c|d);
-
-endmodule // seq_nor4
-
-module seq_aoi_2 ( a0, a1, b, x );
-
-	input a0;
-	input a1;
-	input b;
-	output x;
-
-	assign x = ~( (a0&a1) | b);
-
-endmodule // seq_aoi_2
-
-// Regular transparent latch
-module seq_hmm3 ( d, clk, cclk, nq );
-
-	input d;
-	input clk;
-	input cclk;
-	output nq;
-
-	reg val;
-	initial val = 1'b0;
-
-	always @(*) begin
-		if (clk)
-			val = d;
-	end
-
-	assign nq = ~val;
-
-endmodule // seq_hmm3
-
-module seq_comb5 ( clk, a0, a1, b0, b1, x );
-
-	input clk;
-	input a0;
-	input a1;
-	input b0;
-	input b1;
-	output x;
-
-	assign x = clk ? ~( (a0&a1) | (b0&b1) ) : 1'b1;
-
-endmodule // seq_comb5
-
-module seq_comb4 ( clk, a0, a1, b0, b1, c, x );
-
-	input clk;
-	input a0;
-	input a1;
-	input b0;
-	input b1;
-	input c;
-	output x;
-
-	assign x = clk ? ~( (a0&a1) | (b0&b1) | c) : ~c;
-
-endmodule // seq_comb4
