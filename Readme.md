@@ -11,7 +11,7 @@ The `B` revision of the DMG SoC is being studied.
 ## Basic Circuit Designs
 
 The core consists of the following main components:
-- The ALU (upper left corner), the flags setting logic and the flags register (most likely there too, but it's not certain)
+- The ALU (upper left corner), the flags setting logic and the flags register
 - A decoder of three levels. Each level outputs a bunch of signals (`d`, `w`, `x`) with a smaller number at each successive level. The main driving force for all the other parts is the set of `x` signals. Decoders are made as NAND/NOR trees + domino logic.
 - The sequencer occupies the right side and is built on "sort of" standard cells. Actually they are not cells in the usual sense, but "handmade" using standard modules and tweaking them a little bit in some places as required.
 - At the bottom is part of DAA logic, the registers block, the SP, the PC and Incrementer/Decrementer. Also obviously there is a small circuit for interrupt control and a small but important circuit called the "Thingy".
