@@ -25,7 +25,7 @@ The processor uses hybrid technology:
 
 ## Wells
 
-P-Wells.
+N-wells for P-diffusion.
 
 Here you can see the CMOS "pockets":
 
