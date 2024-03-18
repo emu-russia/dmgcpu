@@ -226,3 +226,9 @@ The other three are "State\[3\]", encoding a timestamp for executing long instru
 |a24|#State0 (0: state0 active)|
 
 (the names of the states are in inverse polarity, because Gekkio takes their values from the corresponding DFFs and they go to the specified decoder inputs in inverse polarity).
+
+## Logisim
+
+An adaptation of the HDL schematic in Logisim has been made for better understanding.
+
+![seq.png](/logisim/seq.png)
