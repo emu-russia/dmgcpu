@@ -341,12 +341,12 @@
     </comp>
     <comp lib="0" loc="(2610,920)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK8"/>
+      <a name="label" val="CLK2"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(2610,940)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK9"/>
+      <a name="label" val="CLK1"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(2640,1050)" name="Tunnel">
@@ -1020,7 +1020,7 @@
     <comp lib="2" loc="(1970,860)" name="Multiplexer">
       <a name="selloc" val="tr"/>
     </comp>
-    <comp lib="8" loc="(1103,1072)" name="Text">
+    <comp lib="8" loc="(1100,1070)" name="Text">
       <a name="font" val="SansSerif bold 12"/>
       <a name="text" val="s1_op_di_ei_s0xx"/>
     </comp>
@@ -1035,18 +1035,21 @@
     <comp lib="8" loc="(1600,860)" name="Text">
       <a name="text" val="g94"/>
     </comp>
-    <comp lib="8" loc="(1870,825)" name="Text">
-      <a name="text" val="g91"/>
-    </comp>
-    <comp lib="8" loc="(1871,58)" name="Text">
+    <comp lib="8" loc="(1870,55)" name="Text">
       <a name="font" val="SansSerif italic 16"/>
       <a name="text" val="All DFFs are posedge"/>
+    </comp>
+    <comp lib="8" loc="(1870,825)" name="Text">
+      <a name="text" val="g91"/>
     </comp>
     <comp lib="8" loc="(2115,55)" name="Text">
       <a name="font" val="SansSerif italic 16"/>
       <a name="text" val="[!] Non-demorganized circuit"/>
     </comp>
-    <comp lib="8" loc="(2401,1212)" name="Text">
+    <comp lib="8" loc="(228,621)" name="Text">
+      <a name="text" val="[!] See g84"/>
+    </comp>
+    <comp lib="8" loc="(2400,1210)" name="Text">
       <a name="font" val="SansSerif bold 12"/>
       <a name="text" val="s1_op_di_ei_s0xx"/>
     </comp>
@@ -1058,40 +1061,43 @@
       <a name="font" val="SansSerif bolditalic 14"/>
       <a name="text" val="clk_dis_or_sync_reset"/>
     </comp>
-    <comp lib="8" loc="(2602,285)" name="Text">
-      <a name="font" val="SansSerif bold 12"/>
-      <a name="text" val="s2_state0_next"/>
+    <comp lib="8" loc="(2508,932)" name="Text">
+      <a name="text" val="[!] CLK2/1 here"/>
     </comp>
-    <comp lib="8" loc="(2603,164)" name="Text">
+    <comp lib="8" loc="(2600,160)" name="Text">
       <a name="font" val="SansSerif bold 12"/>
       <a name="text" val="s2_state2_next"/>
     </comp>
-    <comp lib="8" loc="(2605,224)" name="Text">
+    <comp lib="8" loc="(2600,285)" name="Text">
+      <a name="font" val="SansSerif bold 12"/>
+      <a name="text" val="s2_state0_next"/>
+    </comp>
+    <comp lib="8" loc="(2605,220)" name="Text">
       <a name="font" val="SansSerif bold 12"/>
       <a name="text" val="s2_state1_next"/>
     </comp>
-    <comp lib="8" loc="(2670,506)" name="Text">
+    <comp lib="8" loc="(2670,505)" name="Text">
       <a name="font" val="SansSerif bold 12"/>
       <a name="text" val="s2_m1"/>
     </comp>
-    <comp lib="8" loc="(2767,555)" name="Text">
+    <comp lib="8" loc="(2765,555)" name="Text">
       <a name="font" val="SansSerif bold 12"/>
       <a name="text" val="s1_op_cb_s0xx"/>
     </comp>
     <comp lib="8" loc="(2790,625)" name="Text">
       <a name="text" val="CLK_DIS"/>
     </comp>
-    <comp lib="8" loc="(2836,1304)" name="Text">
+    <comp lib="8" loc="(2835,1300)" name="Text">
       <a name="font" val="SansSerif bold 12"/>
       <a name="text" val="s1_int_s110"/>
     </comp>
-    <comp lib="8" loc="(288,1282)" name="Text">
+    <comp lib="8" loc="(285,1280)" name="Text">
       <a name="text" val="s2_wr"/>
     </comp>
-    <comp lib="8" loc="(288,1364)" name="Text">
+    <comp lib="8" loc="(285,1360)" name="Text">
       <a name="text" val="s2_m1"/>
     </comp>
-    <comp lib="8" loc="(3014,1479)" name="Text">
+    <comp lib="8" loc="(3010,1475)" name="Text">
       <a name="font" val="SansSerif bolditalic 20"/>
       <a name="text" val="Clock Control (HALT, STOP processing)"/>
     </comp>
@@ -1099,35 +1105,35 @@
       <a name="font" val="SansSerif bolditalic 20"/>
       <a name="text" val="Sequence state &amp; modes"/>
     </comp>
-    <comp lib="8" loc="(3098,1245)" name="Text">
+    <comp lib="8" loc="(3095,1245)" name="Text">
       <a name="font" val="SansSerif bold 12"/>
       <a name="text" val="s1_op_nop_stop_s0xx"/>
     </comp>
-    <comp lib="8" loc="(3118,425)" name="Text">
+    <comp lib="8" loc="(3115,425)" name="Text">
       <a name="font" val="SansSerif bold 12"/>
       <a name="text" val="s2_m1"/>
     </comp>
-    <comp lib="8" loc="(3140,482)" name="Text">
+    <comp lib="8" loc="(3140,480)" name="Text">
       <a name="font" val="SansSerif bold 10"/>
       <a name="text" val="s2_data_fetch_cycle"/>
     </comp>
     <comp lib="8" loc="(315,1145)" name="Text">
       <a name="text" val="s1_int_s110"/>
     </comp>
-    <comp lib="8" loc="(317,1302)" name="Text">
+    <comp lib="8" loc="(315,1300)" name="Text">
       <a name="text" val="s2_addr_valid"/>
     </comp>
-    <comp lib="8" loc="(3179,1125)" name="Text">
+    <comp lib="8" loc="(315,1385)" name="Text">
+      <a name="text" val="s2_state2_next"/>
+    </comp>
+    <comp lib="8" loc="(315,1400)" name="Text">
+      <a name="text" val="s2_state1_next"/>
+    </comp>
+    <comp lib="8" loc="(3175,1125)" name="Text">
       <a name="font" val="SansSerif bold 12"/>
       <a name="text" val="s1_op_halt_s0xx"/>
     </comp>
-    <comp lib="8" loc="(319,1385)" name="Text">
-      <a name="text" val="s2_state2_next"/>
-    </comp>
-    <comp lib="8" loc="(319,1404)" name="Text">
-      <a name="text" val="s2_state1_next"/>
-    </comp>
-    <comp lib="8" loc="(320,1344)" name="Text">
+    <comp lib="8" loc="(320,1340)" name="Text">
       <a name="text" val="s2_state0_next"/>
     </comp>
     <comp lib="8" loc="(3230,545)" name="Text">
@@ -1136,33 +1142,33 @@
     <comp lib="8" loc="(3235,430)" name="Text">
       <a name="text" val="g26"/>
     </comp>
-    <comp lib="8" loc="(3260,857)" name="Text">
+    <comp lib="8" loc="(325,1225)" name="Text">
+      <a name="text" val="s1_op_cb_s0xx"/>
+    </comp>
+    <comp lib="8" loc="(3260,855)" name="Text">
       <a name="font" val="SansSerif italic 16"/>
       <a name="text" val="OSC_STABLE Edge detect"/>
     </comp>
-    <comp lib="8" loc="(329,1227)" name="Text">
-      <a name="text" val="s1_op_cb_s0xx"/>
+    <comp lib="8" loc="(3320,1030)" name="Text">
+      <a name="font" val="SansSerif bolditalic 12"/>
+      <a name="text" val="dff_halt"/>
     </comp>
-    <comp lib="8" loc="(3321,1140)" name="Text">
+    <comp lib="8" loc="(3320,1140)" name="Text">
       <a name="font" val="SansSerif bolditalic 12"/>
       <a name="text" val="dff_stop"/>
     </comp>
-    <comp lib="8" loc="(3323,1032)" name="Text">
-      <a name="font" val="SansSerif bolditalic 12"/>
-      <a name="text" val="dff_halt"/>
+    <comp lib="8" loc="(335,1165)" name="Text">
+      <a name="text" val="s1_op_di_ei_s0xx"/>
     </comp>
     <comp lib="8" loc="(335,1185)" name="Text">
       <a name="text" val="s1_op_halt_s0xx"/>
     </comp>
+    <comp lib="8" loc="(335,1320)" name="Text">
+      <a name="text" val="s2_data_fetch_cycle"/>
+    </comp>
     <comp lib="8" loc="(335,95)" name="Text">
       <a name="font" val="SansSerif bold 13"/>
       <a name="text" val="1: Bus disable"/>
-    </comp>
-    <comp lib="8" loc="(337,1165)" name="Text">
-      <a name="text" val="s1_op_di_ei_s0xx"/>
-    </comp>
-    <comp lib="8" loc="(339,1324)" name="Text">
-      <a name="text" val="s2_data_fetch_cycle"/>
     </comp>
     <comp lib="8" loc="(3480,575)" name="Text">
       <a name="text" val="cb_mode"/>
@@ -1170,39 +1176,39 @@
     <comp lib="8" loc="(3500,665)" name="Text">
       <a name="text" val="intr_dispatch"/>
     </comp>
-    <comp lib="8" loc="(3530,298)" name="Text">
-      <a name="text" val="State1"/>
-    </comp>
-    <comp lib="8" loc="(3531,206)" name="Text">
-      <a name="text" val="State2"/>
-    </comp>
-    <comp lib="8" loc="(3532,174)" name="Text">
+    <comp lib="8" loc="(3530,170)" name="Text">
       <a name="text" val="#State2"/>
     </comp>
-    <comp lib="8" loc="(3532,388)" name="Text">
-      <a name="text" val="State0"/>
+    <comp lib="8" loc="(3530,205)" name="Text">
+      <a name="text" val="State2"/>
     </comp>
-    <comp lib="8" loc="(3533,267)" name="Text">
+    <comp lib="8" loc="(3530,265)" name="Text">
       <a name="text" val="#State1"/>
     </comp>
-    <comp lib="8" loc="(3534,356)" name="Text">
+    <comp lib="8" loc="(3530,295)" name="Text">
+      <a name="text" val="State1"/>
+    </comp>
+    <comp lib="8" loc="(3530,355)" name="Text">
       <a name="text" val="#State0"/>
+    </comp>
+    <comp lib="8" loc="(3530,385)" name="Text">
+      <a name="text" val="State0"/>
+    </comp>
+    <comp lib="8" loc="(355,1205)" name="Text">
+      <a name="text" val="s1_op_nop_stop_s0xx"/>
     </comp>
     <comp lib="8" loc="(355,300)" name="Text">
       <a name="text" val="/NMI"/>
     </comp>
-    <comp lib="8" loc="(357,1207)" name="Text">
-      <a name="text" val="s1_op_nop_stop_s0xx"/>
-    </comp>
-    <comp lib="8" loc="(3591,145)" name="Text">
+    <comp lib="8" loc="(3590,145)" name="Text">
       <a name="font" val="SansSerif bolditalic 12"/>
       <a name="text" val="Extra decoder inputs"/>
     </comp>
-    <comp lib="8" loc="(3603,619)" name="Text">
+    <comp lib="8" loc="(3600,615)" name="Text">
       <a name="font" val="SansSerif bolditalic 12"/>
       <a name="text" val="Extra decoder inputs"/>
     </comp>
-    <comp lib="8" loc="(3711,456)" name="Text">
+    <comp lib="8" loc="(3710,455)" name="Text">
       <a name="font" val="SansSerif bold 12"/>
       <a name="text" val="s2_addr_valid"/>
     </comp>
@@ -1219,25 +1225,25 @@
     <comp lib="8" loc="(425,390)" name="Text">
       <a name="text" val="CLK_DIS"/>
     </comp>
-    <comp lib="8" loc="(525,885)" name="Text">
-      <a name="text" val="s3_op_reti_s011"/>
-    </comp>
-    <comp lib="8" loc="(528,522)" name="Text">
+    <comp lib="8" loc="(525,520)" name="Text">
       <a name="font" val="SansSerif italic 11"/>
       <a name="text" val="Some inputs are shorted out. This is fine, just like in a real chip."/>
+    </comp>
+    <comp lib="8" loc="(525,885)" name="Text">
+      <a name="text" val="s3_op_reti_s011"/>
     </comp>
     <comp lib="8" loc="(600,120)" name="Text">
       <a name="font" val="SansSerif italic 16"/>
       <a name="text" val="NMI Edge detect"/>
     </comp>
-    <comp lib="8" loc="(643,264)" name="Text">
+    <comp lib="8" loc="(640,260)" name="Text">
       <a name="font" val="SansSerif bold 12"/>
       <a name="text" val="s1_op_cb_s0xx"/>
     </comp>
-    <comp lib="8" loc="(655,359)" name="Text">
+    <comp lib="8" loc="(655,355)" name="Text">
       <a name="text" val="s2_m1"/>
     </comp>
-    <comp lib="8" loc="(697,486)" name="Text">
+    <comp lib="8" loc="(695,485)" name="Text">
       <a name="font" val="SansSerif bold 12"/>
       <a name="text" val="s1_int_s110"/>
     </comp>
@@ -1930,7 +1936,7 @@
       <a name="appearance" val="logisim_evolution"/>
       <a name="trigger" val="high"/>
     </comp>
-    <comp lib="8" loc="(306,194)" name="Text">
+    <comp lib="8" loc="(305,190)" name="Text">
       <a name="text" val="level-triggered"/>
     </comp>
     <wire from="(170,110)" to="(230,110)"/>
@@ -1969,7 +1975,7 @@
       <a name="appearance" val="logisim_evolution"/>
       <a name="trigger" val="high"/>
     </comp>
-    <comp lib="8" loc="(381,48)" name="Text">
+    <comp lib="8" loc="(380,45)" name="Text">
       <a name="text" val="#reset has priority over set"/>
     </comp>
     <wire from="(190,160)" to="(240,160)"/>
@@ -2025,7 +2031,7 @@
       <a name="appearance" val="logisim_evolution"/>
       <a name="trigger" val="high"/>
     </comp>
-    <comp lib="8" loc="(455,131)" name="Text">
+    <comp lib="8" loc="(455,130)" name="Text">
       <a name="text" val="active-high triggered"/>
     </comp>
     <wire from="(180,110)" to="(200,110)"/>
