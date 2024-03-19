@@ -99,8 +99,8 @@ module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, bbus, cbus, dbus, ebus, 
 	assign ebus = ~(CLK4 ? ~(({8{`s3_oe_idu_to_uhlbus}}&adl) | ({8{`s3_oe_wzreg_to_uhlbus}}&zbus) | ({8{`s3_oe_ubus_to_uhlbus}}&Res)) : 8'b11111111);
 
 	assign d60w8 = ~(d60 | `s2_op_jr_any_sx01);
-	assign Z_in = ~(({8{d60}}&adl) | ({8{~d60}}&DL));
-	assign W_in = ~(({8{~d60w8}}&adh) | ({8{d60w8}}&DL));
+	assign Z_in = (({8{d60}}&adl) | ({8{~d60}}&DL));
+	assign W_in = (({8{~d60w8}}&adh) | ({8{d60w8}}&DL));
 
 endmodule // TempRegsBuses
 
