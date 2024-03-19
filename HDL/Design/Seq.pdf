@@ -4842,8 +4842,8 @@ q
 BT
 /F1 10 Tf
 1 0 0 -1 0 0 Tm
--9 2 Td
-(nr) Tj
+-5 2 Td
+(s) Tj
 ET
 Q
 5381 1000 m
@@ -4855,8 +4855,8 @@ q
 BT
 /F1 10 Tf
 1 0 0 -1 0 0 Tm
--5 2 Td
-(s) Tj
+-9 2 Td
+(nr) Tj
 ET
 Q
 5461 980 m

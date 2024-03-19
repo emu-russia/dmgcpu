@@ -786,103 +786,103 @@
       <a name="font" val="SansSerif italic 16"/>
       <a name="text" val="[!] Non-demorganized circuit"/>
     </comp>
-    <comp lib="8" loc="(2389,1196)" name="Text">
+    <comp lib="8" loc="(2385,1195)" name="Text">
       <a name="text" val="d99"/>
     </comp>
-    <comp lib="8" loc="(2433,134)" name="Text">
+    <comp lib="8" loc="(2430,130)" name="Text">
       <a name="font" val="SansSerif bolditalic 12"/>
       <a name="text" val="The decoder commands when to switch state."/>
     </comp>
-    <comp lib="8" loc="(2444,499)" name="Text">
+    <comp lib="8" loc="(2440,495)" name="Text">
       <a name="font" val="SansSerif bolditalic 14"/>
       <a name="text" val="clk_dis_or_sync_reset"/>
     </comp>
-    <comp lib="8" loc="(2612,235)" name="Text">
+    <comp lib="8" loc="(2610,235)" name="Text">
       <a name="text" val="s2_state1_next"/>
     </comp>
-    <comp lib="8" loc="(2615,176)" name="Text">
+    <comp lib="8" loc="(2615,175)" name="Text">
       <a name="text" val="s2_state2_next"/>
     </comp>
-    <comp lib="8" loc="(2617,295)" name="Text">
+    <comp lib="8" loc="(2615,295)" name="Text">
       <a name="text" val="s2_state0_next"/>
     </comp>
-    <comp lib="8" loc="(2674,159)" name="Text">
+    <comp lib="8" loc="(2670,155)" name="Text">
       <a name="text" val="w32"/>
     </comp>
-    <comp lib="8" loc="(2677,221)" name="Text">
+    <comp lib="8" loc="(2675,220)" name="Text">
       <a name="text" val="w33"/>
     </comp>
-    <comp lib="8" loc="(2678,280)" name="Text">
+    <comp lib="8" loc="(2675,280)" name="Text">
       <a name="text" val="w20"/>
     </comp>
-    <comp lib="8" loc="(2692,510)" name="Text">
+    <comp lib="8" loc="(2690,510)" name="Text">
       <a name="text" val="s2_m1"/>
     </comp>
-    <comp lib="8" loc="(2717,491)" name="Text">
+    <comp lib="8" loc="(2715,490)" name="Text">
       <a name="text" val="w26"/>
     </comp>
-    <comp lib="8" loc="(2770,583)" name="Text">
+    <comp lib="8" loc="(2770,580)" name="Text">
       <a name="font" val="SansSerif bold 13"/>
       <a name="text" val="s1_op_cb_s0xx"/>
     </comp>
-    <comp lib="8" loc="(2790,627)" name="Text">
+    <comp lib="8" loc="(2790,625)" name="Text">
       <a name="text" val="CLK_DIS"/>
     </comp>
-    <comp lib="8" loc="(2802,566)" name="Text">
+    <comp lib="8" loc="(2800,565)" name="Text">
       <a name="text" val="d102"/>
     </comp>
-    <comp lib="8" loc="(2826,1326)" name="Text">
+    <comp lib="8" loc="(2825,1325)" name="Text">
       <a name="text" val="d93"/>
     </comp>
-    <comp lib="8" loc="(2867,1228)" name="Text">
+    <comp lib="8" loc="(2865,1225)" name="Text">
       <a name="text" val="d101"/>
     </comp>
-    <comp lib="8" loc="(2875,1199)" name="Text">
+    <comp lib="8" loc="(2875,1195)" name="Text">
       <a name="text" val="IR4"/>
     </comp>
-    <comp lib="8" loc="(3063,95)" name="Text">
+    <comp lib="8" loc="(3060,95)" name="Text">
       <a name="font" val="SansSerif bolditalic 20"/>
       <a name="text" val="Sequence state &amp; modes"/>
     </comp>
-    <comp lib="8" loc="(3112,464)" name="Text">
+    <comp lib="8" loc="(3110,460)" name="Text">
       <a name="text" val="w18"/>
     </comp>
-    <comp lib="8" loc="(3116,438)" name="Text">
+    <comp lib="8" loc="(3115,435)" name="Text">
       <a name="text" val="w26"/>
     </comp>
-    <comp lib="8" loc="(3150,478)" name="Text">
+    <comp lib="8" loc="(3150,475)" name="Text">
       <a name="font" val="SansSerif bold 10"/>
       <a name="text" val="s2_data_fetch_cycle"/>
     </comp>
-    <comp lib="8" loc="(3161,433)" name="Text">
+    <comp lib="8" loc="(3160,430)" name="Text">
       <a name="text" val="s2_m1"/>
     </comp>
-    <comp lib="8" loc="(3228,1057)" name="Text">
+    <comp lib="8" loc="(3225,1055)" name="Text">
       <a name="text" val="d100"/>
     </comp>
-    <comp lib="8" loc="(3233,548)" name="Text">
+    <comp lib="8" loc="(3230,545)" name="Text">
       <a name="text" val="g30"/>
     </comp>
-    <comp lib="8" loc="(3235,431)" name="Text">
+    <comp lib="8" loc="(3235,430)" name="Text">
       <a name="text" val="g26"/>
     </comp>
     <comp lib="8" loc="(335,95)" name="Text">
       <a name="font" val="SansSerif bold 13"/>
       <a name="text" val="1: Bus disable"/>
     </comp>
-    <comp lib="8" loc="(3484,576)" name="Text">
+    <comp lib="8" loc="(3480,575)" name="Text">
       <a name="text" val="cb_mode"/>
     </comp>
-    <comp lib="8" loc="(3489,158)" name="Text">
+    <comp lib="8" loc="(3485,155)" name="Text">
       <a name="text" val="#State2"/>
     </comp>
-    <comp lib="8" loc="(3490,244)" name="Text">
+    <comp lib="8" loc="(3490,240)" name="Text">
       <a name="text" val="#State1"/>
     </comp>
-    <comp lib="8" loc="(3490,338)" name="Text">
+    <comp lib="8" loc="(3490,335)" name="Text">
       <a name="text" val="#State0"/>
     </comp>
-    <comp lib="8" loc="(3501,667)" name="Text">
+    <comp lib="8" loc="(3500,665)" name="Text">
       <a name="text" val="intr_dispatch"/>
     </comp>
     <comp lib="8" loc="(355,300)" name="Text">
@@ -892,21 +892,21 @@
       <a name="font" val="SansSerif bolditalic 12"/>
       <a name="text" val="Extra decoder inputs"/>
     </comp>
-    <comp lib="8" loc="(3613,616)" name="Text">
+    <comp lib="8" loc="(3610,615)" name="Text">
       <a name="font" val="SansSerif bolditalic 12"/>
       <a name="text" val="Extra decoder inputs"/>
     </comp>
-    <comp lib="8" loc="(3821,875)" name="Text">
+    <comp lib="8" loc="(3820,875)" name="Text">
       <a name="text" val="g43"/>
     </comp>
-    <comp lib="8" loc="(3985,1056)" name="Text">
+    <comp lib="8" loc="(3985,1055)" name="Text">
       <a name="text" val="w40"/>
     </comp>
-    <comp lib="8" loc="(4096,873)" name="Text">
+    <comp lib="8" loc="(4095,870)" name="Text">
       <a name="font" val="SansSerif bolditalic 12"/>
       <a name="text" val="rs_clk_disable"/>
     </comp>
-    <comp lib="8" loc="(4147,761)" name="Text">
+    <comp lib="8" loc="(4145,760)" name="Text">
       <a name="text" val="CLK_DIS"/>
     </comp>
     <comp lib="8" loc="(425,390)" name="Text">
@@ -937,7 +937,7 @@
     <comp lib="8" loc="(700,320)" name="Text">
       <a name="text" val="w26"/>
     </comp>
-    <comp lib="8" loc="(717,406)" name="Text">
+    <comp lib="8" loc="(715,405)" name="Text">
       <a name="font" val="SansSerif bolditalic 14"/>
       <a name="text" val="clk_dis_or_sync_reset"/>
     </comp>
@@ -1431,10 +1431,12 @@
     <wire from="(3810,900)" to="(3810,920)"/>
     <wire from="(3810,920)" to="(3820,920)"/>
     <wire from="(3850,1430)" to="(3930,1430)"/>
-    <wire from="(3860,930)" to="(4040,930)"/>
+    <wire from="(3860,930)" to="(3870,930)"/>
+    <wire from="(3870,920)" to="(3870,930)"/>
+    <wire from="(3870,920)" to="(4040,920)"/>
     <wire from="(3880,1180)" to="(3940,1180)"/>
-    <wire from="(3890,920)" to="(3890,1050)"/>
-    <wire from="(3890,920)" to="(4040,920)"/>
+    <wire from="(3890,930)" to="(3890,1050)"/>
+    <wire from="(3890,930)" to="(4040,930)"/>
     <wire from="(3910,1000)" to="(3910,1340)"/>
     <wire from="(3930,1290)" to="(3930,1430)"/>
     <wire from="(3930,1290)" to="(4040,1290)"/>

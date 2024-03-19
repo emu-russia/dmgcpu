@@ -50,4 +50,5 @@ if __name__ == '__main__':
 	CropImage (FusedTopo, "../imgstore/modules/shielded", [7141, 1744, 308, 108] )	# ~MREQ
 	CropImage (FusedTopo, "../imgstore/modules/x61", [4441, 3573, 662, 399] )		# SP
 	CropImage (FusedTopo, "../imgstore/modules/x68", [5071, 3561, 691, 411] )		# PC
+	CropImage (FusedTopo, "../imgstore/modules/module42", [6907, 1033, 192, 75] )	# module4_2 (special rs)
 	print ("TopoShredder End")
