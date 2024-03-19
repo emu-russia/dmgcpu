@@ -119,8 +119,12 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 	inout [7:0] databus;
 	input [15:0] addrbus;
 
-	// Now the hardware is configured to give out single-byte opcodes for checking.
+	reg [7:0] mem[65535];
+	reg [7:0] value;
 
-	assign databus = (MREQ & RD) ? 8'b00111100 : 8'bzzzzzzzz;	// INC A (0x3c)
+	initial $readmemh("bogus_hw.mem", mem);
+
+	assign databus = (MREQ & RD) ? value : 8'bzzzzzzzz;
+	always @(addrbus) value <= mem[addrbus];
 
 endmodule // Bogus_HW

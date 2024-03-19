@@ -1,0 +1,11 @@
+00        // NOP
+31 cc aa  // LD SP, $AACC
+21 80 de  // LD HL, $DE80
+3e bc     // LD A, $BC
+77        // LD (HL), A
+3e de     // LD A, $DE
+7e        // LD A, (HL)
+c3 12 01  // JP $0112
+
+@0112
+76        // HALT
