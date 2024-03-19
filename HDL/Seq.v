@@ -277,7 +277,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	seq_oai_21 g26 (.a1(w22), .b(w23), .x(w24), .a0(w2) );
 	seq_nor g60 (.a(w25), .b(w26), .x(w29) );
 	seq_oai_21 g43 (.b(w14), .a1(w114), .a0(w113), .x(w27) );
-	seq_rs_latch2 g49 (.q(w28), .s(w27), .nr(w122) );
+	seq_rs_latch2 g49 (.q(w28), .nr(w27), .s(w122) );
 	seq_rs_latch g62 (.nr(w29), .s(w109), .q(w30) );
 	seq_not g61 (.a(w30), .x(w31) );
 	seq_dff_posedge_comp g37 (.clk(w7), .cclk(w3), .d(w95), .q(w96) );

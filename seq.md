@@ -109,7 +109,7 @@ Initially it was mistaken for module4, but after a detailed study it became clea
 
 ![module42_tran](/imgstore/modules/module42_tran.jpg)
 
-This is essentially the same rs_latch (see above), but with the inputs rearranged.
+This is essentially the same rs_latch (see above), but with the inputs rearranged. The cell occurs in a single instance (g49) and Issue #219 was associated with it.
 
 (I rechecked all the other modules4).
 
@@ -183,7 +183,7 @@ Output in inverse polarity (`#Q`).
 
 ![iwantsleep_tran](/imgstore/modules/iwantsleep_tran.jpg)
 
-## shielded
+## shielded - mreq
 
 Very cleverly twisted combined logic. Bravo, SHARP engineers!
 
