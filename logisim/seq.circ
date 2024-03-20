@@ -63,12 +63,12 @@
     </comp>
     <comp lib="0" loc="(1320,860)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK8"/>
+      <a name="label" val="CLK9"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(1320,880)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK9"/>
+      <a name="label" val="CLK8"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(1440,1040)" name="Tunnel">
@@ -218,11 +218,11 @@
     </comp>
     <comp lib="0" loc="(230,210)" name="Pin">
       <a name="appearance" val="NewPins"/>
-      <a name="label" val="CLK8"/>
+      <a name="label" val="CLK9"/>
     </comp>
     <comp lib="0" loc="(230,230)" name="Pin">
       <a name="appearance" val="NewPins"/>
-      <a name="label" val="CLK9"/>
+      <a name="label" val="CLK8"/>
     </comp>
     <comp lib="0" loc="(230,310)" name="Pin">
       <a name="appearance" val="NewPins"/>
@@ -248,13 +248,13 @@
       <a name="label" val="SeqControl_2"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
-    <comp lib="0" loc="(230,560)" name="Pin">
+    <comp lib="0" loc="(230,570)" name="Pin">
       <a name="appearance" val="NewPins"/>
-      <a name="label" val="CLK1"/>
+      <a name="label" val="CLK2"/>
     </comp>
     <comp lib="0" loc="(230,590)" name="Pin">
       <a name="appearance" val="NewPins"/>
-      <a name="label" val="CLK2"/>
+      <a name="label" val="CLK1"/>
     </comp>
     <comp lib="0" loc="(230,670)" name="Pin">
       <a name="appearance" val="NewPins"/>
@@ -298,11 +298,11 @@
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(240,210)" name="Tunnel">
-      <a name="label" val="CLK8"/>
+      <a name="label" val="CLK9"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(240,230)" name="Tunnel">
-      <a name="label" val="CLK9"/>
+      <a name="label" val="CLK8"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(240,360)" name="Tunnel">
@@ -317,12 +317,12 @@
       <a name="label" val="ALU_Out1"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
-    <comp lib="0" loc="(240,560)" name="Tunnel">
-      <a name="label" val="CLK1"/>
+    <comp lib="0" loc="(240,570)" name="Tunnel">
+      <a name="label" val="CLK2"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(240,590)" name="Tunnel">
-      <a name="label" val="CLK2"/>
+      <a name="label" val="CLK1"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(240,90)" name="Tunnel">
@@ -401,12 +401,12 @@
     </comp>
     <comp lib="0" loc="(2850,1040)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK8"/>
+      <a name="label" val="CLK9"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(2850,1060)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK9"/>
+      <a name="label" val="CLK8"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(2850,1320)" name="Tunnel">
@@ -431,12 +431,12 @@
     </comp>
     <comp lib="0" loc="(3050,880)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK8"/>
+      <a name="label" val="CLK9"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(3050,900)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK9"/>
+      <a name="label" val="CLK8"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(3100,1190)" name="Tunnel">
@@ -461,32 +461,32 @@
     </comp>
     <comp lib="0" loc="(3150,150)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK8"/>
+      <a name="label" val="CLK9"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(3150,170)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK9"/>
+      <a name="label" val="CLK8"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(3150,240)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK8"/>
+      <a name="label" val="CLK9"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(3150,260)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK9"/>
+      <a name="label" val="CLK8"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(3150,330)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK8"/>
+      <a name="label" val="CLK9"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(3150,350)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK9"/>
+      <a name="label" val="CLK8"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(3190,600)" name="Constant">
@@ -502,22 +502,22 @@
     </comp>
     <comp lib="0" loc="(3240,1030)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK8"/>
+      <a name="label" val="CLK9"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(3240,1050)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK9"/>
+      <a name="label" val="CLK8"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(3240,1150)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK8"/>
+      <a name="label" val="CLK9"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(3240,1170)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK9"/>
+      <a name="label" val="CLK8"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(3410,590)" name="Pin">
@@ -580,12 +580,12 @@
     </comp>
     <comp lib="0" loc="(3550,850)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK8"/>
+      <a name="label" val="CLK9"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(3550,870)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK9"/>
+      <a name="label" val="CLK8"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(3560,1160)" name="Tunnel">
@@ -617,12 +617,12 @@
     </comp>
     <comp lib="0" loc="(3750,1140)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK8"/>
+      <a name="label" val="CLK9"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(3750,1160)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK9"/>
+      <a name="label" val="CLK8"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(3780,1400)" name="Tunnel">
@@ -632,12 +632,12 @@
     </comp>
     <comp lib="0" loc="(380,160)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK8"/>
+      <a name="label" val="CLK9"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(380,180)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK9"/>
+      <a name="label" val="CLK8"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(4000,1050)" name="Tunnel">
@@ -647,22 +647,22 @@
     </comp>
     <comp lib="0" loc="(4010,1010)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK9"/>
+      <a name="label" val="CLK8"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(4010,1110)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK8"/>
+      <a name="label" val="CLK9"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(4010,1130)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK9"/>
+      <a name="label" val="CLK8"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(4010,990)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK8"/>
+      <a name="label" val="CLK9"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(4100,400)" name="Pin">
@@ -1046,7 +1046,7 @@
       <a name="font" val="SansSerif italic 16"/>
       <a name="text" val="[!] Non-demorganized circuit"/>
     </comp>
-    <comp lib="8" loc="(228,621)" name="Text">
+    <comp lib="8" loc="(225,620)" name="Text">
       <a name="text" val="[!] See g84"/>
     </comp>
     <comp lib="8" loc="(2400,1210)" name="Text">
@@ -1061,7 +1061,7 @@
       <a name="font" val="SansSerif bolditalic 14"/>
       <a name="text" val="clk_dis_or_sync_reset"/>
     </comp>
-    <comp lib="8" loc="(2508,932)" name="Text">
+    <comp lib="8" loc="(2505,930)" name="Text">
       <a name="text" val="[!] CLK2/1 here"/>
     </comp>
     <comp lib="8" loc="(2600,160)" name="Text">
@@ -1096,6 +1096,18 @@
     </comp>
     <comp lib="8" loc="(285,1360)" name="Text">
       <a name="text" val="s2_m1"/>
+    </comp>
+    <comp lib="8" loc="(292,216)" name="Text">
+      <a name="text" val="ck"/>
+    </comp>
+    <comp lib="8" loc="(293,575)" name="Text">
+      <a name="text" val="ck"/>
+    </comp>
+    <comp lib="8" loc="(295,236)" name="Text">
+      <a name="text" val="cck"/>
+    </comp>
+    <comp lib="8" loc="(297,596)" name="Text">
+      <a name="text" val="cck"/>
     </comp>
     <comp lib="8" loc="(3010,1475)" name="Text">
       <a name="font" val="SansSerif bolditalic 20"/>
@@ -1148,6 +1160,18 @@
     <comp lib="8" loc="(3260,855)" name="Text">
       <a name="font" val="SansSerif italic 16"/>
       <a name="text" val="OSC_STABLE Edge detect"/>
+    </comp>
+    <comp lib="8" loc="(3280,315)" name="Text">
+      <a name="font" val="SansSerif bolditalic 12"/>
+      <a name="text" val="dff_state0"/>
+    </comp>
+    <comp lib="8" loc="(3281,223)" name="Text">
+      <a name="font" val="SansSerif bolditalic 12"/>
+      <a name="text" val="dff_state1"/>
+    </comp>
+    <comp lib="8" loc="(3290,134)" name="Text">
+      <a name="font" val="SansSerif bolditalic 12"/>
+      <a name="text" val="dff_state2"/>
     </comp>
     <comp lib="8" loc="(3320,1030)" name="Text">
       <a name="font" val="SansSerif bolditalic 12"/>
@@ -1232,7 +1256,7 @@
     <comp lib="8" loc="(525,885)" name="Text">
       <a name="text" val="s3_op_reti_s011"/>
     </comp>
-    <comp lib="8" loc="(600,120)" name="Text">
+    <comp lib="8" loc="(598,113)" name="Text">
       <a name="font" val="SansSerif italic 16"/>
       <a name="text" val="NMI Edge detect"/>
     </comp>
@@ -1250,6 +1274,10 @@
     <comp lib="8" loc="(715,405)" name="Text">
       <a name="font" val="SansSerif bolditalic 14"/>
       <a name="text" val="clk_dis_or_sync_reset"/>
+    </comp>
+    <comp lib="8" loc="(776,124)" name="Text">
+      <a name="font" val="SansSerif plain 12"/>
+      <a name="text" val="g55 in opposite clk phase"/>
     </comp>
     <comp lib="8" loc="(955,255)" name="Text">
       <a name="text" val="g39"/>
@@ -1457,7 +1485,7 @@
     <wire from="(230,360)" to="(240,360)"/>
     <wire from="(230,460)" to="(240,460)"/>
     <wire from="(230,50)" to="(240,50)"/>
-    <wire from="(230,560)" to="(240,560)"/>
+    <wire from="(230,570)" to="(240,570)"/>
     <wire from="(230,590)" to="(240,590)"/>
     <wire from="(230,90)" to="(240,90)"/>
     <wire from="(230,900)" to="(820,900)"/>
