@@ -88,11 +88,17 @@ module External_CLK ( CLK, RESET, ADR_CLK_N, ADR_CLK_P, DATA_CLK_N, DATA_CLK_P, 
 	wire TUBO_nq;
 	wire ASOL_q;
 	wire ASOL_nq;
-	wire SixteenHz;
+	reg SixteenHz;
 	wire AFER_nq;
 
-	// I don't know what this thing is for, but if you make it 0, SYNC_RESET never disappears. Some kind of internal DIV kitchen, I didn't bother to figure it out.
-	assign SixteenHz = 1'b1; 		// From DIV
+	// @Rodrigodd recommended to do it so that it looks like real behavior. But I'm still not interested in what it's for :-)    (#219)
+	// Some kind of internal DIV kitchen
+	initial SixteenHz = 1'b0;
+	always begin
+		// wait 4 cycles after RESET
+		repeat (12) @(posedge CLK);
+		SixteenHz <= ~SixteenHz;
+	end
 
 	NOR_LATCH TUBO (.set(CLK_ENA), .res(RESET | ~OSC_ENA), .q(TUBO_q), .nq(TUBO_nq));
 	assign OSC_STABLE = (T1_nT2 | nT1_T2 | (TUBO_nq & SixteenHz));
