@@ -262,7 +262,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	// Instances
 
 	seq_mreq g72 (.d(w11), .b(w35), .a(w34), .c(w36), .x(w33) );
-	seq_dff_posedge_comp g38 (.q(w8), .clk(w7), .cclk(w3), .d(w136) );
+	seq_dff_posedge_comp g38 (.q(w8), .cclk(w7), .clk(w3), .d(w136) );
 	seq_not g66 (.a(w16), .x(w15) );
 	seq_nor3 g50 (.a(w28), .b(w16), .c(1'b0), .x(w17) );
 	seq_not g27 (.a(w24), .x(w9) );
@@ -280,20 +280,20 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	seq_rs_latch2 g49 (.q(w28), .nr(w27), .s(w122) );
 	seq_rs_latch g62 (.nr(w29), .s(w109), .q(w30) );
 	seq_not g61 (.a(w30), .x(w31) );
-	seq_dff_posedge_comp g37 (.clk(w7), .cclk(w3), .d(w95), .q(w96) );
-	seq_dff_posedge_comp g36 (.clk(w7), .cclk(w3), .d(w103), .q(w137) );
-	seq_dff_posedge_comp g35 (.clk(w7), .cclk(w3), .q(w94), .d(w99) );
+	seq_dff_posedge_comp g37 (.cclk(w7), .clk(w3), .d(w95), .q(w96) );
+	seq_dff_posedge_comp g36 (.cclk(w7), .clk(w3), .d(w103), .q(w137) );
+	seq_dff_posedge_comp g35 (.cclk(w7), .clk(w3), .q(w94), .d(w99) );
 	seq_latchr_comp g33 (.q(w124), .d(w1), .res(w28), .clk(w138), .cclk(w139), .ld(w2), .nld(w123) );
-	seq_dff_posedge_comp g42 (.cclk(w3), .clk(w7), .d(w112), .q(w113) );
-	seq_dff_posedge_comp g46 (.clk(w7), .cclk(w3), .d(w107), .q(w120) );
-	seq_dff_posedge_comp g54 (.clk(w7), .cclk(w3), .d(w39), .q(w90) );
-	seq_dff_posedge_comp g57 (.clk(w7), .cclk(w3), .d(w117), .q(w115) );
-	seq_dff_posedge_comp g58 (.clk(w7), .cclk(w3), .d(w119), .q(w117) );
-	seq_dff_posedge_comp g63 (.clk(w7), .cclk(w3), .d(w134), .q(w109) );
-	seq_dff_posedge_comp g67 (.clk(w7), .cclk(w3), .d(w5), .q(w6) );
-	seq_dff_posedge_comp g74 (.clk(w7), .cclk(w3), .d(w131), .q(w126) );
+	seq_dff_posedge_comp g42 (.clk(w3), .cclk(w7), .d(w112), .q(w113) );
+	seq_dff_posedge_comp g46 (.cclk(w7), .clk(w3), .d(w107), .q(w120) );
+	seq_dff_posedge_comp g54 (.cclk(w7), .clk(w3), .d(w39), .q(w90) );
+	seq_dff_posedge_comp g57 (.cclk(w7), .clk(w3), .d(w117), .q(w115) );
+	seq_dff_posedge_comp g58 (.cclk(w7), .clk(w3), .d(w119), .q(w117) );
+	seq_dff_posedge_comp g63 (.cclk(w7), .clk(w3), .d(w134), .q(w109) );
+	seq_dff_posedge_comp g67 (.cclk(w7), .clk(w3), .d(w5), .q(w6) );
+	seq_dff_posedge_comp g74 (.cclk(w7), .clk(w3), .d(w131), .q(w126) );
 	seq_dff_posedge_comp g84 (.clk(w111), .cclk(w110), .d(w74), .q(w83) );
-	seq_dff_posedge_comp g85 (.clk(w7), .cclk(w3), .d(w75), .q(w68) );
+	seq_dff_posedge_comp g85 (.cclk(w7), .clk(w3), .d(w75), .q(w68) );
 	seq_not g0 (.a(w47), .x(w48) );
 	seq_not g1 (.a(w106), .x(w47) );
 	seq_not g2 (.a(w37), .x(w52) );

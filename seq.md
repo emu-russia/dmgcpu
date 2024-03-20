@@ -10,14 +10,14 @@
 
 |Signal|From|Description|
 |---|---|---|
-|CLK1|External|To g84|
-|CLK2|External|To g84|
-|CLK4|External| |
-|CLK6|External|See `huge1` module|
-|CLK8|External| |
-|CLK9|External| |
-|SYNC_RESET|External|Port T12|
-|RESET|External|Port T13|
+|CLK1 / ADR_CLK_N|External|To g84 only|
+|CLK2 / ADR_CLK_P|External|To g84 only|
+|CLK4|External / DATA_CLK_N| |
+|CLK6|External / INC_CLK_P|See `huge1` module|
+|CLK8 / MAIN_CLK_N|External| |
+|CLK9 / MAIN_CLK_P|External| |
+|SYNC_RESET|External|Port T12; Synchronous reset means that it is only applied during a certain phase value of some CLK|
+|RESET|External|Port T13; Unconditional and instantaneous reset, regardless of CLK|
 |OSC_STABLE (_deprecated signal name Clock_WTF_)|External|Port T15. To nand g59|
 |NMI (_deprecated signal name Unbonded_)|External|Port T16. NMI|
 |WAKE|External|Port B25|
@@ -174,6 +174,8 @@ Output in inverse polarity (`#Q`).
 ![hmm3](/imgstore/modules/hmm3.jpg)
 
 ![hmm3_tran](/imgstore/modules/hmm3_tran.jpg)
+
+:warning: Note that CLK comes to this cell in complement, relative to the other DFFs. This cell is used to edge detect the NMI signal (or more precisely its derivative /NMI obtained from g53).
 
 ## iwantsleep - oai_21
 

@@ -28,8 +28,7 @@ module seq_dff_posedge_comp ( d, clk, cclk, q );
 	reg val;
 	initial val = 1'bx;
 
-	// XXX: Initially, clk and cclk were mixed up when parsing the netlist. So read here cclk as clk. Not a very nice mix-up, but this is always the case with clk.
-	always @(posedge cclk) begin
+	always @(posedge clk) begin
 		val <= d;
 	end
 
