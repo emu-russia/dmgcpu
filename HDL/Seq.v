@@ -292,7 +292,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	seq_dff_posedge_comp g63 (.cclk(w7), .clk(w3), .d(w134), .q(w109) );
 	seq_dff_posedge_comp g67 (.cclk(w7), .clk(w3), .d(w5), .q(w6) );
 	seq_dff_posedge_comp g74 (.cclk(w7), .clk(w3), .d(w131), .q(w126) );
-	seq_dff_posedge_comp g84 (.clk(w111), .cclk(w110), .d(w74), .q(w83) );
+	seq_dff_posedge_comp g84 (.cclk(w111), .clk(w110), .d(w74), .q(w83) );
 	seq_dff_posedge_comp g85 (.cclk(w7), .clk(w3), .d(w75), .q(w68) );
 	seq_not g0 (.a(w47), .x(w48) );
 	seq_not g1 (.a(w106), .x(w47) );

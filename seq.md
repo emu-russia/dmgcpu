@@ -10,7 +10,7 @@
 
 |Signal|From|Description|
 |---|---|---|
-|CLK1 / ADR_CLK_N|External|To g84 only|
+|CLK1 / ADR_CLK_N|External|To g84 only; CLK2/1 are coupled by complement for g84, converting this DFF to negedge.|
 |CLK2 / ADR_CLK_P|External|To g84 only|
 |CLK4|External / DATA_CLK_N| |
 |CLK6|External / INC_CLK_P|See `huge1` module|
@@ -78,6 +78,7 @@ DFF on a complementary CLK (Dual Rails).
 Since the polarity of CLKs is now known (CLK9 = CLK, CLK8 = CCLK), we can say for sure that it is posedge DFF.
 
 In fact, when using Dual Rails, you can easily turn a posedge DFF into a negedge by simply rearranging the CLK complement signals.
+(and moreover this is what is done for `g84`, turning it into negedge dff)
 
 A distinctive feature of the circuits that do Edge Detection is the two serial MUX's that are opened complementary to the CLK. Using black magic and propagation delay - the edge of the signal is caught.
 
