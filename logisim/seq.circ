@@ -341,12 +341,12 @@
     </comp>
     <comp lib="0" loc="(2610,920)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK2"/>
+      <a name="label" val="CLK1"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(2610,940)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="CLK1"/>
+      <a name="label" val="CLK2"/>
       <a name="labelfont" val="SansSerif bold 10"/>
     </comp>
     <comp lib="0" loc="(2640,1050)" name="Tunnel">
@@ -1035,9 +1035,9 @@
     <comp lib="8" loc="(1600,860)" name="Text">
       <a name="text" val="g94"/>
     </comp>
-    <comp lib="8" loc="(1870,55)" name="Text">
+    <comp lib="8" loc="(1785,56)" name="Text">
       <a name="font" val="SansSerif italic 16"/>
-      <a name="text" val="All DFFs are posedge"/>
+      <a name="text" val="All DFFs are posedge, except g84"/>
     </comp>
     <comp lib="8" loc="(1870,825)" name="Text">
       <a name="text" val="g91"/>
@@ -1061,8 +1061,12 @@
       <a name="font" val="SansSerif bolditalic 14"/>
       <a name="text" val="clk_dis_or_sync_reset"/>
     </comp>
-    <comp lib="8" loc="(2505,930)" name="Text">
-      <a name="text" val="[!] CLK2/1 here"/>
+    <comp lib="8" loc="(2553,1001)" name="Text">
+      <a name="font" val="SansSerif plain 11"/>
+      <a name="text" val="CLK2/1 are coupled by complement, converting this DFF to negedge."/>
+    </comp>
+    <comp lib="8" loc="(2556,936)" name="Text">
+      <a name="text" val="[!]"/>
     </comp>
     <comp lib="8" loc="(2600,160)" name="Text">
       <a name="font" val="SansSerif bold 12"/>
@@ -1097,16 +1101,16 @@
     <comp lib="8" loc="(285,1360)" name="Text">
       <a name="text" val="s2_m1"/>
     </comp>
-    <comp lib="8" loc="(292,216)" name="Text">
+    <comp lib="8" loc="(290,215)" name="Text">
       <a name="text" val="ck"/>
     </comp>
-    <comp lib="8" loc="(293,575)" name="Text">
+    <comp lib="8" loc="(290,575)" name="Text">
       <a name="text" val="ck"/>
     </comp>
-    <comp lib="8" loc="(295,236)" name="Text">
+    <comp lib="8" loc="(295,235)" name="Text">
       <a name="text" val="cck"/>
     </comp>
-    <comp lib="8" loc="(297,596)" name="Text">
+    <comp lib="8" loc="(295,595)" name="Text">
       <a name="text" val="cck"/>
     </comp>
     <comp lib="8" loc="(3010,1475)" name="Text">
@@ -1161,15 +1165,15 @@
       <a name="font" val="SansSerif italic 16"/>
       <a name="text" val="OSC_STABLE Edge detect"/>
     </comp>
+    <comp lib="8" loc="(3280,220)" name="Text">
+      <a name="font" val="SansSerif bolditalic 12"/>
+      <a name="text" val="dff_state1"/>
+    </comp>
     <comp lib="8" loc="(3280,315)" name="Text">
       <a name="font" val="SansSerif bolditalic 12"/>
       <a name="text" val="dff_state0"/>
     </comp>
-    <comp lib="8" loc="(3281,223)" name="Text">
-      <a name="font" val="SansSerif bolditalic 12"/>
-      <a name="text" val="dff_state1"/>
-    </comp>
-    <comp lib="8" loc="(3290,134)" name="Text">
+    <comp lib="8" loc="(3290,130)" name="Text">
       <a name="font" val="SansSerif bolditalic 12"/>
       <a name="text" val="dff_state2"/>
     </comp>
@@ -1256,7 +1260,7 @@
     <comp lib="8" loc="(525,885)" name="Text">
       <a name="text" val="s3_op_reti_s011"/>
     </comp>
-    <comp lib="8" loc="(598,113)" name="Text">
+    <comp lib="8" loc="(595,110)" name="Text">
       <a name="font" val="SansSerif italic 16"/>
       <a name="text" val="NMI Edge detect"/>
     </comp>
@@ -1275,7 +1279,7 @@
       <a name="font" val="SansSerif bolditalic 14"/>
       <a name="text" val="clk_dis_or_sync_reset"/>
     </comp>
-    <comp lib="8" loc="(776,124)" name="Text">
+    <comp lib="8" loc="(775,120)" name="Text">
       <a name="font" val="SansSerif plain 12"/>
       <a name="text" val="g55 in opposite clk phase"/>
     </comp>
