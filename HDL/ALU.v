@@ -12,8 +12,8 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	input [7:0] DV; 		// ALU Operand2
 	output [7:0] Res; 		// ALU Result
 	input AllZeros;			// Res == 0
-	input d42;
-	input d58;
+	input d42; 			// Gekkio: s1_cb_00_to_3f
+	input d58; 			// Gekkio: s1_op_pop_sx10
 	input [40:0] w;		// Decoder2 outputs
 	input [68:0] x;		// Decoder3 outputs
 	output [5:0] bc;
@@ -84,6 +84,8 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 		.x(bx), 
 		.w(bw) );
 
+	// Shifter
+
 	Comb3 bit_lsb ( .clk(CLK2), .x(ca[0]), .a({`s3_alu_rlc,DV[7]}), .b({`s3_alu_rotate_shift_right,DV[1]}), .c({`s3_alu_swap,DV[4]}), .d({`s3_alu_rl,bc[1]}) );
 	Comb2 bits_mid [6:1] ( .clk({6{CLK2}}), .x(ca[6:1]), 
 		.a({{`s3_alu_rotate_shift_left,DV[5]},{`s3_alu_rotate_shift_left,DV[4]},{`s3_alu_rotate_shift_left,DV[3]},{`s3_alu_rotate_shift_left,DV[2]},{`s3_alu_rotate_shift_left,DV[1]},{`s3_alu_rotate_shift_left,DV[0]}}), 
@@ -91,9 +93,9 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 		.c({{`s3_alu_swap,DV[2]},{`s3_alu_swap,DV[1]},{`s3_alu_swap,DV[0]},{`s3_alu_swap,DV[7]},{`s3_alu_swap,DV[6]},{`s3_alu_swap,DV[5]}}) );
 	Comb1 bit_msb ( .clk(CLK2), .x(ca[7]), .a({`s3_alu_rotate_shift_left,DV[6]}), .b({`s3_alu_rr,bc[1]}), .c({`s3_alu_sra,DV[7]}), .d({`s3_alu_rrc,DV[0]}), .e({`s3_alu_swap,DV[3]}) );
 
-	// Large spaghetti at the bottom
+	// Flag setting logic (large spaghetti at the bottom)
 
-	LargeComb1 large_comb1 (
+	LargeComb1 flag_logic (
 		.CLK2(CLK2),
 		.CLK6(CLK6),
 		.CLK7(CLK7),
@@ -121,20 +123,20 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 		.bq7(bq7),
 		.azo(azo) );
 
-	// Part of the circuit below spaghetti (some FF and domino inverters)
+	// Flags (part of the circuit below spaghetti, some FF and domino inverters)
 
 	assign e = ~{azo[10],azo[9],azo[8],azo[6],azo[5],azo[4],azo[3],azo[0]};
 	assign ALU_to_top = ~azo[13];
 	assign ALU_Out1 = ~azo[11];
 
-	bc bc5 ( .nd(azo[1]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_hf_nf_zf), .q(bc[5]), .nq(nbc[5]) );
-	bc bc1 ( .nd(azo[2]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_cf), .q(bc[1]), .nq(nbc[1]) );
-	bc bc2 ( .nd(azo[7]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_hf_nf_zf), .q(bc[2]), .nq(nbc[2]) );
-	bc bc3 ( .nd(azo[12]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_hf_nf_zf), .q(bc[3]), .nq(nbc[3]) );
-	ALU_to_bot_FF flag_z ( .d(Temp_Z), .CLK(CLK6), .CCLK(CLK5), .Load(CLK4), .q(ALU_to_bot) );
+	bc bc5 ( .nd(azo[1]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_hf_nf_zf), .q(bc[5]), .nq(nbc[5]) ); 			// Flag H
+	bc bc1 ( .nd(azo[2]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_cf), .q(bc[1]), .nq(nbc[1]) ); 			// Flag C
+	bc bc2 ( .nd(azo[7]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_hf_nf_zf), .q(bc[2]), .nq(nbc[2]) );  		// Flag N
+	bc bc3 ( .nd(azo[12]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_hf_nf_zf), .q(bc[3]), .nq(nbc[3]) ); 	// Flag Z
+	ALU_to_bot_FF flag_z ( .d(Temp_Z), .CLK(CLK6), .CCLK(CLK5), .Load(CLK4), .q(ALU_to_bot) ); 			// another Flag Z? wtf? Figure it out
 
 	// Regarding "bc". I tend to think that even though bc0/bc4 is at the bottom, it is still part of the ALU.
-	// I'll probably move this circuit in my HDL inside the ALU instead of at the bottom. Then wire [5:0] bc; will become output.
+	// Moved this circuit in my HDL inside the ALU instead of at the bottom. Then wire [5:0] bc; will become output.
 
 	assign bc[0] = (IR[4] & IR[5] & `s2_op_push_sx10);
 	assign bc[4] = ALU_to_bot & `s2_op_sp_e_sx10;
@@ -177,16 +179,16 @@ endmodule // module6
 module module2 ( a, b, c, e, f, g, h, k, m, x, w );
 
 	input a; 		// active low input
-	input b;
-	input c;
-	input e;
-	output f;
-	input g;
-	output h;
-	input k;
-	output m;
-	output x;
-	output w;
+	input b;  			// x19 (s3_alu_logic_and)
+	input c; 			// x4 (s3_alu_logic_or)
+	input e; 		// Large Comb results
+	output f; 		// To Large Comb NAND trees
+	input g; 		// x25 (s3_alu_b_complement)
+	output h; 		// To CLA Generator (P-terms)
+	input k; 		// Operand2: DV[n]
+	output m; 		// To CLA Generator (G-terms)
+	output x; 		// To ands near CLA
+	output w; 		// To Sums
 
 	// Missing transparent DLatch that stores the result of the shifter. This DLatch is critically needed, for example, when shifting DV to the left, in this case the following will happen (get ready, it's complicated):
 	// The dynamic comb of shifter during CLK2 pre-charges the output to 1 - this will be the complement of the result of the shifter bit (i.e. - 0). At the same time, the s3_alu_rotate_shift_left command does not multiplex the output of the dynamic comb for lsb in any way;
@@ -202,6 +204,7 @@ module module2 ( a, b, c, e, f, g, h, k, m, x, w );
 
 endmodule // module2
 
+// AOI-51 dynamic (5 AND to OR Inverted)
 module Comb1 ( clk, x, a, b, c, d, e );
 
 	input clk;
@@ -216,6 +219,7 @@ module Comb1 ( clk, x, a, b, c, d, e );
 
 endmodule // Comb1
 
+// AOI-31 dynamic (3 AND to OR Inverted)
 module Comb2 ( clk, x, a, b, c );
 
 	input clk;
@@ -228,6 +232,7 @@ module Comb2 ( clk, x, a, b, c );
 
 endmodule // Comb2
 
+// AOI-41 dynamic (4 AND to OR Inverted)
 module Comb3 ( clk, x, a, b, c, d );
 
 	input clk;
@@ -241,6 +246,7 @@ module Comb3 ( clk, x, a, b, c, d );
 
 endmodule // Comb3
 
+// Flag setting logic
 module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR, nIR, f, bc, nbc, ALU_to_Thingy, ALU_L0, Temp_H, Temp_C, ALU_L3, Temp_N, ALU_L5, bq4, bq5, bq7, azo );
 
 	input CLK2;
@@ -273,6 +279,7 @@ module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR,
 	wire [13:0] az;		// LargeComb1 results (non-dynamic)
 
 	// ALU Trees (by hand)
+	// The flag logic in SM83 is organized in such a way that all flag changes calculations are performed in one place (topologically). On the one hand it is very convenient (the logic is isolated), on the other hand it turns out to be a very confusing doshirak.
 
 	assign az[0] = ~( alu[0] | (`s2_alu_set&nIR[3]&nIR[4]&nIR[5]) | (`s2_alu_res&(IR[3]|IR[4]|IR[5])) );
 	assign az[1] = ~( (ALU_L5&((nIR[0]&`s2_op_incdec8)|`s3_alu_sum_pos_hf_cf)) | (ALU_L3&`s3_alu_sum_neg_hf_nf) | `s3_alu_cpl | `s2_cb_bit | `s3_alu_logic_and | (Temp_H&d58) );
