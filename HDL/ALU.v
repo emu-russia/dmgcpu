@@ -34,7 +34,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 
 	wire [7:0] e;		// module2 e in
 	wire [7:0] f;		// module2 f out
-	wire [7:0] ca; 		// comb1-3 out
+	wire [7:0] ca; 		// Shifter (comb1-3) out  (active-low)
 	wire [7:0] bx;		// module2 x out
 	wire [7:0] bm;		// module2 m out
 	wire [7:0] bh;		// module2 h out
@@ -176,7 +176,7 @@ endmodule // module6
 // G/P Terms Product
 module module2 ( a, b, c, e, f, g, h, k, m, x, w );
 
-	input a;
+	input a; 		// active low input
 	input b;
 	input c;
 	input e;
@@ -188,11 +188,17 @@ module module2 ( a, b, c, e, f, g, h, k, m, x, w );
 	output x;
 	output w;
 
+	// Missing transparent DLatch that stores the result of the shifter. This DLatch is critically needed, for example, when shifting DV to the left, in this case the following will happen (get ready, it's complicated):
+	// The dynamic comb of shifter during CLK2 pre-charges the output to 1 - this will be the complement of the result of the shifter bit (i.e. - 0). At the same time, the s3_alu_rotate_shift_left command does not multiplex the output of the dynamic comb for lsb in any way;
+	// Therefore, the output for lsb will be 0 (or rather the complementary value of 1 pre-charge, which is what is stored on the DLatch).
+	wire shift_res_q;
+	BusKeeper shift_res (.d(a), .q(shift_res_q) );
+
 	assign f = g ^ k;
 	assign h = e | f;
 	assign x = ~(e & f);
 	assign m = ~x;
-	assign w = ~(a & (~(b&m)) & (~(c&h)));
+	assign w = ~(shift_res_q & (~(b&m)) & (~(c&h)));
 
 endmodule // module2
 

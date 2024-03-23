@@ -51,4 +51,7 @@ if __name__ == '__main__':
 	CropImage (FusedTopo, "../imgstore/modules/x61", [4441, 3573, 662, 399] )		# SP
 	CropImage (FusedTopo, "../imgstore/modules/x68", [5071, 3561, 691, 411] )		# PC
 	CropImage (FusedTopo, "../imgstore/modules/module42", [6907, 1033, 192, 75] )	# module4_2 (special rs)
+	CropImage (FusedTopo, "../imgstore/modules/comb1", [3099, 1823, 196, 265] )		# Shifter msb
+	CropImage (FusedTopo, "../imgstore/modules/comb2", [2928, 1816, 130, 263] )		# Shifter bits [6:1]
+	CropImage (FusedTopo, "../imgstore/modules/comb3", [1741, 1814, 109, 274] )		# Shifter lsb
 	print ("TopoShredder End")

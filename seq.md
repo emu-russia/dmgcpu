@@ -12,8 +12,8 @@
 |---|---|---|
 |CLK1 / ADR_CLK_N|External|To g84 only; CLK2/1 are coupled by complement for g84, converting this DFF to negedge.|
 |CLK2 / ADR_CLK_P|External|To g84 only|
-|CLK4|External / DATA_CLK_N| |
-|CLK6|External / INC_CLK_P|See `huge1` module|
+|CLK4 / DATA_CLK_N|External| |
+|CLK6 / INC_CLK_P|External|See `huge1` module|
 |CLK8 / MAIN_CLK_N|External| |
 |CLK9 / MAIN_CLK_P|External| |
 |SYNC_RESET|External|Port T12; Synchronous reset means that it is only applied during a certain phase value of some CLK|
