@@ -13,8 +13,8 @@ module test_alu ();
 
 	wire M1; 		// T1
 	wire OSC_STABLE;		// T15
-	wire OSC_ENA;		// T14
-	wire CLK_ENA;		// T11
+	reg OSC_ENA;		// T14
+	reg CLK_ENA;		// T11
 	
 	wire RD;
 	wire WR;
@@ -110,6 +110,9 @@ module test_alu ();
 		$display("Test ALU.");
 
 		CLK <= 1'b0;
+		// It's not very true, but it'll do..
+		CLK_ENA <= 1'b1;
+		OSC_ENA <= 1'b1;
 		IR <= 0;
 		Temp_C <= 0;
 		Temp_H <= 0;
