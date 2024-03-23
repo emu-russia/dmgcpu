@@ -36,8 +36,8 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	wire [7:0] f;		// module2 f out
 	wire [7:0] ca; 		// Shifter (comb1-3) out  (active-low)
 	wire [7:0] bx;		// module2 x out
-	wire [7:0] bm;		// module2 m out
-	wire [7:0] bh;		// module2 h out
+	wire [7:0] bm;		// module2 m out (G-terms)
+	wire [7:0] bh;		// module2 h out (P-terms)
 	wire [7:0] bw;		// module2 w out
 	wire [7:0] ao; 		// G/P ands outputs to module6
 	wire [7:1] na; 		// CLA nots outputs to module6
@@ -166,8 +166,8 @@ module module6 ( a, b, c, d, e, x );
 
 	input a;
 	input b;
-	input c;
-	input d;
+	input c; 			// x18 (s3_alu_xor)
+	input d; 			// x3 (s3_alu_sum)
 	input e;
 	output x;
 

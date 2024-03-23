@@ -119,8 +119,8 @@ module test_alu ();
 		bq5 <= 0;
 		bq7 <= 0;
 
-		DV <= 0;
-		alu <= 0;
+		DV <= 5;
+		alu <= 7;
 
 		$dumpfile("test_alu.vcd");
 		$dumpvars(0, test_alu);
@@ -142,8 +142,8 @@ module MockDecoder (d, w, x);
 	output [68:0] x;		// Decoder3 outputs
 
 	assign d = 0;
-	assign w = 0;
-	assign x = 0;
+	assign w = 'b0_0000000000_0000000000_0000000000_0000000000;
+	assign x = 'b000000000_0000000000_0000000000_0000000000_0000000000_0000000000_0000001000; 		// x3 = 1
 
 endmodule // MockDecoder
 
