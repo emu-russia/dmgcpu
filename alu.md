@@ -14,17 +14,17 @@ See: https://www.youtube.com/watch?v=WItAXzrfPrE&list=PLBDB2c4Mp7hBLRcEpE19yyHB-
 
 |Signal|From|Description|
 |---|---|---|
-|CLK2|External| |
-|CLK4|External|Used as LoadEnable for ALU_to_bot FF|
-|CLK5|External| |
-|CLK6|External| |
-|CLK7|External| |
+|CLK2 / ADR_CLK_P|External| |
+|CLK4 / DATA_CLK_N|External|Used as LoadEnable for ALU_to_bot FF|
+|CLK5 / INC_CLK_N|External| |
+|CLK6 / INC_CLK_P|External| |
+|CLK7 / LATCH_CLK|External| |
 |DV\[7:0\]|Bottom|ALU Operand 2|
 |AllZeros|NOR-8|1: The result (`Res`) is 0.|
-|d42|Decoder1| |
-|d58|Decoder1| |
-|w (many)|Decoder2|Decoder2 outputs|
-|x (many)|Decoder3|Decoder3 outputs|
+|d42|Decoder1|Gekkio: s1_cb_00_to_3f |
+|d58|Decoder1|Gekkio: s1_op_pop_sx10 |
+|w (many, see below)|Decoder2|Decoder2 outputs|
+|x (many, see below)|Decoder3|Decoder3 outputs|
 |alu\[7:0\]|Bottom|ALU Operand 1|
 |bq4|Bottom Left| |
 |bq5|Bottom Left| |
@@ -35,6 +35,46 @@ See: https://www.youtube.com/watch?v=WItAXzrfPrE&list=PLBDB2c4Mp7hBLRcEpE19yyHB-
 |TempZ|Bottom|Flag Z from temp Z register (zbus\[7\])|
 |IR\[7:0\]|IR|Current opcode|
 |nIR\[5:0\]|MightySix|Current opcode (complement)|
+
+## Decoder2/3 Inputs
+
+The control ALU inputs from decoders 2/3 are listed separately.
+
+|Decoder2/3|Where To|Gekkio name|
+|---|---|---|
+|w0 |Flags Logic |s2_cc_check |
+|w3 |Flags Logic |s2_op_alu8 |
+|w9 |Flags Logic |s2_op_sp_e_sx10 |
+|w10 |Flags Logic |s2_alu_res |
+|w12 |Flags Logic |s2_cb_bit |
+|w15 |Flags Logic |s2_op_add_hl_sxx0 |
+|w19 |Flags Logic |s2_data_fetch_cycle |
+|w24 |Flags Logic |s2_alu_set |
+|w37 |Flags Logic |s2_op_incdec8 |
+|x0 |Shifter, Flags Logic |s3_alu_rotate_shift_left |
+|x1 |Shifter, Flags Logic |s3_alu_rotate_shift_right |
+|x3 |Sums |s3_alu_sum |
+|x4 |G/P Terms |s3_alu_logic_or |
+|x5 |Shifter |s3_alu_rlc |
+|x6 |Shifter |s3_alu_rl |
+|x7 |Shifter |s3_alu_rrc |
+|x8 |Shifter |s3_alu_rr |
+|x9 |Shifter |s3_alu_sra |
+|x10 |Flags Logic |s3_alu_sum_pos_hf_cf |
+|x11 |Flags Logic |s3_alu_sum_neg_cf |
+|x12 |Flags Logic |s3_alu_sum_neg_hf_nf |
+|x16 |Shifter |s3_alu_swap |
+|x18 |Sums |s3_alu_xor |
+|x19 |G/P Terms, Flags Logic |s3_alu_logic_and |
+|x21 |Flags Logic |s3_alu_ccf_scf |
+|x22 |Flags Logic |s3_alu_daa |
+|x23 |Flags Logic |s3_alu_add_adc |
+|x24 |Flags Logic |s3_alu_sub_sbc |
+|x25 |G/P Terms |s3_alu_b_complement |
+|x26 |Flags Logic |s3_alu_cpl |
+|x27 |Flags Logic |s3_alu_cp |
+|x28 |Flags |s3_wren_cf |
+|x29 |Flags |s3_wren_hf_nf_zf |
 
 ## ALU Outputs
 
@@ -91,12 +131,12 @@ In between is the small logic, and above the 8 "Sum" blocks (module6), which giv
 
 |Port|Dir|Description|
 |---|---|---|
-|a|input|comb1-3 outputs (`ca[7:0]`)|
-|b|input|x19|
-|c|input|x4|
+|a|input|Shifter (comb1-3) outputs (`ca[7:0]`)|
+|b|input|x19 (s3_alu_logic_and)|
+|c|input|x4 (s3_alu_logic_or)|
 |e|input|Large Comb results|
 |f|output|To Large Comb NAND trees|
-|g|input|x25|
+|g|input|x25 (s3_alu_b_complement)|
 |h|output|To CLA Generator (P-terms)|
 |k|input|DV\[n\]|
 |m|output|To CLA Generator (G-terms)|
@@ -106,7 +146,9 @@ In between is the small logic, and above the 8 "Sum" blocks (module6), which giv
 
 ## Bottom Part
 
-Presumably contains the flag setting logic and the flag register (F).
+Contains shifter, the flag setting logic and the flag register (F).
+
+## Shifter
 
 Contains 8 dynamic comb logic modules (ANDs-to-NORs + CLK2) whose outputs go up (`ca[7:0]`):
 
@@ -115,13 +157,13 @@ Contains 8 dynamic comb logic modules (ANDs-to-NORs + CLK2) whose outputs go up 
 |![comb3](/imgstore/modules/comb3.jpg)|![comb2](/imgstore/modules/comb2.jpg)|![comb1](/imgstore/modules/comb1.jpg)|
 |![comb3_tran](/imgstore/modules/comb3_tran.jpg)|![comb2_tran](/imgstore/modules/comb2_tran.jpg)|![comb1_tran](/imgstore/modules/comb1_tran.jpg)|
 
-The lower part contains many NAND trees, the inputs for which come from all sides and also from `module2` instancies.
+## Flag Setting Logic
 
-Large Comb 1 (_14 NAND trees_):
+The lower part contains many dynamic NAND trees, the inputs for which come from all sides and also from `module2` instancies.
+
+Flag settings logic (_14 NAND trees_):
 
 ![LargeComb1](/imgstore/LargeComb1.jpg)
-
-## LargeComb1 Nand Trees
 
 |Tree|CLK|Issued as|Tree|
 |---|---|---|---|
@@ -148,7 +190,7 @@ The result is an AND-to-NOR tree (using alu_0 as an example):
 
 ![ALU_LargeComb1](/HDL/Design/ALU_LargeComb1.png)
 
-## Below LargeComb1
+## Flags
 
 ![LargeComb1_Res](/imgstore/LargeComb1_Res.jpg)
 
