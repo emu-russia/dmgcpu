@@ -131,7 +131,7 @@ In between is the small logic, and above the 8 "Sum" blocks (module6), which giv
 
 |Port|Dir|Description|
 |---|---|---|
-|a|input|Shifter (comb1-3) outputs (`ca[7:0]`)|
+|a|input|Shifter (comb1-3) outputs (`ca[7:0]`); Stored on input transparent DLatch.|
 |b|input|x19 (s3_alu_logic_and)|
 |c|input|x4 (s3_alu_logic_or)|
 |e|input|Large Comb results|
@@ -150,12 +150,16 @@ Contains shifter, the flag setting logic and the flag register (F).
 
 ## Shifter
 
-Contains 8 dynamic comb logic modules (ANDs-to-NORs + CLK2) whose outputs go up (`ca[7:0]`):
+Contains 8 dynamic comb logic modules (ANDs-to-NORs + CLK2), multiplexing DV operand to outputs (`ca[7:0]`, active low output):
 
 |Comb1 (bit 7)|Comb2 (bits 6-1)|Comb3 (bit 0)|
 |---|---|---|
 |![comb1](/imgstore/modules/comb1.jpg)|![comb2](/imgstore/modules/comb2.jpg)|![comb3](/imgstore/modules/comb3.jpg)|
 |![comb1_tran](/imgstore/modules/comb1_tran.jpg)|![comb2_tran](/imgstore/modules/comb2_tran.jpg)|![comb3_tran](/imgstore/modules/comb3_tran.jpg)|
+
+![alu_shifter](/logisim/alu_shifter.png)
+
+The output from the dynamic combinatorial logic is stored on the DLatch (see G/P Terms module).
 
 ## Flag Setting Logic
 

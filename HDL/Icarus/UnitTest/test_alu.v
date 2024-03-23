@@ -146,3 +146,24 @@ module MockDecoder (d, w, x);
 	assign x = 0;
 
 endmodule // MockDecoder
+
+// Transparent latch used as a bus keeper.
+module BusKeeper (d, q);
+
+	input d;
+	output q;
+
+	reg val;
+	// The BusKeeper value is stored on the FET gate. We assume that initially there is no charge there, i.e. the value is 0.
+	initial val = 1'b0;
+
+	always @(*) begin
+		if (d == 1'b1)
+			val = 1'b1;
+		if (d == 1'b0)
+			val = 1'b0;
+	end
+
+	assign q = val;
+
+endmodule // BusKeeper
