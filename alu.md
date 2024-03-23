@@ -152,10 +152,10 @@ Contains shifter, the flag setting logic and the flag register (F).
 
 Contains 8 dynamic comb logic modules (ANDs-to-NORs + CLK2) whose outputs go up (`ca[7:0]`):
 
-|Comb3 (bit 0)|Comb2 (bits 1-6)|Comb1 (bit 7)|
+|Comb1 (bit 7)|Comb2 (bits 6-1)|Comb3 (bit 0)|
 |---|---|---|
-|![comb3](/imgstore/modules/comb3.jpg)|![comb2](/imgstore/modules/comb2.jpg)|![comb1](/imgstore/modules/comb1.jpg)|
-|![comb3_tran](/imgstore/modules/comb3_tran.jpg)|![comb2_tran](/imgstore/modules/comb2_tran.jpg)|![comb1_tran](/imgstore/modules/comb1_tran.jpg)|
+|![comb1](/imgstore/modules/comb1.jpg)|![comb2](/imgstore/modules/comb2.jpg)|![comb3](/imgstore/modules/comb3.jpg)|
+|![comb1_tran](/imgstore/modules/comb1_tran.jpg)|![comb2_tran](/imgstore/modules/comb2_tran.jpg)|![comb3_tran](/imgstore/modules/comb3_tran.jpg)|
 
 ## Flag Setting Logic
 
