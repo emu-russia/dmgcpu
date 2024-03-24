@@ -319,8 +319,8 @@ module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR,
 	assign azo[5] = CLK2 ? az[5] : 1'b1;
 	assign azo[6] = CLK2 ? az[6] : 1'b1;
 	assign azo[7] = CLK7 ? (CLK6 ? az[7] : 1'b1) : 1'b1;		// -> bc2
-	assign azo[8] = CLK2 ? az[7] : 1'b1;
-	assign azo[9] = CLK2 ? az[8] : 1'b1;
+	assign azo[8] = CLK2 ? az[8] : 1'b1;
+	assign azo[9] = CLK2 ? az[9] : 1'b1;
 	assign azo[10] = CLK2 ? az[10] : 1'b1;
 	assign azo[11] = CLK7 ? (CLK6 ? az[11] : 1'b1) : 1'b1; 		// -> ALU_Out1
 	assign azo[12] = CLK7 ? (CLK6 ? az[12] : 1'b1) : 1'b1;		// -> bc3
