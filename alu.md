@@ -123,6 +123,15 @@ In between is the small logic, and above the 8 "Sum" blocks (module6), which giv
 
 ![module6_tran](/imgstore/modules/module6_tran.jpg)
 
+|Port|Dir|Description|
+|---|---|---|
+|a|input| |
+|b|input| |
+|c|input|x18 (s3_alu_xor)|
+|d|input|x3 (s3_alu_sum)|
+|e|input|The result of the logical operation AND/OR/permutation of Operand2 bits.|
+|x|output|Res|
+
 ## Middle Part (G/P Terms)
 
 8 identical modules.
@@ -136,15 +145,15 @@ In between is the small logic, and above the 8 "Sum" blocks (module6), which giv
 |a|input|Shifter (comb1-3) outputs (`ca[7:0]`); Stored on input transparent DLatch.|
 |b|input|x19 (s3_alu_logic_and)|
 |c|input|x4 (s3_alu_logic_or)|
-|e|input|Large Comb results|
-|f|output|To Large Comb NAND trees|
+|e|input|Large Comb results; Result of executing SET/RES opcodes for operand1|
+|f|output|To Large Comb NAND trees; Operand2 optionally complemented|
 |g|input|x25 (s3_alu_b_complement)|
 |h|output|To CLA Generator (P-terms)|
-|k|input|DV\[n\]|
+|k|input|Operand2: DV\[n\]|
 |m|output|To CLA Generator (G-terms)|
 |clk|input|CLK2|
 |x|output|To ands near CLA|
-|w|output|To Sums (module6)|
+|w|output|To Sums (module6); The result of the logical operation AND/OR/permutation of Operand2 bits.|
 
 ## Bottom Part
 
