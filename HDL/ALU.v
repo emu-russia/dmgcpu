@@ -93,9 +93,9 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 		.c({{`s3_alu_swap,DV[2]},{`s3_alu_swap,DV[1]},{`s3_alu_swap,DV[0]},{`s3_alu_swap,DV[7]},{`s3_alu_swap,DV[6]},{`s3_alu_swap,DV[5]}}) );
 	Comb1 bit_msb ( .clk(CLK2), .x(ca[7]), .a({`s3_alu_rotate_shift_left,DV[6]}), .b({`s3_alu_rr,bc[1]}), .c({`s3_alu_sra,DV[7]}), .d({`s3_alu_rrc,DV[0]}), .e({`s3_alu_swap,DV[3]}) );
 
-	// Flag setting logic (large spaghetti at the bottom)
+	// Random logic (large spaghetti at the bottom)
 
-	LargeComb1 flag_logic (
+	LargeComb1 rand_logic (
 		.CLK2(CLK2),
 		.CLK6(CLK6),
 		.CLK7(CLK7),
@@ -246,7 +246,7 @@ module Comb3 ( clk, x, a, b, c, d );
 
 endmodule // Comb3
 
-// Flag setting logic
+// Random logic
 module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR, nIR, f, bc, nbc, ALU_to_Thingy, ALU_L0, Temp_H, Temp_C, ALU_L3, Temp_N, ALU_L5, bq4, bq5, bq7, azo );
 
 	input CLK2;
