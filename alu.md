@@ -10,6 +10,8 @@ The SM83 ALU is a regular 8-bit CLA adder.
 
 See: https://www.youtube.com/watch?v=WItAXzrfPrE&list=PLBDB2c4Mp7hBLRcEpE19yyHB-zKzsyp_4&index=20
 
+A note from the future: although in this section individual modules are referred to by a single name (e.g. `Sums`), most modules actually fulfill a hybrid role. For example, the module for obtaining G/P terms is also used for logical operations (as it comes naturally from the nature of G/P). The ALU is not yet fully understood, so some of the signals have "cryptologic" names.
+
 ## ALU Inputs
 
 |Signal|From|Description|
