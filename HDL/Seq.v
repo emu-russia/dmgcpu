@@ -33,7 +33,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	input Maybe2; 			// See seq_mreq module.
 	output MREQ;
 
-	input SeqControl_1;
+	input SeqControl_1; 		// 1: Wake up after an interrupt. Used in HLT opcode processing.
 	input SeqControl_2;
 	output SeqOut_1;
 	output SeqOut_2;

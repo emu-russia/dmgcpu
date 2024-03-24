@@ -25,7 +25,7 @@
 |MMIO_REQ|External|Port R4. See `shielded` module|
 |IPL_REQ|External|Port R5. See `shielded` module|
 |Maybe2|External|Port R6. See `shielded` module|
-|Seq_Control1|Bottom|To g42|
+|Seq_Control1|IRQ Logic|To g42; 1: Wake up after an interrupt. Used in HLT opcode processing.|
 |Seq_Control2|Bottom|To nand g79|
 |d93|Decoder1|To g52, g78|
 |d99|Decoder1|To g80, g91, g94|

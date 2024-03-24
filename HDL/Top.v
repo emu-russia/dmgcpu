@@ -72,7 +72,7 @@ module SM83Core (
 	wire SeqOut_1; 		// IME? (to interrupt control)
 	wire SeqOut_2;
 	wire SeqOut_3; 		// N.C.
-	wire SeqControl_1;
+	wire SeqControl_1; 			// 1: Wake up after an interrupt. Used in HLT opcode processing.
 	wire SeqControl_2;
 	wire nCLK4;					// It is obtained by inverting CLK4 inside the sequencer.
 
