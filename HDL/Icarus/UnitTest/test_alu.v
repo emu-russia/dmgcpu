@@ -13,8 +13,8 @@ module test_alu ();
 
 	wire M1; 		// T1
 	wire OSC_STABLE;		// T15
-	wire OSC_ENA;		// T14
-	wire CLK_ENA;		// T11
+	reg OSC_ENA;		// T14
+	reg CLK_ENA;		// T11
 	
 	wire RD;
 	wire WR;
@@ -110,6 +110,9 @@ module test_alu ();
 		$display("Test ALU.");
 
 		CLK <= 1'b0;
+		// It's not very true, but it'll do..
+		CLK_ENA <= 1'b1;
+		OSC_ENA <= 1'b1;
 		IR <= 0;
 		Temp_C <= 0;
 		Temp_H <= 0;
@@ -119,8 +122,8 @@ module test_alu ();
 		bq5 <= 0;
 		bq7 <= 0;
 
-		DV <= 0;
-		alu <= 0;
+		DV <= 5;
+		alu <= 7;
 
 		$dumpfile("test_alu.vcd");
 		$dumpvars(0, test_alu);
@@ -142,8 +145,8 @@ module MockDecoder (d, w, x);
 	output [68:0] x;		// Decoder3 outputs
 
 	assign d = 0;
-	assign w = 0;
-	assign x = 0;
+	assign w = 'b0_0000000000_0000000000_0000000000_0000000000;
+	assign x = 'b000000000_0000000000_0000000000_0000000000_0000000000_0000000000_0000001000; 		// x3 = 1
 
 endmodule // MockDecoder
 

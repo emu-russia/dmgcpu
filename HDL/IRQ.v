@@ -17,7 +17,7 @@ module IRQ_Logic ( CLK3, CLK4, CLK5, CLK6, DL, RD, CPU_IRQ_ACK, CPU_IRQ_TRIG, br
 	output bot_to_Thingy;			// 1: Access to IE detected
 	input Thingy_to_bot;			// 1: Write Access to IE detected (Load IE from DataBus)
 	input SYNC_RES;
-	output SeqControl_1;
+	output SeqControl_1; 			// 1: Wake up after an interrupt. Used in HLT opcode processing.
 	output SeqControl_2;
 	input SeqOut_1;			// IME?
 	input d93; 			// 1: Enable IRQ processing by Decoder1, 0: disable
