@@ -223,4 +223,4 @@ Regular memory cell (latch) with write enable (x28/x29). It also contains a Prec
 
 ![ALU_to_bot_tran](/imgstore/modules/ALU_to_bot_tran.jpg)
 
-A regular memory cell (latch), for storing the Temp_Z = `zbus[7]` value (msb). The signal CLK4 acts as WriteEnable.
+A regular memory cell (latch), for storing the TempZ = `zbus[7]` value (msb). The signal CLK4 acts as WriteEnable.
