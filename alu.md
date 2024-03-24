@@ -23,7 +23,7 @@ A note from the future: although in this section individual modules are referred
 |CLK7 / LATCH_CLK|External| |
 |DV\[7:0\]|Bottom|ALU Operand 2|
 |AllZeros|NOR-8|1: The result (`Res`) is 0.|
-|d42|Decoder1|Gekkio: s1_cb_00_to_3f |
+|d42|Decoder1|Gekkio: s1_cb_00_to_3f, i.e. all operations related to bit permutation (shift/rotate/swap) |
 |d58|Decoder1|Gekkio: s1_op_pop_sx10 |
 |w (many, see below)|Decoder2|Decoder2 outputs|
 |x (many, see below)|Decoder3|Decoder3 outputs|

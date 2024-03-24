@@ -22,17 +22,17 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	input bq5;
 	input bq7;
 	output ALU_to_Thingy; 		// ALU Carry Out
-	input Temp_C;		// Flag C from temp Z register
-	input Temp_H;		// Flag H from temp Z register
-	input Temp_N;		// Flag N from temp Z register
-	input Temp_Z;			// Flag Z from temp Z register
+	input Temp_C;		// Flag C from temp Z register  (zbus[4])
+	input Temp_H;		// Flag H from temp Z register  (zbus[5])
+	input Temp_N;		// Flag N from temp Z register    (zbus[6])
+	input Temp_Z;			// Flag Z from temp Z register / zbus msb  (zbus[7])
 	output ALU_Out1;
 	input [7:0] IR;
 	input [5:0] nIR;
 
 	// Internal wires
 
-	wire [7:0] e;		// module2 e in
+	wire [7:0] e;		// Operand1 processing results for SET/RES opcodes; module2 e in
 	wire [7:0] f;		// module2 f out
 	wire [7:0] ca; 		// Shifter (comb1-3) out  (active-low)
 	wire [7:0] bx;		// module2 x out
@@ -48,7 +48,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	wire ALU_L0;
 	wire ALU_L3;
 	wire ALU_L5;
-	wire ALU_to_bot;		// ALU Flag Z.  As a result of the optimization and transposition of the `bc` derivation circuit, the signal became internal.
+	wire ALU_to_bot;		// Derived from zbus[7] .  As a result of the optimization and transposition of the `bc` derivation circuit, the signal became internal.
 
 	// Top part (CLA + Sum)
 
@@ -133,7 +133,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	bc bc1 ( .nd(azo[2]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_cf), .q(bc[1]), .nq(nbc[1]) ); 			// Flag C
 	bc bc2 ( .nd(azo[7]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_hf_nf_zf), .q(bc[2]), .nq(nbc[2]) );  		// Flag N
 	bc bc3 ( .nd(azo[12]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_hf_nf_zf), .q(bc[3]), .nq(nbc[3]) ); 	// Flag Z
-	ALU_to_bot_FF flag_z ( .d(Temp_Z), .CLK(CLK6), .CCLK(CLK5), .Load(CLK4), .q(ALU_to_bot) ); 			// another Flag Z? wtf? Figure it out
+	ALU_to_bot_FF zbus_msb ( .d( Temp_Z /* =zbus[7] */ ), .CLK(CLK6), .CCLK(CLK5), .Load(CLK4), .q(ALU_to_bot) ); 			// zbus msb FF
 
 	// Regarding "bc". I tend to think that even though bc0/bc4 is at the bottom, it is still part of the ALU.
 	// Moved this circuit in my HDL inside the ALU instead of at the bottom. Then wire [5:0] bc; will become output.
