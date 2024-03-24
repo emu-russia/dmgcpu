@@ -155,9 +155,9 @@ module module5 ( m, h, c, q );
 	output [3:0] q; 	// C1...C4  (inverted)
 
 	assign q[0] = ~(m[0] | (h[0] & c)); 		// ~Carry1 out
-	assign q[1] = ~(m[1] | (h[1] & q[0]));		// ~Carry2 out
-	assign q[2] = ~(m[2] | (h[2] & q[1]));		// ~Carry3 out
-	assign q[3] = ~(m[3] | (h[3] & q[2]));		// ~Carry4 out
+	assign q[1] = ~(m[1] | (h[1] & ~q[0]));		// ~Carry2 out
+	assign q[2] = ~(m[2] | (h[2] & ~q[1]));		// ~Carry3 out
+	assign q[3] = ~(m[3] | (h[3] & ~q[2]));		// ~Carry4 out
 
 endmodule // module5
 
