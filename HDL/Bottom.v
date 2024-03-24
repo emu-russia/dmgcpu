@@ -20,7 +20,7 @@ module Bottom ( CLK2, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, Temp_C,
 	output Temp_C;		// Flag C from temp Z register
 	output Temp_H;		// Flag H from temp Z register
 	output Temp_N;		// Flag N from temp Z register
-	output Temp_Z;			// Flag Z from temp Z register
+	output Temp_Z;			// Flag Z from temp Z register  / zbus msb
 	output [7:0] alu; 		// ALU Operand1
 	input [7:0] Res;		// ALU Result
 

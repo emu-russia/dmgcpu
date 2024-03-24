@@ -84,6 +84,7 @@ module test_alu ();
 		.nIR(~IR[5:0]) );
 
 	// clkgen is needed only if we want to test ALU more thoroughly, with the logic of setting flags, for example.
+	// EDIT: In the process of test development it turned out that operations on ALU are synchronous and require at least CLK2 (see modified Operand1 alu0-7, outputs e0-e7 from flag logic)
 
 	External_CLK clkgen (
 		.CLK(CLK),
@@ -102,6 +103,8 @@ module test_alu ();
 		.OSC_STABLE(OSC_STABLE),
 		.ASYNC_RESET(ASYNC_RESET),
 		.SYNC_RESET(SYNC_RESET) );
+
+	// The mock decoder is needed to return the d/w/x signals to the ALU, which will make it work as an adder.
 
 	MockDecoder decoder (.d(d), .w(w), .x(x) );
 
@@ -146,7 +149,7 @@ module MockDecoder (d, w, x);
 
 	assign d = 0;
 	assign w = 'b0_0000000000_0000000000_0000000000_0000000000;
-	assign x = 'b000000000_0000000000_0000000000_0000000000_0000000000_0000000000_0000001000; 		// x3 = 1
+	assign x = 'b0_00000000_0000000000_0000000000_0000000000_0000000000_0000000000_0000001000; 		// x3 = 1 (s3_alu_sum)
 
 endmodule // MockDecoder
 

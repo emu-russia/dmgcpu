@@ -10,6 +10,8 @@ The SM83 ALU is a regular 8-bit CLA adder.
 
 See: https://www.youtube.com/watch?v=WItAXzrfPrE&list=PLBDB2c4Mp7hBLRcEpE19yyHB-zKzsyp_4&index=20
 
+A note from the future: although in this section individual modules are referred to by a single name (e.g. `Sums`), most modules actually fulfill a hybrid role. For example, the module for obtaining G/P terms is also used for logical operations (as it comes naturally from the nature of G/P). The ALU is not yet fully understood, so some of the signals have "cryptologic" names.
+
 ## ALU Inputs
 
 |Signal|From|Description|
@@ -21,7 +23,7 @@ See: https://www.youtube.com/watch?v=WItAXzrfPrE&list=PLBDB2c4Mp7hBLRcEpE19yyHB-
 |CLK7 / LATCH_CLK|External| |
 |DV\[7:0\]|Bottom|ALU Operand 2|
 |AllZeros|NOR-8|1: The result (`Res`) is 0.|
-|d42|Decoder1|Gekkio: s1_cb_00_to_3f |
+|d42|Decoder1|Gekkio: s1_cb_00_to_3f, i.e. all operations related to bit permutation (shift/rotate/swap) |
 |d58|Decoder1|Gekkio: s1_op_pop_sx10 |
 |w (many, see below)|Decoder2|Decoder2 outputs|
 |x (many, see below)|Decoder3|Decoder3 outputs|
@@ -36,7 +38,7 @@ See: https://www.youtube.com/watch?v=WItAXzrfPrE&list=PLBDB2c4Mp7hBLRcEpE19yyHB-
 |IR\[7:0\]|IR|Current opcode|
 |nIR\[5:0\]|MightySix|Current opcode (complement)|
 
-## Decoder2/3 Inputs
+## Inputs from Decoder2/3
 
 The control ALU inputs from decoders 2/3 are listed separately.
 

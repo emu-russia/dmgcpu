@@ -5,9 +5,9 @@
 
 module Thingy ( w8, w31, w35, ALU_to_Thingy, WR, Temp_Z, TTB1, TTB2, TTB3, Thingy_to_bot, bot_to_Thingy );
 
-	input w8;
-	input w31;
-	input w35;
+	input w8; 			// Gekkio: s2_op_jr_any_sx01
+	input w31; 			// Gekkio: s2_idu_inc
+	input w35; 				// Gekkio: s2_idu_dec
 	input ALU_to_Thingy;
 	input WR;
 	input Temp_Z;		// Flag Z from temp Z register (zbus[7])
