@@ -204,7 +204,7 @@ module module2 ( a, b, c, e, f, g, h, k, m, x, w );
 
 endmodule // module2
 
-// AOI-51 dynamic (5 AND to OR Inverted)
+// AOI-22222 dynamic (5 ANDs to OR Inverted)
 module Comb1 ( clk, x, a, b, c, d, e );
 
 	input clk;
@@ -219,7 +219,7 @@ module Comb1 ( clk, x, a, b, c, d, e );
 
 endmodule // Comb1
 
-// AOI-31 dynamic (3 AND to OR Inverted)
+// AOI-222 dynamic (3 ANDs to OR Inverted)
 module Comb2 ( clk, x, a, b, c );
 
 	input clk;
@@ -232,7 +232,7 @@ module Comb2 ( clk, x, a, b, c );
 
 endmodule // Comb2
 
-// AOI-41 dynamic (4 AND to OR Inverted)
+// AOI-2222 dynamic (4 ANDs to OR Inverted)
 module Comb3 ( clk, x, a, b, c, d );
 
 	input clk;
