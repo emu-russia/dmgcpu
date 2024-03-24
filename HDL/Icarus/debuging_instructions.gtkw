@@ -1,0 +1,118 @@
+[*]
+[*] GTKWave Analyzer v3.3.118 (w)1999-2023 BSI
+[*] Sun Mar 24 21:40:34 2024
+[*]
+[dumpfile] "/home/rodrigodd/repos/dmg-sim/dmgcpu/HDL/Icarus/dmg_waves.vcd"
+[dumpfile_mtime] "Sun Mar 24 21:29:41 2024"
+[dumpfile_size] 576665
+[savefile] "/home/rodrigodd/repos/dmg-sim/dmgcpu/HDL/Icarus/debuging_instructions.gtkw"
+[timestart] 3823
+[size] 1362 668
+[pos] -1 -1
+*-8.400001 5210 5210 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] SM83_Run.
+[treeopen] SM83_Run.dmgcore.
+[treeopen] SM83_Run.dmgcore.bot.
+[sst_width] 273
+[signals_width] 214
+[sst_expanded] 1
+[sst_vpaned_height] 180
+@28
+SM83_Run.clkgen.CLK
+SM83_Run.dmgcore.CLK9
+SM83_Run.dmgcore.dl.CLK
+@22
+SM83_Run.dmgcore.IR[7:0]
+SM83_Run.dmgcore.A[15:0]
+SM83_Run.dmgcore.D[7:0]
+SM83_Run.dmgcore.bot.pc.DL[7:0]
+@28
+SM83_Run.dmgcore.RD
+SM83_Run.dmgcore.WR
+@22
+SM83_Run.dmgcore.bot.pc.PC[15:0]
+SM83_Run.dmgcore.bot.sp.SP[15:0]
+SM83_Run.dmgcore.bot.regs.r1q[7:0]
+SM83_Run.dmgcore.bot.regs.r3q[7:0]
+SM83_Run.dmgcore.bot.regs.r2q[7:0]
+SM83_Run.dmgcore.dl.Res[7:0]
+@200
+-
+-databus to A
+@22
+SM83_Run.dmgcore.bot.IR[7:0]
+SM83_Run.dmgcore.D[7:0]
+SM83_Run.dmgcore.bot.DL[7:0]
+SM83_Run.dmgcore.bot.temp_regs.Z_in[7:0]
+SM83_Run.dmgcore.bot.zbus[7:0]
+SM83_Run.dmgcore.bot.bbus[7:0]
+SM83_Run.dmgcore.bot.bottom_left.bbq[7:0]
+@c00022
+SM83_Run.dmgcore.bot.DV[7:0]
+@28
+(0)SM83_Run.dmgcore.bot.DV[7:0]
+(1)SM83_Run.dmgcore.bot.DV[7:0]
+(2)SM83_Run.dmgcore.bot.DV[7:0]
+(3)SM83_Run.dmgcore.bot.DV[7:0]
+(4)SM83_Run.dmgcore.bot.DV[7:0]
+(5)SM83_Run.dmgcore.bot.DV[7:0]
+(6)SM83_Run.dmgcore.bot.DV[7:0]
+(7)SM83_Run.dmgcore.bot.DV[7:0]
+@1401200
+-group_end
+@22
+SM83_Run.dmgcore.bot.Res[7:0]
+SM83_Run.dmgcore.bot.fbus[7:0]
+SM83_Run.dmgcore.bot.regs.r1q[7:0]
+@28
+SM83_Run.dmgcore.bot.CLK2
+@200
+-
+-databus to HL
+@22
+SM83_Run.dmgcore.bot.IR[7:0]
+SM83_Run.dmgcore.D[7:0]
+SM83_Run.dmgcore.bot.DL[7:0]
+SM83_Run.dmgcore.bot.temp_regs.Z_in[7:0]
+SM83_Run.dmgcore.bot.temp_regs.W_in[7:0]
+SM83_Run.dmgcore.bot.zbus[7:0]
+SM83_Run.dmgcore.bot.wbus[7:0]
+SM83_Run.dmgcore.bot.ebus[7:0]
+SM83_Run.dmgcore.bot.fbus[7:0]
+SM83_Run.dmgcore.bot.regs.r2q[7:0]
+SM83_Run.dmgcore.bot.regs.r3q[7:0]
+@200
+-
+-databus to SP
+@22
+SM83_Run.dmgcore.bot.regs.IR[7:0]
+SM83_Run.dmgcore.D[7:0]
+SM83_Run.dmgcore.DL[7:0]
+SM83_Run.dmgcore.bot.temp_regs.Z_in[7:0]
+SM83_Run.dmgcore.bot.temp_regs.zbus[7:0]
+SM83_Run.dmgcore.bot.wbus[7:0]
+SM83_Run.dmgcore.bot.ebus[7:0]
+SM83_Run.dmgcore.bot.fbus[7:0]
+SM83_Run.dmgcore.bot.sp.sph_q[7:0]
+SM83_Run.dmgcore.bot.sp.spl_q[7:0]
+@200
+-
+-databus to PC
+@22
+SM83_Run.dmgcore.bot.regs.IR[7:0]
+SM83_Run.dmgcore.D[7:0]
+SM83_Run.dmgcore.DL[7:0]
+SM83_Run.dmgcore.bot.temp_regs.Z_in[7:0]
+SM83_Run.dmgcore.bot.temp_regs.zbus[7:0]
+SM83_Run.dmgcore.bot.wbus[7:0]
+SM83_Run.dmgcore.bot.pc.pcl_nd[7:0]
+SM83_Run.dmgcore.bot.pc.pch_nd[7:0]
+@23
+SM83_Run.dmgcore.bot.pc.pcl_q[7:0]
+@22
+SM83_Run.dmgcore.bot.pc.pch_q[7:0]
+@200
+-
+-
+[pattern_trace] 1
+[pattern_trace] 0
