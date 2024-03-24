@@ -228,7 +228,7 @@ The other three are "State\[3\]", encoding a timestamp for executing long instru
 |a22|#State1 (0: state1 active)|
 |a24|#State0 (0: state0 active)|
 
-(the names of the states are in inverse polarity, because Gekkio takes their values from the corresponding DFFs and they go to the specified decoder inputs in inverse polarity).
+(the names of the states given here in inverse polarity, because Gekkio takes their names from the corresponding DFFs but they go to the specified decoder inputs in inverse polarity).
 
 ## Logisim
 
