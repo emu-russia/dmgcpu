@@ -125,8 +125,8 @@ module test_alu ();
 		bq5 <= 0;
 		bq7 <= 0;
 
-		DV <= 5;
-		alu <= 7;
+		DV <= 77;
+		alu <= 35;
 
 		$dumpfile("test_alu.vcd");
 		$dumpvars(0, test_alu);

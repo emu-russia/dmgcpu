@@ -4,7 +4,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	Temp_C, Temp_H, Temp_N, Temp_Z, ALU_Out1, IR, nIR );
 
 	input CLK2;
-	input CLK4;			// Used as LoadEnable for ALU_to_bot FF.
+	input CLK4;			// Used as LoadEnable for ALU_to_bot latch.
 	input CLK5;
 	input CLK6;
 	input CLK7;
@@ -33,21 +33,21 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	// Internal wires
 
 	wire [7:0] e;		// Operand1 processing results for SET/RES opcodes; module2 e in
-	wire [7:0] f;		// module2 f out
+	wire [7:0] f;		// module2 f out; Optionaly complemeted Operand2
 	wire [7:0] ca; 		// Shifter (comb1-3) out  (active-low)
 	wire [7:0] bx;		// module2 x out
 	wire [7:0] bm;		// module2 m out (G-terms)
 	wire [7:0] bh;		// module2 h out (P-terms)
-	wire [7:0] bw;		// module2 w out
-	wire [7:0] ao; 		// G/P ands outputs to module6
-	wire [7:1] na; 		// CLA nots outputs to module6
-	wire [7:0] q; 		// CLA outputs (0-3: left, 4-7: right)
+	wire [7:0] logic_op;		// module2 w out; The result of the logical operation AND/OR/permutation of Operand2 bits.
+	wire [7:0] ao; 		// G/P ands outputs to module6  (logic xor)
+	wire [7:1] na; 		// CLA Carry outputs; CLA nots outputs to module6
+	wire [7:0] q; 		// CLA carry complement outputs (bits 0-3: topologicaly left, bits 4-7: topologicaly right)
 	wire [5:0] nbc; 	// #bc
 	wire [13:0] azo;	// LargeComb1 results
 	wire ALU_to_top; 		// Carry In
-	wire ALU_L0;
-	wire ALU_L3;
-	wire ALU_L5;
+	wire ALU_L0; 		// ~Carry7
+	wire ALU_L3; 		// ~Carry4
+	wire ALU_L5; 		// Carry4
 	wire ALU_to_bot;		// Derived from zbus[7] .  As a result of the optimization and transposition of the `bc` derivation circuit, the signal became internal.
 
 	// Top part (CLA + Sum)
@@ -57,12 +57,12 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 		.b(ao),
 		.c({8{`s3_alu_xor}}),
 		.d({8{`s3_alu_sum}}),
-		.e(bw),
+		.e(logic_op),
 		.x(Res) );
 
-	assign ALU_L0 = ~ALU_to_Thingy;
-	assign ALU_L3 = ~na[4];
-	assign ALU_L5 = na[4];
+	assign ALU_L0 = ~ALU_to_Thingy;  		// ~cout
+	assign ALU_L3 = ~na[4]; 			// ~half cout
+	assign ALU_L5 = na[4]; 				// half cout
 	assign {ALU_to_Thingy, na[7:1]} = ~q;
 	assign ao = bh & bx; 		// ands
 
@@ -82,7 +82,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 		.k(DV), 
 		.m(bm), 
 		.x(bx), 
-		.w(bw) );
+		.w(logic_op) );
 
 	// Shifter
 
@@ -93,9 +93,9 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 		.c({{`s3_alu_swap,DV[2]},{`s3_alu_swap,DV[1]},{`s3_alu_swap,DV[0]},{`s3_alu_swap,DV[7]},{`s3_alu_swap,DV[6]},{`s3_alu_swap,DV[5]}}) );
 	Comb1 bit_msb ( .clk(CLK2), .x(ca[7]), .a({`s3_alu_rotate_shift_left,DV[6]}), .b({`s3_alu_rr,bc[1]}), .c({`s3_alu_sra,DV[7]}), .d({`s3_alu_rrc,DV[0]}), .e({`s3_alu_swap,DV[3]}) );
 
-	// Flag setting logic (large spaghetti at the bottom)
+	// Random logic (large spaghetti at the bottom)
 
-	LargeComb1 flag_logic (
+	LargeComb1 rand_logic (
 		.CLK2(CLK2),
 		.CLK6(CLK6),
 		.CLK7(CLK7),
@@ -133,7 +133,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	bc bc1 ( .nd(azo[2]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_cf), .q(bc[1]), .nq(nbc[1]) ); 			// Flag C
 	bc bc2 ( .nd(azo[7]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_hf_nf_zf), .q(bc[2]), .nq(nbc[2]) );  		// Flag N
 	bc bc3 ( .nd(azo[12]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_hf_nf_zf), .q(bc[3]), .nq(nbc[3]) ); 	// Flag Z
-	ALU_to_bot_FF zbus_msb ( .d( Temp_Z /* =zbus[7] */ ), .CLK(CLK6), .CCLK(CLK5), .Load(CLK4), .q(ALU_to_bot) ); 			// zbus msb FF
+	ALU_to_bot_latch zbus_msb ( .d( Temp_Z /* =zbus[7] */ ), .CLK(CLK6), .CCLK(CLK5), .Load(CLK4), .q(ALU_to_bot) ); 			// zbus msb latch
 
 	// Regarding "bc". I tend to think that even though bc0/bc4 is at the bottom, it is still part of the ALU.
 	// Moved this circuit in my HDL inside the ALU instead of at the bottom. Then wire [5:0] bc; will become output.
@@ -155,9 +155,9 @@ module module5 ( m, h, c, q );
 	output [3:0] q; 	// C1...C4  (inverted)
 
 	assign q[0] = ~(m[0] | (h[0] & c)); 		// ~Carry1 out
-	assign q[1] = ~(m[1] | (h[1] & q[0]));		// ~Carry2 out
-	assign q[2] = ~(m[2] | (h[2] & q[1]));		// ~Carry3 out
-	assign q[3] = ~(m[3] | (h[3] & q[2]));		// ~Carry4 out
+	assign q[1] = ~(m[1] | (h[1] & ~q[0]));		// ~Carry2 out
+	assign q[2] = ~(m[2] | (h[2] & ~q[1]));		// ~Carry3 out
+	assign q[3] = ~(m[3] | (h[3] & ~q[2]));		// ~Carry4 out
 
 endmodule // module5
 
@@ -168,39 +168,40 @@ module module6 ( a, b, c, d, e, x );
 	input b;
 	input c; 			// x18 (s3_alu_xor)
 	input d; 			// x3 (s3_alu_sum)
-	input e;
+	input e; 			// The result of the logical operation AND/OR/permutation of Operand2 bits.
 	output x;
 
 	assign x = ( (b & c) | ((a ^ b) & d) | (e) );
 
 endmodule // module6
 
-// G/P Terms Product
+// G/P Terms Product.
+// The module "hybridizes" the computation of G/P terms by reusing them for logical AND/OR operations. It also contains a Shifter result bypass.
 module module2 ( a, b, c, e, f, g, h, k, m, x, w );
 
-	input a; 		// active low input
+	input a; 		// Result of permutation(shift/rotate/swap) of Operand2 bits; [!] active low input
 	input b;  			// x19 (s3_alu_logic_and)
 	input c; 			// x4 (s3_alu_logic_or)
-	input e; 		// Large Comb results
-	output f; 		// To Large Comb NAND trees
+	input e; 		// Large Comb results; Result of executing SET/RES opcodes for operand1
+	output f; 		// To Large Comb NAND trees; Operand2 optionally complemented
 	input g; 		// x25 (s3_alu_b_complement)
 	output h; 		// To CLA Generator (P-terms)
 	input k; 		// Operand2: DV[n]
 	output m; 		// To CLA Generator (G-terms)
 	output x; 		// To ands near CLA
-	output w; 		// To Sums
+	output w; 		// To Sums; The result of the logical operation AND/OR/permutation of Operand2 bits.
 
-	// Missing transparent DLatch that stores the result of the shifter. This DLatch is critically needed, for example, when shifting DV to the left, in this case the following will happen (get ready, it's complicated):
+	// Missing transparent DLatch that stores the result of the shifter (permutation result). This DLatch is critically needed, for example, when shifting DV to the left, in this case the following will happen (get ready, it's complicated):
 	// The dynamic comb of shifter during CLK2 pre-charges the output to 1 - this will be the complement of the result of the shifter bit (i.e. - 0). At the same time, the s3_alu_rotate_shift_left command does not multiplex the output of the dynamic comb for lsb in any way;
 	// Therefore, the output for lsb will be 0 (or rather the complementary value of 1 pre-charge, which is what is stored on the DLatch).
-	wire shift_res_q;
-	BusKeeper shift_res (.d(a), .q(shift_res_q) );
+	wire shift_res_q;  		// <-- active low
+	BusKeeper perm_ff (.d(a), .q(shift_res_q) );
 
-	assign f = g ^ k;
+	assign f = k ^ g;
 	assign h = e | f;
 	assign x = ~(e & f);
 	assign m = ~x;
-	assign w = ~(shift_res_q & (~(b&m)) & (~(c&h)));
+	assign w = ~(shift_res_q & (~(b&m)) & (~(c&h))); 		// or simply 3-OR, if you demorganize the operation.
 
 endmodule // module2
 
@@ -246,7 +247,7 @@ module Comb3 ( clk, x, a, b, c, d );
 
 endmodule // Comb3
 
-// Flag setting logic
+// Random logic
 module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR, nIR, f, bc, nbc, ALU_to_Thingy, ALU_L0, Temp_H, Temp_C, ALU_L3, Temp_N, ALU_L5, bq4, bq5, bq7, azo );
 
 	input CLK2;
@@ -352,7 +353,7 @@ module bc ( nd, CLK, CCLK, Load, q, nq );
 
 endmodule // bc
 
-module ALU_to_bot_FF ( d, CLK, CCLK, Load, q );
+module ALU_to_bot_latch ( d, CLK, CCLK, Load, q );
 
 	input d; 
 	input CLK; 
@@ -376,4 +377,4 @@ module ALU_to_bot_FF ( d, CLK, CCLK, Load, q );
 
 	assign q = val_out;
 
-endmodule // ALU_to_bot_FF
+endmodule // ALU_to_bot_latch
