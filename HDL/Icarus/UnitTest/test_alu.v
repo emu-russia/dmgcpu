@@ -127,6 +127,7 @@ module test_alu ();
 
 		DV <= 77;
 		alu <= 35;
+		// Make sure that Res = DV + alu in GTKWave during CLK2=1
 
 		$dumpfile("test_alu.vcd");
 		$dumpvars(0, test_alu);

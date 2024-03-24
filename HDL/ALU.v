@@ -279,8 +279,11 @@ module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR,
 
 	wire [13:0] az;		// LargeComb1 results (non-dynamic)
 
-	// ALU Trees (by hand)
+	// ALU Trees (by hand); Tree numbering is topological (how they are arranged on the chip)
 	// The flag logic in SM83 is organized in such a way that all flag changes calculations are performed in one place (topologically). On the one hand it is very convenient (the logic is isolated), on the other hand it turns out to be a very confusing doshirak.
+
+	// ALU trees 0,3-6,8,9 are responsible for preprocessing operand 1 for SET/RES opcodes (CB table) as well as DAA (decimal correction)
+	// Because of the topological numbering of the trees, they don't go in order, which is a bit ugly.
 
 	assign az[0] = ~( alu[0] | (`s2_alu_set&nIR[3]&nIR[4]&nIR[5]) | (`s2_alu_res&(IR[3]|IR[4]|IR[5])) );
 	assign az[1] = ~( (ALU_L5&((nIR[0]&`s2_op_incdec8)|`s3_alu_sum_pos_hf_cf)) | (ALU_L3&`s3_alu_sum_neg_hf_nf) | `s3_alu_cpl | `s2_cb_bit | `s3_alu_logic_and | (Temp_H&d58) );
@@ -307,6 +310,7 @@ module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR,
 	assign az[13] = ~( `s3_alu_cp | (`s2_op_incdec8&nIR[0]) | (`s2_op_sp_e_sx10&bc[1]) | (`s3_alu_sub_sbc&(nIR[3]|nbc[1])) | (`s2_op_add_hl_sx01&bc[1]) | (`s3_alu_add_adc&IR[3]) );
 
 	// Dynamic part
+	// TBD: Check if it is necessary to add transparent DLatch for dynamic logic outputs (on inverter gates) or if this will do.
 
 	assign azo[0] = CLK2 ? az[0] : 1'b1;
 	assign azo[1] = CLK7 ? (CLK6 ? az[1] : 1'b1) : 1'b1;		// -> bc5
@@ -316,8 +320,8 @@ module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR,
 	assign azo[5] = CLK2 ? az[5] : 1'b1;
 	assign azo[6] = CLK2 ? az[6] : 1'b1;
 	assign azo[7] = CLK7 ? (CLK6 ? az[7] : 1'b1) : 1'b1;		// -> bc2
-	assign azo[8] = CLK2 ? az[7] : 1'b1;
-	assign azo[9] = CLK2 ? az[8] : 1'b1;
+	assign azo[8] = CLK2 ? az[8] : 1'b1;
+	assign azo[9] = CLK2 ? az[9] : 1'b1;
 	assign azo[10] = CLK2 ? az[10] : 1'b1;
 	assign azo[11] = CLK7 ? (CLK6 ? az[11] : 1'b1) : 1'b1; 		// -> ALU_Out1
 	assign azo[12] = CLK7 ? (CLK6 ? az[12] : 1'b1) : 1'b1;		// -> bc3
