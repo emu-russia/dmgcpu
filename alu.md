@@ -17,7 +17,7 @@ A note from the future: although in this section individual modules are referred
 |Signal|From|Description|
 |---|---|---|
 |CLK2 / ADR_CLK_P|External| |
-|CLK4 / DATA_CLK_N|External|Used as LoadEnable for ALU_to_bot FF|
+|CLK4 / DATA_CLK_N|External|Used as LoadEnable for ALU_to_bot latch|
 |CLK5 / INC_CLK_N|External| |
 |CLK6 / INC_CLK_P|External| |
 |CLK7 / LATCH_CLK|External| |
@@ -87,7 +87,7 @@ The control ALU inputs from decoders 2/3 are listed separately.
 |bc2|Bottom Left| |
 |bc3|Bottom Left| |
 |bc5|Bottom Left| |
-|ALU_to_bot|Bottom|ALU Flag Z|
+|ALU_to_bot|Bottom|zbus msb (zbus[7]) derived from ALU_to_bot latch|
 |ALU_to_Thingy|Thingy|CarryOut|
 |ALU_Out1|Sequencer| |
 
@@ -223,4 +223,4 @@ Regular memory cell (latch) with write enable (x28/x29). It also contains a Prec
 
 ![ALU_to_bot_tran](/imgstore/modules/ALU_to_bot_tran.jpg)
 
-A regular memory cell (latch), for storing the `TempZ` signal. The signal CLK4 acts as WriteEnable.
+A regular memory cell (latch), for storing the `zbus[7]` value (msb). The signal CLK4 acts as WriteEnable.
