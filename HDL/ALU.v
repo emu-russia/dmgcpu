@@ -310,6 +310,7 @@ module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR,
 	assign az[13] = ~( `s3_alu_cp | (`s2_op_incdec8&nIR[0]) | (`s2_op_sp_e_sx10&bc[1]) | (`s3_alu_sub_sbc&(nIR[3]|nbc[1])) | (`s2_op_add_hl_sx01&bc[1]) | (`s3_alu_add_adc&IR[3]) );
 
 	// Dynamic part
+	// TBD: Check if it is necessary to add transparent DLatch for dynamic logic outputs (on inverter gates) or if this will do.
 
 	assign azo[0] = CLK2 ? az[0] : 1'b1;
 	assign azo[1] = CLK7 ? (CLK6 ? az[1] : 1'b1) : 1'b1;		// -> bc5
