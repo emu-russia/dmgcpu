@@ -38,7 +38,7 @@ A note from the future: although in this section individual modules are referred
 |IR\[7:0\]|IR|Current opcode|
 |nIR\[5:0\]|MightySix|Current opcode (complement)|
 
-## Decoder2/3 Inputs
+## Inputs from Decoder2/3
 
 The control ALU inputs from decoders 2/3 are listed separately.
 
