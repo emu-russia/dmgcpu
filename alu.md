@@ -176,6 +176,8 @@ The output from the dynamic combinatorial logic is stored on the DLatch (see G/P
 
 The lower part contains many dynamic NAND trees, the inputs for which come from all sides and also from `module2` instancies.
 
+Tree numbering is topological (how they are arranged on the chip). ALU trees 0,3-6,8,9 are responsible for preprocessing operand 1 for SET/RES opcodes (CB table) as well as DAA (decimal correction). Because of the topological numbering of the trees, they don't go in order, which is a bit ugly.
+
 Random logic (_14 NAND trees_):
 
 ![LargeComb1](/imgstore/LargeComb1.jpg)
