@@ -4,7 +4,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	Temp_C, Temp_H, Temp_N, Temp_Z, ALU_Out1, IR, nIR );
 
 	input CLK2;
-	input CLK4;			// Used as LoadEnable for ALU_to_bot FF.
+	input CLK4;			// Used as LoadEnable for ALU_to_bot latch.
 	input CLK5;
 	input CLK6;
 	input CLK7;
@@ -33,21 +33,21 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	// Internal wires
 
 	wire [7:0] e;		// Operand1 processing results for SET/RES opcodes; module2 e in
-	wire [7:0] f;		// module2 f out
+	wire [7:0] f;		// module2 f out; Optionaly complemeted Operand2
 	wire [7:0] ca; 		// Shifter (comb1-3) out  (active-low)
 	wire [7:0] bx;		// module2 x out
 	wire [7:0] bm;		// module2 m out (G-terms)
 	wire [7:0] bh;		// module2 h out (P-terms)
 	wire [7:0] logic_op;		// module2 w out; The result of the logical operation AND/OR/permutation of Operand2 bits.
-	wire [7:0] ao; 		// G/P ands outputs to module6
-	wire [7:1] na; 		// CLA nots outputs to module6
-	wire [7:0] q; 		// CLA outputs (0-3: left, 4-7: right)
+	wire [7:0] ao; 		// G/P ands outputs to module6  (logic xor)
+	wire [7:1] na; 		// CLA Carry outputs; CLA nots outputs to module6
+	wire [7:0] q; 		// CLA carry complement outputs (bits 0-3: topologicaly left, bits 4-7: topologicaly right)
 	wire [5:0] nbc; 	// #bc
 	wire [13:0] azo;	// LargeComb1 results
 	wire ALU_to_top; 		// Carry In
-	wire ALU_L0;
-	wire ALU_L3;
-	wire ALU_L5;
+	wire ALU_L0; 		// ~Carry7
+	wire ALU_L3; 		// ~Carry4
+	wire ALU_L5; 		// Carry4
 	wire ALU_to_bot;		// Derived from zbus[7] .  As a result of the optimization and transposition of the `bc` derivation circuit, the signal became internal.
 
 	// Top part (CLA + Sum)
@@ -60,9 +60,9 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 		.e(logic_op),
 		.x(Res) );
 
-	assign ALU_L0 = ~ALU_to_Thingy;
-	assign ALU_L3 = ~na[4];
-	assign ALU_L5 = na[4];
+	assign ALU_L0 = ~ALU_to_Thingy;  		// ~cout
+	assign ALU_L3 = ~na[4]; 			// ~half cout
+	assign ALU_L5 = na[4]; 				// half cout
 	assign {ALU_to_Thingy, na[7:1]} = ~q;
 	assign ao = bh & bx; 		// ands
 
@@ -133,7 +133,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	bc bc1 ( .nd(azo[2]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_cf), .q(bc[1]), .nq(nbc[1]) ); 			// Flag C
 	bc bc2 ( .nd(azo[7]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_hf_nf_zf), .q(bc[2]), .nq(nbc[2]) );  		// Flag N
 	bc bc3 ( .nd(azo[12]), .CLK(CLK6), .CCLK(CLK5), .Load(`s3_wren_hf_nf_zf), .q(bc[3]), .nq(nbc[3]) ); 	// Flag Z
-	ALU_to_bot_FF zbus_msb ( .d( Temp_Z /* =zbus[7] */ ), .CLK(CLK6), .CCLK(CLK5), .Load(CLK4), .q(ALU_to_bot) ); 			// zbus msb FF
+	ALU_to_bot_latch zbus_msb ( .d( Temp_Z /* =zbus[7] */ ), .CLK(CLK6), .CCLK(CLK5), .Load(CLK4), .q(ALU_to_bot) ); 			// zbus msb latch
 
 	// Regarding "bc". I tend to think that even though bc0/bc4 is at the bottom, it is still part of the ALU.
 	// Moved this circuit in my HDL inside the ALU instead of at the bottom. Then wire [5:0] bc; will become output.
@@ -353,7 +353,7 @@ module bc ( nd, CLK, CCLK, Load, q, nq );
 
 endmodule // bc
 
-module ALU_to_bot_FF ( d, CLK, CCLK, Load, q );
+module ALU_to_bot_latch ( d, CLK, CCLK, Load, q );
 
 	input d; 
 	input CLK; 
@@ -377,4 +377,4 @@ module ALU_to_bot_FF ( d, CLK, CCLK, Load, q );
 
 	assign q = val_out;
 
-endmodule // ALU_to_bot_FF
+endmodule // ALU_to_bot_latch
