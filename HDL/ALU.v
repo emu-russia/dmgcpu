@@ -38,7 +38,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	wire [7:0] bx;		// module2 x out
 	wire [7:0] bm;		// module2 m out (G-terms)
 	wire [7:0] bh;		// module2 h out (P-terms)
-	wire [7:0] bw;		// module2 w out
+	wire [7:0] logic_op;		// module2 w out; The result of the logical operation AND/OR/permutation of Operand2 bits.
 	wire [7:0] ao; 		// G/P ands outputs to module6
 	wire [7:1] na; 		// CLA nots outputs to module6
 	wire [7:0] q; 		// CLA outputs (0-3: left, 4-7: right)
@@ -57,7 +57,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 		.b(ao),
 		.c({8{`s3_alu_xor}}),
 		.d({8{`s3_alu_sum}}),
-		.e(bw),
+		.e(logic_op),
 		.x(Res) );
 
 	assign ALU_L0 = ~ALU_to_Thingy;
@@ -82,7 +82,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 		.k(DV), 
 		.m(bm), 
 		.x(bx), 
-		.w(bw) );
+		.w(logic_op) );
 
 	// Shifter
 
@@ -168,39 +168,40 @@ module module6 ( a, b, c, d, e, x );
 	input b;
 	input c; 			// x18 (s3_alu_xor)
 	input d; 			// x3 (s3_alu_sum)
-	input e;
+	input e; 			// The result of the logical operation AND/OR/permutation of Operand2 bits.
 	output x;
 
 	assign x = ( (b & c) | ((a ^ b) & d) | (e) );
 
 endmodule // module6
 
-// G/P Terms Product
+// G/P Terms Product.
+// The module "hybridizes" the computation of G/P terms by reusing them for logical AND/OR operations. It also contains a Shifter result bypass.
 module module2 ( a, b, c, e, f, g, h, k, m, x, w );
 
-	input a; 		// active low input
+	input a; 		// Result of permutation(shift/rotate/swap) of Operand2 bits; [!] active low input
 	input b;  			// x19 (s3_alu_logic_and)
 	input c; 			// x4 (s3_alu_logic_or)
-	input e; 		// Large Comb results
-	output f; 		// To Large Comb NAND trees
+	input e; 		// Large Comb results; Result of executing SET/RES opcodes for operand1
+	output f; 		// To Large Comb NAND trees; Operand2 optionally complemented
 	input g; 		// x25 (s3_alu_b_complement)
 	output h; 		// To CLA Generator (P-terms)
 	input k; 		// Operand2: DV[n]
 	output m; 		// To CLA Generator (G-terms)
 	output x; 		// To ands near CLA
-	output w; 		// To Sums
+	output w; 		// To Sums; The result of the logical operation AND/OR/permutation of Operand2 bits.
 
-	// Missing transparent DLatch that stores the result of the shifter. This DLatch is critically needed, for example, when shifting DV to the left, in this case the following will happen (get ready, it's complicated):
+	// Missing transparent DLatch that stores the result of the shifter (permutation result). This DLatch is critically needed, for example, when shifting DV to the left, in this case the following will happen (get ready, it's complicated):
 	// The dynamic comb of shifter during CLK2 pre-charges the output to 1 - this will be the complement of the result of the shifter bit (i.e. - 0). At the same time, the s3_alu_rotate_shift_left command does not multiplex the output of the dynamic comb for lsb in any way;
 	// Therefore, the output for lsb will be 0 (or rather the complementary value of 1 pre-charge, which is what is stored on the DLatch).
-	wire shift_res_q;
-	BusKeeper shift_res (.d(a), .q(shift_res_q) );
+	wire shift_res_q;  		// <-- active low
+	BusKeeper perm_ff (.d(a), .q(shift_res_q) );
 
-	assign f = g ^ k;
+	assign f = k ^ g;
 	assign h = e | f;
 	assign x = ~(e & f);
 	assign m = ~x;
-	assign w = ~(shift_res_q & (~(b&m)) & (~(c&h)));
+	assign w = ~(shift_res_q & (~(b&m)) & (~(c&h))); 		// or simply 3-OR, if you demorganize the operation.
 
 endmodule // module2
 
