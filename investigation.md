@@ -56,6 +56,8 @@ write neither of them are used, `\`s2_op_alu8` (`w[3]`) and
 
 ![opcode_77_ldhl](/imgstore/waves/opcode_77_ldhl.png)
 
+In screenshot, the execution of the instruction LD (HL), A (77).
+
 ## HL is inverted in the address bus
 
 `H` and `L` are stored in `ReqH`/`r3q` and `ReqL`/`r2q`, respectively, inverted.
