@@ -54,6 +54,8 @@ put in the `abus` or `bbus` (and `Aout`, but just affect ALU logic), but during
 write neither of them are used, `\`s2_op_alu8` (`w[3]`) and
 `\`s3_oe_areg_to_rbus` (`x[35]`) are both 0.
 
+![opcode_77_ldhl](/imgstore/waves/opcode_77_ldhl.png)
+
 ## HL is inverted in the address bus
 
 `H` and `L` are stored in `ReqH`/`r3q` and `ReqL`/`r2q`, respectively, inverted.
