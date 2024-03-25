@@ -99,8 +99,8 @@ module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, bbus, cbus, dbus, ebus, 
 	assign ebus = ~(CLK4 ? ~(({8{`s3_oe_idu_to_uhlbus}}&adl) | ({8{`s3_oe_wzreg_to_uhlbus}}&zbus) | ({8{`s3_oe_ubus_to_uhlbus}}&Res)) : 8'b11111111);
 
 	assign d60w8 = ~(d60 | `s2_op_jr_any_sx01);
-	assign Z_in = ~(({8{d60}}&adl) | ({8{~d60}}&DL));
-	assign W_in = ~(({8{~d60w8}}&adh) | ({8{d60w8}}&DL));
+	assign Z_in = (({8{d60}}&adl) | ({8{~d60}}&DL));
+	assign W_in = (({8{~d60w8}}&adh) | ({8{d60w8}}&DL));
 
 endmodule // TempRegsBuses
 
@@ -134,6 +134,10 @@ module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, DL, abus, bbus, cbus, db
 
 	wire [7:0] spl_bnq;		// SPL input buskeeper output
 	wire [7:0] sph_bnq;		// SPH input buskeeper output
+
+	// For debugging purposes
+	wire [15:0] SP;
+	assign SP = {sph_q, spl_q};
 
 	sp_regbit SPL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(spl_bnq), .ld({8{`s3_wren_sp}}), .q(spl_q), .nq(spl_nq) );
 	sp_regbit SPH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(sph_bnq), .ld({8{`s3_wren_sp}}), .q(sph_q), .nq(sph_nq) );
@@ -189,6 +193,10 @@ module PC ( CLK5, CLK6, CLK7, d92, w, x, DL, abus, cbus, dbus, zbus, wbus, adl, 
 
 	wire [7:0] pcl_bnq;		// PCL input buskeeper output
 	wire [7:0] pch_bnq;		// PCH input buskeeper output
+
+	// For debugging purposes
+	wire [15:0] PC;
+	assign PC = {pch_q, pcl_q};
 
 	pc_regbit PCL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .nd(pcl_bnq), .ld({8{`s3_wren_pc}}), .q(pcl_q), .nq(pcl_nq) );
 	pc_regbit PCH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .nd(pch_bnq), .ld({8{`s3_wren_pc}}), .q(pch_q), .nq(pch_nq) );
@@ -273,7 +281,7 @@ module sp_regbit ( clk, cclk, nd, ld, q, nq );
 	assign q = ~val_out;
 	assign nq = ~q;
 
-endmodule // regbit
+endmodule // sp_regbit
 
 module pc_regbit ( clk, cclk, nd, ld, nres, q, nq );
 
@@ -307,4 +315,4 @@ module pc_regbit ( clk, cclk, nd, ld, nres, q, nq );
 	assign q = ~val_out;
 	assign nq = ~q;
 
-endmodule // regbit_res
+endmodule // pc_regbit
