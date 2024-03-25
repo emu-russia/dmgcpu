@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project source="3.7.2" version="1.0">
-  This file is intended to be loaded by Logisim-evolution v3.7.2(https://github.com/logisim-evolution/).
+<project source="3.8.0" version="1.0">
+  This file is intended to be loaded by Logisim-evolution v3.8.0(https://github.com/logisim-evolution/).
 
   <lib desc="#Wiring" name="0">
     <tool name="Pin">
@@ -56,24 +56,24 @@
     <a name="circuit" val="main"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
     <a name="simulationFrequency" val="256.0"/>
-    <comp lib="0" loc="(140,450)" name="Pin">
-      <a name="appearance" val="NewPins"/>
-      <a name="label" val="Res_to_DL"/>
-    </comp>
-    <comp lib="0" loc="(140,480)" name="Pin">
-      <a name="appearance" val="NewPins"/>
-      <a name="label" val="Res_in"/>
-    </comp>
     <comp lib="0" loc="(150,120)" name="Pin">
       <a name="appearance" val="NewPins"/>
       <a name="label" val="Test1"/>
     </comp>
-    <comp lib="0" loc="(150,150)" name="Pin">
+    <comp lib="0" loc="(150,230)" name="Pin">
       <a name="appearance" val="NewPins"/>
       <a name="label" val="ExtDB_in"/>
       <a name="tristate" val="true"/>
     </comp>
-    <comp lib="0" loc="(150,180)" name="Pin">
+    <comp lib="0" loc="(150,350)" name="Pin">
+      <a name="appearance" val="NewPins"/>
+      <a name="label" val="Res_to_DL"/>
+    </comp>
+    <comp lib="0" loc="(150,390)" name="Pin">
+      <a name="appearance" val="NewPins"/>
+      <a name="label" val="Res_in"/>
+    </comp>
+    <comp lib="0" loc="(150,500)" name="Pin">
       <a name="appearance" val="NewPins"/>
       <a name="label" val="IntDB_in"/>
       <a name="tristate" val="true"/>
@@ -82,118 +82,73 @@
       <a name="appearance" val="NewPins"/>
       <a name="label" val="CLK"/>
     </comp>
-    <comp lib="0" loc="(310,270)" name="Constant"/>
-    <comp lib="0" loc="(310,290)" name="NoConnect"/>
-    <comp lib="0" loc="(380,320)" name="Constant">
-      <a name="value" val="0x0"/>
-    </comp>
-    <comp lib="0" loc="(620,150)" name="Pin">
-      <a name="appearance" val="NewPins"/>
-      <a name="facing" val="west"/>
-      <a name="label" val="ExtDB_out"/>
-      <a name="output" val="true"/>
-      <a name="tristate" val="true"/>
-    </comp>
-    <comp lib="0" loc="(620,180)" name="Pin">
+    <comp lib="0" loc="(350,210)" name="NoConnect"/>
+    <comp lib="0" loc="(460,280)" name="Constant"/>
+    <comp lib="0" loc="(570,480)" name="Constant"/>
+    <comp lib="0" loc="(730,380)" name="Pin">
       <a name="appearance" val="NewPins"/>
       <a name="facing" val="west"/>
       <a name="label" val="IntDB_out"/>
       <a name="output" val="true"/>
       <a name="tristate" val="true"/>
     </comp>
-    <comp lib="1" loc="(250,230)" name="OR Gate">
-      <a name="size" val="30"/>
+    <comp lib="0" loc="(730,490)" name="Pin">
+      <a name="appearance" val="NewPins"/>
+      <a name="facing" val="west"/>
+      <a name="label" val="ExtDB_out"/>
+      <a name="output" val="true"/>
+      <a name="tristate" val="true"/>
     </comp>
-    <comp lib="1" loc="(350,390)" name="NOR Gate">
-      <a name="size" val="30"/>
+    <comp lib="1" loc="(200,120)" name="NOT Gate"/>
+    <comp lib="1" loc="(690,490)" name="Controlled Buffer">
+      <a name="control" val="left"/>
     </comp>
-    <comp lib="1" loc="(350,480)" name="NOT Gate">
-      <a name="size" val="20"/>
-    </comp>
-    <comp lib="1" loc="(390,170)" name="NOR Gate">
-      <a name="size" val="30"/>
-    </comp>
-    <comp lib="1" loc="(400,470)" name="AND Gate">
-      <a name="size" val="30"/>
-    </comp>
-    <comp lib="1" loc="(470,440)" name="NOR Gate">
-      <a name="size" val="30"/>
-    </comp>
-    <comp lib="1" loc="(510,420)" name="NOT Gate">
-      <a name="size" val="20"/>
-    </comp>
-    <comp lib="2" loc="(350,280)" name="Multiplexer">
+    <comp lib="2" loc="(400,220)" name="Multiplexer">
       <a name="selloc" val="tr"/>
     </comp>
-    <comp lib="2" loc="(420,310)" name="Multiplexer">
+    <comp lib="2" loc="(500,290)" name="Multiplexer">
       <a name="selloc" val="tr"/>
     </comp>
-    <comp lib="2" loc="(550,430)" name="Multiplexer">
+    <comp lib="2" loc="(560,380)" name="Multiplexer">
       <a name="selloc" val="tr"/>
     </comp>
-    <comp lib="8" loc="(424,136)" name="Text">
-      <a name="font" val="SansSerif bold 12"/>
-      <a name="text" val="CLK=0: Int bus -&gt; Ext bus"/>
+    <comp lib="2" loc="(610,490)" name="Multiplexer">
+      <a name="selloc" val="tr"/>
     </comp>
-    <comp lib="8" loc="(433,367)" name="Text">
-      <a name="font" val="SansSerif bold 12"/>
-      <a name="text" val="CLK=1: Ext bus / Res -&gt; Int bus"/>
+    <comp loc="(320,230)" name="DLatch">
+      <a name="label" val="ext_to_int"/>
     </comp>
-    <comp loc="(290,420)" name="DLatch"/>
-    <comp loc="(320,180)" name="DLatch"/>
-    <wire from="(140,450)" to="(340,450)"/>
-    <wire from="(140,480)" to="(330,480)"/>
-    <wire from="(150,120)" to="(200,120)"/>
-    <wire from="(150,150)" to="(170,150)"/>
-    <wire from="(150,180)" to="(220,180)"/>
-    <wire from="(150,80)" to="(180,80)"/>
-    <wire from="(170,150)" to="(170,420)"/>
-    <wire from="(170,420)" to="(190,420)"/>
-    <wire from="(180,240)" to="(220,240)"/>
-    <wire from="(180,80)" to="(180,240)"/>
-    <wire from="(180,80)" to="(530,80)"/>
-    <wire from="(200,120)" to="(200,220)"/>
-    <wire from="(200,120)" to="(330,120)"/>
-    <wire from="(200,220)" to="(200,380)"/>
-    <wire from="(200,220)" to="(220,220)"/>
-    <wire from="(200,380)" to="(310,380)"/>
-    <wire from="(250,230)" to="(330,230)"/>
-    <wire from="(290,420)" to="(300,420)"/>
-    <wire from="(300,400)" to="(300,420)"/>
-    <wire from="(300,400)" to="(310,400)"/>
-    <wire from="(310,270)" to="(320,270)"/>
-    <wire from="(310,290)" to="(320,290)"/>
-    <wire from="(320,180)" to="(350,180)"/>
-    <wire from="(330,120)" to="(330,160)"/>
-    <wire from="(330,160)" to="(350,160)"/>
-    <wire from="(330,230)" to="(330,260)"/>
-    <wire from="(340,450)" to="(340,460)"/>
-    <wire from="(340,460)" to="(370,460)"/>
-    <wire from="(350,280)" to="(370,280)"/>
-    <wire from="(350,390)" to="(410,390)"/>
-    <wire from="(350,480)" to="(370,480)"/>
-    <wire from="(370,280)" to="(370,300)"/>
-    <wire from="(370,300)" to="(390,300)"/>
-    <wire from="(380,320)" to="(390,320)"/>
-    <wire from="(390,170)" to="(400,170)"/>
-    <wire from="(400,170)" to="(400,290)"/>
-    <wire from="(400,470)" to="(410,470)"/>
-    <wire from="(410,390)" to="(410,430)"/>
-    <wire from="(410,430)" to="(430,430)"/>
-    <wire from="(410,450)" to="(410,470)"/>
-    <wire from="(410,450)" to="(430,450)"/>
-    <wire from="(410,470)" to="(480,470)"/>
-    <wire from="(420,310)" to="(580,310)"/>
-    <wire from="(470,440)" to="(520,440)"/>
-    <wire from="(480,420)" to="(480,470)"/>
-    <wire from="(480,420)" to="(490,420)"/>
-    <wire from="(510,420)" to="(520,420)"/>
-    <wire from="(530,80)" to="(530,410)"/>
-    <wire from="(550,430)" to="(610,430)"/>
-    <wire from="(580,150)" to="(580,310)"/>
-    <wire from="(580,150)" to="(620,150)"/>
-    <wire from="(610,180)" to="(610,430)"/>
-    <wire from="(610,180)" to="(620,180)"/>
+    <comp loc="(320,500)" name="DLatch">
+      <a name="label" val="int_to_ext"/>
+    </comp>
+    <wire from="(150,120)" to="(170,120)"/>
+    <wire from="(150,230)" to="(220,230)"/>
+    <wire from="(150,350)" to="(540,350)"/>
+    <wire from="(150,390)" to="(530,390)"/>
+    <wire from="(150,500)" to="(220,500)"/>
+    <wire from="(150,80)" to="(480,80)"/>
+    <wire from="(200,120)" to="(380,120)"/>
+    <wire from="(320,230)" to="(370,230)"/>
+    <wire from="(320,500)" to="(580,500)"/>
+    <wire from="(350,210)" to="(370,210)"/>
+    <wire from="(380,120)" to="(380,200)"/>
+    <wire from="(380,120)" to="(680,120)"/>
+    <wire from="(400,220)" to="(420,220)"/>
+    <wire from="(420,220)" to="(420,300)"/>
+    <wire from="(420,300)" to="(470,300)"/>
+    <wire from="(460,280)" to="(470,280)"/>
+    <wire from="(480,80)" to="(480,270)"/>
+    <wire from="(480,80)" to="(590,80)"/>
+    <wire from="(500,290)" to="(520,290)"/>
+    <wire from="(520,290)" to="(520,370)"/>
+    <wire from="(520,370)" to="(530,370)"/>
+    <wire from="(540,350)" to="(540,360)"/>
+    <wire from="(560,380)" to="(730,380)"/>
+    <wire from="(570,480)" to="(580,480)"/>
+    <wire from="(590,80)" to="(590,470)"/>
+    <wire from="(610,490)" to="(670,490)"/>
+    <wire from="(680,120)" to="(680,480)"/>
+    <wire from="(690,490)" to="(730,490)"/>
   </circuit>
   <circuit name="DLatch">
     <a name="appearance" val="evolution"/>

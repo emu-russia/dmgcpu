@@ -8,7 +8,7 @@ module DataLatch ( CLK, DL_Control1, DL_Control2, DataBus, DL, Res );
 	inout [7:0] DataBus;		// External databus
 	/* verilator lint_off UNOPTFLAT */
 	inout [7:0] DL;				// Internal databus
-	input [7:0] Res;			// ALU Result
+	input [7:0] Res;			// ALU Result  (always driven)
 
 	module1 DL_Bits [7:0] (
 		.clk({8{CLK}}), 

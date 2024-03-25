@@ -20,8 +20,6 @@ DataLatch consists of 8 such chunks:
 
 ![module1_tran](/imgstore/modules/module1_tran.jpg)
 
-![DataLatch](/logisim/DataLatch.png)
-
 |Port|Dir|Description|
 |---|---|---|
 |a|input|DL_Control1. 1: Bus disable|
@@ -48,3 +46,18 @@ Internal data bus driven (internal->external):
 |---|---|
 
 In all cases, the internal data bus is precharged (DL=0xff) during CLK2=0.
+
+## Logisim
+
+The circuit is very low-level, with bidirectional signals and tristates made as FETs, so it is difficult to make an identical circuit in Logisim.
+
+The closest approximation is following:
+
+![DataLatch](/logisim/DataLatch.png)
+
+- For the external data bus, the tristate is on the output BEFORE precharging; the value from the internal data bus is stored on the transparent DLatch (`int_to_ext`)
+- The multiplexing of the external data bus and the ALU result can be thought of as a locomotive of MUXes:
+ 	- The leading mux selects between the connection of the internal data bus and the ALU result (x37 = 1)
+ 	- The next mux precharges the internal data bus if the ALU result is not required (since `Res` is always driven signal).
+ 	- The closing mux acts as tristate and disconnects the external data bus when Test1 = 1
+- The value from the external data bus is stored on the transparent DLatch (`ext_to_int`).
