@@ -3,6 +3,7 @@
 ![locator_regs](/imgstore/locator_regs.png)
 
 :warning: Read and double-check everything here very thoughtfully. Complementary logic can blow your mind.
+This additional work to proofread and verify register and bus connections (referred to as "Paths") is associated with #240
 
 ## Register Bit
 
