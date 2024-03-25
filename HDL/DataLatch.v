@@ -22,10 +22,10 @@ endmodule // DataLatch
 
 module module1 ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus );
 	
-	input clk; 
-	input Test1;
-	input Res_to_DL;
-	input Res;
+	input clk;  		// CLK2; All buses are precharged when clk=0.
+	input Test1; 			// External (1: disconnect core databus)
+	input Res_to_DL; 		// ALU result -> internal databus  (from decoder3)
+	input Res; 				// ALU result
 	inout Int_bus; 	// DL[n] (internal databus)
 	inout Ext_bus; 	// D[n] (external databus)
 
@@ -37,5 +37,11 @@ module module1 ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus );
 
 	assign Ext_bus = ~(Test1 | int_to_ext_q) ? 1'b0 : ((Test1 | clk) ? 1'bz : 1'b1);
 	assign Int_bus = clk ? (~((~(Test1 | ext_to_int_q)) | (~Res & Res_to_DL))) : ~(~Res & Res_to_DL);
+
+	// A more understandable implementation but it doesn't work right now:
+	//assign Ext_bus = Test1 ? 1'bz : (clk ? int_to_ext_q : 1'b1);
+	//assign Int_bus = Res_to_DL ? Res : 
+	//	( clk ? (Test1 ? 1'bz : ext_to_int_q) : 1'b1);
+	// The ALU result (Res) unconditionally beats all other multiplexing options for internal databus (think of it as connecting "directly" as mounting-AND).
 
 endmodule // module1
