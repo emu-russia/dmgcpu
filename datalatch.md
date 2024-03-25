@@ -55,7 +55,7 @@ The closest approximation is following:
 
 ![DataLatch](/logisim/DataLatch.png)
 
-- For the external data bus, the tristate is on the output BEFORE precharging; the value from the internal data bus is stored on the transparent DLatch (`int_to_ext`)
+- For the external data bus, the tristate is on the output AFTER precharging; the value from the internal data bus is stored on the transparent DLatch (`int_to_ext`)
 - The multiplexing of the external data bus and the ALU result can be thought of as a locomotive of MUXes:
  	- The leading mux selects between the connection of the internal data bus and the ALU result (x37 = 1)
  	- The next mux precharges the internal data bus if the ALU result is not required (since `Res` is always driven signal).
