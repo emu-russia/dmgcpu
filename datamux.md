@@ -87,3 +87,9 @@ The DV value also goes "through" the DataBridge and is fed to the ALU input (Ope
 |0|1|z|
 |1|0|0|
 |1|1|z|
+
+## Combined DataMux
+
+If you combine the two circuits into one, then according to the latest data from our scientists, you should get something like this:
+
+![DataMux](/logisim/DataMux.png)
