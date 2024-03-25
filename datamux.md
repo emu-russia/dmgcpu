@@ -38,6 +38,8 @@ It looks like a mixture of dynamic CMOS logic, NMOS and regular CMOS.
 
 A gate capacitance is used as memory.
 
+Same thing by Gekkio: https://github.com/Gekkio/gb-research/tree/main/sm83-cpu-core/io-cell
+
 ### Top Part Circuit analysis
 
 External data bus driven (external->internal):
