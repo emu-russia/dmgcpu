@@ -80,12 +80,16 @@ fundamental, like the value read from the memory?
 
 So `RegA`/`r1q` contains the inverted value of `A`.
 
+![Path_Regs](/imgstore/Path_Regs.png)
+
 ## Path from databus to register HL
 
 - H: `D` -> `DataLatch` -> `DL` -> `W_in` (inverted) -> `wbus` -> `fbus` -> `RegH`
 - L: `D` -> `DataLatch` -> `DL` -> `Z_in` (inverted) -> `zbus` -> `ebus` -> `RegL`
 
 So `HL` are also stored inverted in the registers.
+
+![Path_Regs](/imgstore/Path_HL.png)
 
 ## Path from databus to register SP
 
@@ -94,6 +98,8 @@ So `HL` are also stored inverted in the registers.
 
 So `SP` is also stored inverted in the registers.
 
+![Path_Regs](/imgstore/Path_SP.png)
+
 ## Path from databus to PC
 
 
@@ -101,3 +107,5 @@ So `SP` is also stored inverted in the registers.
 - PC low:  `D` -> `DataLatch` -> `DL` -> `Z_in` (inverted) -> `zbus` -> `pcl_nd` (inverted) -> `PCL` (inverted)
 
 So `PC` is also stored inverted in the registers.
+
+![Path_Regs](/imgstore/Path_PC.png)

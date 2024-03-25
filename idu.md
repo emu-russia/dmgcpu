@@ -33,4 +33,4 @@ To make the movements between registers and IDU clearer, here is a short descrip
 - The register input has the feature that it is in a floating state between CLK6 and CLK7 (the register input is a transparent DLatch)
 - In the register the value is stored as `~val` (inverse hold)
 
-![IDU_Path](/imgstore/IDU_Path.png)
+![Path_IDU](/imgstore/Path_IDU.png)
