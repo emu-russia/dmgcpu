@@ -91,18 +91,15 @@ module SM83Core (
 
 	nor z_eval (AllZeros, Res[0], Res[1], Res[2], Res[3], Res[4], Res[5], Res[6], Res[7]);
 
-	DataLatch dl (
+	DataMux data_mux (
 		.CLK(CLK2), 
 		.DL_Control1(Maybe1), 
 		.DL_Control2(`s3_oe_alu_to_pbus), 
 		.DataBus(D),
 		.DL(DL), 
-		.Res(Res) );
-
-	DataBridge bridge (
+		.Res(Res),
 		.DataOut(`s3_oe_rbus_to_pbus),
-		.DV(DV),
-		.DL(DL) );
+		.DV(DV) );
 
 	Decoder1 dec1 (
 		.CLK2(CLK2),
