@@ -37,7 +37,7 @@ py -3 MakeNandTree.py --tree {w9,nIR4} --output_name "x[30]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {w23,nIR4} --output_name "x[31]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {d34,nIR4}{d34,nIR5} --output_name "x[32]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {IR0,w37} --output_name "x[33]" >> decoder3_trees.v
-py -3 MakeNandTree.py --tree {w3}{d4}{a3} --output_name "x[34]" >> decoder3_trees.v
+py -3 MakeNandTree.py --tree {w3}{d41}{a3} --output_name "x[34]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {x34,IR0,IR1,IR2}{w14}{w4}{w37,IR3,IR4,IR5}{d38,IR4,IR5}{x32} --output_name "x[35]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {d42}{w10}{w24} --output_name "x[36]" >> decoder3_trees.v
 py -3 MakeNandTree.py --tree {w8}{w6,d42}{w6,w10}{w6,w37}{w6,w24}{x30}{x31} --output_name "x[37]" >> decoder3_trees.v

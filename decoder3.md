@@ -145,7 +145,7 @@ The output drivers act as signal amplifiers and are also used as "domino" logic,
 |x31|op_add_sp_e_s001 |{w23,nIR4}|
 |x32|op_alu_misc_a |{d34,nIR4}<br/>{d34,nIR5}|
 |x33|op_dec8 |{IR0,w37}|
-|x34|alu_reg_to_rbus |{w3}<br/>{d4}<br/>{a3}|
+|x34|alu_reg_to_rbus |{w3}<br/>{d41}<br/>{a3}|
 |x35|oe_areg_to_rbus |{x34,IR0,IR1,IR2}<br/>{w14}<br/>{w4}<br/>{w37,IR3,IR4,IR5}<br/>{d38,IR4,IR5}<br/>{x32}|
 |x36|cb_wren_r |{d42}<br/>{w10}<br/>{w24}|
 |x37|oe_alu_to_pbus |{w8}<br/>{w6,d42}<br/>{w6,w10}<br/>{w6,w37}<br/>{w6,w24}<br/>{x30}<br/>{x31}|
