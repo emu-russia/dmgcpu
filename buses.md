@@ -62,9 +62,9 @@ This section describes the approach used in SM83 to connect bidirectional buses 
 A few words if the schematic doesn't look very clear.
 
 - The value from the bus does not come directly to the consumer, but is stored on the transparent DLatch (on the FET gates). From the DLatch output, the value comes out as a complement, because DLatch by its nature is an ordinary inverter (not)
-- If you want to output a value from the consumer to the bus, the design in the figure below is used:
-	- The value is output via znand, with the OE signal used to "open" znand; for this reason, the consumer output value is inverted
-	- Bus is synchronous (clocked by CLK): when CLK=0 the bus is being precharged, when CLK=1 the value from the consumers is updated if they have been "connected" by their OE signals.
-	- Several consumers can be connected to the bus by hanging additional znand in bunches
+- If you want to output a value from the producer to the bus, the design in the figure below is used:
+	- The value is output via znand, with the OE signal used to "open" znand; for this reason, the producer output value is inverted
+	- Bus is synchronous (clocked by CLK): when CLK=0 the bus is being precharged, when CLK=1 the value from the producers is updated if they have been "connected" by their OE signals.
+	- Several producers can be connected to the bus by hanging additional znand in bunches
 
 From the above, it will be clear why the SM83 uses "inverse hold" for registers.
