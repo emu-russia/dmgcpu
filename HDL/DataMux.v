@@ -42,9 +42,12 @@ module data_mux_bit ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus, DataOut, dv_
 	BusKeeper int_to_ext ( .d(Int_bus), .q(int_to_ext_q) );
 	BusKeeper ext_to_int ( .d(Ext_bus), .q(ext_to_int_q) );
 
-	assign Ext_bus = Test1 ? 1'bz : (clk ? int_to_ext_q : 1'b1);
-	assign Int_bus = DataOut ? dv_bit : (
-		Res_to_DL ? Res : 
-		( clk ? (Test1 ? 1'bz : ext_to_int_q) : 1'b1) );
+	assign Ext_bus = ~(Test1 | int_to_ext_q) ? 1'b0 : ((Test1 | clk) ? 1'bz : 1'b1);
+	assign Int_bus = clk ? (~((~(Test1 | ext_to_int_q)) | (~Res & Res_to_DL))) : ~(~Res & Res_to_DL);
+
+	//assign Ext_bus = Test1 ? 1'bz : (clk ? int_to_ext_q : 1'b1);
+	//assign Int_bus = DataOut ? dv_bit : (
+	//	Res_to_DL ? Res : 
+	//	( clk ? (Test1 ? 1'bz : ext_to_int_q) : 1'b1) );
 
 endmodule // data_mux_bit
