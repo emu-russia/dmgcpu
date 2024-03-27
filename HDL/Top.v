@@ -51,7 +51,7 @@ module SM83Core (
 	wire [40:0] w; 			// Decoder2 out
 	wire [68:0] x; 			// Decoder3 out
 
-	wire [7:0] DL;			// Current DataLatch value
+	wire [7:0] DL;			// Internal databus
 	wire [7:0] DV;			// ALU Operand2
 	wire [7:0] Res;			// ALU Result
 	wire AllZeros; 			// Res == 0
@@ -99,7 +99,8 @@ module SM83Core (
 		.DL(DL), 
 		.Res(Res),
 		.DataOut(`s3_oe_rbus_to_pbus),
-		.DV(DV) );
+		.DV(DV),
+		.WR_hack(WR) );
 
 	Decoder1 dec1 (
 		.CLK2(CLK2),
