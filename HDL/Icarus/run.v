@@ -128,6 +128,8 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 			value <= mem[addrbus];
 		else if (WR)
 			mem[addrbus] <= databus;
+		else
+			value <= 'bz;
 	end
 
 	assign databus = (MREQ & RD) ? value : 'bz;
