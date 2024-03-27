@@ -52,7 +52,10 @@ module data_mux_bit ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus, DataOut, dv_
 	BusKeeper res_latch ( .d(Res), .q(res_q) );
 	BusKeeper dv_latch ( .d(dv_bit), .q(dv_q) );
 
+	//⚠️This implementation is an approximation of the real circuit, so it is not a die-perfect approach.
+
 	assign Ext_bus = (WR_hack && ~Test1 && clk) ? int_to_ext_q : 1'bz;
-	assign Int_bus = ~( (~(Test1 | ext_to_int_q) & clk) | (~res_q & Res_to_DL) | (~dv_q & DataOut) );
+	assign Int_bus = (~WR_hack && ~Test1 && clk) ? ext_to_int_q : 
+		( Res_to_DL ? res_q : ( DataOut ? dv_q : 1'bz ) );
 
 endmodule // data_mux_bit
