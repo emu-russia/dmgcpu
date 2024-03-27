@@ -118,12 +118,18 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 	inout [7:0] databus;
 	input [15:0] addrbus;
 
-	reg [7:0] mem[65535];
+	reg [7:0] mem[0:65535];
 	reg [7:0] value;
 
 	initial $readmemh("bogus_hw.mem", mem);
 
-	assign databus = (MREQ & RD) ? value : 8'bzzzzzzzz;
-	always @(addrbus) value <= mem[addrbus];
+	always @(RD || WR) begin
+		if (RD)
+			value <= mem[addrbus];
+		else if (WR)
+			mem[addrbus] <= databus;
+	end
+
+	assign databus = (MREQ & RD) ? value : 'bz;
 
 endmodule // Bogus_HW
