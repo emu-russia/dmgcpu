@@ -46,7 +46,11 @@ module data_mux_bit ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus, DataOut, dv_
 	BusKeeper res_latch ( .d(Res), .q(res_q) );
 	BusKeeper dv_latch ( .d(dv_bit), .q(dv_q) );
 
-	assign Ext_bus = ~(Test1 | int_to_ext_q) ? 1'b0 : ((Test1 | clk) ? 1'bz : 1'b1);
+	// Although the actual schematic for outputting a value to the external bus looks like this:
+	//assign Ext_bus = ~(Test1 | int_to_ext_q) ? 1'b0 : ((Test1 | clk) ? 1'bz : 1'b1);
+	// We simplify it and do not use external data bus precharging during clk=0
+	assign Ext_bus = (Test1 | clk) ? 1'bz : int_to_ext_q;
+
 	assign Int_bus = ~( (~(Test1 | ext_to_int_q) & clk) | (~res_q & Res_to_DL) | (~dv_q & DataOut) );
 
 endmodule // data_mux_bit
