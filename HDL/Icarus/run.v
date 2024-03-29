@@ -105,6 +105,7 @@ module SM83_Run();
 		ExternalRESET = 1'b0;
 
 		repeat (256) @ (posedge CLK);
+		$writememh ("out.mem", hw.mem);
 		$finish;
 	end	
 
@@ -120,6 +121,12 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 
 	reg [7:0] mem[0:65535];
 	reg [7:0] value;
+
+	// You need to pre-fill the memory with some value so you don't run into `xx'
+	integer j;
+	initial 
+  	for(j = 0; j < 65536; j = j+1) 
+    	mem[j] = 0;
 
 	initial $readmemh("bogus_hw.mem", mem);
 
