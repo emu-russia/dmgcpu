@@ -7,7 +7,7 @@ This additional work to proofread and verify register and bus connections (refer
 
 ## Register Bit
 
-All registers use a common module.
+All registers use a common module (with a small exception for Z/W register bits, see further in the Temp Registers section).
 
 ![regbit](/imgstore/modules/regbit.jpg)
 
@@ -43,18 +43,18 @@ Latch with complementary set enable, complementary CLK.
 
 The names of some buses are arbitrary (do not make sense).
 
-|Bus|To Reg|From Reg|Precharge|
-|---|---|---|---|
-|abus|alu\[7:0\] to top (no reg)|H, L, A, SPL, SPH, PCL|CLK2|
-|bbus|DV\[7:0\] to top (no reg)|B, C, D, E, H, L, A, Z, SPL, SPH|CLK2|
-|cbus|IDU Lo|C, E, L, Z, SPL, PCL|CLK2|
-|dbus|IDU Hi|B, D, H, W, SPH, PCH|CLK2|
-|ebus|C, E, L|Dedicated circuit| |
-|fbus|B, D, H, A|Dedicated circuit| |
-|zbus|SPL, PCL|Z| |
-|wbus|SPH, PCH|W| |
-|adl|SPL, PCL, Z|IDU Lo| |
-|adh|SPH, PCH, W|IDU Hi| |
+|Bus|From Reg|To Reg|Precharge|Bus Polarity|
+|---|---|---|---|---|
+|abus|H, L, A, SPL, SPH, PCL|alu\[7:0\] to top (no reg)|CLK2=0|inverse hold|
+|bbus|B, C, D, E, H, L, A, Z, SPL, SPH|DV\[7:0\] to top (no reg)|CLK2=0|inverse hold|
+|cbus|C, E, L, Z, SPL, PCL|IDU Lo|CLK2=0|inverse hold|
+|dbus|B, D, H, W, SPH, PCH|IDU Hi|CLK2=0|inverse hold|
+|ebus|Dedicated circuit|C, E, L|CLK4=0| |
+|fbus|Dedicated circuit|B, D, H, A|CLK4=0| |
+|zbus|Z|SPL, PCL| | |
+|wbus|W|SPH, PCH| | |
+|adl|IDU Lo|SPL, PCL, Z| | |
+|adh|IDU Hi|SPH, PCH, W| | |
 
 There are small pieces for Precharge scattered throughout the circuitry.
 
@@ -70,11 +70,15 @@ Between the registers scattered small logic for issuing their values to the buse
 
 ## Temp Registers vs Bus Logic
 
-The value on the temp registers (Z/W) does not come directly from the buses, but using logic.
+The value on the temp registers (Z/W) does not come directly from the buses, but using logic. And, attention, the input of Z/W registers has inverse polarity (active low), but the output of the registers to the bus zbus/wbus in the regular polarity, so at the output of Z/W registers additional inverter (not) is sticked.
 
 ![gk](/imgstore/modules/gk.jpg)
 
 ![gk_tran](/imgstore/modules/gk_tran.jpg)
+
+The picture shows how the signals at the input and output of Z/W registers vary compared to conventional registers:
+
+![Path_ZW](/imgstore/Path_ZW.png)
 
 ## SP Register
 

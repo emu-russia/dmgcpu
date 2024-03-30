@@ -33,7 +33,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	// Internal wires
 
 	wire [7:0] e;		// Operand1 processing results for SET/RES opcodes; module2 e in
-	wire [7:0] f;		// module2 f out; Optionaly complemeted Operand2
+	wire [7:0] f;		// module2 f out; Optionaly complemented Operand2
 	wire [7:0] ca; 		// Shifter (comb1-3) out  (active-low)
 	wire [7:0] bx;		// module2 x out
 	wire [7:0] bm;		// module2 m out (G-terms)
@@ -43,7 +43,7 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	wire [7:1] na; 		// CLA Carry outputs; CLA nots outputs to module6
 	wire [7:0] q; 		// CLA carry complement outputs (bits 0-3: topologicaly left, bits 4-7: topologicaly right)
 	wire [5:0] nbc; 	// #bc
-	wire [13:0] azo;	// LargeComb1 results
+	wire [13:0] azo;	// Random logic results
 	wire ALU_to_top; 		// Carry In
 	wire ALU_L0; 		// ~Carry7
 	wire ALU_L3; 		// ~Carry4

@@ -87,9 +87,30 @@ The control ALU inputs from decoders 2/3 are listed separately.
 |bc2|Bottom Left| |
 |bc3|Bottom Left| |
 |bc5|Bottom Left| |
-|ALU_to_bot|Bottom|zbus msb (zbus[7]) derived from ALU_to_bot latch|
+|ALU_to_bot|Bottom|zbus msb (zbus\[7\]) derived from ALU_to_bot latch|
 |ALU_to_Thingy|Thingy|CarryOut|
 |ALU_Out1|Sequencer| |
+
+## Internal Wires
+
+|Signal|Description|
+|---|---|
+|e\[7:0\]|Operand1 processing results for SET/RES/DAA opcodes; module2 e in|
+|f\[7:0\]|module2 f out; Optionaly complemented Operand2|
+|ca\[7:0\]|Shifter (comb1-3) out  (:warning: active-low)|
+|bx\[7:0\]|module2 x out|
+|bm\[7:0\]|module2 m out (G-terms)|
+|bh\[7:0\]|module2 h out (P-terms)|
+|w\[7:0\]|module2 w out; The result of the logical operation AND/OR/permutation of Operand2 bits. "logic_op"|
+|ao\[7:0\]|G/P ands outputs to module6  (logic xor)|
+|na\[7:1\]|CLA Carry outputs; CLA nots outputs to module6|
+|q\[7:0\]|CLA carry complement outputs (bits 0-3: topologicaly left, bits 4-7: topologicaly right)|
+|nbc\[5:0\]|#bc|
+|azo\[13:0\]|Random logic results|
+|ALU_to_top|Carry In|
+|ALU_L0|~Carry7|
+|ALU_L3|~Carry4|
+|ALU_L5|Carry4|
 
 ## NOR-8
 
@@ -105,7 +126,7 @@ The result of the nor8 operation is the `AllZeros` signal. This is often require
 
 The paired construction that looks like a Christmas tree is actually two 4-bit Carry Lookahead Generators (module5).
 
-In between is the small logic, and above the 8 "Sum" blocks (module6), which give the result of the ALU.
+In between is the small logic (8 AND gates implementing logical XOR operation out of G/P terms), and above the 8 "Sum" blocks (module6), which give the result of the ALU (`Res`).
 
 ### module5 (4-bit CLA Generators, x2)
 
@@ -114,6 +135,8 @@ In between is the small logic, and above the 8 "Sum" blocks (module6), which giv
 ![module5_tran](/imgstore/modules/module5_tran.jpg)
 
 ![module5_logisim](/logisim/module5_logisim.png)
+
+The gaps contain AND gates that implement a logical XOR operation based on the x/h Sums outputs.
 
 ### module6 (Sums)
 

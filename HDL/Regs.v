@@ -2,6 +2,10 @@
 
 // Separated from Bottom.v to make it easier to scroll through the source.
 
+// Important note: SHARP engineers did give slack and use inverse polarity in some places (buses a,b,c,d, inputs for Z/W/PC/SP registers).
+// If you will be doing your own implementation of SM83 "inspired by", keep in mind that you do not have to repeat the inverse polarity for the above entities at all.
+// Inverse polarity is used there just for convenience (e.g. bus precharging).
+
 module RegsBuses ( CLK5, CLK6, w, x, DL, IR, abus, bbus, cbus, dbus, ebus, fbus, Aout );
 
 	input CLK5;
@@ -10,10 +14,10 @@ module RegsBuses ( CLK5, CLK6, w, x, DL, IR, abus, bbus, cbus, dbus, ebus, fbus,
 	input [68:0] x;
 	inout [7:0] DL;
 	output [7:0] IR;
-	inout [7:0] abus;
-	inout [7:0] bbus;
-	inout [7:0] cbus;
-	inout [7:0] dbus;
+	inout [7:0] abus; 		// ⚠️ inverse hold (active low)
+	inout [7:0] bbus; 		// ⚠️ inverse hold (active low)
+	inout [7:0] cbus; 		// ⚠️ inverse hold (active low)
+	inout [7:0] dbus; 		// ⚠️ inverse hold (active low)
 	inout [7:0] ebus;
 	inout [7:0] fbus;
 	output [7:0] Aout; 			// Reg A output for bq logic
@@ -66,13 +70,13 @@ module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, bbus, cbus, dbus, ebus, 
 	input CLK4;
 	input CLK5;
 	input CLK6;
-	input d60;
+	input d60; 				// Gekkio: s1_op_ld_nn_sp_s010
 	input [40:0] w;
 	input [68:0] x;
 	inout [7:0] DL;
-	inout [7:0] bbus;
-	inout [7:0] cbus;
-	inout [7:0] dbus;
+	inout [7:0] bbus;		// ⚠️ inverse hold (active low)
+	inout [7:0] cbus;		// ⚠️ inverse hold (active low)
+	inout [7:0] dbus; 		// ⚠️ inverse hold (active low)
 	inout [7:0] ebus;
 	inout [7:0] fbus;
 	inout [7:0] zbus;
@@ -81,12 +85,13 @@ module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, bbus, cbus, dbus, ebus, 
 	inout [7:0] adl;
 	inout [7:0] adh;
 
-	wire [7:0] Z_in;
-	wire [7:0] W_in;
+	wire [7:0] Z_in; 		// active low
+	wire [7:0] W_in; 		// active low
 	wire d60w8;
 
-	regbit Z [7:0]( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(Z_in), .ld({8{`s3_wren_z}}), .q(zbus) );
-	regbit W [7:0]( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(W_in), .ld({8{`s3_wren_w}}), .q(wbus) );
+	// ⚠️ The Z/W registers have an input in inverse polarity, and the output in the regular
+	regbit_nd Z [7:0]( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(Z_in), .ld({8{`s3_wren_z}}), .q(zbus) );
+	regbit_nd W [7:0]( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(W_in), .ld({8{`s3_wren_w}}), .q(wbus) );
 
 	assign cbus = `s2_op_ldh_imm_sx01 ? ~zbus : 8'bzzzzzzzz;
 	assign cbus = `s2_oe_wzreg_to_idu ? ~zbus : 8'bzzzzzzzz;
@@ -99,8 +104,8 @@ module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, bbus, cbus, dbus, ebus, 
 	assign ebus = ~(CLK4 ? ~(({8{`s3_oe_idu_to_uhlbus}}&adl) | ({8{`s3_oe_wzreg_to_uhlbus}}&zbus) | ({8{`s3_oe_ubus_to_uhlbus}}&Res)) : 8'b11111111);
 
 	assign d60w8 = ~(d60 | `s2_op_jr_any_sx01);
-	assign Z_in = (({8{d60}}&adl) | ({8{~d60}}&DL));
-	assign W_in = (({8{~d60w8}}&adh) | ({8{d60w8}}&DL));
+	assign Z_in = ~(({8{d60}}&adl) | ({8{~d60}}&DL));
+	assign W_in = ~(({8{~d60w8}}&adh) | ({8{d60w8}}&DL));
 
 endmodule // TempRegsBuses
 
@@ -132,8 +137,8 @@ module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, DL, abus, bbus, cbus, db
 	wire [7:0] sph_q;		// SPH output 
 	wire [7:0] sph_nq;		// SPH output (complement)
 
-	wire [7:0] spl_bnq;		// SPL input buskeeper output
-	wire [7:0] sph_bnq;		// SPH input buskeeper output
+	wire [7:0] spl_bnq;		// SPL input buskeeper output  (active low)
+	wire [7:0] sph_bnq;		// SPH input buskeeper output  (active low)
 
 	// For debugging purposes
 	wire [15:0] SP;
@@ -191,8 +196,8 @@ module PC ( CLK5, CLK6, CLK7, d92, w, x, DL, abus, cbus, dbus, zbus, wbus, adl, 
 	wire [7:0] pch_q;		// PCH output
 	wire [7:0] pch_nq;		// PCH output (complement)
 
-	wire [7:0] pcl_bnq;		// PCL input buskeeper output
-	wire [7:0] pch_bnq;		// PCH input buskeeper output
+	wire [7:0] pcl_bnq;		// PCL input buskeeper output  (active low)
+	wire [7:0] pch_bnq;		// PCH input buskeeper output  (active low)
 
 	// For debugging purposes
 	wire [15:0] PC;
@@ -251,6 +256,36 @@ module regbit ( clk, cclk, d, ld, q );
 	assign q = val_out;
 
 endmodule // regbit
+
+// Used for Z/W registers
+module regbit_nd ( clk, cclk, nd, ld, q );
+
+	input clk;
+	input cclk;
+	input nd;
+	input ld;
+	output q;
+
+	// Latch with complementary set enable, complementary CLK.
+	// Inverse hold.
+
+	reg val_in;
+	reg val_out;
+	initial val_in = 1'bx;
+	initial val_out = 1'bx;
+
+	always @(*) begin
+		if (clk && ld)
+			val_in = d;
+	end
+
+	always @(negedge ld) begin
+		val_out <= val_in;
+	end
+
+	assign q = ~val_out;
+
+endmodule // regbit_nd
 
 module sp_regbit ( clk, cclk, nd, ld, q, nq );
 
