@@ -5,6 +5,8 @@ This module is an integration of two circuits called "DataLatch" (TopPart) and "
 |![locator_datalatch](/imgstore/locator_datalatch.png)|![locator_databridge](/imgstore/locator_databridge.png)|
 |---|---|
 
+Please, if you want to understand correctly how this tricky circuit works, read the whole section carefully and take into account that this schematic was originally designed as two sections of the wiki, so the description is a bit "fragmented". The most correct and easiest to understand circuit is at the very end of the section.
+
 ## Top Part
 
 ![datalatch](/imgstore/datalatch.jpg)
@@ -52,7 +54,7 @@ Internal data bus driven (internal->external):
 |![datalatch_intbus_0](/imgstore/datalatch_intbus_0.png)|![datalatch_intbus_1](/imgstore/datalatch_intbus_1.png)|
 |---|---|
 
-In all cases, the internal data bus is precharged (DL=0xff) during CLK2=0.
+In all cases, both the internal and external data buses are precharged (value=0xff) during CLK2=0.
 
 ### Top Part Logisim
 

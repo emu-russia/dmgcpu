@@ -44,17 +44,17 @@ The control ALU inputs from decoders 2/3 are listed separately.
 
 |Decoder2/3|Where To|Gekkio name|
 |---|---|---|
-|w0 |Flags Logic |s2_cc_check |
-|w3 |Flags Logic |s2_op_alu8 |
-|w9 |Flags Logic |s2_op_sp_e_sx10 |
-|w10 |Flags Logic |s2_alu_res |
-|w12 |Flags Logic |s2_cb_bit |
-|w15 |Flags Logic |s2_op_add_hl_sxx0 |
-|w19 |Flags Logic |s2_data_fetch_cycle |
-|w24 |Flags Logic |s2_alu_set |
-|w37 |Flags Logic |s2_op_incdec8 |
-|x0 |Shifter, Flags Logic |s3_alu_rotate_shift_left |
-|x1 |Shifter, Flags Logic |s3_alu_rotate_shift_right |
+|w0 |Random Logic |s2_cc_check |
+|w3 |Random Logic |s2_op_alu8 |
+|w9 |Random Logic |s2_op_sp_e_sx10 |
+|w10 |Random Logic |s2_alu_res |
+|w12 |Random Logic |s2_cb_bit |
+|w15 |Random Logic |s2_op_add_hl_sxx0 |
+|w19 |Random Logic |s2_data_fetch_cycle |
+|w24 |Random Logic |s2_alu_set |
+|w37 |Random Logic |s2_op_incdec8 |
+|x0 |Shifter, Random Logic |s3_alu_rotate_shift_left |
+|x1 |Shifter, Random Logic |s3_alu_rotate_shift_right |
 |x3 |Sums |s3_alu_sum |
 |x4 |G/P Terms |s3_alu_logic_or |
 |x5 |Shifter |s3_alu_rlc |
@@ -62,21 +62,21 @@ The control ALU inputs from decoders 2/3 are listed separately.
 |x7 |Shifter |s3_alu_rrc |
 |x8 |Shifter |s3_alu_rr |
 |x9 |Shifter |s3_alu_sra |
-|x10 |Flags Logic |s3_alu_sum_pos_hf_cf |
-|x11 |Flags Logic |s3_alu_sum_neg_cf |
-|x12 |Flags Logic |s3_alu_sum_neg_hf_nf |
+|x10 |Random Logic |s3_alu_sum_pos_hf_cf |
+|x11 |Random Logic |s3_alu_sum_neg_cf |
+|x12 |Random Logic |s3_alu_sum_neg_hf_nf |
 |x16 |Shifter |s3_alu_swap |
 |x18 |Sums |s3_alu_xor |
-|x19 |G/P Terms, Flags Logic |s3_alu_logic_and |
-|x21 |Flags Logic |s3_alu_ccf_scf |
-|x22 |Flags Logic |s3_alu_daa |
-|x23 |Flags Logic |s3_alu_add_adc |
-|x24 |Flags Logic |s3_alu_sub_sbc |
+|x19 |G/P Terms, Random Logic |s3_alu_logic_and |
+|x21 |Random Logic |s3_alu_ccf_scf |
+|x22 |Random Logic |s3_alu_daa |
+|x23 |Random Logic |s3_alu_add_adc |
+|x24 |Random Logic |s3_alu_sub_sbc |
 |x25 |G/P Terms |s3_alu_b_complement |
-|x26 |Flags Logic |s3_alu_cpl |
-|x27 |Flags Logic |s3_alu_cp |
-|x28 |Flags |s3_wren_cf |
-|x29 |Flags |s3_wren_hf_nf_zf |
+|x26 |Random Logic |s3_alu_cpl |
+|x27 |Random Logic |s3_alu_cp |
+|x28 |Random |s3_wren_cf |
+|x29 |Random |s3_wren_hf_nf_zf |
 
 ## ALU Outputs
 
