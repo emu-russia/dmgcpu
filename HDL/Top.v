@@ -87,6 +87,18 @@ module SM83Core (
 	assign nCLK4 = ~CLK4;
 	assign WR = `s2_wr;
 
+	// Debug wires:
+	wire [15:0] RegPC = bot.pc.PC;
+	wire [15:0] RegSP = bot.sp.SP;
+	wire [7:0] RegA = bot.regs.r1q;
+	wire [7:0] RegF = {alu_inst.bc[3], alu_inst.bc[2], alu_inst.bc[5], alu_inst.bc[1], 4'h0};
+	wire [7:0] RegB = bot.regs.r7q;
+	wire [7:0] RegC = bot.regs.r6q;
+	wire [7:0] RegD = bot.regs.r5q;
+	wire [7:0] RegE = bot.regs.r4q;
+	wire [7:0] RegH = bot.regs.r3q;
+	wire [7:0] RegL = bot.regs.r1q;
+
 	// Instances
 
 	nor z_eval (AllZeros, Res[0], Res[1], Res[2], Res[3], Res[4], Res[5], Res[6], Res[7]);

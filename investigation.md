@@ -113,3 +113,130 @@ So `SP` is also stored inverted in the registers.
 So `PC` is also stored inverted in the registers.
 
 ![Path_Regs](/imgstore/Path_PC.png)
+
+# RET Z, RET NZ
+
+~~The conditional checking are inverted. Testing with `JP Z` and `JP NZ` the
+condition is correct, so the problem is only in the `RET` instructions, I
+suppose.~~ Actually, these instruction are correct in the `dmgcpu` simulation,
+and only appears in the `dmg-sim`. In fact, both instructions are affected. The
+error is actually due to a timing difference in the `dmg-sim` simulation.
+
+Value of the signal `a[25:0]`, at the first cycle of the instructions `JP Z`,
+`JP NZ` `RET Z` (`c8`) and `RET NZ` (`c0`) are:
+
+- `ca`: 15665A5 (JP Z)
+- `c2`: 15655A5 (JP NZ)
+- diff: 0001000
+- `c8`: 15565A5 (RET Z)
+- `c0`: 15555A5 (RET NZ)
+- diff: 0001000
+
+`a[13]` is the only difference between the two groups. The values of `d`, `x`
+and `w` are also the same in the first cycle (but differ afterwards).
+
+`a[13]` is directly connected to bit 3 of the instruction. These signals only
+affect the value of `d`, `x` and some instructions (probably when part of the
+instructions behaviour is directly encoded in the opcode).
+
+Looking at the value of `a` in the second cycle:
+
+- `ca`: 25665A5 (JP Z)
+- `c2`: 25655A5 (JP NZ)
+- diff: 0001000
+- `c8`: 2A565A5 (RET Z)
+- `c0`: 25555A5 (RET NZ)
+- diff: 0F01000
+
+Beside the difference in `a[13]`, the value of `a[23]` to `a[20]` also change.
+But not in the `JP` instructions.
+
+In the decoded there are signals called `s2_state0_next`, `s2_state1_next` and
+`s2_state2_next`, which I presume indicate the next state of the sequencer. The
+sequencer must change state depending on the conditional falgs, so by tracing
+these signals I may find where the conditional flags are used, and probably
+where the problem is.
+
+These signals are `w[20]`, `w[33]` and `w[32]`, outputs of `Decoder2`. These
+signals are only affected by `d`, output of `Decoder1`. `Decoder1` is only
+affected by `a`, output of the `Sequencer`.
+
+One of the inputs of the `Sequencer` is `ALU_Out1`, which become high at end of
+one cycle of the conditional instructions that did not branch (at least for the
+4 instructiosn listed above).
+
+ALU_Out1 <- ~azo[11] <- az[11]
+
+assign az[11] = ~( 
+    `s2_cc_check & (
+        (nIR[3]&IR[4]&bc[1]) |
+        (IR[3]&IR[4]&nbc[1]) |
+        (IR[3]&nIR[4]&nbc[3]) |
+        (nIR[3]&nIR[4]&bc[3]))
+    );
+
+Here, `bc` store the conditional flags (Z: bc[3], N: bc[2], H: bc[5], C: bc[1]),
+and `IR` the instruction opcode:
+
+IR[4:3] | Flag
+---     | ---
+00      | Z
+01      | NZ
+10      | C
+11      | NC
+
+Comparing it to some instructions:
+
+Instruction | IR | IR[4:3] | Flags
+---         | ---| ---     | ---
+JP NZ       | c2 | 00      | Z
+JP Z        | ca | 01      | NZ
+JP NC       | d2 | 10      | C
+JP C        | da | 11      | NC
+RET NZ      | c0 | 00      | Z
+RET Z       | c8 | 01      | NZ
+RET NC      | d0 | 10      | C
+RET C       | d8 | 11      | NC
+
+The conditional flags are inverted, but this is correct, because when ALU_Out1
+is high is when the branch is not taken.
+
+At this point I noticed that the instructions are actually emulating correctly
+in the `dmgcpu` simulation, and the error only appear in the `dmg-sim` simulation.
+Looking more closely at the `ALU_Out1` signal, its negative edge is happening
+before the change of state in the sequencer. This makes the logic always read
+this signal as low, and always taking the branch.
+
+The difference in timing is beacuse `dmg-sim` tries to take in account the small
+delays in the real hardware, while `dmgcpu` is almost cycle based.
+
+The state of the sequencer is advanced by posedge of `CLK9`, while `ALU_Out1`
+(`azo[11]`) is gated by `CLK6` (and `CLK7`). `CLK6` ends a little before `CLK9`
+(22ns to be exact), so the sequencer fails to read `ALU_Out1`.
+
+Removing all delays from the `dmg-sim` simulation, the instructions work
+correctly, with the end of `CLK6` aligning with the start of `CLK9`.
+
+Looking at the length of the paths from the source clock to `CLK9` and `CLK6`,
+we can see that the path to `CLK6` is 11 connections longer than the path to
+`CLK9`. In `dmg-sim`, each connection have around 2ns of delay, so the
+difference in timing is expected.
+
+```
+- CLK9                 <- BOGA <- *BALY*
+- CLK1         <- AWOB <- BOGA <- *BALY*
+- CLK2 <- BEDO <- BYXO <- BUVU <- *BALY* <- BYJU <- BELE <- BUTO <- BAZE <- BELO <- BANE <- BEJA <- BOLO <- BUFA <- BERY <- **BAPY**
+
+- CLK3 <- BEKO <- BUDE <- BIRY <- BELU <- ~ATYP & CLK_EAN
+- CLK4 <- UVYT <- BUDE
+
+- CLK5 <- BOLO <- BUFA
+- CLK6         <- BUFA <- BERU <- **BAPY**
+
+**BAPY** <- ~(ATYP | AROV | ~CLK_ENA) = ~ATYP & ~AROV & CLK_ENA
+ATYP <- AFUR
+AROV <- APUK
+```
+
+Adding `22ns` of delay to `CLK3`, `CLK4`, `CLK5` and `CLK6` (all these CLK are
+almost in sync) in the `dmg-sim` fix the problem.
