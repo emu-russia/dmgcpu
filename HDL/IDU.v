@@ -8,13 +8,13 @@
 // There is an inverter on the register input that loads ~val into the register.
 // In the register the value is stored as ~val (inverse hold)
 
-module IncDec ( CLK4, TTB1, TTB2, TTB3, Maybe1, cbus, dbus, adl, adh, AddrBus );
+module IncDec ( CLK4, TTB1, TTB2, TTB3, BUS_DISABLE, cbus, dbus, adl, adh, AddrBus );
 
 	input CLK4;
 	input TTB1;				// 1: Perform pairwise increment/decrement (simultaneously for two 8-bit IncDec halves)
 	input TTB2;				// 1: Perform decrement
 	input TTB3;				// 1: Perform increment
-	input Maybe1;
+	input BUS_DISABLE;
 	inout [7:0] cbus;		// ~val_lo
 	inout [7:0] dbus;		// ~val_hi
 	inout [7:0] adl;		// res_lo
@@ -39,7 +39,7 @@ module IncDec ( CLK4, TTB1, TTB2, TTB3, Maybe1, cbus, dbus, adl, adh, AddrBus );
 
 	// The AddrBus value is formed on the basis of the bus keeper values of the cbus/dbus.
 
-	assign AddrBus = ~Maybe1 ? {~dbq,~cbq} : 16'bz;
+	assign AddrBus = ~BUS_DISABLE ? {~dbq,~cbq} : 16'bz;
 
 endmodule // IncDec
 

@@ -1035,7 +1035,7 @@
     <comp lib="8" loc="(1600,860)" name="Text">
       <a name="text" val="g94"/>
     </comp>
-    <comp lib="8" loc="(1785,56)" name="Text">
+    <comp lib="8" loc="(1785,55)" name="Text">
       <a name="font" val="SansSerif italic 16"/>
       <a name="text" val="All DFFs are posedge, except g84"/>
     </comp>
@@ -1061,11 +1061,11 @@
       <a name="font" val="SansSerif bolditalic 14"/>
       <a name="text" val="clk_dis_or_sync_reset"/>
     </comp>
-    <comp lib="8" loc="(2553,1001)" name="Text">
+    <comp lib="8" loc="(2550,1000)" name="Text">
       <a name="font" val="SansSerif plain 11"/>
       <a name="text" val="CLK2/1 are coupled by complement, converting this DFF to negedge."/>
     </comp>
-    <comp lib="8" loc="(2556,936)" name="Text">
+    <comp lib="8" loc="(2555,935)" name="Text">
       <a name="text" val="[!]"/>
     </comp>
     <comp lib="8" loc="(2600,160)" name="Text">
@@ -2089,63 +2089,82 @@
     <a name="circuit" val="mreq_cell"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
     <a name="simulationFrequency" val="1.0"/>
-    <comp lib="0" loc="(160,110)" name="Pin">
+    <comp lib="0" loc="(300,130)" name="Pin">
       <a name="appearance" val="NewPins"/>
       <a name="label" val="b"/>
     </comp>
-    <comp lib="0" loc="(160,150)" name="Pin">
+    <comp lib="0" loc="(300,170)" name="Pin">
       <a name="appearance" val="NewPins"/>
       <a name="label" val="c"/>
     </comp>
-    <comp lib="0" loc="(160,210)" name="Pin">
+    <comp lib="0" loc="(300,230)" name="Pin">
       <a name="appearance" val="NewPins"/>
       <a name="label" val="d"/>
     </comp>
-    <comp lib="0" loc="(160,70)" name="Pin">
+    <comp lib="0" loc="(300,90)" name="Pin">
       <a name="appearance" val="NewPins"/>
       <a name="label" val="a"/>
     </comp>
-    <comp lib="0" loc="(520,100)" name="Constant"/>
-    <comp lib="0" loc="(600,110)" name="Pin">
+    <comp lib="0" loc="(660,120)" name="Constant"/>
+    <comp lib="0" loc="(740,130)" name="Pin">
       <a name="appearance" val="NewPins"/>
       <a name="facing" val="west"/>
       <a name="label" val="x"/>
       <a name="output" val="true"/>
     </comp>
-    <comp lib="1" loc="(290,80)" name="NOT Gate"/>
-    <comp lib="1" loc="(360,90)" name="AND Gate">
+    <comp lib="1" loc="(430,100)" name="NOT Gate"/>
+    <comp lib="1" loc="(500,110)" name="AND Gate">
       <a name="size" val="30"/>
     </comp>
-    <comp lib="1" loc="(370,170)" name="NOR Gate">
+    <comp lib="1" loc="(510,190)" name="NOR Gate">
       <a name="size" val="30"/>
     </comp>
-    <comp lib="1" loc="(460,120)" name="NOR Gate">
+    <comp lib="1" loc="(600,140)" name="NOR Gate">
       <a name="size" val="30"/>
     </comp>
-    <comp lib="2" loc="(560,110)" name="Multiplexer"/>
-    <wire from="(160,110)" to="(190,110)"/>
-    <wire from="(160,150)" to="(240,150)"/>
-    <wire from="(160,210)" to="(540,210)"/>
-    <wire from="(160,70)" to="(210,70)"/>
-    <wire from="(190,110)" to="(190,180)"/>
-    <wire from="(190,180)" to="(330,180)"/>
-    <wire from="(210,160)" to="(330,160)"/>
-    <wire from="(210,70)" to="(210,160)"/>
-    <wire from="(210,70)" to="(230,70)"/>
-    <wire from="(230,70)" to="(230,80)"/>
-    <wire from="(230,80)" to="(260,80)"/>
-    <wire from="(240,100)" to="(240,150)"/>
-    <wire from="(240,100)" to="(330,100)"/>
-    <wire from="(290,80)" to="(330,80)"/>
-    <wire from="(360,90)" to="(390,90)"/>
-    <wire from="(370,170)" to="(390,170)"/>
-    <wire from="(390,110)" to="(420,110)"/>
-    <wire from="(390,130)" to="(390,170)"/>
-    <wire from="(390,130)" to="(420,130)"/>
-    <wire from="(390,90)" to="(390,110)"/>
-    <wire from="(460,120)" to="(530,120)"/>
-    <wire from="(520,100)" to="(530,100)"/>
-    <wire from="(540,130)" to="(540,210)"/>
-    <wire from="(560,110)" to="(600,110)"/>
+    <comp lib="2" loc="(700,130)" name="Multiplexer"/>
+    <comp lib="8" loc="(151,177)" name="Text">
+      <a name="text" val="IPL_DISABLE (Maybe2)"/>
+    </comp>
+    <comp lib="8" loc="(179,239)" name="Text">
+      <a name="text" val="s2_addr_valid"/>
+    </comp>
+    <comp lib="8" loc="(192,99)" name="Text">
+      <a name="text" val="MMIO_REQ"/>
+    </comp>
+    <comp lib="8" loc="(196,138)" name="Text">
+      <a name="text" val="IPL_REQ"/>
+    </comp>
+    <comp lib="8" loc="(820,78)" name="Text">
+      <a name="font" val="SansSerif italic 13"/>
+      <a name="text" val="Immediately after this cell is the extra inverter, to get the MREQ signal"/>
+    </comp>
+    <comp lib="8" loc="(830,138)" name="Text">
+      <a name="text" val="#MREQ"/>
+    </comp>
+    <wire from="(300,130)" to="(330,130)"/>
+    <wire from="(300,170)" to="(380,170)"/>
+    <wire from="(300,230)" to="(680,230)"/>
+    <wire from="(300,90)" to="(350,90)"/>
+    <wire from="(330,130)" to="(330,200)"/>
+    <wire from="(330,200)" to="(470,200)"/>
+    <wire from="(350,180)" to="(470,180)"/>
+    <wire from="(350,90)" to="(350,180)"/>
+    <wire from="(350,90)" to="(370,90)"/>
+    <wire from="(370,100)" to="(400,100)"/>
+    <wire from="(370,90)" to="(370,100)"/>
+    <wire from="(380,120)" to="(380,170)"/>
+    <wire from="(380,120)" to="(470,120)"/>
+    <wire from="(430,100)" to="(470,100)"/>
+    <wire from="(500,110)" to="(530,110)"/>
+    <wire from="(510,190)" to="(530,190)"/>
+    <wire from="(530,110)" to="(530,130)"/>
+    <wire from="(530,130)" to="(560,130)"/>
+    <wire from="(530,150)" to="(530,190)"/>
+    <wire from="(530,150)" to="(560,150)"/>
+    <wire from="(600,140)" to="(670,140)"/>
+    <wire from="(660,120)" to="(670,120)"/>
+    <wire from="(680,150)" to="(680,230)"/>
+    <wire from="(700,130)" to="(740,130)"/>
   </circuit>
 </project>

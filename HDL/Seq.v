@@ -1,7 +1,7 @@
 `timescale 1ns/1ns
 
 module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, ALU_Out1, 
-	NMI, CLK_ENA, OSC_ENA, RESET, SYNC_RESET, OSC_STABLE, WAKE, RD, Maybe1, MMIO_REQ, IPL_REQ, Maybe2, MREQ,
+	NMI, CLK_ENA, OSC_ENA, RESET, SYNC_RESET, OSC_STABLE, WAKE, RD, BUS_DISABLE, MMIO_REQ, IPL_REQ, IPL_DISABLE, MREQ,
 	SeqControl_1, SeqControl_2, SeqOut_1, SeqOut_2, SeqOut_3 );
 
 	input CLK1;
@@ -27,10 +27,10 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	input OSC_STABLE;		// [previously Clock_WTF]
 	input WAKE;
 	output RD;
-	input Maybe1;			// 1: Bus disable
+	input BUS_DISABLE;			// 1: Bus disable
 	input MMIO_REQ;
 	input IPL_REQ;
-	input Maybe2; 			// See seq_mreq module.
+	input IPL_DISABLE; 			// 1: IPL disable, mutes IPL_REQ; See seq_mreq module.
 	output MREQ;
 
 	input SeqControl_1; 		// 1: Wake up after an interrupt. Used in HLT opcode processing.
@@ -189,10 +189,10 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	assign w2 = `s2_m1;
 	assign w4 = `s3_op_reti_s011;
 	assign w38 = NMI;
-	assign w10 = Maybe1;
+	assign w10 = BUS_DISABLE;
 	assign w34 = MMIO_REQ;
 	assign w35 = IPL_REQ;
-	assign w36 = Maybe2;
+	assign w36 = IPL_DISABLE;
 	assign MREQ = w12;
 	assign SeqOut_1 = w6;
 	assign w7 = CLK8;

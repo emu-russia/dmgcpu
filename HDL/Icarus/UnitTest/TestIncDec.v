@@ -24,7 +24,7 @@ module TestIncDec();
 		.TTB1(1'b0),
 		.TTB2(1'b0),
 		.TTB3(1'b1),		// +1
-		.Maybe1(1'b0),
+		.BUS_DISABLE(1'b0),
 		.cbus(nq[7:0]),
 		.dbus(nq[15:8]),
 		.adl(d[7:0]),

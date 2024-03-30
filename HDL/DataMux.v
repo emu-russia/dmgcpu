@@ -6,7 +6,7 @@
 module DataMux ( CLK, DL_Control1, DL_Control2, DataBus, DL, Res, DataOut, DV, WR_hack );
 
 	input CLK; 				// CLK2
-	input DL_Control1;			// 1: Bus disable  (External Test1 aka Maybe1)
+	input DL_Control1;			// 1: Bus disable  (External Test1 aka BUS_DISABLE)
 	input DL_Control2;			// x37. ALU Result -> DL; Gekkio: s3_oe_alu_to_pbus
 	inout [7:0] DataBus;		// External databus
 	/* verilator lint_off UNOPTFLAT */

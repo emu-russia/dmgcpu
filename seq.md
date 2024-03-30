@@ -21,10 +21,10 @@
 |OSC_STABLE (_deprecated signal name Clock_WTF_)|External|Port T15. To nand g59|
 |NMI (_deprecated signal name Unbonded_)|External|Port T16. NMI|
 |WAKE|External|Port B25|
-|Maybe1|External|Port R3. 1: Bus disable|
+|BUS_DISABLE (_deprecated signal name Maybe1_|External|Port R3. 1: Bus disable|
 |MMIO_REQ|External|Port R4. See `shielded` module|
 |IPL_REQ|External|Port R5. See `shielded` module|
-|Maybe2|External|Port R6. See `shielded` module|
+|IPL_DISABLE (_deprecated signal name Maybe2_)|External|Port R6. 1: IPL disabled; See `shielded` module|
 |Seq_Control1|IRQ Logic|To g42; 1: Wake up after an interrupt. Used in HLT opcode processing.|
 |Seq_Control2|Bottom|To nand g79|
 |d93|Decoder1|To g52, g78|
@@ -195,6 +195,8 @@ This module is essentially used to generate the `#MREQ` signal. Below is `not` t
 ![shielded](/imgstore/modules/shielded.jpg)
 
 ![shielded_tran](/imgstore/modules/shielded_tran.jpg)
+
+![mreq](/logisim/mreq.png)
 
 ## comb4 - aoi_221_dyn
 

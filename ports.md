@@ -21,13 +21,13 @@ By @msinger: http://iceboy.a-singer.de/doc/dmg_cpu_connections.html
 |T13	|I	|RESET	|RESET|RST (ext. pad)	|Active-high asynchronous reset input. Fed directly from RST input pad.|
 |T14	|O	|CLKIN_A	|OSC_ENA|multiple	|:warning: _NOTE: The label used in the schematics is misleading. This is not a clock;_ nor is it an input! Crystal oscillator enable. When CPU drives this low, the crystal oscillator gets disabled to save power. This happens during STOP mode.|
 |T15	|I	|unlabeled	|OSC_STABLE|TABA.q	|Active-high crystal oscillator stablilized input? After reset, this signal gets high after about 32 milliseconds. The CPU must not drive T11 high before T15 gets high. See description of T11.|
-|T16	|I	|NMI	|Unbonded|(ext. pad)	|Directly connected to an input pad at the top of the die, which is not bonded. org: NMI|
+|T16	|I	|NMI	|NMI|(ext. pad)	|Directly connected to an input pad at the top of the die, which is not bonded. org: NMI|
 |R1	|O	|CPU_RAW_RD	|RD|multiple	|Active-high memory RD signal from CPU.|
 |R2	|O	|FROM_CPU3	|WR|multiple	|Active-high memory WR signal from CPU.|
-|R3	|I	|T1T2	|Maybe1|UNOR.q	|1: Disable all bus drivers (databus, addrbus) in the CPU when test mode is active.|
+|R3	|I	|T1T2	|BUS_DISABLE|UNOR.q	|1: Disable all bus drivers (databus, addrbus) in the CPU when test mode is active.|
 |R4	|I	|unlabeled	|MMIO_REQ|SYRO.q	|High when address bus is 0xfexx or 0xffxx. When high, it suppresses R7, so that the data bus can be driven by an internal component (HRAM, OAM, FFxx registers). I suspect this is also used by the CPU to decode the address for the interrupt enable register (0xffff), but I'm not sure yet.|
 |R5	|I	|unlabeled	|IPL_REQ|TUTU.q	|High when address bus is 0x00xx and boot ROM is still visible. When high, it suppresses R7, so that the data bus can be driven by the internal boot ROM.|
-|R6	|I	|T1T2	|Maybe2|UMUT.q	|Maybe used to disable all bus drivers in the CPU when test mode is active.|
+|R6	|I	|T1T2	|IPL_DISABLE|UMUT.q	|1: IPL disable, mutes IPL_REQ|
 |R7	|O	|FROM_CPU4	|MREQ|TEXO.in1, AGUT.in3	|Active-high external memory request. Has to be high during external memory cycles (read or write). This causes one of the chip select signals (CS, MCS, A15) to be asserted in the right moment. Has to be low if no memory cycle is going on, otherwise the chip select will be asserted even if R1 and R2 are low. During write cycles, this signal is also needed for driving the internal data bus onto the I/O pads. During read cycles, this signal is also needed for latching the I/O pads and driving the latched data onto the internal data bus. When R4 or R5 is high, the CPU keeps this signal low, allowing internal components (HRAM, OAM, boot ROM, FFxx registers) to drive the internal data bus.|
 |R8	|?	|-	| |-	|Not connected.|
 |R9	|?	|-	| |-	|Not connected.|
