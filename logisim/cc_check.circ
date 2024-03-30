@@ -114,32 +114,32 @@
     <comp lib="1" loc="(670,210)" name="NAND Gate">
       <a name="size" val="30"/>
     </comp>
-    <comp lib="8" loc="(102,87)" name="Text">
+    <comp lib="8" loc="(100,85)" name="Text">
       <a name="text" val="Flag C"/>
     </comp>
-    <comp lib="8" loc="(105,128)" name="Text">
+    <comp lib="8" loc="(105,125)" name="Text">
       <a name="text" val="Flag Z"/>
     </comp>
-    <comp lib="8" loc="(144,459)" name="Text">
+    <comp lib="8" loc="(142,458)" name="Text">
       <a name="text" val="11001000 - RET Z"/>
     </comp>
-    <comp lib="8" loc="(147,509)" name="Text">
+    <comp lib="8" loc="(145,505)" name="Text">
       <a name="text" val="11011000 - RET C"/>
     </comp>
-    <comp lib="8" loc="(151,437)" name="Text">
+    <comp lib="8" loc="(150,435)" name="Text">
       <a name="text" val="11000000 - RET NZ"/>
     </comp>
-    <comp lib="8" loc="(151,483)" name="Text">
+    <comp lib="8" loc="(150,480)" name="Text">
       <a name="text" val="11010000 - RET NC"/>
     </comp>
-    <comp lib="8" loc="(645,278)" name="Text">
+    <comp lib="8" loc="(645,275)" name="Text">
       <a name="font" val="SansSerif italic 10"/>
       <a name="text" val="The dynamic part of the logic is not shown for simplification purposes"/>
     </comp>
-    <comp lib="8" loc="(800,184)" name="Text">
-      <a name="text" val="ALU_Out1"/>
+    <comp lib="8" loc="(764,171)" name="Text">
+      <a name="text" val="ALU_Out1 = ~cond_ok"/>
     </comp>
-    <comp lib="8" loc="(86,38)" name="Text">
+    <comp lib="8" loc="(85,35)" name="Text">
       <a name="text" val="s2_cc_check"/>
     </comp>
     <wire from="(190,390)" to="(210,390)"/>
