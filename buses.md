@@ -38,18 +38,18 @@ ALU result to bottom/DataMux.
 
 ## Internal bottom buses
 
-|Bus|To Reg|From Reg|
-|---|---|---|
-|abus|alu\[7:0\] to top (no reg)|H, L, A, SPL, SPH, PCL|
-|bbus|DV\[7:0\] to top (no reg)|B, C, D, E, H, L, A, Z, SPL, SPH|
-|cbus|IDU Lo|C, E, L, Z, SPL, PCL|
-|dbus|IDU Hi|B, D, H, W, SPH, PCH|
-|ebus|C, E, L|Dedicated circuit|
-|fbus|B, D, H, A|Dedicated circuit|
-|zbus|SPL, PCL|Z|
-|wbus|SPH, PCH|W|
-|adl|SPL, PCL, Z|IDU Lo|
-|adh|SPH, PCH, W|IDU Hi|
+|Bus|From Reg|To Reg|Precharge|Bus Polarity|
+|---|---|---|---|---|
+|abus|H, L, A, SPL, SPH, PCL|alu\[7:0\] to top (no reg)|CLK2=0|inverse hold|
+|bbus|B, C, D, E, H, L, A, Z, SPL, SPH|DV\[7:0\] to top (no reg)|CLK2=0|inverse hold|
+|cbus|C, E, L, Z, SPL, PCL|IDU Lo|CLK2=0|inverse hold|
+|dbus|B, D, H, W, SPH, PCH|IDU Hi|CLK2=0|inverse hold|
+|ebus|Dedicated circuit|C, E, L|CLK4=0| |
+|fbus|Dedicated circuit|B, D, H, A|CLK4=0| |
+|zbus|Z|SPL, PCL| | |
+|wbus|W|SPH, PCH| | |
+|adl|IDU Lo|SPL, PCL, Z| | |
+|adh|IDU Hi|SPH, PCH, W| | |
 
 The names of some internal bottom buses are arbitrary (do not make sense).
 
