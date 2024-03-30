@@ -17,7 +17,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	input [106:0] d;
 	input [40:0] w;
 	input [68:0] x;
-	input ALU_Out1;
+	input ALU_Out1; // high when condition check fails. See `az[11]` for logic.
 
 	input NMI;				// [previously Unbonded]
 	output CLK_ENA;			// [previously LongDescr]

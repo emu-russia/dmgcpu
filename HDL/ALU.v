@@ -297,7 +297,13 @@ module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR,
 	assign az[8] = ~( alu[5] | (`s2_alu_set&IR[3]&nIR[4]&IR[5]) | (`s2_alu_res&(nIR[3]|IR[4]|nIR[5])) | (bc[2]&`s3_alu_daa&((bc[1]&nbc[5])|(nbc[1]&bc[5]))) | (nbc[2]&`s3_alu_daa&((bq5)|(bc[1])|(bq4&bq7))) );
 	assign az[9] = ~( alu[6] | (`s2_alu_set&nIR[3]&IR[4]&IR[5]) | (`s2_alu_res&(IR[3]|nIR[4]|nIR[5])) | (bc[2]&`s3_alu_daa&(nbc[1]&bc[5])) | (nbc[2]&`s3_alu_daa&((bq4&bq7)|(bc[1])|(bq5))) );
 	assign az[10] = ~( alu[7] | (`s2_alu_set&IR[3]&IR[4]&IR[5]) | (`s2_alu_res&(nIR[3]|nIR[4]|nIR[5])) | (bc[2]&`s3_alu_daa&(bc[1]|bc[5])) );
-	assign az[11] = ~( `s2_cc_check & ((nIR[3]&IR[4]&bc[1]) | (IR[3]&IR[4]&nbc[1]) | (IR[3]&nIR[4]&nbc[3]) | (nIR[3]&nIR[4]&bc[3])) );
+	assign az[11] = ~( 
+		`s2_cc_check & (              // inverted condition check
+			(nIR[3]&nIR[4] & bc[3]) | // 00 | Z
+			( IR[3]&nIR[4] &nbc[3]) | // 10 | NZ
+			(nIR[3]& IR[4] & bc[1]) | // 01 | C
+			( IR[3]& IR[4] &nbc[1])   // 11 | NC
+		));
 	assign az[12] = ~(
 		(f[0]&`s2_cb_bit&nIR[3]&nIR[4]&nIR[5]) |
 		(f[1]&`s2_cb_bit&IR[3]&nIR[4]&nIR[5]) |
