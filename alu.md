@@ -89,7 +89,7 @@ The control ALU inputs from decoders 2/3 are listed separately.
 |bc5|Bottom Left| |
 |ALU_to_bot|Bottom|zbus msb (zbus\[7\]) derived from ALU_to_bot latch|
 |ALU_to_Thingy|Thingy|CarryOut|
-|ALU_Out1|Sequencer| |
+|ALU_Out1|Sequencer|1: Skip branch |
 
 ## Internal Wires
 

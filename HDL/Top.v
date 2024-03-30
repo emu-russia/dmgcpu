@@ -64,7 +64,7 @@ module SM83Core (
 	wire Temp_H; 			// Temp H flag
 	wire Temp_N;			// Temp N flag
 	wire Temp_Z;			// Temp Z flag  / zbus msb
-	wire ALU_Out1;
+	wire ALU_Out1;			// ALU random logic -> Sequencer; 1: Skip branch
 	wire [7:0] IR;			// Current opcode
 	wire [5:0] nIR;				// Inverse IR values are only used for the first 6 bits.
 	wire [7:3] bro; 		// IRQ Logic interrupt address
