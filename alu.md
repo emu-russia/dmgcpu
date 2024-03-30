@@ -75,8 +75,8 @@ The control ALU inputs from decoders 2/3 are listed separately.
 |x25 |G/P Terms |s3_alu_b_complement |
 |x26 |Random Logic |s3_alu_cpl |
 |x27 |Random Logic |s3_alu_cp |
-|x28 |Random |s3_wren_cf |
-|x29 |Random |s3_wren_hf_nf_zf |
+|x28 |Random Logic |s3_wren_cf |
+|x29 |Random Logic |s3_wren_hf_nf_zf |
 
 ## ALU Outputs
 
@@ -229,6 +229,25 @@ The result is an AND-to-NOR tree (using alu_0 as an example):
 (the dynamic part is not shown in the picture)
 
 ![ALU_LargeComb1](/HDL/Design/ALU_LargeComb1.png)
+
+### ALU Operand1 Preprocessing (trees 0,3-6,8-10)
+
+ALU trees 0,3-6,8-10 are responsible for preprocessing operand 1 for SET/RES opcodes (CB table) as well as DAA (decimal correction).
+Because of the topological numbering of the trees, they don't go in order, which is a bit ugly.
+
+### Cond Code Check (tree 11)
+
+ALU tree 11 deals with code checking for conditional instructions (NZ/Z/NC/C)
+
+![cc_check](/logisim/cc_check.png)
+
+### Flags Logic (trees 1,2,7,12)
+
+TBD.
+
+### Carry In (tree 13)
+
+TBD.
 
 ## Flags
 
