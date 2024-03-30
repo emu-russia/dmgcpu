@@ -276,7 +276,7 @@ module regbit_nd ( clk, cclk, nd, ld, q );
 
 	always @(*) begin
 		if (clk && ld)
-			val_in = d;
+			val_in = nd;
 	end
 
 	always @(negedge ld) begin
