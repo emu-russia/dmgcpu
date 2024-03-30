@@ -282,8 +282,9 @@ module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR,
 	// ALU Trees (by hand); Tree numbering is topological (how they are arranged on the chip)
 	// The flag logic in SM83 is organized in such a way that all flag changes calculations are performed in one place (topologically). On the one hand it is very convenient (the logic is isolated), on the other hand it turns out to be a very confusing doshirak.
 
-	// ALU trees 0,3-6,8,9 are responsible for preprocessing operand 1 for SET/RES opcodes (CB table) as well as DAA (decimal correction)
+	// ALU trees 0,3-6,8-10 are responsible for preprocessing operand 1 for SET/RES opcodes (CB table) as well as DAA (decimal correction)
 	// Because of the topological numbering of the trees, they don't go in order, which is a bit ugly.
+	// ALU tree 11 deals with code checking for conditional instructions (NZ/Z/NC/C)
 
 	assign az[0] = ~( alu[0] | (`s2_alu_set&nIR[3]&nIR[4]&nIR[5]) | (`s2_alu_res&(IR[3]|IR[4]|IR[5])) );
 	assign az[1] = ~( (ALU_L5&((nIR[0]&`s2_op_incdec8)|`s3_alu_sum_pos_hf_cf)) | (ALU_L3&`s3_alu_sum_neg_hf_nf) | `s3_alu_cpl | `s2_cb_bit | `s3_alu_logic_and | (Temp_H&d58) );
