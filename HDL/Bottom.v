@@ -191,11 +191,11 @@ module BottomLeftLogic ( CLK2, bc, bq4, bq5, bq7, Aout, abus, bbus, alu, DV );
 	output bq4;
 	output bq5;
 	output bq7;
-	input [7:0] Aout; 		// Current value of the `A` register.
-	inout [7:0] abus;
-	inout [7:0] bbus;
-	output [7:0] alu;
-	output [7:0] DV;
+	input [7:0] Aout; 		// Current value of the `A` register  (directly from the register bits output)
+	inout [7:0] abus; 		// ⚠️ inverse hold (active low)
+	inout [7:0] bbus; 		// ⚠️ inverse hold (active low)
+	output [7:0] alu; 		// abus -> ALU Operand 1
+	output [7:0] DV; 		// bbus -> ALU Operand 2
 
 	wire [7:0] abq; 	// abus Bus keepers outputs
 	wire [7:0] bbq; 	// bbus Bus keepers outputs
@@ -207,6 +207,8 @@ module BottomLeftLogic ( CLK2, bc, bq4, bq5, bq7, Aout, abus, bbus, alu, DV );
 	// This requires transparent latches, since nobody could set up a abus/bbus. On the actual circuit, they are also present as a memory on the `not` gate.
 	BusKeeper abus_keepers [7:0] ( .d(abus), .q(abq) );
 	BusKeeper bbus_keepers [7:0] ( .d(bbus), .q(bbq) );
+
+	// TODO: wtf is this at all?
 
 	assign #`ALU_Ops_delay DV[0] = ~(CLK2 ? (bbq[0] & ~bc[4]) : 1'b1);
 	assign #`ALU_Ops_delay DV[1] = ~(CLK2 ? (bbq[1] & ~bc[4]) : 1'b1);

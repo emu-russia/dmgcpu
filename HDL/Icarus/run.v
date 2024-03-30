@@ -122,7 +122,7 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 	reg [7:0] mem[0:65535];
 	reg [7:0] value;
 
-	// You need to pre-fill the memory with some value so you don't run into `xx'
+	// You need to pre-fill the memory with some value so you don't run into `xx`
 	integer j;
 	initial 
   	for(j = 0; j < 65536; j = j+1) 
