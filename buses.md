@@ -22,11 +22,11 @@ Decoder3 outputs.
 
 ## DL
 
-The bus between the lower part and the DataLatch. Most likely it is actually just an internal data bus (`DB`), but already named as `DL`.
+The bus between the lower part and the DataMux. Most likely it is actually just an internal data bus (`DB`), but already named as `DL`.
 
 ## DV - ALU Operand2
 
-The value from the bottom for the DataBridge/ALU.
+The value from the bottom for the DataMux/ALU.
 
 ## alu - ALU Operand1
 
@@ -34,7 +34,7 @@ The value from the bottom for the ALU.
 
 ## Res
 
-ALU result to bottom.
+ALU result to bottom/DataMux.
 
 ## Internal bottom buses
 
