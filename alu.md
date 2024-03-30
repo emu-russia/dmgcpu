@@ -136,7 +136,7 @@ In between is the small logic (8 AND gates implementing logical XOR operation ou
 
 ![module5_logisim](/logisim/module5_logisim.png)
 
-The gaps contain AND gates that implement a logical XOR operation based on the x/h Sums outputs.
+The gaps contain AND gates that implement a logical XOR operation based on the G/P Terms outputs (x/h).
 
 ### module6 (Sums)
 
@@ -175,7 +175,7 @@ The gaps contain AND gates that implement a logical XOR operation based on the x
 |k|input|Operand2: DV\[n\]|
 |m|output|To CLA Generator (G-terms)|
 |clk|input|CLK2|
-|x|output|To ands near CLA|
+|x|output|To ands near CLA (G-terms complement)|
 |w|output|To Sums (module6); The result of the logical operation AND/OR/permutation of Operand2 bits.|
 
 ## Bottom Part
