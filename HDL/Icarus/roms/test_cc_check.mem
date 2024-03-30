@@ -3,12 +3,13 @@
 // Knowingly false cc checks will be performed so as not to interrupt code flow
 
 00 // nop
-3e 00 // ld a, 0
-c0 // ret nz
-3c // inc a
-c8 // ret z
-3f // ccf
-d8 // ret c
-37 // scf
-d0 // ret nc
+3e 00 // ld a, 0    <-- a = 0
+3c // inc a 		<-- a = 1  (ZF=0)
+c8 // ret z 		<-- return if ZF == 1
+3d // dec a 		<-- a = 0  (ZF=1)
+c0 // ret nz 		<-- return if ZF == 0
+37 // scf 			<-- CF = 1
+d0 // ret nc 		<-- return if CF == 0
+3f // ccf 			<-- CF = 0
+d8 // ret c 		<-- return if CF == 1
 76 // halt
