@@ -1,3 +1,5 @@
+// A very basic program, just to show that something is moving there.
+
 00        // NOP
 31 cc aa  // LD SP, $AACC
 21 80 de  // LD HL, $DE80

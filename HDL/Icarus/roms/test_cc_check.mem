@@ -1,0 +1,14 @@
+// Check the part of the circuit that deals with checking the condition code ("cc check").
+// For this purpose we will use RET cc instructions as the most convenient for verification;
+// Knowingly false cc checks will be performed so as not to interrupt code flow
+
+00 // nop
+3e 00 // ld a, 0
+c0 // ret nz
+3c // inc a
+c8 // ret z
+3f // ccf
+d8 // ret c
+37 // scf
+d0 // ret nc
+76 // halt
