@@ -41,7 +41,7 @@
 |w33|Decoder2|To not g20|
 |w40|Decoder2|To g38|
 |x41|Decoder3|To g87, g94|
-|ALU_Out1|ALU|To nor g24|
+|ALU_Out1|ALU|1: Skip branch; To nor g24|
 |IR|IR|Used to form the inputs of Decoder1. IR3 and IR4 are also used in other places.|
 
 ## Sequencer Outputs
