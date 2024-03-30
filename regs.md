@@ -7,7 +7,7 @@ This additional work to proofread and verify register and bus connections (refer
 
 ## Register Bit
 
-All registers use a common module.
+All registers use a common module (with a small exception for Z/W register bits, see further in the Temp Registers section).
 
 ![regbit](/imgstore/modules/regbit.jpg)
 
@@ -70,11 +70,15 @@ Between the registers scattered small logic for issuing their values to the buse
 
 ## Temp Registers vs Bus Logic
 
-The value on the temp registers (Z/W) does not come directly from the buses, but using logic.
+The value on the temp registers (Z/W) does not come directly from the buses, but using logic. And, attention, the input of Z/W registers has inverse polarity (active low), but the output of the registers to the bus zbus/wbus in the regular polarity, so at the output of Z/W registers additional inverter (not) is sticked.
 
 ![gk](/imgstore/modules/gk.jpg)
 
 ![gk_tran](/imgstore/modules/gk_tran.jpg)
+
+The picture shows how the signals at the input and output of Z/W registers vary compared to conventional registers:
+
+![Path_ZW](/imgstore/Path_ZW.png)
 
 ## SP Register
 
