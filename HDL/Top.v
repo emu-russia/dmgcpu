@@ -6,7 +6,7 @@ module SM83Core (
 	CLK1, CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, CLK8, CLK9, 
 	M1,
 	OSC_STABLE, OSC_ENA, RESET, SYNC_RESET, CLK_ENA, NMI,
-	WAKE, RD, WR, Maybe1, MMIO_REQ, IPL_REQ, Maybe2, MREQ,
+	WAKE, RD, WR, BUS_DISABLE, MMIO_REQ, IPL_REQ, IPL_DISABLE, MREQ,
 	D, A, CPU_IRQ_TRIG, CPU_IRQ_ACK );
 
 	// Obviously, such a large number of dual CLKs is due to the four-cycle "slot" execution of the core.
@@ -33,10 +33,10 @@ module SM83Core (
 	input WAKE;			// Wakes CPU from STOP mode.
 	output RD;
 	output WR;
-	input Maybe1;		// 1: Disable all bus drivers in the CPU when test mode is active.
+	input BUS_DISABLE;		// 1: Disable all bus drivers in the CPU when test mode is active.   [previously Maybe1]
 	input MMIO_REQ;		// High when address bus is 0xfexx or 0xffxx.
 	input IPL_REQ;		// High when address bus is 0x00xx and boot ROM is still visible.
-	input Maybe2;		// TBD: Maybe used to disable all bus drivers in the CPU when test mode is active.
+	input IPL_DISABLE;		// 1: IPL disable, mutes IPL_REQ   [previously Maybe2]
 	output MREQ;
 
 	inout [7:0] D;
@@ -93,7 +93,7 @@ module SM83Core (
 
 	DataMux data_mux (
 		.CLK(CLK2), 
-		.DL_Control1(Maybe1), 
+		.DL_Control1(BUS_DISABLE), 
 		.DL_Control2(`s3_oe_alu_to_pbus), 
 		.DataBus(D),
 		.DL(DL), 
@@ -180,10 +180,10 @@ module SM83Core (
 		.OSC_STABLE(OSC_STABLE),
 		.WAKE(WAKE),
 		.RD(RD),
-		.Maybe1(Maybe1),
+		.BUS_DISABLE(BUS_DISABLE),
 		.MMIO_REQ(MMIO_REQ),
 		.IPL_REQ(IPL_REQ),
-		.Maybe2(Maybe2),
+		.IPL_DISABLE(IPL_DISABLE),
 		.MREQ(MREQ),
 		.SeqControl_1(SeqControl_1),
 		.SeqControl_2(SeqControl_2),
@@ -230,7 +230,7 @@ module SM83Core (
 		.TTB1(TTB1),
 		.TTB2(TTB2),
 		.TTB3(TTB3),
-		.Maybe1(Maybe1),
+		.BUS_DISABLE(BUS_DISABLE),
 		.bro(bro),
 		.A(A) );
 

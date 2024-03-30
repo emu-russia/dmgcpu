@@ -3,7 +3,7 @@
 `define ALU_Ops_delay 0
 
 module Bottom ( CLK2, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, Temp_C, Temp_H, Temp_N, Temp_Z, alu, Res, IR, d, w, x, 
-	SYNC_RES, TTB1, TTB2, TTB3, Maybe1, bro, A );
+	SYNC_RES, TTB1, TTB2, TTB3, BUS_DISABLE, bro, A );
 
 	input CLK2;
 	input CLK4;
@@ -33,7 +33,7 @@ module Bottom ( CLK2, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, Temp_C,
 	input TTB1;				// 1: Perform pairwise increment/decrement (simultaneously for two 8-bit IncDec halves)
 	input TTB2;				// 1: Perform decrement
 	input TTB3;				// 1: Perform increment
-	input Maybe1;			// 1: Bus disable
+	input BUS_DISABLE;			// 1: Bus disable
 	input [7:3] bro; 		// IRQ Logic interrupt address
 	output [15:0] A;		// External core address bus
 
@@ -152,7 +152,7 @@ module Bottom ( CLK2, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, Temp_C,
 		.TTB1(TTB1),
 		.TTB2(TTB2),
 		.TTB3(TTB3),
-		.Maybe1(Maybe1),
+		.BUS_DISABLE(BUS_DISABLE),
 		.cbus(cbus),
 		.dbus(dbus),
 		.adl(adl),
