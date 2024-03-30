@@ -136,6 +136,8 @@ In between is the small logic (8 AND gates implementing logical XOR operation ou
 
 ![module5_logisim](/logisim/module5_logisim.png)
 
+The gaps contain AND gates that implement a logical XOR operation based on the x/h Sums outputs.
+
 ### module6 (Sums)
 
 8 identical modules.
