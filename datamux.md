@@ -1,4 +1,4 @@
-# Databus Multpliexer
+# Databus Multiplexer
 
 This module is an integration of two circuits called "DataLatch" (TopPart) and "DataBridge" (BottomPart). After the whole chip was cracked, it became obvious that it is one circuit, just separated into two parts to reduce the length of wires.
 
