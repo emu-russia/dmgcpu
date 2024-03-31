@@ -1,0 +1,22 @@
+// Check conditional jump
+
+// https://www.asm80.com/onepage/asmz80.html
+
+//0000   00                     NOP   
+//0001   37                     SCF   
+//0002   38 03                  JR   c,label1
+//0004   00                     NOP   
+//0005   00                     NOP   
+//0006   00                     NOP   
+//0007                LABEL1:   
+//0007   76                     HALT 
+
+00
+37
+38 03
+00
+00
+00
+
+@0007
+76
