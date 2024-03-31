@@ -12,11 +12,11 @@ The CPU receives 9 (!) CLK signals.
 |CLK4|T5 / DATA_CLK_N|~phi|
 |CLK5|T6 / INC_CLK_N|~writeback|
 |CLK6|T7 / INC_CLK_P|writeback|
-|CLK7|T8 / LATCH_CLK|writeback_ext|
+|CLK7|T8 / LATCH_CLK|writeback_ext; This CLK is used to maintain the overlapped instruction execution mechanism used in the SM83 and other vintage chips of that era|
 |CLK8|T9 / MAIN_CLK_N|~mclk_pulse|
 |CLK9|T10 / MAIN_CLK_P|mclk_pulse|
 
-All CLKs use an approach called `Dual Rails`, where a single CLK is split into two complementary signals (or "phases"). One phase has a value of `1` when CLK=0 (and is called `Clock Complement`) and the other phase has a value of `1` when CLK=1 (same as CLK).
+All CLKs (except CLK7) use an approach called `Dual Rails`, where a single CLK is split into two complementary signals (or "phases"). One phase has a value of `1` when CLK=0 (and is called `Clock Complement`) and the other phase has a value of `1` when CLK=1 (same as CLK).
 
 :warning: To analyze the operation of an individual module, it is not particularly important in which polarity the CLK that is used there comes. It only becomes important when all the modules work together.
 
