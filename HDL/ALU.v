@@ -319,20 +319,20 @@ module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR,
 
 	// Dynamic part
 
-	assign azo_latched[0] = CLK2 ? az[0] : 1'b1;
-	assign azo_latched[1] = CLK7 ? (CLK6 ? az[1] : 1'b1) : 1'b1;		// -> bc5   -- Flag H
-	assign azo_latched[2] = CLK7 ? (CLK6 ? az[2] : 1'b1) : 1'b1;		// -> bc1   -- Flag C
-	assign azo_latched[3] = CLK2 ? az[3] : 1'b1;
-	assign azo_latched[4] = CLK2 ? az[4] : 1'b1;
-	assign azo_latched[5] = CLK2 ? az[5] : 1'b1;
-	assign azo_latched[6] = CLK2 ? az[6] : 1'b1;
-	assign azo_latched[7] = CLK7 ? (CLK6 ? az[7] : 1'b1) : 1'b1;		// -> bc2   -- Flag N
-	assign azo_latched[8] = CLK2 ? az[8] : 1'b1;
-	assign azo_latched[9] = CLK2 ? az[9] : 1'b1;
-	assign azo_latched[10] = CLK2 ? az[10] : 1'b1;
-	assign azo_latched[11] = CLK7 ? (CLK6 ? az[11] : 1'b1) : 1'b1; 		// -> ALU_Out1  -- Skip branch
-	assign azo_latched[12] = CLK7 ? (CLK6 ? az[12] : 1'b1) : 1'b1;		// -> bc3   -- Flag Z
-	assign azo_latched[13] = CLK2 ? az[13] : 1'b1;		// -> ALU_to_top aka CarryIn
+	assign azo_latched[0] = CLK2 ? az[0] : 1'bz;
+	assign azo_latched[1] = CLK7 ? (CLK6 ? az[1] : 1'bz) : 1'bz;		// -> bc5   -- Flag H
+	assign azo_latched[2] = CLK7 ? (CLK6 ? az[2] : 1'bz) : 1'bz;		// -> bc1   -- Flag C
+	assign azo_latched[3] = CLK2 ? az[3] : 1'bz;
+	assign azo_latched[4] = CLK2 ? az[4] : 1'bz;
+	assign azo_latched[5] = CLK2 ? az[5] : 1'bz;
+	assign azo_latched[6] = CLK2 ? az[6] : 1'bz;
+	assign azo_latched[7] = CLK7 ? (CLK6 ? az[7] : 1'bz) : 1'bz;		// -> bc2   -- Flag N
+	assign azo_latched[8] = CLK2 ? az[8] : 1'bz;
+	assign azo_latched[9] = CLK2 ? az[9] : 1'bz;
+	assign azo_latched[10] = CLK2 ? az[10] : 1'bz;
+	assign azo_latched[11] = CLK7 ? (CLK6 ? az[11] : 1'bz) : 1'bz; 		// -> ALU_Out1  -- Skip branch
+	assign azo_latched[12] = CLK7 ? (CLK6 ? az[12] : 1'bz) : 1'bz;		// -> bc3   -- Flag Z
+	assign azo_latched[13] = CLK2 ? az[13] : 1'bz;		// -> ALU_to_top aka CarryIn
 
 	// Transparent DLatch is required at least for asymmetric dynamic logic (which uses CLK7/CLK6, i.e. for flags and cc_check);
 	// The others don't require DLatch, but are made for unification.
