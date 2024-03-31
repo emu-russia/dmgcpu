@@ -275,12 +275,13 @@ module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR,
 	input bq4;
 	input bq5;
 	input bq7;
-	output [13:0] azo;
+	output [13:0] azo; 		// "azo" means absolutely nothing, just the name of the random logic results
 
-	wire [13:0] az;		// LargeComb1 results (non-dynamic)
+	wire [13:0] azo_latched; 		// Inputs to DLatch from dynamic logic
+	wire [13:0] az;		// random logic results (non-dynamic)
 
 	// ALU Trees (by hand); Tree numbering is topological (how they are arranged on the chip)
-	// The flag logic in SM83 is organized in such a way that all flag changes calculations are performed in one place (topologically). On the one hand it is very convenient (the logic is isolated), on the other hand it turns out to be a very confusing doshirak.
+	// Random logic in SM83 is organized in such a way that all related calculations are performed in one place (topologically). On the one hand it is very convenient (the logic is isolated), on the other hand it turns out to be a very confusing doshirak.
 
 	// ALU trees 0,3-6,8-10 are responsible for preprocessing operand 1 for SET/RES opcodes (CB table) as well as DAA (decimal correction)
 	// Because of the topological numbering of the trees, they don't go in order, which is a bit ugly.
@@ -317,25 +318,30 @@ module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR,
 	assign az[13] = ~( `s3_alu_cp | (`s2_op_incdec8&nIR[0]) | (`s2_op_sp_e_sx10&bc[1]) | (`s3_alu_sub_sbc&(nIR[3]|nbc[1])) | (`s2_op_add_hl_sx01&bc[1]) | (`s3_alu_add_adc&IR[3]) );
 
 	// Dynamic part
-	// TBD: Check if it is necessary to add transparent DLatch for dynamic logic outputs (on inverter gates) or if this will do.
 
-	assign azo[0] = CLK2 ? az[0] : 1'b1;
-	assign azo[1] = CLK7 ? (CLK6 ? az[1] : 1'b1) : 1'b1;		// -> bc5
-	assign azo[2] = CLK7 ? (CLK6 ? az[2] : 1'b1) : 1'b1;		// -> bc1
-	assign azo[3] = CLK2 ? az[3] : 1'b1;
-	assign azo[4] = CLK2 ? az[4] : 1'b1;
-	assign azo[5] = CLK2 ? az[5] : 1'b1;
-	assign azo[6] = CLK2 ? az[6] : 1'b1;
-	assign azo[7] = CLK7 ? (CLK6 ? az[7] : 1'b1) : 1'b1;		// -> bc2
-	assign azo[8] = CLK2 ? az[8] : 1'b1;
-	assign azo[9] = CLK2 ? az[9] : 1'b1;
-	assign azo[10] = CLK2 ? az[10] : 1'b1;
-	assign azo[11] = CLK7 ? (CLK6 ? az[11] : 1'b1) : 1'b1; 		// -> ALU_Out1
-	assign azo[12] = CLK7 ? (CLK6 ? az[12] : 1'b1) : 1'b1;		// -> bc3
-	assign azo[13] = CLK2 ? az[13] : 1'b1;		// -> ALU_to_top aka CarryIn
+	assign azo_latched[0] = CLK2 ? az[0] : 1'b1;
+	assign azo_latched[1] = CLK7 ? (CLK6 ? az[1] : 1'b1) : 1'b1;		// -> bc5   -- Flag H
+	assign azo_latched[2] = CLK7 ? (CLK6 ? az[2] : 1'b1) : 1'b1;		// -> bc1   -- Flag C
+	assign azo_latched[3] = CLK2 ? az[3] : 1'b1;
+	assign azo_latched[4] = CLK2 ? az[4] : 1'b1;
+	assign azo_latched[5] = CLK2 ? az[5] : 1'b1;
+	assign azo_latched[6] = CLK2 ? az[6] : 1'b1;
+	assign azo_latched[7] = CLK7 ? (CLK6 ? az[7] : 1'b1) : 1'b1;		// -> bc2   -- Flag N
+	assign azo_latched[8] = CLK2 ? az[8] : 1'b1;
+	assign azo_latched[9] = CLK2 ? az[9] : 1'b1;
+	assign azo_latched[10] = CLK2 ? az[10] : 1'b1;
+	assign azo_latched[11] = CLK7 ? (CLK6 ? az[11] : 1'b1) : 1'b1; 		// -> ALU_Out1  -- Skip branch
+	assign azo_latched[12] = CLK7 ? (CLK6 ? az[12] : 1'b1) : 1'b1;		// -> bc3   -- Flag Z
+	assign azo_latched[13] = CLK2 ? az[13] : 1'b1;		// -> ALU_to_top aka CarryIn
+
+	// Transparent DLatch is required at least for asymmetric dynamic logic (which uses CLK7/CLK6, i.e. for flags and cc_check);
+	// The others don't require DLatch, but are made for unification.
+	// The use of asymmetric CLK is obviously related to the peculiarities of overlapped instruction execution in SM83  (CLK6 = writeback; CLK7 = writeback_ext)
+	BusKeeper latched_results [13:0] ( .d(azo_latched), .q(azo) );
 
 endmodule // LargeComb1
 
+// This latch is used to hold flags (bc3=Z / bc2=N / bc5=H / bc1=C); The silly name `bc` is just from the early stages of research
 module bc ( nd, CLK, CCLK, Load, q, nq );
 
 	input nd; 
@@ -364,6 +370,7 @@ module bc ( nd, CLK, CCLK, Load, q, nq );
 
 endmodule // bc
 
+// This latch exists in a single instance and is used to hold the zbus msb (ie - sign)
 module ALU_to_bot_latch ( d, CLK, CCLK, Load, q );
 
 	input d; 
