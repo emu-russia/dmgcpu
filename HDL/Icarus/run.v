@@ -129,8 +129,9 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 		mem[j] = 0;
 
 	// TODO: Come up with some convenient way to select ROM (via -define ?)
-	//initial $readmemh("roms/bogus_hw.mem", mem);
-	initial $readmemh("roms/test_cc_check.mem", mem);
+	initial $readmemh("roms/bogus_hw.mem", mem);
+	//initial $readmemh("roms/test_cc_check.mem", mem);
+	//initial $readmemh("roms/test_jr_cc.mem", mem);
 
 	always @(RD) value <= mem[addrbus];
 	always @(WR) mem[addrbus] <= databus;
