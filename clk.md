@@ -45,3 +45,11 @@ Based on: https://github.com/msinger/dmg-schematics
 |CLK7 / LATCH_CLK / writeback_ext | `10000011` |
 |CLK8 / MAIN_CLK_N / ~mclk_pulse  | `01111111` |
 |CLK9 / MAIN_CLK_P / mclk_pulse   | `10000000` |
+
+## Use of CLK7
+
+This section is initiated by #274. You can use it as a reference to make sure that your SM83 implementation takes this CLK into account in all places.
+
+List of places where CLK7 is used:
+- In ALU to get updated value of flags (Z/N/H/C) and also for ALU_Out1 signal (aka SkipBranch)
+- In the register block, for SPL/SPH, PCL/PCH registers
