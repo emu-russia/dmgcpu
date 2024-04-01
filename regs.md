@@ -80,6 +80,8 @@ The picture shows how the signals at the input and output of Z/W registers vary 
 
 ![Path_ZW](/imgstore/Path_ZW.png)
 
+Also: the inverters for the ebus/fbus buses most likely act as a transparent DLatch. If during the evaluation of the bus connection none of the znands "opens", the precharge that was made during CLK4=0 will remain at the inverter input. I don't think it is necessary to add DLatch for HDL implementation, it is enough to treat this part of the circuit as dynamic AOI-31.
+
 ## SP Register
 
 :warning: A distinctive feature of the SP register bits is that the value on them is loaded and kept in the inverse polarity. In addition to the regular output the register also has a complement output.
