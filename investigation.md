@@ -238,5 +238,194 @@ ATYP <- AFUR
 AROV <- APUK
 ```
 
-Adding `22ns` of delay to `CLK3`, `CLK4`, `CLK5` and `CLK6` (all these CLK are
-almost in sync) in the `dmg-sim` fix the problem.
+~~Adding `22ns` of delay to `CLK3`, `CLK4`, `CLK5` and `CLK6` (all these CLK are
+almost in sync) in the `dmg-sim` fix the problem.~~
+
+The actual fix was to introduce a transparent latch to `ALU_Out1`, so it is
+signal is extended to the next cycle. This latch was already present in the
+original circuit.
+
+# JR d16
+
+Jump relative is not jumping to the correct address. The jump relative should use
+the ALU to compute the target address, and them set the value of PC to its
+resutl. What appears to be happening is a bug in the `DataMux`, where it is not
+putting the value of `Res` into `DL` (internal databus).
+
+The `DataMux` has currently the following logic (assuming `CLK` is high, and
+`Test1` is low):
+
+`WR` | `Res_to_DL` | `DataOut` | Operation
+---  | ---         | ---       | ---
+1    | 1           | x         | D <- DL; DL <- Res
+1    | 0           | 0         | D <- DL
+1    | 0           | 0         | D <- DL; DL <- DV
+0    | x           | x         | DL <- D
+
+I think the first line is invalid, `DL` is being written and read at the same
+time, while I expect that another entity must be already driven `DL`. In no
+other case the content of `Res` is put into `DL`.
+
+During the execution of the instruction `JR d16`, `WR` is low and `Res_to_DL` is
+high.
+
+## DataMux 
+
+In `datamux.md`, the logisim of the `DataMux` describes the following Verilog:
+
+```verilog
+assign Ext_bus = ~Test1 ? (clk ? int_to_ext_q : 1) : 1'bz;
+assign Int_bus = Res_to_DL ? res_q : ( clk ? (~Test1 ? ext_to_int_q : 1'bz) : 1);
+assign Int_bus = (~dv_q) ? (DataOut ? 0 : 1'bz) : 1'bz;
+```
+
+The logic above has a conflict when `DataOut=0 && dv_q=0` (driving `Int_bus` to 0),
+and `(Res_to_DL=1 & req_q=1) | (Res_to_DL=0 & clk=0) | (Res_to_DL=0 & clk=1 &
+Test1=0 & ext_to_int_q=1)` (driving `Int_bus` to `1`).
+
+Looking at the underlining transistors logic (from ogamespec diagram, I can't
+read the silicon traces), the logic is the following Verilog:
+
+```verilog
+assign Ext_bus = (clk || Test1) ? 1'bz : 1;
+assign Ext_bus = int_to_ext_q || Test1 ? 1'bz: 0;
+
+assign Int_bus = clk ? 1'bz : 1;
+assign Int_bus = clk && ~(Test1 || ext_to_int_q) ? 0 : 1'bz;
+assign Int_bus = (Res_to_DL && ~Res) ? 0 : 1'bz;
+```
+
+The circuit has even more conflicts. We can represent it in the following tables:
+
+`Test1` | `clk` | `int_to_ext_q` | `=Ext_bus`
+---     | ---   | ---            | ---
+0       | 0     | 0              | 1,0 = x
+0       | 0     | 1              | 1,z = 1
+0       | 1     | 0              | z,0 = 0
+0       | 1     | 1              | z,z - z
+1       | -     | -              | 1,z = 0
+
+`Test1` | `clk` | `ext_to_int_q` | `Res_to_DL` | `Res` | `=Int_bus`
+---     | ---   | ---            | ---         | ---   | ---
+0       | 0     | -              | 0           | -     | 1,z,z = 1
+0       | 0     | -              | 1           | 0     | 1,z,0 = -
+0       | 0     | -              | 1           | 1     | 1,z,z = 1
+0       | 1     | 0              | 0           | -     | z,0,z = 0
+0       | 1     | 0              | 1           | 0     | z,0,0 = 0
+0       | 1     | 0              | 1           | 1     | z,0,z = 0
+0       | 1     | 1              | 0           | -     | z,z,z = z
+0       | 1     | 1              | 1           | 0     | z,z,0 = 0
+0       | 1     | 1              | 1           | 1     | z,z,z = z
+1       | 0     | -              | 0           | -     | 1,z,z = 1
+1       | 0     | -              | 1           | 0     | 1,z,0 = x
+1       | 0     | -              | 1           | 1     | 1,z,z = 1
+1       | 1     | -              | 0           | -     | z,z,z = 0
+1       | 1     | -              | 1           | 0     | z,z,0 = 0
+1       | 1     | -              | 1           | 1     | z,z,z = 0
+
+We assume that those conflicts are resolved by the non-digital nature of the
+silicon circuit. First, I assume that `clk=0` will always drive the buses to `1`
+as pre-charged. I also assume that `Test1` will always be low, because it is
+only used when testing the circuit, I believe.
+
+With these assumptions, the table can be simplified to:
+
+`clk` | `int_to_ext_q` | `=Ext_bus`
+---   | ---            | ---
+0     | -              | 1
+1     | 0              | 0
+1     | 1              | z
+
+`clk` | `ext_to_int_q` | `Res_to_DL` | `Res` | `=Int_bus`
+---   | ---            | ---         | ---   | ---
+0     | -              | -           | -     | 1,-,- = 1
+1     | 0              | 0           | -     | z,0,z = 0
+1     | 0              | 1           | 0     | z,0,0 = 0
+1     | 0              | 1           | 1     | z,0,z = 0
+1     | 1              | 0           | -     | z,z,z = z
+1     | 1              | 1           | 0     | z,z,0 = 0
+1     | 1              | 1           | 1     | z,z,z = z
+
+This solve the conflicts, but there is still `z`s in the table. Due to the
+pre-charge of the buses, I suppose that the `z` will be resolved to `1`.
+
+I forget to include the `DataBridge` logic. Here it is:
+
+```verilog
+assign Int_bus = (~dv_q) ? (DataOut ? 0 : 1'bz) : 1'bz;
+```
+
+`DataOut` | `dv_q` | `=Int_bus`
+---       | ---    | ---
+0         | 0      | z
+0         | 1      | z
+1         | 0      | 0
+1         | 1      | z
+
+This logic is parallel to the previous one, so it will also create a conflict if
+this outputs 0 and the other outputs 1. But I suppose that `DataOut` will not be
+1 when clk is 0, so no conflict will arise.
+
+But a conflict will arise when another component of the system tries to drive
+the external bus or internal bus. For example, when `R` (read signal) is high,
+the external bus will be driven by the memory, but the internal bus still drives
+it low.
+
+Here is a table with possible scenarios:
+
+Situation             | Circuit                                   | Expected
+---                   | ---                                       | ---
+RD=0,WR=0             | D <- DL↓, DL <- D↓                        | -
+RD=1,WR=0             | D driven, D <- DL↓, DL <- D↓              | DL <- D
+RD=0,WR=1             | DL driven, D <- DL↓, DL <- D↓             | D <- DL
+RD=0,WR=0,Res_to_DL=1 | D <- DL↓, DL <- D↓                        | DL <- Res
+RD=0,WR=1,DataOut=1   | DV driven, D <- DL↓, DL <- D↓, DL <- DV↓  | D <- DL, DL <- DV
+
+* `↓` means `x ? z : 0`
+
+For the circuit to work as expected, it should need to know the values of RD and
+WR, but it does not, it always connect both buses together. One way this may be
+working, is that the external driver is always stronger than the internal
+connections. Not sure how this is suppose to work in the actual silicon.
+
+We can try to simulate this behavior using Verilog's strength levels:
+
+```verilog
+assign Ext_bus = (clk || Test1) ? 1'bz : 1;
+assign(pull0, pull1) Ext_bus = clk && ~(int_to_ext_q || Test1) ? 0 : 1'bz;
+
+assign Int_bus = clk ? 1'bz : 1;
+assign(pull0, pull1) Int_bus = clk && ~(Test1 || ext_to_int_q) ? 0 : 1'bz;
+assign(pull0, pull1) Int_bus = (Res_to_DL && ~Res) ? 0 : 1'bz;
+
+// DataBridge logic
+assign(pull0, pull1) Int_bus = (~dv_q) ? (DataOut ? 0 : 1'bz) : 1'bz;
+
+// Drive DL and D buses up with weak strength to simulate the precharge.
+assign (weak0, weak1) Ext_bus = 1;
+assign (weak0, weak1) Int_bus = 1;
+```
+
+And this works!! But this breaks Verilator (it does not support strength levels
+in module ports).
+
+Another way to simulate this is to add hack `RD` and `WR` signals to `DataMux`,
+and only simulate the high level behavior:
+
+```verilog
+assign Ext_bus = ~clk ? 1
+        : RD_hack && ~WR_hack ? 1'bz
+        : ~RD_hack && WR_hack ? int_to_ext_q
+        : 1;
+
+assign Int_bus = ~clk ? 1
+        : RD_hack && ~WR_hack ? ext_to_int_q
+        : ~RD_hack && WR_hack && DataOut ? dv_q
+        : ~RD_hack && WR_hack ? 1'bz
+        : Res_to_DL ? res_q
+        : 1;
+```
+
+This also works, although in this situation the pre-charge is not simulated,
+making `Int_bus` go to `z`, temporarily introducing a `x` into `Z_in` and
+`W_in`, but that does not affect the simulation.
