@@ -112,6 +112,7 @@ module SM83Core (
 		.Res(Res),
 		.DataOut(`s3_oe_rbus_to_pbus),
 		.DV(DV),
+		.RD_hack(RD),
 		.WR_hack(WR) );
 
 	Decoder1 dec1 (

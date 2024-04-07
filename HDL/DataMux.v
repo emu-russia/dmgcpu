@@ -1,9 +1,6 @@
 `timescale 1ns/1ns
 
-// ⚠️ This module did not do without a hack (WR_hack) to avoid conflicts with the external data bus and the peculiarities of its precharging.
-// Read the wiki to master the circuit, then it will become clear why this hack is needed here.
-
-module DataMux ( CLK, DL_Control1, DL_Control2, DataBus, DL, Res, DataOut, DV, WR_hack );
+module DataMux ( CLK, DL_Control1, DL_Control2, DataBus, DL, Res, DataOut, DV, RD_hack, WR_hack);
 
 	input CLK; 				// CLK2
 	input DL_Control1;			// 1: Bus disable  (External Test1 aka BUS_DISABLE)
@@ -14,7 +11,11 @@ module DataMux ( CLK, DL_Control1, DL_Control2, DataBus, DL, Res, DataOut, DV, W
 	input [7:0] Res;			// ALU Result  (always driven)
 	input DataOut;			// x15. DV -> DL; Gekkio: s3_oe_rbus_to_pbus
 	input [7:0] DV;			// ALU Operand2	
-	input WR_hack; 		// ⚠️ Loose wire used for proper operation of value output to external data bus
+
+	// HACK: These signals are not present in the original circuit, but are
+	// need when simulating it without resorting to driving strength.
+	input RD_hack;
+	input WR_hack;
 
 	data_mux_bit dmux [7:0] (
 		.clk({8{CLK}}), 
@@ -25,12 +26,13 @@ module DataMux ( CLK, DL_Control1, DL_Control2, DataBus, DL, Res, DataOut, DV, W
 		.Ext_bus(DataBus),
 		.DataOut({8{DataOut}}),
 		.dv_bit(DV),
-		.WR_hack({8{WR_hack}}) );
+		.RD_hack(RD_hack),
+		.WR_hack(WR_hack) );
 
 endmodule // DataMux
 
 // A combined schematic that combines the two bits of what used to be called DataLatch and DataBridge.
-module data_mux_bit ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus, DataOut, dv_bit, WR_hack );
+module data_mux_bit ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus, DataOut, dv_bit, RD_hack, WR_hack);
 	
 	input clk;  		// CLK2; All buses are precharged when clk=0.
 	input Test1; 			// External (1: disconnect core databus)
@@ -40,7 +42,8 @@ module data_mux_bit ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus, DataOut, dv_
 	inout Ext_bus; 		// D[n] (external databus)
 	input dv_bit;
 	input DataOut;	 		// Gekkio: s3_oe_rbus_to_pbus
-	input WR_hack; 		// ⚠️ Loose wire used for proper operation of value output to external data bus
+	input RD_hack;
+	input WR_hack;
 
 	wire int_to_ext_q; 		// transparent latch to keep DL bus
 	wire ext_to_int_q; 		// transparent latch to keep external databus
@@ -52,10 +55,50 @@ module data_mux_bit ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus, DataOut, dv_
 	BusKeeper res_latch ( .d(Res), .q(res_q) );
 	BusKeeper dv_latch ( .d(dv_bit), .q(dv_q) );
 
-	//⚠️This implementation is an approximation of the real circuit, so it is not a die-perfect approach.
+	// ⚠️This implementation is an approximation of the real circuit, so it is
+	// not a die-perfect approach.
+	//
+	// An analysis of the real circuit reveals that the buses may be driven by
+	// multiple sources at the same time, causing conflicts. The mechanism
+	// that resolves these conflicts in the real circuit is unclear, but
+	// making all external buses have a stronger driving strength than
+	// internal buses seems to work.
+	// 
+	// We also assume that the `clk` signal, which appears to pre-charge the
+	// buses, has a stronger driving strength than the other signals
+	// (otherwise there will also be internal conflicts).
+	//
+	// And to simulate the pre-charge effect, we have a weak pull-up on the
+	// buses, that makes it resolve to 1 when no other signal is driving the
+	// bus.
 
-	assign Ext_bus = (WR_hack && ~Test1 && clk) ? int_to_ext_q : 1'bz;
-	assign Int_bus = (~WR_hack && ~Test1 && clk) ? ext_to_int_q : 
-		( Res_to_DL ? res_q : ( DataOut ? dv_q : 1'bz ) );
+	// DataLatch logic
+	assign Ext_bus = (clk || Test1) ? 1'bz : 1;
+	assign(pull0, pull1) Ext_bus = clk && ~(int_to_ext_q || Test1) ? 0 : 1'bz;
+
+	assign Int_bus = clk ? 1'bz : 1;
+	assign(pull0, pull1) Int_bus = clk && ~(Test1 || ext_to_int_q) ? 0 : 1'bz;
+	assign(pull0, pull1) Int_bus = (Res_to_DL && ~Res) ? 0 : 1'bz;
+
+	// DataBridge logic
+	assign(pull0, pull1) Int_bus = (~dv_q) ? (DataOut ? 0 : 1'bz) : 1'bz;
+
+	// Drive DL and D buses up with weak strength to simulate the pre-charge.
+	assign (weak0, weak1) Ext_bus = 1;
+	assign (weak0, weak1) Int_bus = 1;
+
+	// The logic above can also be expressed, in a higher level, as:
+	//
+	// assign Ext_bus = ~clk ? 1
+	// 		: RD_hack && ~WR_hack ? 1'bz
+	// 		: ~RD_hack && WR_hack ? int_to_ext_q
+	// 		: 1;
+	//
+	// assign Int_bus = ~clk ? 1
+	// 		: RD_hack && ~WR_hack ? ext_to_int_q
+	// 		: ~RD_hack && WR_hack && DataOut ? dv_q
+	// 		: ~RD_hack && WR_hack ? 1'bz
+	// 		: Res_to_DL ? res_q
+	// 		: 1;
 
 endmodule // data_mux_bit

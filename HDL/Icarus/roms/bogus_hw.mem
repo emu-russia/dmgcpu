@@ -18,10 +18,12 @@ ca 50 01  // JP Z $0150
 
 @0150
 cd 00 20  // CALL $2000
+18 01     // JR +$01
+76        // HALT
 76        // HALT
 
 @2000
-fe ba     // CP $BC
+fe ba     // CP $BA
 c8        // RET Z
 c0        // RET NZ
 c9        // RET
