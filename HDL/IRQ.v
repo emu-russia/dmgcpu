@@ -85,7 +85,7 @@ module module7 ( clk, cclk, d, ld, res, q, nq );
 	initial val_in = 1'b0;
 	initial val_out = 1'b0;
 
-	always @(*) begin
+	always_latch begin
 		if (clk && ld)
 			val_in = d;
 		if (res)
@@ -114,7 +114,7 @@ module module8 ( clk, cclk, d, q, nq );
 	reg val;
 	initial val = 1'bx;
 
-	always @(*) begin
+	always_latch begin
 		if (clk)
 			val = d;
 	end

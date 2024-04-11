@@ -356,7 +356,7 @@ module bc ( nd, CLK, CCLK, Load, q, nq );
 	initial val_in = 1'b0;
 	initial val_out = 1'b0;
 
-	always @(*) begin
+	always_latch begin
 		if (CLK && Load)
 			val_in = ~nd;
 	end
@@ -384,7 +384,7 @@ module ALU_to_bot_latch ( d, CLK, CCLK, Load, q );
 	initial val_in = 1'b0;
 	initial val_out = 1'b0;
 
-	always @(*) begin
+	always_latch begin
 		if (CLK && Load)
 			val_in = d;
 	end

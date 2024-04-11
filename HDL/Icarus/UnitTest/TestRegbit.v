@@ -95,7 +95,7 @@ module BusKeeper (d, q);
 	reg val;
 	initial val <= 1'b0;
 
-	always @(*) begin
+	always_latch begin
 		if (d == 1'b1)
 			val <= 1'b1;
 		if (d == 1'b0)
