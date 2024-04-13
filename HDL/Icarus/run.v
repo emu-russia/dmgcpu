@@ -122,21 +122,23 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 	reg [7:0] mem[0:65535];
 	reg [7:0] value;
 
-	// You need to pre-fill the memory with some value so you don't run into `xx`
-	integer j;
-	initial 
-	for(j = 0; j < 65536; j = j+1) 
-		mem[j] = 0;
-
-	// TODO: Come up with some convenient way to select ROM (via -define ?)
-	initial $readmemh("roms/bogus_hw.mem", mem);
-	//initial $readmemh("roms/test_cc_check.mem", mem);
-	//initial $readmemh("roms/test_jr_cc.mem", mem);
-	//initial $readmemh("roms/cpu_instrs.mem", mem);	
 
 	always @(RD) value <= mem[addrbus];
 	always @(WR) mem[addrbus] <= databus;
 
 	assign databus = (MREQ & RD) ? value : 'bz;
+	integer j;
+	initial begin
+		// Pre-fill the memory with some value so we don't run into `xx`
+		for(j = 0; j < 65536; j = j+1) 
+			mem[j] = 0;
+
+		`define STRINGIFY(x) `"x`"
+		`ifdef ROM
+			$readmemh(`STRINGIFY(`ROM), mem);
+		`else
+			$readmemh("roms/bogus_hw.mem", mem);
+		`endif
+	end
 
 endmodule // Bogus_HW
