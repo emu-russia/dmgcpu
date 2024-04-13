@@ -1,7 +1,5 @@
 `timescale 1ns/1ns
 
-`define ALU_Ops_delay 0
-
 module Bottom ( CLK2, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, Temp_C, Temp_H, Temp_N, Temp_Z, alu, Res, IR, d, w, x, 
 	SYNC_RES, TTB1, TTB2, TTB3, BUS_DISABLE, bro, A );
 
@@ -210,16 +208,16 @@ module BottomLeftLogic ( CLK2, bc, bq4, bq5, bq7, Aout, abus, bbus, alu, DV );
 
 	// TODO: wtf is this at all?
 
-	assign #`ALU_Ops_delay DV[0] = ~(CLK2 ? (bbq[0] & ~bc[4]) : 1'b1);
-	assign #`ALU_Ops_delay DV[1] = ~(CLK2 ? (bbq[1] & ~bc[4]) : 1'b1);
-	assign #`ALU_Ops_delay DV[2] = ~(CLK2 ? (bbq[2] & ~bc[4]) : 1'b1);
-	assign #`ALU_Ops_delay DV[3] = ~(CLK2 ? (bbq[3] & ~bc[4]) : 1'b1);
-	assign #`ALU_Ops_delay DV[4] = ~(CLK2 ? (bbq[4] & ~(bc[4] | (bc[0] & bc[1])) ) : 1'b1);
-	assign #`ALU_Ops_delay DV[5] = ~(CLK2 ? (bbq[5] & ~(bc[4] | (bc[0] & bc[5])) ) : 1'b1);
-	assign #`ALU_Ops_delay DV[6] = ~(CLK2 ? (bbq[6] & ~(bc[4] | (bc[0] & bc[2])) ) : 1'b1);
-	assign #`ALU_Ops_delay DV[7] = ~(CLK2 ? (bbq[7] & ~(bc[4] | (bc[0] & bc[3])) ) : 1'b1);
+	assign DV[0] = ~(CLK2 ? (bbq[0] & ~bc[4]) : 1'b1);
+	assign DV[1] = ~(CLK2 ? (bbq[1] & ~bc[4]) : 1'b1);
+	assign DV[2] = ~(CLK2 ? (bbq[2] & ~bc[4]) : 1'b1);
+	assign DV[3] = ~(CLK2 ? (bbq[3] & ~bc[4]) : 1'b1);
+	assign DV[4] = ~(CLK2 ? (bbq[4] & ~(bc[4] | (bc[0] & bc[1])) ) : 1'b1);
+	assign DV[5] = ~(CLK2 ? (bbq[5] & ~(bc[4] | (bc[0] & bc[5])) ) : 1'b1);
+	assign DV[6] = ~(CLK2 ? (bbq[6] & ~(bc[4] | (bc[0] & bc[2])) ) : 1'b1);
+	assign DV[7] = ~(CLK2 ? (bbq[7] & ~(bc[4] | (bc[0] & bc[3])) ) : 1'b1);
 
-	assign #`ALU_Ops_delay alu = ~abq;
+	assign alu = ~abq;
 
 	// I decided to put the bc0/bc4 generation in the ALU, so that the bc signals would be made as output from the ALU (for beauty).
 
