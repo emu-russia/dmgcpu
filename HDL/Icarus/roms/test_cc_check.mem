@@ -2,6 +2,7 @@
 // For this purpose we will use RET cc instructions as the most convenient for verification;
 // Knowingly false cc checks will be performed so as not to interrupt code flow
 
+@0100
 00 // nop
 3e 00 // ld a, 0    <-- a = 0
 3c // inc a 		<-- a = 1  (ZF=0)

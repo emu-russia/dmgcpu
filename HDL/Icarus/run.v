@@ -120,14 +120,14 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 	inout [7:0] databus;
 	input [15:0] addrbus;
 
+	reg [7:0] bootrom[0:255];
+	initial $readmemh("roms/boot.mem", bootrom);
+
 	reg [7:0] mem[0:65535];
 	reg [7:0] value;
 
+	reg in_boot = 1'b1;
 
-	always @(RD) value <= mem[addrbus];
-	always @(WR) mem[addrbus] <= databus;
-
-	assign databus = (MREQ & RD) ? value : 'bz;
 	integer j;
 	initial begin
 		// Pre-fill the memory with some value so we don't run into `xx`
@@ -141,5 +141,26 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 			$readmemh("roms/bogus_hw.mem", mem);
 		`endif
 	end
+
+	always @(posedge RD) begin
+		// disable bootrom after entering ROM
+		if (in_boot && addrbus >= 16'h0100) begin
+			in_boot = 1'b0;
+		end
+
+		if (in_boot) value <= bootrom[addrbus[7:0]];
+		else value <= mem[addrbus];
+	end
+
+	// the CPU changes the address bus and WR signal at the same time, which
+	// causes issues due to order evaluation. To work around this, we extend
+	// the address bus and data bus by one tick.
+	wire [15:0] #1 ADR = addrbus;
+	wire [7:0] #1 DAT = databus;
+
+	always @(negedge WR) mem[ADR] <= DAT;
+	
+
+	assign databus = (MREQ & RD) ? value : 8'hZZ;
 
 endmodule // Bogus_HW
