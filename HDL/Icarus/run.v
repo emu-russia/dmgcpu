@@ -106,6 +106,8 @@ module SM83_Run();
 		ExternalRESET = 1'b0;
 
 		repeat (256) @ (posedge CLK);
+
+		$display(""); // breakline after any serial output
 		$writememh ("out.mem", hw.mem);
 		$finish;
 	end	
@@ -158,7 +160,12 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 	wire [15:0] #1 ADR = addrbus;
 	wire [7:0] #1 DAT = databus;
 
-	always @(negedge WR) mem[ADR] <= DAT;
+	always @(negedge WR) begin
+		mem[ADR] <= DAT;
+		if (ADR == 16'hFF02) begin
+			$write("%c", mem[16'hFF01]);
+		end
+	end
 	
 
 	assign databus = (MREQ & RD) ? value : 8'hZZ;
