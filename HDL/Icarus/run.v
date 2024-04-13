@@ -1,5 +1,7 @@
 `timescale 1ns/1ns
 
+`define STRINGIFY(x) `"x`"
+
 module SM83_Run();
 
 	reg CLK;
@@ -91,8 +93,7 @@ module SM83_Run();
 		.CPU_IRQ_ACK(irq_ack) );
 
 	initial begin
-
-		$display("Check that the DMG Core is moving.");
+		$display("Running '%s'", `STRINGIFY(`ROM));
 
 		ExternalRESET = 1'b0;
 		CLK = 1'b0;
