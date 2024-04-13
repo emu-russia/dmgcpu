@@ -146,7 +146,6 @@ module seq_latchr_comp ( q, d, res, clk, cclk, ld, nld);
 	input nld;
 
 	reg val_in;
-	/* verilator lint_off UNOPTFLAT */
 	reg val_out;
 	initial val_in = 1'bx;
 	initial val_out = 1'bx;

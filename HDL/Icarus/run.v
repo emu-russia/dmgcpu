@@ -1,9 +1,9 @@
-
 `timescale 1ns/1ns
 
 module SM83_Run();
 
 	reg CLK;
+	/* verilator lint_off UNOPTFLAT */
 	wire [7:0] dbus;
 	wire [15:0] abus;
 	wire [7:0] irq_ack;
