@@ -15,7 +15,10 @@ SOURCES =\
  ../Thingy.v\
  ../Top.v
 
+ROM=roms/bogus_hw.mem
+
 OPTS=\
+ -DROM=$(ROM)\
  --top-module SM83_Run\
  --cc\
  $(SOURCES)\

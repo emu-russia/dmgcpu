@@ -97,7 +97,7 @@ module SM83_Run();
 		ExternalRESET = 1'b0;
 		CLK = 1'b0;
 
-		$dumpfile("dmg_waves.vcd");
+		$dumpfile("dmg_waves.fst");
 		$dumpvars(0, SM83_Run);
 
 		ExternalRESET = 1'b1;
