@@ -101,7 +101,7 @@ module seq_rs_latch2 ( nr, s, q );
 	initial val = 1'b0;
 
 	// The module design is such that reset overrides set if both are set at the same time.
-	always_latch begin
+	always @(*) begin
 		if (~nr)
 			val = 1'b0;
 		else if (s)
@@ -124,7 +124,7 @@ module seq_rs_latch ( nr, s, q );
 	initial val = 1'b0;
 
 	// The module design is such that reset overrides set if both are set at the same time.
-	always_latch begin
+	always @(*) begin
 		if (~nr)
 			val = 1'b0;
 		else if (s)
@@ -150,7 +150,7 @@ module seq_latchr_comp ( q, d, res, clk, cclk, ld, nld);
 	initial val_in = 1'bx;
 	initial val_out = 1'bx;
 
-	always_latch begin
+	always @(*) begin
 		if (clk && ld)
 			val_in = d;
 		if (res)
@@ -220,7 +220,7 @@ module seq_latch_comp ( d, clk, cclk, nq );
 	reg val;
 	initial val = 1'b0;
 
-	always_latch begin
+	always @(*) begin
 		if (clk)
 			val = d;
 	end

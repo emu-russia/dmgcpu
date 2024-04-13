@@ -116,7 +116,7 @@ module NOR_LATCH (set, res, q, nq);
 	initial val = 1'bx;
 
 	// res above set.
-	always_latch begin
+	always @(*) begin
 		if (res)
 			val = 1'b0;
 		else if (set)
@@ -144,7 +144,7 @@ module DFFR_B (clk, nres, d, q, nq);
 			val <= d;
 	end
 
-	always_latch begin
+	always @(*) begin
 		if (~nres)
 			val <= 1'b0;
 	end
@@ -165,7 +165,7 @@ module DR_LATCH (ena, nres, d, q, nq);
 	reg val;
 	initial val = 1'b0;
 
-	always_latch begin
+	always @(*) begin
 		if (ena)
 			val = d;
 		if (~nres)

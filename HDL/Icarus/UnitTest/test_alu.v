@@ -164,7 +164,7 @@ module BusKeeper (d, q);
 	// The BusKeeper value is stored on the FET gate. We assume that initially there is no charge there, i.e. the value is 0.
 	initial val = 1'b0;
 
-	always_latch begin
+	always @(*) begin
 		if (d == 1'b1)
 			val = 1'b1;
 		if (d == 1'b0)

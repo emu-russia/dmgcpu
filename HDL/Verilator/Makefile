@@ -22,7 +22,8 @@ OPTS=\
  ../Icarus/external_clk.v\
  ../Icarus/run.v\
  --timing\
- --trace-fst
+ --trace-fst\
+ --Wno-LATCH
 
 run:
 	cd ../Icarus && ../Verilator/obj_dir/VSM83_Run
