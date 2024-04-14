@@ -12,14 +12,14 @@ module RegsBuses ( CLK5, CLK6, w, x, DL, IR, abus, bbus, cbus, dbus, ebus, fbus,
 	input CLK6;
 	input [40:0] w;
 	input [68:0] x;
-	inout [7:0] DL;
+	input [7:0] DL;
 	output [7:0] IR;
-	inout [7:0] abus; 		// ⚠️ inverse hold (active low)
-	inout [7:0] bbus; 		// ⚠️ inverse hold (active low)
-	inout [7:0] cbus; 		// ⚠️ inverse hold (active low)
-	inout [7:0] dbus; 		// ⚠️ inverse hold (active low)
-	inout [7:0] ebus;
-	inout [7:0] fbus;
+	output [7:0] abus; 		// ⚠️ inverse hold (active low)
+	output [7:0] bbus; 		// ⚠️ inverse hold (active low)
+	output [7:0] cbus; 		// ⚠️ inverse hold (active low)
+	output [7:0] dbus; 		// ⚠️ inverse hold (active low)
+	input [7:0] ebus;
+	input [7:0] fbus;
 	output [7:0] Aout; 			// Reg A output for bq logic
 
 	// Regs output
@@ -73,17 +73,17 @@ module TempRegsBuses ( CLK4, CLK5, CLK6, d60, w, x, DL, bbus, cbus, dbus, ebus, 
 	input d60; 				// Gekkio: s1_op_ld_nn_sp_s010
 	input [40:0] w;
 	input [68:0] x;
-	inout [7:0] DL;
-	inout [7:0] bbus;		// ⚠️ inverse hold (active low)
-	inout [7:0] cbus;		// ⚠️ inverse hold (active low)
-	inout [7:0] dbus; 		// ⚠️ inverse hold (active low)
-	inout [7:0] ebus;
-	inout [7:0] fbus;
-	inout [7:0] zbus;
-	inout [7:0] wbus;
+	input [7:0] DL;
+	output [7:0] bbus;		// ⚠️ inverse hold (active low)
+	output [7:0] cbus;		// ⚠️ inverse hold (active low)
+	output [7:0] dbus; 		// ⚠️ inverse hold (active low)
+	output [7:0] ebus;
+	output [7:0] fbus;
+	output [7:0] zbus;
+	output [7:0] wbus;
 	input [7:0] Res;
-	inout [7:0] adl;
-	inout [7:0] adh;
+	input [7:0] adl;
+	input [7:0] adh;
 
 	wire [7:0] Z_in; 		// active low
 	wire [7:0] W_in; 		// active low
@@ -120,15 +120,15 @@ module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, DL, abus, bbus, cbus, db
 	input d66;
 	input [40:0] w;
 	input [68:0] x;
-	inout [7:0] DL;			// Internal databus
-	inout [7:0] abus;
-	inout [7:0] bbus;
-	inout [7:0] cbus;
-	inout [7:0] dbus;
-	inout [7:0] zbus;
-	inout [7:0] wbus;
-	inout [7:0] adl;
-	inout [7:0] adh;
+	output [7:0] DL;			// Internal databus
+	output [7:0] abus;
+	output [7:0] bbus;
+	output [7:0] cbus;
+	output [7:0] dbus;
+	input [7:0] zbus;
+	input [7:0] wbus;
+	input [7:0] adl;
+	input [7:0] adh;
 
 	wire [7:0] spl_nd;		// SPL input (inverse)
 	wire [7:0] spl_q;		// SPL output
@@ -177,14 +177,14 @@ module PC ( CLK5, CLK6, CLK7, d92, w, x, DL, abus, cbus, dbus, zbus, wbus, adl, 
 	input d92;
 	input [40:0] w;
 	input [68:0] x;	
-	inout [7:0] DL;			// Internal databus
-	inout [7:0] abus;
-	inout [7:0] cbus;
-	inout [7:0] dbus;
-	inout [7:0] zbus;
-	inout [7:0] wbus;
-	inout [7:0] adl;
-	inout [7:0] adh;
+	output [7:0] DL;			// Internal databus
+	output [7:0] abus;
+	output [7:0] cbus;
+	output [7:0] dbus;
+	input [7:0] zbus;
+	input [7:0] wbus;
+	input [7:0] adl;
+	input [7:0] adh;
 	input [7:0] IR;			// Current opcode
 	input [7:3] bro;		// Interrupt address
 	input SYNC_RES;

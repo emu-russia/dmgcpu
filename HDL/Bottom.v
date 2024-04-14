@@ -167,11 +167,11 @@ endmodule // Bottom
 module BusPrecharge ( CLK2, DL, abus, bbus, cbus, dbus );
 
 	input CLK2;
-	inout [7:0] DL;
-	inout [7:0] abus;
-	inout [7:0] bbus;
-	inout [7:0] cbus;
-	inout [7:0] dbus;
+	output [7:0] DL;
+	output [7:0] abus;
+	output [7:0] bbus;
+	output [7:0] cbus;
+	output [7:0] dbus;
 
 	assign   DL = CLK2 ? 8'bzzzzzzzz : 8'b11111111;
 	assign abus = CLK2 ? 8'bzzzzzzzz : 8'b11111111;
@@ -190,8 +190,8 @@ module BottomLeftLogic ( CLK2, bc, bq4, bq5, bq7, Aout, abus, bbus, alu, DV );
 	output bq5;
 	output bq7;
 	input [7:0] Aout; 		// Current value of the `A` register  (directly from the register bits output)
-	inout [7:0] abus; 		// ⚠️ inverse hold (active low)
-	inout [7:0] bbus; 		// ⚠️ inverse hold (active low)
+	input [7:0] abus; 		// ⚠️ inverse hold (active low)
+	input [7:0] bbus; 		// ⚠️ inverse hold (active low)
 	output [7:0] alu; 		// abus -> ALU Operand 1
 	output [7:0] DV; 		// bbus -> ALU Operand 2
 

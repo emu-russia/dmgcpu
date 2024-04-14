@@ -15,10 +15,10 @@ module IncDec ( CLK4, TTB1, TTB2, TTB3, BUS_DISABLE, cbus, dbus, adl, adh, AddrB
 	input TTB2;				// 1: Perform decrement
 	input TTB3;				// 1: Perform increment
 	input BUS_DISABLE;
-	inout [7:0] cbus;		// ~val_lo
-	inout [7:0] dbus;		// ~val_hi
-	inout [7:0] adl;		// res_lo
-	inout [7:0] adh;		// res_hi
+	input [7:0] cbus;		// ~val_lo
+	input [7:0] dbus;		// ~val_hi
+	output [7:0] adl;		// res_lo
+	output [7:0] adh;		// res_hi
 	output [15:0] AddrBus;
 
 	wire [7:0] cbq; 	// cbus Bus keepers outputs
