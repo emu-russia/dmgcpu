@@ -19,6 +19,9 @@ make run ROM=roms/cpu_instrs.mem # or any other .mem file in `roms`
 
 # Verilator
 
+> ⚠️ Verilator doesn't have enough support for high impedance signals, so this
+> simulation doesn't work correctly at all.
+
 The same simulation can be run in
 [verilator](https://www.veripool.org/verilator/) instead, which is much faster.
 
