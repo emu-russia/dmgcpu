@@ -1,3 +1,4 @@
 *.run
 *.vcd
 out.mem
+obj_dir

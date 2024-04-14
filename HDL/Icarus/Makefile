@@ -13,14 +13,38 @@ SOURCES =\
  ../SeqCells.v\
  ../Seq.v\
  ../Thingy.v\
- ../Top.v
+ ../Top.v\
+ external_clk.v\
+ run.v
 
 ROM=roms/bogus_hw.mem
 
 run:
-	iverilog -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) run.v external_clk.v -DROM=$(ROM)
+	iverilog -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) -DROM=$(ROM)
 	vvp sm83.run -fst
 
 verbose:
-	iverilog -v -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) run.v external_clk.v -DROM=$(ROM)
+	iverilog -v -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) -DROM=$(ROM)
 	vvp -v sm83.run -fst
+
+VERILATOR_OPTS=\
+ -DROM=$(ROM)\
+ --top-module SM83_Run\
+ --cc\
+ $(SOURCES)\
+ --timing\
+ --trace-fst\
+ --no-trace-top\
+ --Wno-fatal\
+ --Wno-LATCH
+
+verilator:
+	verilator $(VERILATOR_OPTS) --binary -j 0
+	obj_dir/VSM83_Run
+
+check:
+	verilator $(VERILATOR_OPTS) --lint-only --report-unoptflat
+
+clean:
+	rm -f sm83.run
+	rm -rf obj_dir
