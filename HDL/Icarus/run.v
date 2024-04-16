@@ -1,9 +1,11 @@
-
 `timescale 1ns/1ns
+
+`define STRINGIFY(x) `"x`"
 
 module SM83_Run();
 
 	reg CLK;
+	/* verilator lint_off UNOPTFLAT */
 	wire [7:0] dbus;
 	wire [15:0] abus;
 	wire [7:0] irq_ack;
@@ -91,13 +93,12 @@ module SM83_Run();
 		.CPU_IRQ_ACK(irq_ack) );
 
 	initial begin
-
-		$display("Check that the DMG Core is moving.");
+		$display("Running '%s'", `STRINGIFY(`ROM));
 
 		ExternalRESET = 1'b0;
 		CLK = 1'b0;
 
-		$dumpfile("dmg_waves.vcd");
+		$dumpfile("dmg_waves.fst");
 		$dumpvars(0, SM83_Run);
 
 		ExternalRESET = 1'b1;
@@ -105,6 +106,8 @@ module SM83_Run();
 		ExternalRESET = 1'b0;
 
 		repeat (256) @ (posedge CLK);
+
+		$display(""); // breakline after any serial output
 		$writememh ("out.mem", hw.mem);
 		$finish;
 	end	
@@ -119,24 +122,52 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 	inout [7:0] databus;
 	input [15:0] addrbus;
 
+	reg [7:0] bootrom[0:255];
+	initial $readmemh("roms/boot.mem", bootrom);
+
 	reg [7:0] mem[0:65535];
 	reg [7:0] value;
 
-	// You need to pre-fill the memory with some value so you don't run into `xx`
+	reg in_boot = 1'b1;
+
 	integer j;
-	initial 
-	for(j = 0; j < 65536; j = j+1) 
-		mem[j] = 0;
+	initial begin
+		// Pre-fill the memory with some value so we don't run into `xx`
+		for(j = 0; j < 65536; j = j+1) 
+			mem[j] = 0;
 
-	// TODO: Come up with some convenient way to select ROM (via -define ?)
-	initial $readmemh("roms/bogus_hw.mem", mem);
-	//initial $readmemh("roms/test_cc_check.mem", mem);
-	//initial $readmemh("roms/test_jr_cc.mem", mem);
-	//initial $readmemh("roms/cpu_instrs.mem", mem);	
+		`define STRINGIFY(x) `"x`"
+		`ifdef ROM
+			$readmemh(`STRINGIFY(`ROM), mem);
+		`else
+			$readmemh("roms/bogus_hw.mem", mem);
+		`endif
+	end
 
-	always @(RD) value <= mem[addrbus];
-	always @(WR) mem[addrbus] <= databus;
+	always @(posedge RD) begin
+		// disable bootrom after entering ROM
+		if (in_boot && addrbus >= 16'h0100) begin
+			in_boot = 1'b0;
+		end
 
-	assign databus = (MREQ & RD) ? value : 'bz;
+		if (in_boot) value <= bootrom[addrbus[7:0]];
+		else value <= mem[addrbus];
+	end
+
+	// the CPU changes the address bus and WR signal at the same time, which
+	// causes issues due to order evaluation. To work around this, we extend
+	// the address bus and data bus by one tick.
+	wire [15:0] #1 ADR = addrbus;
+	wire [7:0] #1 DAT = databus;
+
+	always @(negedge WR) begin
+		mem[ADR] <= DAT;
+		if (ADR == 16'hFF02) begin
+			$write("%c", mem[16'hFF01]);
+		end
+	end
+	
+
+	assign databus = (MREQ & RD) ? value : 8'hZZ;
 
 endmodule // Bogus_HW

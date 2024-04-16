@@ -12,8 +12,14 @@ def Main (file_bin, file_mem):
 	f.close()
 
 	text = ""
+	i = 0
 	for b in binarycontent:
-		text += ("%0x" % b) + " "
+		text += ("%02x" % b)
+		i += 1
+		if i % 16 == 0:
+			text += "\n"
+		else:
+			text += " "
 
 	text_file = open(file_mem, "w")
 	text_file.write(text)

@@ -72,33 +72,33 @@ module data_mux_bit ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus, DataOut, dv_
 	// buses, that makes it resolve to 1 when no other signal is driving the
 	// bus.
 
-	// DataLatch logic
-	assign Ext_bus = (clk || Test1) ? 1'bz : 1;
-	assign(pull0, pull1) Ext_bus = clk && ~(int_to_ext_q || Test1) ? 0 : 1'bz;
-
-	assign Int_bus = clk ? 1'bz : 1;
-	assign(pull0, pull1) Int_bus = clk && ~(Test1 || ext_to_int_q) ? 0 : 1'bz;
-	assign(pull0, pull1) Int_bus = (Res_to_DL && ~Res) ? 0 : 1'bz;
-
-	// DataBridge logic
-	assign(pull0, pull1) Int_bus = (~dv_q) ? (DataOut ? 0 : 1'bz) : 1'bz;
-
-	// Drive DL and D buses up with weak strength to simulate the pre-charge.
-	assign (weak0, weak1) Ext_bus = 1;
-	assign (weak0, weak1) Int_bus = 1;
+	// // DataLatch logic
+	// assign Ext_bus = (clk || Test1) ? 1'bz : 1;
+	// assign(pull0, pull1) Ext_bus = clk && ~(int_to_ext_q || Test1) ? 0 : 1'bz;
+	//
+	// assign Int_bus = clk ? 1'bz : 1;
+	// assign(pull0, pull1) Int_bus = clk && ~(Test1 || ext_to_int_q) ? 0 : 1'bz;
+	// assign(pull0, pull1) Int_bus = (Res_to_DL && ~Res) ? 0 : 1'bz;
+	//
+	// // DataBridge logic
+	// assign(pull0, pull1) Int_bus = (~dv_q) ? (DataOut ? 0 : 1'bz) : 1'bz;
+	//
+	// // Drive DL and D buses up with weak strength to simulate the pre-charge.
+	// assign (weak0, weak1) Ext_bus = 1;
+	// assign (weak0, weak1) Int_bus = 1;
 
 	// The logic above can also be expressed, in a higher level, as:
-	//
-	// assign Ext_bus = ~clk ? 1
-	// 		: RD_hack && ~WR_hack ? 1'bz
-	// 		: ~RD_hack && WR_hack ? int_to_ext_q
-	// 		: 1;
-	//
-	// assign Int_bus = ~clk ? 1
-	// 		: RD_hack && ~WR_hack ? ext_to_int_q
-	// 		: ~RD_hack && WR_hack && DataOut ? dv_q
-	// 		: ~RD_hack && WR_hack ? 1'bz
-	// 		: Res_to_DL ? res_q
-	// 		: 1;
+
+	assign Ext_bus = ~clk ? 1
+			: RD_hack && ~WR_hack ? 1'bz
+			: ~RD_hack && WR_hack ? int_to_ext_q
+			: 1;
+
+	assign Int_bus = ~clk ? 1
+			: RD_hack && ~WR_hack ? ext_to_int_q
+			: ~RD_hack && WR_hack && DataOut ? dv_q
+			: ~RD_hack && WR_hack ? 1'bz
+			: Res_to_DL ? res_q
+			: 1;
 
 endmodule // data_mux_bit

@@ -1,5 +1,6 @@
 // A very basic program, just to show that something is moving there.
 
+@0100
 00        // NOP
 31 cc aa  // LD SP, $AACC
 21 80 de  // LD HL, $DE80
@@ -7,16 +8,16 @@
 77        // LD (HL), A
 3e de     // LD A, $DE
 7e        // LD A, (HL)
-c3 12 01  // JP $0112
+c3 12 02  // JP $0212
 76        // HALT
 
-@0112
+@0212
 fe bc     // CP $BC
-c2 50 01  // JP NZ $0150
-ca 50 01  // JP Z $0150
+c2 50 02  // JP NZ $0250
+ca 50 02  // JP Z $0250
 76        // HALT
 
-@0150
+@0250
 cd 00 20  // CALL $2000
 18 01     // JR +$01
 76        // HALT

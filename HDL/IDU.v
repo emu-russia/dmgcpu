@@ -15,10 +15,10 @@ module IncDec ( CLK4, TTB1, TTB2, TTB3, BUS_DISABLE, cbus, dbus, adl, adh, AddrB
 	input TTB2;				// 1: Perform decrement
 	input TTB3;				// 1: Perform increment
 	input BUS_DISABLE;
-	inout [7:0] cbus;		// ~val_lo
-	inout [7:0] dbus;		// ~val_hi
-	inout [7:0] adl;		// res_lo
-	inout [7:0] adh;		// res_hi
+	input [7:0] cbus;		// ~val_lo
+	input [7:0] dbus;		// ~val_hi
+	output [7:0] adl;		// res_lo
+	output [7:0] adh;		// res_hi
 	output [15:0] AddrBus;
 
 	wire [7:0] cbq; 	// cbus Bus keepers outputs
@@ -66,9 +66,7 @@ module cntbit_carry_chain ( CLK4, TTB1, TTB2, TTB3, mq, xa );
 	input [15:0] mq;
 	output [15:0] xa;
 
-	/* verilator lint_off UNOPTFLAT */
 	wire [15:0] nxa;
-	/* verilator lint_off UNOPTFLAT */
 	wire ct;
 
 	assign nxa[0] = ~(TTB2 | TTB3);
@@ -79,9 +77,10 @@ module cntbit_carry_chain ( CLK4, TTB1, TTB2, TTB3, mq, xa );
 	assign nxa[4] = CLK4 ? (~(mq[0] & mq[1] & mq[2] & mq[3])) : 1'b1;
 	assign nxa[5] = CLK4 ? (~(mq[0] & mq[1] & mq[2] & mq[3] & mq[4])) : 1'b1;
 	assign nxa[6] = CLK4 ? (~(mq[0] & mq[1] & mq[2] & mq[3] & mq[4] & mq[5])) : 1'b1;
-	assign nxa[7] = CLK4 ? (~(mq[0] & mq[1] & mq[2] & mq[3] & mq[4] & mq[5] & mq[6])) : 1'b1;
+	wire nxa7 = CLK4 ? (~(mq[0] & mq[1] & mq[2] & mq[3] & mq[4] & mq[5] & mq[6])) : 1'b1;
+	assign nxa[7] = nxa7; // workaround for circular logic in verilator
 
-	assign ct = (mq[7] & xa[7]) | TTB1;
+	assign ct = (mq[7] & ~nxa7) | TTB1;
 	assign nxa[8] = CLK4 ? (~(ct)) : 1'b1;
 	assign nxa[9] = CLK4 ? (~(ct & mq[8])) : 1'b1;
 	assign nxa[10] = CLK4 ? (~(ct & mq[8] & mq[9])) : 1'b1;

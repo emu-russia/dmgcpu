@@ -1,0 +1,2 @@
+// the bootrom will just jump to the ROM entry point
+c3 00 01
