@@ -62,5 +62,3 @@ Do not expect that all of them are quickly renamed to proper names. Such a proce
 From experience - frequent renaming of signals also contributes to various errors and confusion.
 
 Renaming a signal does not make it work differently :smiley:
-
-EDIT: This is the last project in which I accept signal name corrections. All subsequent ones will have a big sign at the beginning that signal corrections are not accepted.
