@@ -4,7 +4,7 @@ DMG-01 SM83 core research.
 
 The core can be found here:
 
-![cpu_location](/imgstore/sm83/cpu_location.jpg)
+![locator_core](/imgstore/locator_core.jpg)
 
 The `B` revision of the DMG SoC is being studied.
 
