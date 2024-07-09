@@ -11,8 +11,6 @@ Please, if you want to understand correctly how this tricky circuit works, read 
 
 ![datalatch](/imgstore/sm83/datalatch.jpg)
 
-![DataLatch](/HDL/sm83/Design/DataLatch.png)
-
 TopPart is used for the following operations:
 - If the external databus (D\[n\]) is not floating (driven), load a value from it to the internal databus (DL), using transparent DLatch
 - If the internal databus (DL\[n\]) is not floating (driven), load a value from it to the external databus (D), using transparent DLatch
@@ -74,8 +72,6 @@ The closest approximation is following:
 ## Bottom Part
 
 ![databridge](/imgstore/sm83/databridge.jpg)
-
-![DataBridge](/HDL/sm83/Design/DataBridge.png)
 
 The purpose of this circuit is put DV bus value into DL bus.
 
