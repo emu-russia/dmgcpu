@@ -23,9 +23,9 @@ TopPart is used for the following operations:
 
 TopPart consists of 8 such chunks:
 
-![module1](/imgstore/sm83/modules/module1.jpg)
+![module1](/imgstore/modules/sm83/module1.jpg)
 
-![module1_tran](/imgstore/sm83/modules/module1_tran.jpg)
+![module1_tran](/imgstore/modules/sm83/module1_tran.jpg)
 
 |Port|Dir|Description|
 |---|---|---|
@@ -81,9 +81,9 @@ The purpose of this circuit is put DV bus value into DL bus.
 
 The DV value also goes "through" the DataBridge and is fed to the ALU input (Operand2).
 
-![bridge_comb](/imgstore/sm83/modules/bridge_comb.jpg)
+![bridge_comb](/imgstore/modules/sm83/bridge_comb.jpg)
 
-![bridge_comb_tran](/imgstore/sm83/modules/bridge_comb_tran.jpg)
+![bridge_comb_tran](/imgstore/modules/sm83/bridge_comb_tran.jpg)
 
 |DataOut|dv_bit|dl_bit|
 |---|---|---|
@@ -100,4 +100,4 @@ If you combine the two circuits into one, then according to the latest data from
 
 Again, Logisim doesn't support such tinkery, so here's a schematic closer to reality:
 
-![datamux_tran](/imgstore/sm83/modules/datamux_tran.jpg)
+![datamux_tran](/imgstore/modules/sm83/datamux_tran.jpg)

@@ -49,7 +49,7 @@ Dynamic logic is used.
 
 ## Decoder1 Output Drivers
 
-![decoder1_drv](/imgstore/sm83/modules/decoder1_drv.jpg)
+![decoder1_drv](/imgstore/modules/sm83/decoder1_drv.jpg)
 
 The output drivers act as signal amplifiers and are also used as "domino" logic, to translate dynamic CMOS logic into conventional logic.
 

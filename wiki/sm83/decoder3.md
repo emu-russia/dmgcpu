@@ -27,7 +27,7 @@ The final stage of the decoder, which generates the `x[68:0]` control signals fo
 
 ## Output Drivers
 
-![decoder3_drv](/imgstore/sm83/modules/decoder3_drv.jpg)
+![decoder3_drv](/imgstore/modules/sm83/decoder3_drv.jpg)
 
 The output drivers act as signal amplifiers and are also used as "domino" logic, to translate dynamic CMOS logic into conventional logic.
 

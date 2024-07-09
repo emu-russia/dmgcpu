@@ -4,11 +4,11 @@
 
 ![IncDec](/logisim/sm83/IncDec.png)
 
-![cntbit](/imgstore/sm83/modules/cntbit.jpg)
+![cntbit](/imgstore/modules/sm83/cntbit.jpg)
 
 ## Counter bits
 
-![cntbit_tran](/imgstore/sm83/modules/cntbit_tran.jpg)
+![cntbit_tran](/imgstore/modules/sm83/cntbit_tran.jpg)
 
 ![IncDec_cntbit](/logisim/sm83/IncDec_cntbit.png)
 
@@ -16,7 +16,7 @@ The bit designs are repeated between the lower part (A0-A7) and the upper part (
 
 ## Counter carry chain
 
-![cntbit_carry_chain](/imgstore/sm83/modules/cntbit_carry_chain.jpg)
+![cntbit_carry_chain](/imgstore/modules/sm83/cntbit_carry_chain.jpg)
 
 ![IncDec_carry_chain](/logisim/sm83/IncDec_carry_chain.png)
 

@@ -14,7 +14,7 @@ The outputs `d[106:0]` from [Decoder1](decoder1.md) are input.
 
 Some drivers are inverters and some are buffers.
 
-![decoder2_drv](/imgstore/sm83/modules/decoder2_drv.jpg)
+![decoder2_drv](/imgstore/modules/sm83/decoder2_drv.jpg)
 
 The output drivers act as signal amplifiers and are also used as "domino" logic, to translate dynamic CMOS logic into conventional logic.
 

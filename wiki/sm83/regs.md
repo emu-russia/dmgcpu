@@ -9,9 +9,9 @@ This additional work to proofread and verify register and bus connections (refer
 
 All registers use a common module (with a small exception for Z/W register bits, see further in the Temp Registers section).
 
-![regbit](/imgstore/sm83/modules/regbit.jpg)
+![regbit](/imgstore/modules/sm83/regbit.jpg)
 
-![regbit_tran](/imgstore/sm83/modules/regbit_tran.jpg)
+![regbit_tran](/imgstore/modules/regbit_tran.jpg)
 
 Latch with complementary set enable, complementary CLK.
 
@@ -22,7 +22,7 @@ Latch with complementary set enable, complementary CLK.
 - So the written value becomes relevant when LD 1->0 changes aka negedge (when the output latch opens and is updated with the value from FlipFlop).
 - The whole thing is complicated by the complementary layout of the LD and CLK signals.
 
-![regbit_waves](/imgstore/sm83/modules/regbit_waves.jpg)
+![regbit_waves](/imgstore/modules/sm83/regbit_waves.jpg)
 
 ## Registers
 
@@ -64,17 +64,17 @@ There are small pieces for Precharge scattered throughout the circuitry.
 
 Between the registers scattered small logic for issuing their values to the buses.
 
-![regs_buses](/imgstore/sm83/modules/regs_buses.jpg)
+![regs_buses](/imgstore/modules/sm83/regs_buses.jpg)
 
-![regs_buses_tran](/imgstore/sm83/modules/regs_buses_tran.jpg)
+![regs_buses_tran](/imgstore/modules/sm83/regs_buses_tran.jpg)
 
 ## Temp Registers vs Bus Logic
 
 The value on the temp registers (Z/W) does not come directly from the buses, but using logic. And, attention, the input of Z/W registers has inverse polarity (active low), but the output of the registers to the bus zbus/wbus in the regular polarity, so at the output of Z/W registers additional inverter (not) is sticked.
 
-![gk](/imgstore/sm83/modules/gk.jpg)
+![gk](/imgstore/modules/sm83/gk.jpg)
 
-![gk_tran](/imgstore/sm83/modules/gk_tran.jpg)
+![gk_tran](/imgstore/modules/sm83/gk_tran.jpg)
 
 The picture shows how the signals at the input and output of Z/W registers vary compared to conventional registers:
 
@@ -86,11 +86,11 @@ Also: the inverters for the ebus/fbus buses most likely act as a transparent DLa
 
 :warning: A distinctive feature of the SP register bits is that the value on them is loaded and kept in the inverse polarity. In addition to the regular output the register also has a complement output.
 
-![x61](/imgstore/sm83/modules/x61.jpg)
+![x61](/imgstore/modules/sm83/x61.jpg)
 
 SP vs Buses:
 
-![x61_tran](/imgstore/sm83/modules/x61_tran.jpg)
+![x61_tran](/imgstore/modules/sm83/x61_tran.jpg)
 
 Between CLK6 and CLK7 there is a short period (1 half-cycle) when the SPH/SPL register input is in a floating state. To maintain this "floater" it is recommended to use a transparent latch in your implementation for the SPH/SPL inputs.
 
@@ -98,14 +98,14 @@ Between CLK6 and CLK7 there is a short period (1 half-cycle) when the SPH/SPL re
 
 :warning: A distinctive feature of the PC register bits is that the value on them is loaded and kept in the inverse polarity. In addition to the regular output the register also has a complement output. The register also has an Active-low input for resetting.
 
-![x68](/imgstore/sm83/modules/x68.jpg)
+![x68](/imgstore/modules/sm83/x68.jpg)
 
 PC Regbit:
 
-![x68_reg_tran](/imgstore/sm83/modules/x68_reg_tran.jpg)
+![x68_reg_tran](/imgstore/modules/sm83/x68_reg_tran.jpg)
 
 PC vs Buses:
 
-![x68_tran](/imgstore/sm83/modules/x68_tran.jpg)
+![x68_tran](/imgstore/modules/sm83/x68_tran.jpg)
 
 Between CLK6 and CLK7 there is a short period (1 half-cycle) when the PCH/PCL register input is in a floating state. To maintain this "floater" it is recommended to use a transparent latch in your implementation for the PCH/PCL inputs.

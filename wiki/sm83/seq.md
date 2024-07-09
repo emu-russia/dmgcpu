@@ -82,9 +82,9 @@ In fact, when using Dual Rails, you can easily turn a posedge DFF into a negedge
 
 A distinctive feature of the circuits that do Edge Detection is the two serial MUX's that are opened complementary to the CLK. Using black magic and propagation delay - the edge of the signal is caught.
 
-![module3](/imgstore/sm83/modules/module3.jpg)
+![module3](/imgstore/modules/sm83/module3.jpg)
 
-![module3_tran](/imgstore/sm83/modules/module3_tran.jpg)
+![module3_tran](/imgstore/modules/sm83/module3_tran.jpg)
 
 Note: If the DFF input goes to a MUX, which opens at CLK=0 by a P-type MOSFET, it is a posedge DFF.
 
@@ -98,17 +98,17 @@ Also: reset input in inverse polarity (`#RESET`).
 
 :warning: The module design is such that reset overrides set if both are set at the same time. Keep this in mind when making your HDL implementation.
 
-![module4](/imgstore/sm83/modules/module4.jpg)
+![module4](/imgstore/modules/sm83/module4.jpg)
 
-![module4_tran](/imgstore/sm83/modules/module4_tran.jpg)
+![module4_tran](/imgstore/modules/sm83/module4_tran.jpg)
 
 ## module4_2 - rs_latch2
 
 Initially it was mistaken for module4, but after a detailed study it became clear that the lower part is different.
 
-![module42](/imgstore/sm83/modules/module42.jpg)
+![module42](/imgstore/modules/sm83/module42.jpg)
 
-![module42_tran](/imgstore/sm83/modules/module42_tran.jpg)
+![module42_tran](/imgstore/modules/sm83/module42_tran.jpg)
 
 This is essentially the same rs_latch (see above), but with the inputs rearranged. The cell occurs in a single instance (g49) and Issue #219 was associated with it.
 
@@ -118,17 +118,17 @@ This is essentially the same rs_latch (see above), but with the inputs rearrange
 
 1 AND x2 to OR inverted.
 
-![aoi_1](/imgstore/sm83/modules/aoi_1.jpg)
+![aoi_1](/imgstore/modules/sm83/aoi_1.jpg)
 
-![aoi_1_tran](/imgstore/sm83/modules/aoi_1_tran.jpg)
+![aoi_1_tran](/imgstore/modules/sm83/aoi_1_tran.jpg)
 
 ## aoi_2 - aoi_21
 
 1 AND x2 to OR inverted.
 
-![aoi_2](/imgstore/sm83/modules/aoi_2.jpg)
+![aoi_2](/imgstore/modules/sm83/aoi_2.jpg)
 
-![aoi_2_tran](/imgstore/sm83/modules/aoi_2_tran.jpg)
+![aoi_2_tran](/imgstore/modules/sm83/aoi_2_tran.jpg)
 
 ## huge1 - latchr_comp
 
@@ -144,25 +144,25 @@ A rather complicated circuit to master:
 
 By the way, there are 2 `not` in the circuit to form the complement, one of which takes `CLK6` signal as input and the second `not` takes `LoadIR` signal as input.
 
-![huge1](/imgstore/sm83/modules/huge1.jpg)
+![huge1](/imgstore/modules/sm83/huge1.jpg)
 
-![huge1_tran](/imgstore/sm83/modules/huge1_tran.jpg)
+![huge1_tran](/imgstore/modules/sm83/huge1_tran.jpg)
 
 ## hmm1 - oai_21
 
 1 OR x2 to AND inverted.
 
-![hmm1](/imgstore/sm83/modules/hmm1.jpg)
+![hmm1](/imgstore/modules/sm83/hmm1.jpg)
 
-![hmm1_tran](/imgstore/sm83/modules/hmm1_tran.jpg)
+![hmm1_tran](/imgstore/modules/sm83/hmm1_tran.jpg)
 
 ## hmm2 - aoi_31
 
 1 AND x3 to OR inverted.
 
-![hmm2](/imgstore/sm83/modules/hmm2.jpg)
+![hmm2](/imgstore/modules/sm83/hmm2.jpg)
 
-![hmm2_tran](/imgstore/sm83/modules/hmm2_tran.jpg)
+![hmm2_tran](/imgstore/modules/sm83/hmm2_tran.jpg)
 
 ## hmm3 - latch_comp
 
@@ -172,9 +172,9 @@ Latch means that the value is written on the CLK level, not on the edge of the s
 
 Output in inverse polarity (`#Q`).
 
-![hmm3](/imgstore/sm83/modules/hmm3.jpg)
+![hmm3](/imgstore/modules/sm83/hmm3.jpg)
 
-![hmm3_tran](/imgstore/sm83/modules/hmm3_tran.jpg)
+![hmm3_tran](/imgstore/modules/sm83/hmm3_tran.jpg)
 
 :warning: Note that CLK comes to this cell in complement, relative to the other DFFs. This cell is used to edge detect the NMI signal (or more precisely its derivative /NMI obtained from g53).
 
@@ -182,9 +182,9 @@ Output in inverse polarity (`#Q`).
 
 1 OR x2 to AND inverted.
 
-![iwantsleep](/imgstore/sm83/modules/iwantsleep.jpg)
+![iwantsleep](/imgstore/modules/sm83/iwantsleep.jpg)
 
-![iwantsleep_tran](/imgstore/sm83/modules/iwantsleep_tran.jpg)
+![iwantsleep_tran](/imgstore/modules/sm83/iwantsleep_tran.jpg)
 
 ## shielded - mreq
 
@@ -192,9 +192,9 @@ Very cleverly twisted combined logic. Bravo, SHARP engineers!
 
 This module is essentially used to generate the `#MREQ` signal. Below is `not` to invert it into a `MREQ` signal and output it to the outside.
 
-![shielded](/imgstore/sm83/modules/shielded.jpg)
+![shielded](/imgstore/modules/sm83/shielded.jpg)
 
-![shielded_tran](/imgstore/sm83/modules/shielded_tran.jpg)
+![shielded_tran](/imgstore/modules/sm83/shielded_tran.jpg)
 
 ![mreq](/logisim/mreq.png)
 
@@ -202,17 +202,17 @@ This module is essentially used to generate the `#MREQ` signal. Below is `not` t
 
 2 AND x2 to OR-3 inverted, dynamic.
 
-![comb4](/imgstore/sm83/modules/comb4.jpg)
+![comb4](/imgstore/modules/sm83/comb4.jpg)
 
-![comb4_tran](/imgstore/sm83/modules/comb4_tran.jpg)
+![comb4_tran](/imgstore/modules/sm83/comb4_tran.jpg)
 
 ## comb5 - aoi_22_dyn
 
 2 AND x2 to OR inverted, dynamic.
 
-![comb5](/imgstore/sm83/modules/comb5.jpg)
+![comb5](/imgstore/modules/sm83/comb5.jpg)
 
-![comb5_tran](/imgstore/sm83/modules/comb5_tran.jpg)
+![comb5_tran](/imgstore/modules/sm83/comb5_tran.jpg)
 
 ## Logic behind additional Decoder inputs
 

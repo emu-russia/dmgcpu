@@ -75,6 +75,15 @@ The circuit is on the left side in a spread out layout. The picture shows the pa
 
 It is very difficult to put this circuit into any category. It belongs to both ALU and registers at the same time, and is generally at the bottom. So it's going to stay here untouched for now.
 
-![bcbq](/imgstore/sm83/modules/bcbq.jpg)
+![bcbq](/imgstore/modules/sm83/bcbq.jpg)
 
-![bcbq_tran](/imgstore/sm83/modules/bcbq_tran.jpg)
+![bcbq_tran](/imgstore/modules/sm83/bcbq_tran.jpg)
+
+From #131:
+
+```
+your bq7 is the same as my a_reg_hilo_gte_8, which means "are both nibbles greater than or equal to 8"
+your bq5 is the same as my a_reg_hi_gt_9, which means "is the upper nibble greater than 9"
+your bq4 is the same as my a_reg_lo_gt_9, which means "is the lower nibble greater than 9"
+those are used by the ALU to generate an "adjustment operand" that gets added to A during DAA
+```

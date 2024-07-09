@@ -116,9 +116,9 @@ The control ALU inputs from decoders 2/3 are listed separately.
 
 8-NOR:
 
-![nor8_1](/imgstore/sm83/modules/nor8_1.jpg)
+![nor8_1](/imgstore/modules/sm83/nor8_1.jpg)
 
-![nor8_1_tran](/imgstore/sm83/modules/nor8_1_tran.jpg)
+![nor8_1_tran](/imgstore/modules/sm83/nor8_1_tran.jpg)
 
 The result of the nor8 operation is the `AllZeros` signal. This is often required to calculate the `Z` flag.
 
@@ -130,9 +130,9 @@ In between is the small logic (8 AND gates implementing logical XOR operation ou
 
 ### module5 (4-bit CLA Generators, x2)
 
-![module5](/imgstore/sm83/modules/module5.jpg)
+![module5](/imgstore/modules/sm83/module5.jpg)
 
-![module5_tran](/imgstore/sm83/modules/module5_tran.jpg)
+![module5_tran](/imgstore/modules/sm83/module5_tran.jpg)
 
 ![module5_logisim](/logisim/module5_logisim.png)
 
@@ -142,9 +142,9 @@ The gaps contain AND gates that implement a logical XOR operation based on the G
 
 8 identical modules.
 
-![module6](/imgstore/sm83/modules/module6.jpg)
+![module6](/imgstore/modules/sm83/module6.jpg)
 
-![module6_tran](/imgstore/sm83/modules/module6_tran.jpg)
+![module6_tran](/imgstore/modules/sm83/module6_tran.jpg)
 
 |Port|Dir|Description|
 |---|---|---|
@@ -159,9 +159,9 @@ The gaps contain AND gates that implement a logical XOR operation based on the G
 
 8 identical modules.
 
-![module2](/imgstore/sm83/modules/module2.jpg)
+![module2](/imgstore/modules/sm83/module2.jpg)
 
-![module2_tran](/imgstore/sm83/modules/module2_tran.jpg)
+![module2_tran](/imgstore/modules/sm83/module2_tran.jpg)
 
 |Port|Dir|Description|
 |---|---|---|
@@ -188,8 +188,8 @@ Contains 8 dynamic comb logic modules (ANDs-to-NORs + CLK2), multiplexing DV ope
 
 |Comb1 (bit 7)|Comb2 (bits 6-1)|Comb3 (bit 0)|
 |---|---|---|
-|![comb1](/imgstore/sm83/modules/comb1.jpg)|![comb2](/imgstore/sm83/modules/comb2.jpg)|![comb3](/imgstore/sm83/modules/comb3.jpg)|
-|![comb1_tran](/imgstore/sm83/modules/comb1_tran.jpg)|![comb2_tran](/imgstore/sm83/modules/comb2_tran.jpg)|![comb3_tran](/imgstore/sm83/modules/comb3_tran.jpg)|
+|![comb1](/imgstore/modules/sm83/comb1.jpg)|![comb2](/imgstore/modules/sm83/comb2.jpg)|![comb3](/imgstore/modules/sm83/comb3.jpg)|
+|![comb1_tran](/imgstore/modules/sm83/comb1_tran.jpg)|![comb2_tran](/imgstore/modules/sm83/comb2_tran.jpg)|![comb3_tran](/imgstore/modules/sm83/comb3_tran.jpg)|
 
 ![alu_shifter](/logisim/sm83/alu_shifter.png)
 
@@ -255,16 +255,16 @@ TBD.
 
 ### bc
 
-![bc](/imgstore/sm83/modules/bc.jpg)
+![bc](/imgstore/modules/sm83/bc.jpg)
 
-![bc_tran](/imgstore/sm83/modules/bc_tran.jpg)
+![bc_tran](/imgstore/modules/sm83/bc_tran.jpg)
 
 Regular memory cell (latch) with write enable (x28/x29). It also contains a Precharge FET for the dynamic logic which is above (input `d`). By the way the input `d` in the drawing is marked in inverse polarity, because the current hypothesis is that the signal `bc` is in direct polarity, and the operation which forms the signal `d` (AOI) gives the result in inverse polarity.
 
 ### ALU_to_bot
 
-![ALU_to_bot](/imgstore/sm83/modules/ALU_to_bot.jpg)
+![ALU_to_bot](/imgstore/modules/sm83/ALU_to_bot.jpg)
 
-![ALU_to_bot_tran](/imgstore/sm83/modules/ALU_to_bot_tran.jpg)
+![ALU_to_bot_tran](/imgstore/modules/sm83/ALU_to_bot_tran.jpg)
 
 A regular memory cell (latch), for storing the TempZ = `zbus[7]` value (msb). The signal CLK4 acts as WriteEnable.
