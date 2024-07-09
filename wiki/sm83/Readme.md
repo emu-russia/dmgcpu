@@ -20,7 +20,7 @@ The core consists of the following main components:
 
 At the moment, the entire topology have been obtained. The basic circuit principles are understood and the transistor circuits of most of the modules are obtained. The main emphasis was made on the sequencer circuit, as the most demanded one.
 
-The research has come to an end. It remains to check the correctness of the circuits in the [HDL](HDL/sm83) simulator.
+The research has come to an end. It remains to check the correctness of the circuits in the [HDL](/HDL/sm83) simulator.
 
 ![DMG01B_Core_Fused_Topo](/imgstore/sm83/DMG01B_Core_Fused_Topo.jpg)
 
