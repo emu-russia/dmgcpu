@@ -28,7 +28,7 @@ Based on: https://github.com/msinger/dmg-schematics
 
 ## Waves
 
-![clk_waves](/imgstore/sm83/waves/clk_waves.png)
+![clk_waves](/imgstore/waves/clk_waves.png)
 
 ## Gekkio Waves
 
