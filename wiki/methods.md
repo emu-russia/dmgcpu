@@ -128,7 +128,7 @@ After getting beautiful pictures, we scratch our heads and reconstruct the schem
 
 ## Restoring the netlist
 
-See [here](/netlist/Readme.md).
+See [here](/netlist/sm83/Readme.md).
 
 ## Conclusions
 

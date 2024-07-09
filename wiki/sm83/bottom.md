@@ -1,6 +1,6 @@
 # Bottom
 
-![locator_bottom](/imgstore/locator_bottom.png)
+![locator_bottom](/imgstore/sm83/locator_bottom.png)
 
 The SM83 processor uses a typical layout from the 70-80's: the "brain" is on top and the registers and ALUs are on the bottom.
 
@@ -10,9 +10,9 @@ For the SM83 the layout is slightly different: the ALU is on the top-left and at
 
 ## Design
 
-![bottom](/imgstore/bottom.jpg)
+![bottom](/imgstore/sm83/bottom.jpg)
 
-![Bottom](/HDL/Design/Bottom.png)
+![Bottom](/HDL/sm83/Design/Bottom.png)
 
 The bottom part consists of 8 lanes, according to the number of registers bits. The numbering of the bits is from 0 from top to bottom.
 
@@ -75,6 +75,6 @@ The circuit is on the left side in a spread out layout. The picture shows the pa
 
 It is very difficult to put this circuit into any category. It belongs to both ALU and registers at the same time, and is generally at the bottom. So it's going to stay here untouched for now.
 
-![bcbq](/imgstore/modules/bcbq.jpg)
+![bcbq](/imgstore/sm83/modules/bcbq.jpg)
 
-![bcbq_tran](/imgstore/modules/bcbq_tran.jpg)
+![bcbq_tran](/imgstore/sm83/modules/bcbq_tran.jpg)

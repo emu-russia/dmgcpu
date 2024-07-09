@@ -1,10 +1,10 @@
 # Decoder3
 
-![locator_decoder3](/imgstore/locator_decoder3.png)
+![locator_decoder3](/imgstore/sm83/locator_decoder3.png)
 
 The final stage of the decoder, which generates the `x[68:0]` control signals for the lower part and the ALU.
 
-![decoder3](/imgstore/decoder3.jpg)
+![decoder3](/imgstore/sm83/decoder3.jpg)
 
 ## Decoder3 Inputs
 
@@ -23,11 +23,11 @@ The final stage of the decoder, which generates the `x[68:0]` control signals fo
 
 ## IR Nots
 
-![ir_nots](/imgstore/ir_nots.jpg)
+![ir_nots](/imgstore/sm83/ir_nots.jpg)
 
 ## Output Drivers
 
-![decoder3_drv](/imgstore/modules/decoder3_drv.jpg)
+![decoder3_drv](/imgstore/sm83/modules/decoder3_drv.jpg)
 
 The output drivers act as signal amplifiers and are also used as "domino" logic, to translate dynamic CMOS logic into conventional logic.
 

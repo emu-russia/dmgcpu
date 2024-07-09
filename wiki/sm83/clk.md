@@ -2,7 +2,7 @@
 
 The CPU receives 9 (!) CLK signals.
 
-![clks](/imgstore/clks.jpg)
+![clks](/imgstore/sm83/clks.jpg)
 
 |CLK Signal|dmg-schematics Name|Gekkio|
 |---|---|---|
@@ -24,15 +24,15 @@ All CLKs (except CLK7) use an approach called `Dual Rails`, where a single CLK i
 
 Based on: https://github.com/msinger/dmg-schematics
 
-![CLKGen](/HDL/Design/CLKGen.png)
+![CLKGen](/HDL/sm83/Design/CLKGen.png)
 
 ## Waves
 
-![clk_waves](/imgstore/waves/clk_waves.png)
+![clk_waves](/imgstore/sm83/waves/clk_waves.png)
 
 ## Gekkio Waves
 
-![clks_gekkio](/imgstore/clks_gekkio.png)
+![clks_gekkio](/imgstore/sm83/clks_gekkio.png)
 
 |CLK|Pattern|
 |---|---|

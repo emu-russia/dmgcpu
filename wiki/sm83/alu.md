@@ -1,10 +1,10 @@
 # ALU
 
-![locator_alu](/imgstore/locator_alu.png)
+![locator_alu](/imgstore/sm83/locator_alu.png)
 
-![alu](/imgstore/alu.jpg)
+![alu](/imgstore/sm83/alu.jpg)
 
-![ALU](/HDL/Design/ALU.png)
+![ALU](/HDL/sm83/Design/ALU.png)
 
 The SM83 ALU is a regular 8-bit CLA adder.
 
@@ -116,9 +116,9 @@ The control ALU inputs from decoders 2/3 are listed separately.
 
 8-NOR:
 
-![nor8_1](/imgstore/modules/nor8_1.jpg)
+![nor8_1](/imgstore/sm83/modules/nor8_1.jpg)
 
-![nor8_1_tran](/imgstore/modules/nor8_1_tran.jpg)
+![nor8_1_tran](/imgstore/sm83/modules/nor8_1_tran.jpg)
 
 The result of the nor8 operation is the `AllZeros` signal. This is often required to calculate the `Z` flag.
 
@@ -130,9 +130,9 @@ In between is the small logic (8 AND gates implementing logical XOR operation ou
 
 ### module5 (4-bit CLA Generators, x2)
 
-![module5](/imgstore/modules/module5.jpg)
+![module5](/imgstore/sm83/modules/module5.jpg)
 
-![module5_tran](/imgstore/modules/module5_tran.jpg)
+![module5_tran](/imgstore/sm83/modules/module5_tran.jpg)
 
 ![module5_logisim](/logisim/module5_logisim.png)
 
@@ -142,9 +142,9 @@ The gaps contain AND gates that implement a logical XOR operation based on the G
 
 8 identical modules.
 
-![module6](/imgstore/modules/module6.jpg)
+![module6](/imgstore/sm83/modules/module6.jpg)
 
-![module6_tran](/imgstore/modules/module6_tran.jpg)
+![module6_tran](/imgstore/sm83/modules/module6_tran.jpg)
 
 |Port|Dir|Description|
 |---|---|---|
@@ -159,9 +159,9 @@ The gaps contain AND gates that implement a logical XOR operation based on the G
 
 8 identical modules.
 
-![module2](/imgstore/modules/module2.jpg)
+![module2](/imgstore/sm83/modules/module2.jpg)
 
-![module2_tran](/imgstore/modules/module2_tran.jpg)
+![module2_tran](/imgstore/sm83/modules/module2_tran.jpg)
 
 |Port|Dir|Description|
 |---|---|---|
@@ -188,10 +188,10 @@ Contains 8 dynamic comb logic modules (ANDs-to-NORs + CLK2), multiplexing DV ope
 
 |Comb1 (bit 7)|Comb2 (bits 6-1)|Comb3 (bit 0)|
 |---|---|---|
-|![comb1](/imgstore/modules/comb1.jpg)|![comb2](/imgstore/modules/comb2.jpg)|![comb3](/imgstore/modules/comb3.jpg)|
-|![comb1_tran](/imgstore/modules/comb1_tran.jpg)|![comb2_tran](/imgstore/modules/comb2_tran.jpg)|![comb3_tran](/imgstore/modules/comb3_tran.jpg)|
+|![comb1](/imgstore/sm83/modules/comb1.jpg)|![comb2](/imgstore/sm83/modules/comb2.jpg)|![comb3](/imgstore/sm83/modules/comb3.jpg)|
+|![comb1_tran](/imgstore/sm83/modules/comb1_tran.jpg)|![comb2_tran](/imgstore/sm83/modules/comb2_tran.jpg)|![comb3_tran](/imgstore/sm83/modules/comb3_tran.jpg)|
 
-![alu_shifter](/logisim/alu_shifter.png)
+![alu_shifter](/logisim/sm83/alu_shifter.png)
 
 The output from the dynamic combinatorial logic is stored on the DLatch (see G/P Terms module).
 
@@ -203,7 +203,7 @@ Tree numbering is topological (how they are arranged on the chip). ALU trees 0,3
 
 Random logic (_14 NAND trees_):
 
-![LargeComb1](/imgstore/LargeComb1.jpg)
+![LargeComb1](/imgstore/sm83/LargeComb1.jpg)
 
 |Tree|CLK|Issued as|Tree|
 |---|---|---|---|
@@ -224,11 +224,11 @@ Random logic (_14 NAND trees_):
 
 The result is an AND-to-NOR tree (using alu_0 as an example):
 
-![demo_alu_0](/imgstore/demo_alu_0.jpg)
+![demo_alu_0](/imgstore/sm83/demo_alu_0.jpg)
 
 (the dynamic part is not shown in the picture)
 
-![ALU_LargeComb1](/HDL/Design/ALU_LargeComb1.png)
+![ALU_LargeComb1](/HDL/sm83/Design/ALU_LargeComb1.png)
 
 ### ALU Operand1 Preprocessing (trees 0,3-6,8-10)
 
@@ -239,7 +239,7 @@ Because of the topological numbering of the trees, they don't go in order, which
 
 ALU tree 11 deals with code checking for conditional instructions (NZ/Z/NC/C)
 
-![cc_check](/logisim/cc_check.png)
+![cc_check](/logisim/sm83/cc_check.png)
 
 ### Flags Logic (trees 1,2,7,12)
 
@@ -251,20 +251,20 @@ TBD.
 
 ## Flags
 
-![LargeComb1_Res](/imgstore/LargeComb1_Res.jpg)
+![LargeComb1_Res](/imgstore/sm83/LargeComb1_Res.jpg)
 
 ### bc
 
-![bc](/imgstore/modules/bc.jpg)
+![bc](/imgstore/sm83/modules/bc.jpg)
 
-![bc_tran](/imgstore/modules/bc_tran.jpg)
+![bc_tran](/imgstore/sm83/modules/bc_tran.jpg)
 
 Regular memory cell (latch) with write enable (x28/x29). It also contains a Precharge FET for the dynamic logic which is above (input `d`). By the way the input `d` in the drawing is marked in inverse polarity, because the current hypothesis is that the signal `bc` is in direct polarity, and the operation which forms the signal `d` (AOI) gives the result in inverse polarity.
 
 ### ALU_to_bot
 
-![ALU_to_bot](/imgstore/modules/ALU_to_bot.jpg)
+![ALU_to_bot](/imgstore/sm83/modules/ALU_to_bot.jpg)
 
-![ALU_to_bot_tran](/imgstore/modules/ALU_to_bot_tran.jpg)
+![ALU_to_bot_tran](/imgstore/sm83/modules/ALU_to_bot_tran.jpg)
 
 A regular memory cell (latch), for storing the TempZ = `zbus[7]` value (msb). The signal CLK4 acts as WriteEnable.

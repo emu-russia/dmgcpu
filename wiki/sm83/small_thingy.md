@@ -1,8 +1,8 @@
 # Small Thingy
 
-![locator_thingy](/imgstore/locator_thingy.png)
+![locator_thingy](/imgstore/sm83/locator_thingy.png)
 
-![thingy](/imgstore/thingy.jpg)
+![thingy](/imgstore/sm83/thingy.jpg)
 
 The circuit deals with the following things:
 - Controls the Inc/Dec circuit at the bottom
@@ -22,6 +22,6 @@ The circuit deals with the following things:
 |bot_to_Thingy|input|Bottom|IE access detected (Address = 0xffff)|
 |Thingy_to_bot|output|Bottom|Load a value into the IE register from the DL bus.|
 
-![thingy_tran](/imgstore/thingy_tran.jpg)
+![thingy_tran](/imgstore/sm83/thingy_tran.jpg)
 
-![Thingy](/HDL/Design/Thingy.png)
+![Thingy](/HDL/sm83/Design/Thingy.png)

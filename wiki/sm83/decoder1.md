@@ -1,12 +1,12 @@
 # Decoder1
 
-![locator_decoder1](/imgstore/locator_decoder1.png)
+![locator_decoder1](/imgstore/sm83/locator_decoder1.png)
 
 Decoder1 makes a preliminary decoding of the operation code, which will then be refined in Decoder2.
 
 Topology features:
 
-![decoder1](/imgstore/decoder1.jpg)
+![decoder1](/imgstore/sm83/decoder1.jpg)
 
 - Each decoder output is a branched NAND
 - The output of a whole NAND tree can be `0` only when all inputs of _at least one_ "branch" are equal to `1`.
@@ -49,7 +49,7 @@ Dynamic logic is used.
 
 ## Decoder1 Output Drivers
 
-![decoder1_drv](/imgstore/modules/decoder1_drv.jpg)
+![decoder1_drv](/imgstore/sm83/modules/decoder1_drv.jpg)
 
 The output drivers act as signal amplifiers and are also used as "domino" logic, to translate dynamic CMOS logic into conventional logic.
 
@@ -171,7 +171,7 @@ The numbers in the tree path mark the inputs `a[25:0]`.
 
 The result should be as follows (using d3 as an example, the dynamical part of the logic is not shown):
 
-![demo_d3](/imgstore/demo_d3.jpg)
+![demo_d3](/imgstore/sm83/demo_d3.jpg)
 
 The `To` outputs are marked only for those that go somewhere else besides Decoder2.
 
