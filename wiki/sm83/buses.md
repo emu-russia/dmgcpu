@@ -57,7 +57,7 @@ The names of some internal bottom buses are arbitrary (do not make sense).
 
 This section describes the approach used in SM83 to connect bidirectional buses to consumers.
 
-![buses](/imgstore/buses.jpg)
+![buses](/imgstore/sm83/buses.jpg)
 
 A few words if the schematic doesn't look very clear.
 

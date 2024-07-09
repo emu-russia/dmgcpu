@@ -1,1 +1,0 @@
-GetVerilog.exe seq.xmlz seq.v seq_

@@ -1,10 +1,10 @@
 # Decoder2
 
-![locator_decoder2](/imgstore/locator_decoder2.png)
+![locator_decoder2](/imgstore/sm83/locator_decoder2.png)
 
 Refines the decoded operation code and reduces the total number of outputs for Decoder3. Implemented as densely packed NOR trees.
 
-![decoder2](/imgstore/decoder2.jpg)
+![decoder2](/imgstore/sm83/decoder2.jpg)
 
 ## Decoder2 Inputs
 
@@ -14,7 +14,7 @@ The outputs `d[106:0]` from [Decoder1](decoder1.md) are input.
 
 Some drivers are inverters and some are buffers.
 
-![decoder2_drv](/imgstore/modules/decoder2_drv.jpg)
+![decoder2_drv](/imgstore/modules/sm83/decoder2_drv.jpg)
 
 The output drivers act as signal amplifiers and are also used as "domino" logic, to translate dynamic CMOS logic into conventional logic.
 
@@ -123,6 +123,6 @@ The numbers in the path refer to Decoder1 outputs `d[106:0]`. Sometimes there ar
 
 The result is a multi-input NOR (the dynamic part is not shown in the picture):
 
-![demo_w1](/imgstore/demo_w1.jpg)
+![demo_w1](/imgstore/sm83/demo_w1.jpg)
 
 To convert trees into a schematic, you can use a script to generate an HDL.

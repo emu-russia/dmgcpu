@@ -1,24 +1,24 @@
 # Increment/Decrement Unit (IDU)
 
-![locator_idu](/imgstore/locator_idu.png)
+![locator_idu](/imgstore/sm83/locator_idu.png)
 
-![IncDec](/logisim/IncDec.png)
+![IncDec](/logisim/sm83/IncDec.png)
 
-![cntbit](/imgstore/modules/cntbit.jpg)
+![cntbit](/imgstore/modules/sm83/cntbit.jpg)
 
 ## Counter bits
 
-![cntbit_tran](/imgstore/modules/cntbit_tran.jpg)
+![cntbit_tran](/imgstore/modules/sm83/cntbit_tran.jpg)
 
-![IncDec_cntbit](/logisim/IncDec_cntbit.png)
+![IncDec_cntbit](/logisim/sm83/IncDec_cntbit.png)
 
 The bit designs are repeated between the lower part (A0-A7) and the upper part (A8-A15), the only difference being that the lower part is connected to cbus/adl and the upper part to dbus/adh.
 
 ## Counter carry chain
 
-![cntbit_carry_chain](/imgstore/modules/cntbit_carry_chain.jpg)
+![cntbit_carry_chain](/imgstore/modules/sm83/cntbit_carry_chain.jpg)
 
-![IncDec_carry_chain](/logisim/IncDec_carry_chain.png)
+![IncDec_carry_chain](/logisim/sm83/IncDec_carry_chain.png)
 
 The carry chain is done as a "breadcrumped" layout.
 
@@ -33,4 +33,4 @@ To make the movements between registers and IDU clearer, here is a short descrip
 - The register input has the feature that it is in a floating state between CLK6 and CLK7 (the register input is a transparent DLatch)
 - In the register the value is stored as `~val` (inverse hold)
 
-![Path_IDU](/imgstore/Path_IDU.png)
+![Path_IDU](/imgstore/sm83/Path_IDU.png)

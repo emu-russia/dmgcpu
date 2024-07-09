@@ -1,3 +1,9 @@
+# SM83 Core Investigations
+
+This document was compiled by @Rodrigodd in the process of debugging SM83 Core HDL.
+The information is of historical interest and can serve as an example of how to search
+for bugs and debug HDL implementation.
+
 # JP a16 and LD SP, a16
 
 JP 0003 is writing 0xFFFC to PC instead of 0x0003, which is its inverse. The
@@ -84,7 +90,7 @@ fundamental, like the value read from the memory?
 
 So `RegA`/`r1q` contains the inverted value of `A`.
 
-![Path_Regs](/imgstore/Path_Regs.png)
+![Path_Regs](/imgstore/sm83/Path_Regs.png)
 
 ## Path from databus to register HL
 
@@ -93,7 +99,7 @@ So `RegA`/`r1q` contains the inverted value of `A`.
 
 So `HL` are also stored inverted in the registers.
 
-![Path_Regs](/imgstore/Path_HL.png)
+![Path_Regs](/imgstore/sm83/Path_HL.png)
 
 ## Path from databus to register SP
 
@@ -102,7 +108,7 @@ So `HL` are also stored inverted in the registers.
 
 So `SP` is also stored inverted in the registers.
 
-![Path_Regs](/imgstore/Path_SP.png)
+![Path_Regs](/imgstore/sm83/Path_SP.png)
 
 ## Path from databus to PC
 
@@ -112,7 +118,7 @@ So `SP` is also stored inverted in the registers.
 
 So `PC` is also stored inverted in the registers.
 
-![Path_Regs](/imgstore/Path_PC.png)
+![Path_Regs](/imgstore/sm83/Path_PC.png)
 
 # RET Z, RET NZ
 

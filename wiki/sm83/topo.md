@@ -13,7 +13,7 @@ Topo Sources: https://drive.google.com/drive/u/2/folders/1deuhwmRb-PVv-K7pEllSLK
 
 Here you can see how the 2-layer integration is transitioning into a 1-layer core implementation:
 
-![core_m1_only](/imgstore/core_m1_only.png)
+![core_m1_only](/imgstore/sm83/core_m1_only.png)
 
 The processor uses hybrid technology:
 - Part of the circuitry is based on dynamic logic
@@ -21,7 +21,7 @@ The processor uses hybrid technology:
 
 ## VDD/GND
 
-![power](/imgstore/power.jpg)
+![power](/imgstore/sm83/power.jpg)
 
 ## Wells
 
@@ -29,13 +29,13 @@ N-wells for P-diffusion.
 
 Here you can see the CMOS "pockets":
 
-![pocket](/imgstore/pocket.png)
+![pocket](/imgstore/sm83/pocket.png)
 
 ## Dynamic Logic
 
 Dynamic logic is used mostly for decoders:
 
-![dynamic](/imgstore/dynamic.png)
+![dynamic](/imgstore/sm83/dynamic.png)
 
 - In the first half-cycle (CLK=0) a Precharge is made
 - In the second half-cycle (CLK=1) a logical operation is performed
@@ -50,11 +50,11 @@ Elsewhere, too, there is complementary logic in the form of individual circuit e
 
 Example:
 
-![thingy](/imgstore/thingy.jpg)
+![thingy](/imgstore/sm83/thingy.jpg)
 
 ## Pignose Vias
 
-![pignose](/imgstore/pignose.png)
+![pignose](/imgstore/sm83/pignose.png)
 
 For the interconnection, paired vias are used. Twice as much work.
 

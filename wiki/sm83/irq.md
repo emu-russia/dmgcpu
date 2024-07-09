@@ -1,6 +1,6 @@
 # Bottom Right (IRQ) Logic
 
-![locator_irq](/imgstore/locator_irq.png)
+![locator_irq](/imgstore/sm83/locator_irq.png)
 
 The IRQ logic consists of the following parts:
 - IE
@@ -10,9 +10,9 @@ The IRQ logic consists of the following parts:
 
 ## IE
 
-![module7](/imgstore/modules/module7.jpg)
+![module7](/imgstore/modules/sm83/module7.jpg)
 
-![module7_tran](/imgstore/modules/module7_tran.jpg)
+![module7_tran](/imgstore/modules/sm83/module7_tran.jpg)
 
 Latch (no CLK edge detection, yes ld edge detection) with reset.
 
@@ -20,9 +20,9 @@ Latch (no CLK edge detection, yes ld edge detection) with reset.
 
 Program access ($FFFE) to the IF in the DMG CPU has been removed.
 
-![module8](/imgstore/modules/module8.jpg)
+![module8](/imgstore/modules/sm83/module8.jpg)
 
-![module8_tran](/imgstore/modules/module8_tran.jpg)
+![module8_tran](/imgstore/modules/sm83/module8_tran.jpg)
 
 It is a regular (transparent) latch (no edge detection), to store the interrupt flag.
 
@@ -38,12 +38,12 @@ I never tire of repeating: dear chip designers - please do not spread the logic 
 
 Logic:
 
-![irq_logic_tran](/imgstore/modules/irq_logic_tran.jpg)
+![irq_logic_tran](/imgstore/modules/sm83/irq_logic_tran.jpg)
 
 Priority encoder:
 
-![irq_prio_tran](/imgstore/modules/irq_prio_tran.jpg)
+![irq_prio_tran](/imgstore/modules/sm83/irq_prio_tran.jpg)
 
 Interrupt address:
 
-![irq_address_tran](/imgstore/modules/irq_address_tran.jpg)
+![irq_address_tran](/imgstore/modules/sm83/irq_address_tran.jpg)

@@ -2,16 +2,14 @@
 
 This module is an integration of two circuits called "DataLatch" (TopPart) and "DataBridge" (BottomPart). After the whole chip was cracked, it became obvious that it is one circuit, just separated into two parts to reduce the length of wires.
 
-|![locator_datalatch](/imgstore/locator_datalatch.png)|![locator_databridge](/imgstore/locator_databridge.png)|
+|![locator_datalatch](/imgstore/sm83/locator_datalatch.png)|![locator_databridge](/imgstore/sm83/locator_databridge.png)|
 |---|---|
 
 Please, if you want to understand correctly how this tricky circuit works, read the whole section carefully and take into account that this schematic was originally designed as two sections of the wiki, so the description is a bit "fragmented". The most correct and easiest to understand circuit is at the very end of the section.
 
 ## Top Part
 
-![datalatch](/imgstore/datalatch.jpg)
-
-![DataLatch](/HDL/Design/DataLatch.png)
+![datalatch](/imgstore/sm83/datalatch.jpg)
 
 TopPart is used for the following operations:
 - If the external databus (D\[n\]) is not floating (driven), load a value from it to the internal databus (DL), using transparent DLatch
@@ -23,9 +21,9 @@ TopPart is used for the following operations:
 
 TopPart consists of 8 such chunks:
 
-![module1](/imgstore/modules/module1.jpg)
+![module1](/imgstore/modules/sm83/module1.jpg)
 
-![module1_tran](/imgstore/modules/module1_tran.jpg)
+![module1_tran](/imgstore/modules/sm83/module1_tran.jpg)
 
 |Port|Dir|Description|
 |---|---|---|
@@ -46,12 +44,12 @@ Same thing by Gekkio: https://github.com/Gekkio/gb-research/tree/main/sm83-cpu-c
 
 External data bus driven (external->internal):
 
-|![datalatch_extbus_0](/imgstore/datalatch_extbus_0.png)|![datalatch_extbus_1](/imgstore/datalatch_extbus_1.png)|
+|![datalatch_extbus_0](/imgstore/sm83/datalatch_extbus_0.png)|![datalatch_extbus_1](/imgstore/sm83/datalatch_extbus_1.png)|
 |---|---|
 
 Internal data bus driven (internal->external):
 
-|![datalatch_intbus_0](/imgstore/datalatch_intbus_0.png)|![datalatch_intbus_1](/imgstore/datalatch_intbus_1.png)|
+|![datalatch_intbus_0](/imgstore/sm83/datalatch_intbus_0.png)|![datalatch_intbus_1](/imgstore/sm83/datalatch_intbus_1.png)|
 |---|---|
 
 In all cases, both the internal and external data buses are precharged (value=0xff) during CLK2=0.
@@ -62,7 +60,7 @@ The circuit is very low-level, with bidirectional signals and tristates made as 
 
 The closest approximation is following:
 
-![DataLatch](/logisim/DataLatch.png)
+![DataLatch](/logisim/sm83/DataLatch.png)
 
 - For the external data bus, the tristate is on the output AFTER precharging; the value from the internal data bus is stored on the transparent DLatch (`int_to_ext`)
 - The multiplexing of the external data bus and the ALU result can be thought of as a locomotive of MUXes:
@@ -73,17 +71,15 @@ The closest approximation is following:
 
 ## Bottom Part
 
-![databridge](/imgstore/databridge.jpg)
-
-![DataBridge](/HDL/Design/DataBridge.png)
+![databridge](/imgstore/sm83/databridge.jpg)
 
 The purpose of this circuit is put DV bus value into DL bus.
 
 The DV value also goes "through" the DataBridge and is fed to the ALU input (Operand2).
 
-![bridge_comb](/imgstore/modules/bridge_comb.jpg)
+![bridge_comb](/imgstore/modules/sm83/bridge_comb.jpg)
 
-![bridge_comb_tran](/imgstore/modules/bridge_comb_tran.jpg)
+![bridge_comb_tran](/imgstore/modules/sm83/bridge_comb_tran.jpg)
 
 |DataOut|dv_bit|dl_bit|
 |---|---|---|
@@ -96,8 +92,8 @@ The DV value also goes "through" the DataBridge and is fed to the ALU input (Ope
 
 If you combine the two circuits into one, then according to the latest data from our scientists, you should get something like this:
 
-![DataMux](/logisim/DataMux.png)
+![DataMux](/logisim/sm83/DataMux.png)
 
 Again, Logisim doesn't support such tinkery, so here's a schematic closer to reality:
 
-![datamux_tran](/imgstore/modules/datamux_tran.jpg)
+![datamux_tran](/imgstore/modules/sm83/datamux_tran.jpg)

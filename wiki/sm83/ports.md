@@ -2,7 +2,7 @@
 
 By @msinger: http://iceboy.a-singer.de/doc/dmg_cpu_connections.html
 
-![cpu_desc](imgstore/cpu_desc.png)
+![cpu_desc](/imgstore/sm83/cpu_desc.png)
 
 |N|I/O|Wire|This Repo|Cell|Description|
 |---|---|---|---|---|---|
