@@ -196,7 +196,7 @@ This module is essentially used to generate the `#MREQ` signal. Below is `not` t
 
 ![shielded_tran](/imgstore/modules/sm83/shielded_tran.jpg)
 
-![mreq](/logisim/mreq.png)
+![mreq](/logisim/sm83/mreq.png)
 
 ## comb4 - aoi_221_dyn
 
@@ -236,4 +236,4 @@ The other three are "State\[3\]", encoding a timestamp for executing long instru
 
 An adaptation of the HDL schematic in Logisim has been made for better understanding.
 
-![seq.png](/logisim/seq.png)
+![seq.png](/logisim/sm83/seq.png)
