@@ -11,7 +11,7 @@ All registers use a common module (with a small exception for Z/W register bits,
 
 ![regbit](/imgstore/modules/sm83/regbit.jpg)
 
-![regbit_tran](/imgstore/modules/regbit_tran.jpg)
+![regbit_tran](/imgstore/modules/sm83/regbit_tran.jpg)
 
 Latch with complementary set enable, complementary CLK.
 
