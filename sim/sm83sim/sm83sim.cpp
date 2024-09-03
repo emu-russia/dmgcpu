@@ -33,7 +33,7 @@ int main (int argc, char **argv)
 		dmg::sm83_state* tmp = current_state;
 		current_state = prev_state;
 		prev_state = tmp;
-		CLK ^= 1;
+		CLK = Not(CLK);
 	}
 
 	size_t text_size = 1024 * 1024;
