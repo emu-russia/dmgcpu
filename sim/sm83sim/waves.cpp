@@ -1,8 +1,8 @@
 // Signal waveform tracer. Outputs waves in text format.
 #include "sm83.h"
-#include <stddef.h>
 #include <vector>
 #include <string>
+#include <string.h>
 
 namespace dmg
 {
