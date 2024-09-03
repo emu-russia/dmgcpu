@@ -5,3 +5,4 @@ Release
 *.sav
 *.vcxproj.user
 /build
+*.log
