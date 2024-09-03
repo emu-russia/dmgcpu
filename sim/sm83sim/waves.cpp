@@ -87,11 +87,19 @@ namespace dmg
 
 					case single_bit: {
 						int* ptr = (int*)((uint8_t*)&st + sm83_signals[n].offset);
-						if (*ptr) {
-							text += "‾‾";
-						}
-						else {
-							text += "__";
+						switch (*ptr) {
+							case -1:
+								text += "--";		// z
+								break;
+							case 0:
+								text += "__";		// 0
+								break;
+							case 1:
+								text += "‾‾";		// 1
+								break;
+							default:
+								text += "xx";		// x
+								break;
 						}
 						break;
 					}
