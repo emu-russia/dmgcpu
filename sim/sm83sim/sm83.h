@@ -12,11 +12,14 @@ namespace dmg
 	{
 		int CLK;
 		int CLK1, CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, CLK8, CLK9;
+		int nCLK4;
 
 		int a[26];
 		int d[107];
 		int w[41];
 		int x[69];
+
+		int SeqOut_2;
 
 		int ALU_to_Thingy;
 		int bot_to_Thingy;
