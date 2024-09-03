@@ -18,4 +18,5 @@ add_executable (sm83sim
 	thingy.cpp
 	sm83sim.cpp
 	waves.cpp
+	logic.cpp
 )
