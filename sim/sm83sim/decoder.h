@@ -2,6 +2,8 @@
 
 namespace dmg
 {
+	// @Gekkio designations.
+
 	// Decoder1
 
 	#define s1_op_ld_nn_a_s010 st->d[0]
