@@ -1,4 +1,5 @@
 ﻿#include "sm83.h"
+#include "../dmglib/dmglib.h"
 
 // Here we do not use Gekkio names on purpose, so that we can make cross checks without engagement.
 
@@ -163,14 +164,14 @@ namespace dmg
 
 		st->w[2] = d[103];
 		st->w[3] = d[3];
-		st->w[7] = Not(IR7);			// Not used
+		st->w[7] = dmglib::Not(IR7);			// Not used
 		st->w[8] = d[19];
 		st->w[12] = d[27];
 		st->w[15] = d[35];
 		st->w[19] = d[46];
 		st->w[21] = d[50];
 		st->w[37] = d[98];
-		st->w[39] = Not(SeqOut_2);
+		st->w[39] = dmglib::Not(SeqOut_2);
 		st->w[40] = st->w[18] & st->w[39];
 	}
 

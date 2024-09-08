@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.0)
 project (sm83sim CXX)
 
+add_definitions (-D_LINUX)
+
 # Main application
 
 set(CMAKE_BUILD_TYPE Release)
@@ -18,5 +20,5 @@ add_executable (sm83sim
 	thingy.cpp
 	sm83sim.cpp
 	waves.cpp
-	logic.cpp
+	../dmglib/dmglib.cpp
 )

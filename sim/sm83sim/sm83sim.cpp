@@ -1,8 +1,13 @@
 // Optional entry point. sm83sim can be a static library.
 
 #include "sm83.h"
+#include "../dmglib/dmglib.h"
 #include <stdio.h>
 #include <string>
+
+#ifdef _LINUX
+#define _countof(a) (sizeof(a)/sizeof(*(a)))
+#endif
 
 // External clock generator (SoC)
 void clkgen(int CLK, dmg::sm83_state* st)
@@ -71,42 +76,42 @@ void sm83_verify_decoder()
 		st.CLK2 = 1;
 		st.CLK4 = 1;
 		st.nCLK4 = 0;
-		st.CLK5 = Not(counter_bit(0));
+		st.CLK5 = dmglib::Not(counter_bit(0));
 
 		for (int i = 0; i < 8; i++) {
 			st.IR[i] = counter_bit(i + 5);
 			if (i < 6) {
-				st.nIR[i] = Not(counter_bit(i + 5));
+				st.nIR[i] = dmglib::Not(counter_bit(i + 5));
 			}
 		}
-		st.SeqOut_2 = Not(counter_bit(1));
+		st.SeqOut_2 = dmglib::Not(counter_bit(1));
 
 		st.a[1] = counter_bit(14); 	// @gekkio: intr_dispatch
-		st.a[0] = Not(st.a[1]);			// @gekkio: ~intr_dispatch
+		st.a[0] = dmglib::Not(st.a[1]);			// @gekkio: ~intr_dispatch
 		st.a[3] = counter_bit(13); 	// @gekkio: cb_mode
-		st.a[2] = Not(st.a[3]);			// @gekkio: ~cb_mode
+		st.a[2] = dmglib::Not(st.a[3]);			// @gekkio: ~cb_mode
 		st.a[5] = counter_bit(12);		// IR7
-		st.a[4] = Not(st.a[5]);
+		st.a[4] = dmglib::Not(st.a[5]);
 		st.a[7] = counter_bit(11);		// IR6
-		st.a[6] = Not(st.a[7]);
+		st.a[6] = dmglib::Not(st.a[7]);
 		st.a[9] = counter_bit(10);		// IR5
-		st.a[8] = Not(st.a[9]);
+		st.a[8] = dmglib::Not(st.a[9]);
 		st.a[11] = counter_bit(9);		// IR4
-		st.a[10] = Not(st.a[11]);
+		st.a[10] = dmglib::Not(st.a[11]);
 		st.a[13] = counter_bit(8);		// IR3
-		st.a[12] = Not(st.a[13]);
+		st.a[12] = dmglib::Not(st.a[13]);
 		st.a[15] = counter_bit(7);		// IR2
-		st.a[14] = Not(st.a[15]);
+		st.a[14] = dmglib::Not(st.a[15]);
 		st.a[17] = counter_bit(6);		// IR1
-		st.a[16] = Not(st.a[17]);
+		st.a[16] = dmglib::Not(st.a[17]);
 		st.a[19] = counter_bit(5);		// IR0
-		st.a[18] = Not(st.a[19]);
-		st.a[20] = Not(counter_bit(4));		// @gekkio: ~state[2]
-		st.a[21] = Not(st.a[20]);		// @gekkio: state[2]
-		st.a[22] = Not(counter_bit(3));		// @gekkio: ~state[1]
-		st.a[23] = Not(st.a[22]);		// @gekkio: state[1]
-		st.a[24] = Not(counter_bit(2));		// @gekkio: ~state[0]
-		st.a[25] = Not(st.a[24]);		// @gekkio: state[0]
+		st.a[18] = dmglib::Not(st.a[19]);
+		st.a[20] = dmglib::Not(counter_bit(4));		// @gekkio: ~state[2]
+		st.a[21] = dmglib::Not(st.a[20]);		// @gekkio: state[2]
+		st.a[22] = dmglib::Not(counter_bit(3));		// @gekkio: ~state[1]
+		st.a[23] = dmglib::Not(st.a[22]);		// @gekkio: state[1]
+		st.a[24] = dmglib::Not(counter_bit(2));		// @gekkio: ~state[0]
+		st.a[25] = dmglib::Not(st.a[24]);		// @gekkio: state[0]
 
 		dmg::sm83_decoder1(&st);
 		dmg::sm83_decoder2(&st);
@@ -157,7 +162,7 @@ int main (int argc, char **argv)
 		dmg::sm83_state* tmp = current_state;
 		current_state = prev_state;
 		prev_state = tmp;
-		CLK = Not(CLK);
+		CLK = dmglib::Not(CLK);
 	}
 
 	size_t text_size = 1024 * 1024;

@@ -4,7 +4,6 @@
 #include <stddef.h>
 
 #include "decoder.h"
-#include "logic.h"
 
 namespace dmg
 {
