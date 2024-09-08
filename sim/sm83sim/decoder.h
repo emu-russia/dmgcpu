@@ -1,6 +1,6 @@
 #pragma once
 
-namespace dmg
+namespace sm83
 {
 	// @Gekkio designations.
 

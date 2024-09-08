@@ -1,13 +1,13 @@
 #include "sm83.h"
 
-namespace dmg
+namespace sm83
 {
-	void sm83_sim(sm83_state* st_old, sm83_state* st_now)
+	void sim(state* st_old, state* st_now)
 	{
-		sm83_decoder1(st_now);
-		sm83_decoder2(st_now);
-		sm83_decoder3(st_now);
+		decoder1(st_now);
+		decoder2(st_now);
+		decoder3(st_now);
 
-		sm83_thingy_sim(st_now);
+		thingy_sim(st_now);
 	}
 }

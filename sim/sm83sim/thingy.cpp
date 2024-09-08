@@ -1,9 +1,9 @@
 #include "sm83.h"
 #include "../dmglib/dmglib.h"
 
-namespace dmg
+namespace sm83
 {
-	void sm83_thingy_sim(sm83_state *st)
+	void thingy_sim(state *st)
 	{
 		int Temp_Z = 0;// TBD.
 

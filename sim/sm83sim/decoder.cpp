@@ -3,9 +3,9 @@
 
 // Here we do not use Gekkio names on purpose, so that we can make cross checks without engagement.
 
-namespace dmg
+namespace sm83
 {
-	void sm83_decoder1(sm83_state* st)
+	void decoder1(state* st)
 	{
 		int CLK2 = st->CLK2;
 		int *a = st->a;
@@ -119,7 +119,7 @@ namespace dmg
 		st->d[106] = ~(CLK2 ? ~(a[24]&a[25]) : 1) & 1;
 	}
 
-	void sm83_decoder2(sm83_state* st)
+	void decoder2(state* st)
 	{
 		int CLK2 = st->CLK2;
 		int* d = st->d;
@@ -175,7 +175,7 @@ namespace dmg
 		st->w[40] = st->w[18] & st->w[39];
 	}
 
-	void sm83_decoder3(sm83_state* st)
+	void decoder3(state* st)
 	{
 		int CLK2 = st->CLK2;
 		int CLK4 = st->CLK4;

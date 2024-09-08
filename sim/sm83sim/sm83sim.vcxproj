@@ -30,7 +30,6 @@
     <ClCompile Include="sm83.cpp" />
     <ClCompile Include="sm83sim.cpp" />
     <ClCompile Include="thingy.cpp" />
-    <ClCompile Include="waves.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="decoder.h" />

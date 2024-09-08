@@ -2,6 +2,8 @@
 
 #include "sm83.h"
 #include "../dmglib/dmglib.h"
+#include "../dmglib/waves.h"
+#include <stddef.h>
 #include <stdio.h>
 #include <string>
 
@@ -9,8 +11,24 @@
 #define _countof(a) (sizeof(a)/sizeof(*(a)))
 #endif
 
+static dmglib::signal_binding sm83_signals[] = {
+
+	{ dmglib::group_separator, "Clocks", 0 },
+	{ dmglib::single_bit, "CLK", offsetof(sm83::state, CLK) },
+	{ dmglib::single_bit, "CLK1", offsetof(sm83::state, CLK1) },
+	{ dmglib::single_bit, "CLK2", offsetof(sm83::state, CLK2) },
+	{ dmglib::single_bit, "CLK3", offsetof(sm83::state, CLK3) },
+	{ dmglib::single_bit, "CLK4", offsetof(sm83::state, CLK4) },
+	{ dmglib::single_bit, "CLK5", offsetof(sm83::state, CLK5) },
+	{ dmglib::single_bit, "CLK6", offsetof(sm83::state, CLK6) },
+	{ dmglib::single_bit, "CLK7", offsetof(sm83::state, CLK7) },
+	{ dmglib::single_bit, "CLK8", offsetof(sm83::state, CLK8) },
+	{ dmglib::single_bit, "CLK9", offsetof(sm83::state, CLK9) },
+
+};
+
 // External clock generator (SoC)
-void clkgen(int CLK, dmg::sm83_state* st)
+void clkgen(int CLK, sm83::state* st)
 {
 	// TBD.
 	st->CLK = CLK;
@@ -61,7 +79,7 @@ void org_to_gekkio (int *d, int *w, int* x, int* stage1, int* stage2, int* stage
 
 void sm83_verify_decoder()
 {
-	dmg::sm83_state st{};
+	sm83::state st{};
 	int stage1[104]{};
 	int stage2[38]{};
 	int stage3[69]{};
@@ -113,9 +131,9 @@ void sm83_verify_decoder()
 		st.a[24] = dmglib::Not(counter_bit(2));		// @gekkio: ~state[0]
 		st.a[25] = dmglib::Not(st.a[24]);		// @gekkio: state[0]
 
-		dmg::sm83_decoder1(&st);
-		dmg::sm83_decoder2(&st);
-		dmg::sm83_decoder3(&st);
+		sm83::decoder1(&st);
+		sm83::decoder2(&st);
+		sm83::decoder3(&st);
 
 		int ir = (c >> 5) & 0xff;
 		int state[3] = { counter_bit(2), counter_bit (3), counter_bit(4) };
@@ -143,8 +161,8 @@ int main (int argc, char **argv)
 
 	sm83_verify_decoder();
 
-	dmg::sm83_state st1{}, st2{};
-	dmg::sm83_state* current_state, * prev_state;
+	sm83::state st1{}, st2{};
+	sm83::state* current_state, * prev_state;
 	int CLK = 0;
 
 	prev_state = &st1;
@@ -152,14 +170,16 @@ int main (int argc, char **argv)
 
 	size_t num_cycles = 32;
 
+	dmglib::waves_bind(sm83_signals, _countof(sm83_signals));
+
 	for (int n = 0; n < num_cycles*2; n++) {
 
 		clkgen(CLK, current_state);
-		dmg::sm83_sim(prev_state, current_state);
+		sm83::sim(prev_state, current_state);
 
-		dmg::sm83_trace(current_state);
+		dmglib::waves_trace(current_state, sizeof(sm83::state));
 
-		dmg::sm83_state* tmp = current_state;
+		sm83::state* tmp = current_state;
 		current_state = prev_state;
 		prev_state = tmp;
 		CLK = dmglib::Not(CLK);
@@ -167,12 +187,13 @@ int main (int argc, char **argv)
 
 	size_t text_size = 1024 * 1024;
 	char* text = new char[text_size];
-	dmg::sm83_dump_trace(text, text_size);
+	dmglib::waves_dump_trace(text, text_size);
 	//printf(text);
 	FILE* f = fopen("trace.log", "wt");
 	fprintf(f, text);
 	fclose(f);
 	delete[] text;
+	dmglib::waves_clear_trace();
 
 	return 0;
 }

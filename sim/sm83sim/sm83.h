@@ -5,9 +5,9 @@
 
 #include "decoder.h"
 
-namespace dmg
+namespace sm83
 {
-	struct sm83_state
+	struct state
 	{
 		int CLK;
 		int CLK1, CLK2, CLK3, CLK4, CLK5, CLK6, CLK7, CLK8, CLK9;
@@ -31,14 +31,10 @@ namespace dmg
 		int nIR[6];
 	};
 
-	void sm83_decoder1(sm83_state* st);
-	void sm83_decoder2(sm83_state* st);
-	void sm83_decoder3(sm83_state* st);
-	void sm83_thingy_sim(sm83_state* st);
+	void decoder1(state* st);
+	void decoder2(state* st);
+	void decoder3(state* st);
+	void thingy_sim(state* st);
 
-	void sm83_trace(sm83_state* st);
-	void sm83_clear_trace();
-	void sm83_dump_trace(char* buffer, size_t size);
-
-	void sm83_sim(sm83_state *st_old, sm83_state* st_now);
+	void sim(state *st_old, state* st_now);
 }

@@ -18,9 +18,15 @@
     <ClCompile Include="dmglib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="waves.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dmglib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="waves.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
