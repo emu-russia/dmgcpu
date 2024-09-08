@@ -33,9 +33,6 @@
     <ClCompile Include="waves.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Readme.md" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="decoder.h" />
     <ClInclude Include="sm83.h" />
   </ItemGroup>
