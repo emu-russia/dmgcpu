@@ -2,6 +2,8 @@
 
 ![dmg_cells](/imgstore/soc/dmg_cells.png)
 
+The cells shown are only part of the SHARP cell library (name?), other cell types will probably be found in other chips of this era.
+
 ## Symmetry group
 
 - In general, the dihedral group 4 (D4) is used for cells
@@ -10,7 +12,14 @@
 
 ![Dih4_cycle_graph](/imgstore/Dih4_cycle_graph.png)
 
+## Cell list
+
+The following are all cell types, in alphabetical order. The names of cells by @msinger are shown in parentheses.
+The topology is not complete (m1 is missing in some places), but it is sufficient to understand the cell architecture for reimplementation.
+
 ## and
+
+![and](/imgstore/modules/soc/and.jpg)
 
 ## and3
 
