@@ -12,9 +12,13 @@ The cells shown are only part of the SHARP cell library (name?), other cell type
 
 ![Dih4_cycle_graph](/imgstore/Dih4_cycle_graph.png)
 
+## Dual-rail CLK
+
+Sequence elements (latch, dff) are presented in two variants: with single-rail CLK and with dual-rail CLK (CLK + complement CLK). Where dual-rail CLK is used, the suffix `comp` is used in the cell name.
+
 ## Cells list
 
-The following are all cell types, in alphabetical order. The names of cells by @msinger are shown in parentheses.
+The following are all cell types, in alphabetical order. The names of cells by @msinger are shown in parentheses (where the correspondence is not obvious)
 The topology is not complete (m1 is missing in some places), but it is sufficient to understand the cell architecture for reimplementation.
 
 ## and
@@ -29,31 +33,31 @@ The topology is not complete (m1 is missing in some places), but it is sufficien
 
 ![and4](/imgstore/modules/soc/and4.jpg)
 
-## aon
+## aon (AO1)
 
 ![aon](/imgstore/modules/soc/aon.jpg)
 
-## aon22
+## aon22 (AO2)
 
 ![aon22](/imgstore/modules/soc/aon22.jpg)
 
-## aon222
+## aon222 (AO3)
 
 ![aon222](/imgstore/modules/soc/aon222.jpg)
 
-## aon2222
+## aon2222 (AO4)
 
 ![aon2222](/imgstore/modules/soc/aon2222.jpg)
 
-## aon222222
+## aon222222 (AO6)
 
 ![aon222222](/imgstore/modules/soc/aon222222.jpg)
 
-## bufif0
+## bufif0 (TRI_BUF_IF0)
 
 ![bufif0](/imgstore/modules/soc/bufif0.jpg)
 
-## cnt
+## cnt (TFFD)
 
 ![cnt](/imgstore/modules/soc/cnt.jpg)
 
@@ -61,19 +65,19 @@ The topology is not complete (m1 is missing in some places), but it is sufficien
 
 ![const](/imgstore/modules/soc/const.jpg)
 
-## dffr
+## dffr - Posedge DFF With Single-rail CLK Synchronous Dual-rail Inverse Polarity Reset Q/NQ Output (DFFR_B2)
 
 ![dffr](/imgstore/modules/soc/dffr.jpg)
 
-## dffr_comp
+## dffr_comp (DFFR_A)
 
 ![dffr_comp](/imgstore/modules/soc/dffr_comp.jpg)
 
-## dffrnq_comp
+## dffrnq_comp (DFFR_B1)
 
 ![dffrnq_comp](/imgstore/modules/soc/dffrnq_comp.jpg)
 
-## dffsr
+## dffsr - Posedge DFF With Single-rail CLK Synchronous Dual-rail Inverse Polarity Set Asynchronous Inverse Polarity Reset Q/NQ Output (DFFSR)
 
 ![dffsr](/imgstore/modules/soc/dffsr.jpg)
 
@@ -85,19 +89,19 @@ The topology is not complete (m1 is missing in some places), but it is sufficien
 
 ![ha](/imgstore/modules/soc/ha.jpg)
 
-## latch
+## latch (D_LATCH_B)
 
 ![latch](/imgstore/modules/soc/latch.jpg)
 
-## latch_comp
+## latch_comp (D_LATCH_A2)
 
 ![latch_comp](/imgstore/modules/soc/latch_comp.jpg)
 
-## latchnq_comp
+## latchnq_comp (D_LATCH_A)
 
 ![latchnq_comp](/imgstore/modules/soc/latchnq_comp.jpg)
 
-## latchr_comp
+## latchr_comp (DR_LATCH)
 
 ![latchr_comp](/imgstore/modules/soc/latchr_comp.jpg)
 
@@ -185,11 +189,11 @@ The topology is not complete (m1 is missing in some places), but it is sufficien
 
 ![not6](/imgstore/modules/soc/not6.jpg)
 
-## notif0
+## notif0 (TRI_INV_IF0)
 
 ![notif0](/imgstore/modules/soc/notif0.jpg)
 
-## notif1
+## notif1 (TRI_INV_IF1)
 
 ![notif1](/imgstore/modules/soc/notif1.jpg)
 
@@ -197,7 +201,7 @@ The topology is not complete (m1 is missing in some places), but it is sufficien
 
 ![oai](/imgstore/modules/soc/oai.jpg)
 
-## oan
+## oan (OA)
 
 ![oan](/imgstore/modules/soc/oan.jpg)
 
