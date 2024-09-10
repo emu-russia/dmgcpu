@@ -4,7 +4,7 @@ DMG-01 SM83 core research. The `B` revision of the DMG SoC is being studied.
 
 The core can be found here:
 
-![locator_core](/imgstore/locator_core.jpg)
+![locator_core](/imgstore/soc/locator_core.jpg)
 
 ## Basic Circuit Designs
 
