@@ -20,7 +20,10 @@ module SM83_Run();
 	wire WR;
 	wire MemReq;
 
-	always #25 CLK = ~CLK;
+	// The original GameBoy run at 4.194304 MHz (2^22 Hz), or a period of
+	// 238.418ns, or a half period of 119.209ns. We round that to 120ns, or
+	// a frequency of 4.1666MHz (a error of ~0.7%)
+	always #120 CLK = ~CLK;
 
 	wire ADR_CLK_N;
 	wire ADR_CLK_P;
