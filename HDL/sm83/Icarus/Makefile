@@ -18,17 +18,25 @@ SOURCES =\
  run.v
 
 ROM=roms/bogus_hw.mem
+WAVE_FILE=dmg_waves.fst
+CYCLES=1024
 
 run:
-	iverilog -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) -DROM=$(ROM)
+	iverilog -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) -DROM=\"$(ROM)\" -DWAVE_FILE=\"$(WAVE_FILE)\" -DCYCLES=$(CYCLES)
 	vvp sm83.run -fst
 
+low:
+	/bin/iverilog -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) -DROM=\"$(ROM)\" -DWAVE_FILE=\"$(WAVE_FILE)\" -DCYCLES=$(CYCLES)
+	/bin/vvp sm83.run -fst
+
 verbose:
-	iverilog -v -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) -DROM=$(ROM)
+	iverilog -v -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) -DROM=\"$(ROM)\" -DWAVE_FILE=\"$(WAVE_FILE)\" -DCYCLES=$(CYCLES)
 	vvp -v sm83.run -fst
 
 VERILATOR_OPTS=\
- -DROM=$(ROM)\
+ -DROM=\"$(ROM)\"\
+ -DWAVE_FILE=\"dmg_waves3.fst\"\
+ -DCYCLES=$(CYCLES)\
  --top-module SM83_Run\
  --cc\
  $(SOURCES)\

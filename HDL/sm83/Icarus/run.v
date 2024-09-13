@@ -96,19 +96,19 @@ module SM83_Run();
 		.CPU_IRQ_ACK(irq_ack) );
 
 	initial begin
-		$display("Running '%s'", `STRINGIFY(`ROM));
+		$display("Running '%s'", `ROM);
 
 		ExternalRESET = 1'b0;
 		CLK = 1'b0;
 
-		$dumpfile("dmg_waves.fst");
+		$dumpfile(`WAVE_FILE);
 		$dumpvars(0, SM83_Run);
 
 		ExternalRESET = 1'b1;
 		repeat (8) @ (posedge CLK);
 		ExternalRESET = 1'b0;
 
-		repeat (256) @ (posedge CLK);
+		repeat (`CYCLES) @ (posedge CLK);
 
 		$display(""); // breakline after any serial output
 		$writememh ("out.mem", hw.mem);
@@ -141,7 +141,7 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 
 		`define STRINGIFY(x) `"x`"
 		`ifdef ROM
-			$readmemh(`STRINGIFY(`ROM), mem);
+			$readmemh(`ROM, mem);
 		`else
 			$readmemh("roms/bogus_hw.mem", mem);
 		`endif
