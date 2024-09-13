@@ -271,8 +271,8 @@ module regbit_nd ( clk, cclk, nd, ld, q );
 
 	reg val_in;
 	reg val_out;
-	initial val_in = 1'bx;
-	initial val_out = 1'bx;
+	initial val_in = 1'b1;
+	initial val_out = 1'b1;
 
 	always @(*) begin
 		if (clk && ld)
@@ -301,8 +301,8 @@ module sp_regbit ( clk, cclk, nd, ld, q, nq );
 
 	reg val_in;
 	reg val_out;
-	initial val_in = 1'bx;
-	initial val_out = 1'bx;
+	initial val_in = 1'b1;
+	initial val_out = 1'b1;
 
 	always @(*) begin
 		if (clk && ld)
@@ -333,8 +333,8 @@ module pc_regbit ( clk, cclk, nd, ld, nres, q, nq );
 
 	reg val_in;
 	reg val_out;
-	initial val_in = 1'bx;
-	initial val_out = 1'bx;
+	initial val_in = 1'b1;
+	initial val_out = 1'b1;
 
 	always @(*) begin
 		if (clk && ld)

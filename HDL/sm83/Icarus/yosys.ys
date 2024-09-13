@@ -1,0 +1,204 @@
+# read verilog
+read_verilog \
+ ../_GekkioNames.v\
+ ../ALU.v\
+ ../Bottom.v\
+ ../DataMux.v\
+ ../Decoder1.v\
+ ../Decoder2.v\
+ ../Decoder3.v\
+ ../IDU.v\
+ ../IRNots.v\
+ ../IRQ.v\
+ ../Regs.v\
+ ../SeqCells.v\
+ ../Seq.v\
+ ../Thingy.v\
+ ../Top.v\
+
+hierarchy -top SM83Core
+
+write_rtlil sm83.1.rtlil
+
+# I don't remember exactly why these steps are necessary, but they are. If
+# these steps are not included, the BusKeeper inside DataMux is not removed in
+# later steps.
+flatten DataMux
+proc DataMux
+opt_clean -purge DataMux
+opt_clean RegsBuses
+
+# Read new modules after `hierarchy` and `flatten`, otherwise they will be
+# removed.
+
+read_verilog -icells <<EOT
+// used to replace seq_sr_latch with internal cell $sr
+module mysr (input nr, s, output q );
+    $sr #(
+        .SET_POLARITY(1'b1),
+        .CLR_POLARITY(1'b0),
+        .WIDTH(1)
+    ) sr1 (
+        .CLR(nr),
+        .SET(s),
+        .Q(q)
+    );
+endmodule
+
+// used to add a delay to seq_dff_posedge_comp, otherwise verilator evaluate
+// the signals in the wrong order.
+module myseqdff (d, clk, cclk, q);
+	input d;	
+	input clk;
+	input cclk;
+	output q;
+
+    wire i;
+    $delay #(
+        .DELAY(1),
+        .WIDTH(1)
+    ) d1 (
+        .A(d),
+        .Y(i)
+    );
+
+	reg val;
+	initial val = 1'b1;
+
+	always @(posedge clk) begin
+		val <= i;
+	end
+
+	assign q = val;
+endmodule
+EOT
+
+chtype -map seq_rs_latch mysr
+chtype -map seq_rs_latch2 mysr
+chtype -map seq_dff_posedge_comp myseqdff
+
+# avoid flattening BusKeeper, because it will be replaced by a $dlatch later on.
+setattr -mod -set keep_hierarchy 1 BusKeeper
+proc
+flatten
+opt_merge_wires SM83Core
+
+# find tribufs, and propragate them. The tribufs will propagate until they
+# reach a output port, a BusKeepr, or a internal bus. 
+#
+# tristates will reach `D` (data-bus) and `A` (address-bus), but only `D` need
+# to be a tristate, `A` will be removed.
+#
+# Tristates that reachs a BusKeeper, will be merged together into a `$dlatch`.
+#
+# Remaning tristates will be replaced by a mux.
+tribuf -propagate
+
+# Prepare modules for extracting tribuf/MuxKeeper pairs, and replacing them by
+# `$dlatches`:
+
+read_verilog -icells <<EOT
+// used to replace tribuffer/buskeeper pair with a $dlatch
+module mybuskeeper(input a, x, output q);
+    wire z;
+
+    $tribuf #(.WIDTH(1)) tb1 (.EN(x), .A(a), .Y(z));
+    BusKeeper bk1 (.d(z), .q(q));
+endmodule
+
+module mydff(input a, x, output q);
+    $dlatch #(.WIDTH(1), .EN_POLARITY(1)) 
+    dl1 (.D(a), .EN(x), .Q(q));
+endmodule
+
+module mybuskeeper8(input [7:0] a, input x, output  [7:0] q);
+    wire [7:0] z;
+    $tribuf #(.WIDTH(8)) tb1 (.EN(x), .A(a), .Y(z));
+    BusKeeper bk0 (.d(z[0]), .q(q[0]));
+    BusKeeper bk1 (.d(z[1]), .q(q[1]));
+    BusKeeper bk2 (.d(z[2]), .q(q[2]));
+    BusKeeper bk3 (.d(z[3]), .q(q[3]));
+    BusKeeper bk4 (.d(z[4]), .q(q[4]));
+    BusKeeper bk5 (.d(z[5]), .q(q[5]));
+    BusKeeper bk6 (.d(z[6]), .q(q[6]));
+    BusKeeper bk7 (.d(z[7]), .q(q[7]));
+endmodule
+
+module mydff8(input [7:0] a, input x, output [7:0] q);
+    $dlatch #(.WIDTH(8), .EN_POLARITY(1)) dl1 (.D(a), .EN(x), .Q(q));
+endmodule
+
+// used for PCL_KeepInput
+module mybuskeeper332(input [2:0] a0, input [2:0] a1, input [1:0] a2, input x0, input x1, input x2, output  [7:0] q);
+    wire [7:0] z;
+    $tribuf #(.WIDTH(3)) tb0 (.EN(x0), .A(a0), .Y(z[2:0]));
+    $tribuf #(.WIDTH(3)) tb1 (.EN(x1), .A(a1), .Y(z[5:3]));
+    $tribuf #(.WIDTH(2)) tb2 (.EN(x2), .A(a2), .Y(z[7:6]));
+    BusKeeper bk0 (.d(z[0]), .q(q[0]));
+    BusKeeper bk1 (.d(z[1]), .q(q[1]));
+    BusKeeper bk2 (.d(z[2]), .q(q[2]));
+    BusKeeper bk3 (.d(z[3]), .q(q[3]));
+    BusKeeper bk4 (.d(z[4]), .q(q[4]));
+    BusKeeper bk5 (.d(z[5]), .q(q[5]));
+    BusKeeper bk6 (.d(z[6]), .q(q[6]));
+    BusKeeper bk7 (.d(z[7]), .q(q[7]));
+endmodule
+
+module mydff332(input [2:0] a0, input [2:0] a1, input [1:0] a2, input x0, input x1, input x2, output  [7:0] q);
+    $dlatch #(.WIDTH(3), .EN_POLARITY(1)) tb0 (.D(a0), .EN(x0), .Q(q[2:0]));
+    $dlatch #(.WIDTH(3), .EN_POLARITY(1)) tb1 (.D(a1), .EN(x1), .Q(q[5:3]));
+    $dlatch #(.WIDTH(2), .EN_POLARITY(1)) tb2 (.D(a2), .EN(x2), .Q(q[7:6]));
+endmodule
+
+// replace remaining BusKeeper
+module mybuffer(input d, output q);
+    assign q = d;
+endmodule
+EOT
+
+design -copy-to mybuskeepermap mybuskeeper
+design -copy-to mybuskeepermap8 mybuskeeper8
+design -copy-to mybuskeepermap332 mybuskeeper332
+
+extract -map %mybuskeepermap SM83Core
+extract -map %mybuskeepermap8 SM83Core
+extract -map %mybuskeepermap332 SM83Core
+
+chtype -map mybuskeeper mydff
+chtype -map mybuskeeper8 mydff8
+chtype -map mybuskeeper332 mydff332
+
+# perm_ff is strangely always driven
+chtype -map BusKeeper mybuffer c:*perm_ff
+
+opt_clean SM83Core
+opt_merge
+opt_merge_wires
+
+# There now should be no BusKeeper
+cd SM83Core
+select -assert-none t:BusKeeper 
+cd
+
+# replace remaining tristates with pmux (except output ports)
+tribuf -merge -logic 
+
+# A is a output port, but it does not need to be a tri-state buffer
+tribuf -merge -logic -force w:A %ci1
+
+# From this point onwards, the design should be completely synthesizable
+# (hopefully). So we can apply more aggressive optimizations.
+
+flatten
+opt
+
+# purging unused signals considerably speed things up, but we lose tracing for
+# many internal signals.
+opt_clean -purge
+
+# Write the code back to SystemVerilog. SystemVerilog contains a little more of
+# semanthic information that helps Verilator.
+write_verilog -sv sm83.yosys.v
+
+# Write the RTLIL text represenation, for debugging.
+write_rtlil sm83.yosys.rtlil

@@ -1,4 +1,4 @@
-SOURCES =\
+CPU =\
  ../_GekkioNames.v\
  ../ALU.v\
  ../Bottom.v\
@@ -14,12 +14,23 @@ SOURCES =\
  ../Seq.v\
  ../Thingy.v\
  ../Top.v\
+
+SOURCES =\
+ $(CPU)\
  external_clk.v\
  run.v
 
 ROM=roms/bogus_hw.mem
 WAVE_FILE=dmg_waves.fst
 CYCLES=1024
+
+# Currently dmgcpu relies on a patched version of yosys.
+# Must be builded from source, from this branch: https://github.com/Rodrigodd/yosys/tree/dmgcpu-changes
+
+# DMG_YOSYS = /path/to/patched/yosys
+ifndef DMG_YOSYS
+$(error DMG_YOSYS is not set)
+endif
 
 run:
 	iverilog -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) -DROM=\"$(ROM)\" -DWAVE_FILE=\"$(WAVE_FILE)\" -DCYCLES=$(CYCLES)
@@ -39,15 +50,26 @@ VERILATOR_OPTS=\
  -DCYCLES=$(CYCLES)\
  --top-module SM83_Run\
  --cc\
- $(SOURCES)\
+ sm83.yosys.v\
+ external_clk.v\
+ run.v\
  --timing\
  --trace-fst\
  --no-trace-top\
  --Wno-fatal\
- --Wno-LATCH
+ --Wno-LATCH\
+ --timescale "1ns/1ns"\
+ --x-initial unique\
 
 verilator:
 	verilator $(VERILATOR_OPTS) --binary -j 0
+	# The Sequencer need that at least w83 to be initialized as 1
+	obj_dir/VSM83_Run +verilator+rand+reset+1
+
+verilator-pgo:
+	verilator $(VERILATOR_OPTS) --binary -j 0 -CFLAGS -fprofile-generate -LDFLAGS -fprofile-generate -DCYCLES=1024
+	obj_dir/VSM83_Run
+	verilator $(VERILATOR_OPTS) --binary -j 0 -CFLAGS "-fprofile-use -fprofile-correction"
 	obj_dir/VSM83_Run
 
 check:
@@ -56,3 +78,17 @@ check:
 clean:
 	rm -f sm83.run
 	rm -rf obj_dir
+	rm -rf *.rtlil
+	rm -f sm831.yosys.v
+	rm -f sm83.yosys.run
+	rm -f dmg_waves.fst
+	rm -f dmg_waves2.fst
+
+# Use yosys to optmize the code, and write back as verilog
+yosys: yosys.ys
+	$(DMG_YOSYS) -s yosys.ys
+
+run_yosys:
+	echo "+timescale+1ns/1ns" > command_file.txt
+	iverilog -f command_file.txt -g2012 -Wall -D ICARUS -s SM83_Run -o sm83.yosys.run sm83.yosys.v external_clk.v run.v -DROM=\"$(ROM)\" -DWAVE_FILE=\"dmg_waves2.fst\" -DCYCLES=$(CYCLES)
+	vvp sm83.yosys.run -fst
