@@ -1,4 +1,5 @@
 *.run
 *.vcd
 out.mem
-obj_dir
+verilator_build
+verilator_pgo_build

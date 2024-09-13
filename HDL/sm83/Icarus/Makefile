@@ -62,15 +62,22 @@ VERILATOR_OPTS=\
  --x-initial unique\
 
 verilator:
-	verilator $(VERILATOR_OPTS) --binary -j 0
-	# The Sequencer need that at least w83 to be initialized as 1
-	obj_dir/VSM83_Run +verilator+rand+reset+1
+	verilator $(VERILATOR_OPTS) --binary -j 0 --Mdir verilator_build
+	verilator_build/VSM83_Run +verilator+rand+reset+1
 
 verilator-pgo:
-	verilator $(VERILATOR_OPTS) --binary -j 0 -CFLAGS -fprofile-generate -LDFLAGS -fprofile-generate -DCYCLES=1024
-	obj_dir/VSM83_Run
-	verilator $(VERILATOR_OPTS) --binary -j 0 -CFLAGS "-fprofile-use -fprofile-correction"
-	obj_dir/VSM83_Run
+	verilator $(VERILATOR_OPTS) --binary -j 0 -CFLAGS -fprofile-generate -LDFLAGS -fprofile-generate -DCYCLES=1024 --Mdir verilator_pgo_build
+	verilator_pgo_build/VSM83_Run
+	verilator $(VERILATOR_OPTS) --binary -j 0 -CFLAGS "-fprofile-use -fprofile-correction" --Mdir verilator_pgo_build
+	verilator_pgo_build/VSM83_Run +verilator+rand+reset+1
+
+run_verilator:
+	# The Sequencer need that at least w83 to be initialized as 1, so we pass +rand+reset+1
+	verilator_build/VSM83_Run +verilator+rand+reset+1
+
+run_verilator_pgo:
+	# The Sequencer need that at least w83 to be initialized as 1, so we pass +rand+reset+1
+	verilator_pgo_build/VSM83_Run +verilator+rand+reset+1
 
 check:
 	verilator $(VERILATOR_OPTS) --lint-only --report-unoptflat
