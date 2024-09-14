@@ -279,10 +279,11 @@ module BusKeeper (d, q);
 	initial val = 1'b0;
 
 	always @(*) begin
-		if (d == 1'b1)
-			val = 1'b1;
-		if (d == 1'b0)
-			val = 1'b0;
+		case (d)
+			1'b1: val <= 1'b1;
+			1'b0: val <= 1'b0;
+			1'bz: val <= val;
+		endcase
 	end
 
 	assign q = val;
