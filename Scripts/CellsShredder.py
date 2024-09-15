@@ -2,8 +2,6 @@
 
 	A script for slicing the `dmg_cells` picture into small pieces.
 
-	I'm tired of doing it by hand every time.
-
 """
 
 # https://stackoverflow.com/questions/5953373/how-to-split-image-into-multiple-pieces-in-python
