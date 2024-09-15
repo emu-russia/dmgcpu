@@ -89,16 +89,16 @@ module data_mux_bit ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus, DataOut, dv_
 
 	// The logic above can also be expressed, in a higher level, as:
 
-	assign Ext_bus = ~clk ? 1
+	assign Ext_bus = ~clk ? 1'b1
 			: RD_hack && ~WR_hack ? 1'bz
 			: ~RD_hack && WR_hack ? int_to_ext_q
-			: 1;
+			: 1'b1;
 
-	assign Int_bus = ~clk ? 1
+	assign Int_bus = ~clk ? 1'b1
 			: RD_hack && ~WR_hack ? ext_to_int_q
 			: ~RD_hack && WR_hack && DataOut ? dv_q
 			: ~RD_hack && WR_hack ? 1'bz
 			: Res_to_DL ? res_q
-			: 1;
+			: 1'b1;
 
 endmodule // data_mux_bit

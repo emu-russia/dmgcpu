@@ -39,7 +39,7 @@ module IncDec ( CLK4, TTB1, TTB2, TTB3, BUS_DISABLE, cbus, dbus, adl, adh, AddrB
 
 	// The AddrBus value is formed on the basis of the bus keeper values of the cbus/dbus.
 
-	assign AddrBus = ~BUS_DISABLE ? {~dbq,~cbq} : 16'bz;
+	assign AddrBus = ~BUS_DISABLE ? {~dbq,~cbq} : 16'hzz;
 
 endmodule // IncDec
 
