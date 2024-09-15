@@ -4,6 +4,8 @@
 
 ![clkgen](/imgstore/soc/clkgen.jpg)
 
+![clkgen_netlist](/imgstore/soc/clkgen_netlist.png)
+
 The names of signals of the CLK group have many synonyms used by different authors at different times.
 
 |Signal|Dir|From/Where To|Description|
