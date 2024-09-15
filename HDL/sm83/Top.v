@@ -88,16 +88,16 @@ module SM83Core (
 	assign WR = `s2_wr;
 
 	// Debug wires:
-	wire [15:0] RegPC = bot.pc.PC;
-	wire [15:0] RegSP = bot.sp.SP;
-	wire [7:0] RegA = bot.regs.r1q;
-	wire [7:0] RegF = {alu_inst.bc[3], alu_inst.bc[2], alu_inst.bc[5], alu_inst.bc[1], 4'h0};
-	wire [7:0] RegB = bot.regs.r7q;
-	wire [7:0] RegC = bot.regs.r6q;
-	wire [7:0] RegD = bot.regs.r5q;
-	wire [7:0] RegE = bot.regs.r4q;
-	wire [7:0] RegH = bot.regs.r3q;
-	wire [7:0] RegL = bot.regs.r1q;
+	// wire [15:0] RegPC = bot.pc.PC;
+	// wire [15:0] RegSP = bot.sp.SP;
+	// wire [7:0] RegA = bot.regs.r1q;
+	// wire [7:0] RegF = {alu_inst.bc[3], alu_inst.bc[2], alu_inst.bc[5], alu_inst.bc[1], 4'h0};
+	// wire [7:0] RegB = bot.regs.r7q;
+	// wire [7:0] RegC = bot.regs.r6q;
+	// wire [7:0] RegD = bot.regs.r5q;
+	// wire [7:0] RegE = bot.regs.r4q;
+	// wire [7:0] RegH = bot.regs.r3q;
+	// wire [7:0] RegL = bot.regs.r1q;
 
 	// Instances
 
@@ -279,10 +279,11 @@ module BusKeeper (d, q);
 	initial val = 1'b0;
 
 	always @(*) begin
-		if (d == 1'b1)
-			val = 1'b1;
-		if (d == 1'b0)
-			val = 1'b0;
+		case (d)
+			1'b1: val <= 1'b1;
+			1'b0: val <= 1'b0;
+			1'bz: val <= val;
+		endcase
 	end
 
 	assign q = val;
