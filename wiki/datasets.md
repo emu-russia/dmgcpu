@@ -1,6 +1,15 @@
 # Datasets
 
+## SoC
+
+- Letterless Revision: https://siliconpr0n.org/map/nintendo/dmg-cpu/  (by @mcmaster)
+- Revision A: https://siliconpr0n.org/map/nintendo/dmg-cpu-a/  (by @mcmaster)
+- Revision B: https://siliconpr0n.org/map/nintendo/dmg-cpu-b/  (by @mcmaster)
+- Revision C: https://siliconpr0n.org/map/nintendo/dmg-cpu-c/  (by @mcmaster)
+
 ## SM83 Core
+
+Initially the research was focused only on the SM83 core, so the large dataset I made is for SM83:
 
 - M1: https://drive.google.com/drive/u/2/folders/1lEEsf0dfqN41lTlkm0sQyRvjxcGQjBN0
 - lap1: https://drive.google.com/drive/u/2/folders/1MuNW_jgkwme4HwDJQ1r1mePoENsvDopT
