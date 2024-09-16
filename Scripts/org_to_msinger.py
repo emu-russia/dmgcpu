@@ -12,32 +12,32 @@
 import sys
 
 def replace_words(input_file, output_file, replacements):
-    try:
-        with open(input_file, 'r', encoding='utf-8') as infile:
-            content = infile.read()
+	try:
+		with open(input_file, 'r', encoding='utf-8') as infile:
+			content = infile.read()
 
-        for old_word, new_word in replacements.items():
-            content = content.replace(old_word, new_word)
-        
-        with open(output_file, 'w', encoding='utf-8') as outfile:
-            outfile.write(content)
+		for old_word, new_word in replacements.items():
+			content = content.replace(old_word, new_word)
+		
+		with open(output_file, 'w', encoding='utf-8') as outfile:
+			outfile.write(content)
 
-        print(f"Words have been substituted and saved in {output_file}")
+		print(f"Words have been substituted and saved in {output_file}")
 
-    except FileNotFoundError:
-        print(f"The {input_file} file was not found.")
-    except Exception as e:
-        print(f"An error has occurred: {e}")
+	except FileNotFoundError:
+		print(f"The {input_file} file was not found.")
+	except Exception as e:
+		print(f"An error has occurred: {e}")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Use: python3 org_to_msinger.py input_file output_file")
-    else:
-        input_file = sys.argv[1]
-        output_file = sys.argv[2]
-        replacements = {
+	if len(sys.argv) != 3:
+		print("Use: python3 org_to_msinger.py input_file output_file")
+	else:
+		input_file = sys.argv[1]
+		output_file = sys.argv[2]
+		replacements = {
 
-        	# Here you should carefully use the order so that longer substrings are processed first (like LZ)
+			# Here you should carefully use the order so that longer substrings are processed first (like LZ)
 
 			"aon222222": "AO6",
 			"aon2222": "AO4",
@@ -91,5 +91,5 @@ if __name__ == "__main__":
 			"latch_comp": "D_LATCH_A2",
 			"latch": "D_LATCH_B",
 
-        }
-        replace_words(input_file, output_file, replacements)
+		}
+		replace_words(input_file, output_file, replacements)
