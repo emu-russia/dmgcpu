@@ -67,7 +67,12 @@ The topology is not complete (m1 is missing in some places), but it is sufficien
 
 ## dffr - Posedge DFF With Single-rail CLK Synchronous Dual-rail Inverse Polarity Reset Q/NQ Output (DFFR_B2)
 
+The #res input is fed separately to the Master and Slave MUX so that synchronous reset can be done. But usually #res1 and #res2 are connected externally, so the DFF becomes with asynchronous reset.
+The dual-rail ck/cck signals are obtained locally by demultiplexing the CLK input signal.
+
 ![dffr](/imgstore/modules/soc/dffr.jpg)
+
+![dffr_tran](/imgstore/modules/soc/dffr_tran.jpg)
 
 ## dffr_comp (DFFR_A)
 
