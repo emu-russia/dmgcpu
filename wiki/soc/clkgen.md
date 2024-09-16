@@ -33,3 +33,10 @@ The names of signals of the CLK group have many synonyms used by different autho
 |clk8|output|To Core| (Aka BOMA_1MHZ,MAIN_CLK_N)|
 |clk9|output|To Core,MMIO,APU| (Aka BOGA_1MHZ,MAIN_CLK_P)|
 |cclk|output|To APU,PPU| (Aka AZOF)|
+
+## Map
+
+|Row|Cells|
+|---|---|
+|1|not, not, not2(unused), not3, nand, nor, not2(unused), not3, nor, oan, not, not2, or, dffrnq_comp, nor_latch, nor, not, not, dffrnq_comp, not, dffrnq_comp, not, dffrnq_comp, not, dffrnq_comp, not, not2, nand, nand, not, not6 |
+|2|not6, not6, or, not, not, nand3, not, not2(unused), not2(unused), not2(unused), not2(unused), not2(unused), not, not, nand4, not6, not, not, nor3, not4+not6, not4+not6, not2, nor3, not4+not6, not4+not6, not2, nor, not6, not6, and, not, not |
