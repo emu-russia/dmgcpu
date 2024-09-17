@@ -14,7 +14,7 @@ The cells shown are only part of the SHARP cell library (name?), other cell type
 
 ## Dual-rail CLK
 
-Sequence elements (latch, dff) are presented in two variants: with single-rail CLK and with dual-rail CLK (CLK + complement CLK). Where dual-rail CLK is used, the suffix `comp` is used in the cell name.
+Sequential elements (latch, dff) are presented in two variants: with single-rail CLK and with dual-rail CLK (CLK + complement CLK). Where dual-rail CLK is used, the suffix `comp` is used in the cell name.
 
 ## Cells list
 
