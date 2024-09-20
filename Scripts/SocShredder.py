@@ -20,7 +20,7 @@ if __name__ == '__main__':
 	print ("SocShredder Start")
 	FusedImg = "../imgstore/soc/dmg_cpu_a"
 	CropImage (FusedImg, "../imgstore/soc/clkgen", [13493, 2684, 2651, 991] )
-	CropImage (FusedImg, "../imgstore/soc/div", [13410, 3636, 2730, 1434] )
+	CropImage (FusedImg, "../imgstore/soc/ser", [13410, 3636, 2730, 1434] )
 	CropImage (FusedImg, "../imgstore/soc/arb", [2035, 2651, 1540, 5616] )
 	CropImage (FusedImg, "../imgstore/soc/mmio", [9963, 3019, 3236, 4759] )
 	CropImage (FusedImg, "../imgstore/soc/apu", [16310, 3143, 4978, 15295] )
