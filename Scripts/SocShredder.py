@@ -35,4 +35,5 @@ if __name__ == '__main__':
 	CropImage (FusedImg, "../imgstore/soc/dac2", [12524, 17564, 2513, 1187] )
 	# Pads
 	CropImage (FusedImg, "../imgstore/soc/pad_ck1_ck2", [21721, 8274, 1547, 1762] )
+	CropImage (FusedImg, "../imgstore/soc/pad_sck", [21699, 13644, 1569, 965] )
 	print ("SocShredder End")
