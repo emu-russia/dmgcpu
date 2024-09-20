@@ -19,3 +19,29 @@
 |n_sin| | | |
 |ser_out| | | |
 |serial_tick| | | |
+
+## ser_reg_bit
+
+![ser_reg_bit_netlist](/imgstore/soc/ser_reg_bit_netlist.png)
+
+|Port|Dir|Description|
+|---|---|---|
+|d|input|Used to load the previous value to form a shift register|
+|q|output|Used to output the current value to form a shift register. The nq output inside the circuit is used to output the value to the databus|
+|clk|input|Clock|
+|oe|input|Output Enable|
+|db|bidir|databus|
+|ie + n_ie|input|Complementary Input Enable|
+|nres|input|Global reset signal (n_reset2 is used)|
+
+The circuit contains an 8-bit shift register based on these elements.
+
+Loading the value from the bus is done in the following way: we cannot use direct feeding, because the `d` input is used to form a chain from the previous bit. Therefore, using the complementary input Input Enable and inputs /set and /res of DFFSR - the register is set to the desired value.
+
+## Map
+
+|Row|Cells|
+|---|---|
+|1|and, dffr, dffr, dffr, dffr, dffr, muxi, dffr, notif1, dffsr, notif1, oan, nand, not, not, and |
+|2|not, dffsr, notif1, oan, nand, not, not2, dffsr, notif1, oan, nand, dffsr, notif1, oan, nand, dffsr, notif1, oan, nand, or |
+|3|dffsr, notif1, oan, nand, dffsr, notif1, oan, nand, dffsr, notif1, oan, nand, not2, dffr, not, dffr, notif1 |

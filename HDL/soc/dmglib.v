@@ -124,3 +124,23 @@ module dmg_dffrnq_comp (  nr1, d, ck, cck, nr2, nq, q);
 	output wire q;
 
 endmodule // dmg_dffrnq_comp
+
+module dmg_dffsr (  clk, nres, nset1, nset2, d, q, nq);
+
+	input wire clk;
+	input wire nres;
+	input wire nset1;
+	input wire nset2;
+	input wire d;
+	output wire q;
+	output wire nq;
+
+endmodule // dmg_dffsr
+
+module dmg_notif1 (  ena, a, x);
+
+	input wire ena;
+	input wire a;
+	output wire x;
+
+endmodule // dmg_notif1
