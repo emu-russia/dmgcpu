@@ -34,9 +34,9 @@
 |ie + n_ie|input|Complementary Input Enable|
 |nres|input|Global reset signal (n_reset2 is used)|
 
-The circuit contains an 8-bit shift register based on these elements.
+The circuit contains 8-bit shift register based on these elements.
 
-Loading the value from the bus is done in the following way: we cannot use direct feeding, because the `d` input is used to form a chain from the previous bit. Therefore, using the complementary input Input Enable and inputs /set and /res of DFFSR - the register is set to the desired value.
+Loading the value from the bus is done in the following way: we cannot use direct feeding, because the `d` input is used to form a chain from the previous bit. Therefore, using the complementary Input Enable and `/set` and `/res` inputs of DFFSR - the register is set to the desired value.
 
 ## Map
 
