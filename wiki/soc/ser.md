@@ -42,6 +42,6 @@ Loading the value from the bus is done in the following way: we cannot use direc
 
 |Row|Cells|
 |---|---|
-|1|and, dffr, dffr, dffr, dffr, dffr, muxi, dffr, notif1, dffsr, notif1, oan, nand, not, not, and |
-|2|not, dffsr, notif1, oan, nand, not, not2, dffsr, notif1, oan, nand, dffsr, notif1, oan, nand, dffsr, notif1, oan, nand, or |
-|3|dffsr, notif1, oan, nand, dffsr, notif1, oan, nand, dffsr, notif1, oan, nand, not2, dffr, not, dffr, notif1 |
+|1|and, dffr, dffr, dffr, dffr, dffr, muxi, dffr, notif1, {dffsr, notif1, oan, nand}(ser_reg_bit), not, not, and |
+|2|not, {dffsr, notif1, oan, nand}(ser_reg_bit), not, not2, {dffsr, notif1, oan, nand}(ser_reg_bit), {dffsr, notif1, oan, nand}(ser_reg_bit), {dffsr, notif1, oan, nand}(ser_reg_bit), or |
+|3|{dffsr, notif1, oan, nand}(ser_reg_bit), {dffsr, notif1, oan, nand}(ser_reg_bit), {dffsr, notif1, oan, nand}(ser_reg_bit), not2, dffr, not, dffr, notif1 |
