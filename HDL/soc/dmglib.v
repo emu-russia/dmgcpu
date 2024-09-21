@@ -144,3 +144,23 @@ module dmg_notif1 (  ena, a, x);
 	output wire x;
 
 endmodule // dmg_notif1
+
+module dmg_dffr (  clk, nr1, nr2, d, q, nq);
+
+	input wire clk;
+	input wire nr1;
+	input wire nr2;
+	input wire d;
+	output wire q;
+	output wire nq;
+
+endmodule // dmg_dffr
+
+module dmg_muxi (  sel, d1, d0, q);
+
+	input wire sel;
+	input wire d1;
+	input wire d0;
+	output wire q;
+
+endmodule // dmg_muxi

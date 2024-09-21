@@ -22,7 +22,7 @@ The names of signals of the CLK group have many synonyms used by different autho
 |osc_stable|input|From MMIO| |
 |n_test_reset|input|From MMIO| |
 |n_clk_in|input|From CK1_CK2 Pad| |
-|n_reset2|output|To MMIO,Arb,PPU,APU| |
+|n_reset2|output|To Ser,MMIO,Arb,PPU,APU|Global reset signal |
 |clk1|output|To Core| (Aka BOWA,ADR_CLK_N)|
 |clk2|output|To Core,MMIO,Arb,APU| (Aka DATA_VALID,ADR_CLK_P)|
 |clk3|output|To Core | (Aka CPU_PHI,DATA_CLK_P)|

@@ -4,21 +4,23 @@
 
 ![ser](/imgstore/soc/ser.jpg)
 
+![ser_netlist](/imgstore/soc/ser_netlist.png)
+
 |Signal|Dir|From/Where To|Description|
 |---|---|---|---|
-|sc_write| | | |
-|n_reset2| | | |
-|lfo_16384Hz| | | |
-|sc_read| | | |
-|sb_read| | | |
-|n_sb_write| | | |
-|d\[7:0\]| | | |
-|n_sck| | | |
-|sck_dir| | | |
-|int_serial| | | |
-|n_sin| | | |
-|ser_out| | | |
-|serial_tick| | | |
+|sc_write|input|From MMIO| |
+|n_reset2|input|From ClkGen|Global reset signal|
+|lfo_16384Hz|input|From MMIO| |
+|sc_read|input|From MMIO| |
+|sb_read|input|From MMIO| |
+|n_sb_write|input|From MMIO| |
+|d\[7:0\]|bidir| | |
+|n_sck|input| | |
+|sck_dir|output| | |
+|int_serial|output| | |
+|n_sin|input| | |
+|ser_out|output| | |
+|serial_tick|output| | |
 
 ## ser_reg_bit
 
