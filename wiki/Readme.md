@@ -6,7 +6,7 @@
 - [I/O Terminals & Bonding Pads](/wiki/soc/pads.md)
 - [Cells Library](/wiki/soc/cells.md)
 - [CLK Generator](/wiki/soc/clkgen.md)
-- [Divider](/wiki/soc/div.md)
+- [Serial Link](/wiki/soc/ser.md)
 - [SM83 Core](/wiki/sm83/Readme.md)
 - [Bus Arbiter](/wiki/soc/arb.md)
 - [Memory-mapped I/O](/wiki/soc/mmio.md)
