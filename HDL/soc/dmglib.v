@@ -62,6 +62,19 @@ module dmg_nand4 (  a, b, c, d, x);
 
 endmodule // dmg_nand4
 
+module dmg_nand7 (  g, f, e, d, c, b, a, x);
+
+	input wire g;
+	input wire f;
+	input wire e;
+	input wire d;
+	input wire c;
+	input wire b;
+	input wire a;
+	output wire x;
+
+endmodule // dmg_nand7
+
 module dmg_nor3 (  a, b, c, x);
 
 	input wire a;

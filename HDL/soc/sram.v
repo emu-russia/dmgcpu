@@ -1,3 +1,5 @@
+// Common elements of DMG static memory (SRAM)
+
 module sram_bit_lane (  oe, n_oe, n_pch, db, wr, col, n_BL, BL);
 
 	input wire oe;
@@ -67,7 +69,7 @@ module sram_bit_lane (  oe, n_oe, n_pch, db, wr, col, n_BL, BL);
 	dmg_nor g7 (.a(w2), .b(w24), .x(w5) );
 	dmg_nor g8 (.a(w25), .b(w5), .x(w2) );
 	inv_tris_comp g9 (.in(w2), .q(w4), .ena(w3), .n_ena(w1) );
-	sense_amp g10 (.n_bl(w24), .bl(w25), .q(w23), .nq(w22) );
+	sense_amp_kinda g10 (.n_bl(w24), .bl(w25), .d(w23), .nd(w22) );
 	pch g11 (.n_en(w26), .q(w24) );
 	pch g12 (.n_en(w26), .q(w25) );
 endmodule // sram_bit_lane
@@ -115,17 +117,17 @@ module inv_tris_comp (  in, q, ena, n_ena);
 
 endmodule // inv_tris_comp
 
-module sense_amp (  n_bl, bl, q, nq);
+module sense_amp_kinda (  n_bl, bl, d, nd);
 
 	output wire n_bl;
 	output wire bl;
 	input wire q;
 	input wire nq;
 
-	assign bl = ~nq;
-	assign n_bl = ~q;
+	assign bl = ~nd;
+	assign n_bl = ~d;
 
-endmodule // sense_amp
+endmodule // sense_amp_kinda
 
 module pch (  n_en, q);
 
@@ -140,3 +142,27 @@ endmodule // pch
 
 // ERROR: conflicting wire w24
 // ERROR: conflicting wire w25
+
+
+module sram_array (  n_pch, n_BL, BL, WL);
+
+	input wire n_pch;
+	inout wire [3:0]n_BL;
+	inout wire [3:0]BL;
+	input wire [31:0]WL;
+
+	// TBD.
+
+endmodule // sram_array
+
+module sram_row_decode (  n_wl_pch, wl_ena, d, nd, x);
+
+	input wire n_wl_pch;
+	input wire wl_ena;
+	input wire [4:0]d;
+	input wire [4:0]nd;
+	output wire [31:0]x;
+
+	// TBD.
+
+endmodule // sram_row_decode
