@@ -69,7 +69,7 @@ module sram_bit_lane (  oe, n_oe, n_pch, db, wr, col, n_BL, BL);
 	dmg_nor g7 (.a(w2), .b(w24), .x(w5) );
 	dmg_nor g8 (.a(w25), .b(w5), .x(w2) );
 	inv_tris_comp g9 (.in(w2), .q(w4), .ena(w3), .n_ena(w1) );
-	sense_amp_kinda g10 (.n_bl(w24), .bl(w25), .d(w23), .nd(w22) );
+	write_driver g10 (.n_bl(w24), .bl(w25), .d(w23), .nd(w22) );
 	pch g11 (.n_en(w26), .q(w24) );
 	pch g12 (.n_en(w26), .q(w25) );
 endmodule // sram_bit_lane
@@ -117,7 +117,7 @@ module inv_tris_comp (  in, q, ena, n_ena);
 
 endmodule // inv_tris_comp
 
-module sense_amp_kinda (  n_bl, bl, d, nd);
+module write_driver (  n_bl, bl, d, nd);
 
 	output wire n_bl;
 	output wire bl;
@@ -127,7 +127,7 @@ module sense_amp_kinda (  n_bl, bl, d, nd);
 	assign bl = ~nd;
 	assign n_bl = ~d;
 
-endmodule // sense_amp_kinda
+endmodule // write_driver
 
 module pch (  n_en, q);
 
