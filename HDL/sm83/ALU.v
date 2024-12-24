@@ -50,6 +50,9 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	wire ALU_L5; 		// Carry4
 	wire ALU_to_bot;		// Derived from zbus[7] .  As a result of the optimization and transposition of the `bc` derivation circuit, the signal became internal.
 
+	// For debugging
+	(* keep *) wire [7:0] F = {bc[3], bc[2], bc[5], bc[1], 4'h0};
+
 	// Top part (CLA + Sum)
 
 	module6 Sums [7:0] (

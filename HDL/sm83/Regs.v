@@ -32,6 +32,16 @@ module RegsBuses ( CLK5, CLK6, w, x, DL, IR, abus, bbus, cbus, dbus, ebus, fbus,
 	wire [7:0] r6q;		// C
 	wire [7:0] r7q;		// B
 
+	// For debugging
+	(* keep *) wire [7:0] A = r1q;
+	(* keep *) wire [7:0] L = r2q;
+	(* keep *) wire [7:0] H = r3q;
+	(* keep *) wire [7:0] E = r4q;
+	(* keep *) wire [7:0] D = r5q;
+	(* keep *) wire [7:0] C = r6q;
+	(* keep *) wire [7:0] B = r7q;
+
+
 	regbit RegIR [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(DL), .ld({8{`s2_m1}}), .q(IR) );
 
 	regbit RegA [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(fbus), .ld({8{`s3_wren_a}}), .q(r1q) );
@@ -140,9 +150,8 @@ module SP ( CLK5, CLK6, CLK7, IR4, IR5, d60, d66, w, x, DL, abus, bbus, cbus, db
 	wire [7:0] spl_bnq;		// SPL input buskeeper output  (active low)
 	wire [7:0] sph_bnq;		// SPH input buskeeper output  (active low)
 
-	// For debugging purposes
-	wire [15:0] SP;
-	assign SP = {sph_q, spl_q};
+	// For debugging
+	(* keep *) wire [15:0] SP = {sph_q, spl_q};
 
 	sp_regbit SPL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(spl_bnq), .ld({8{`s3_wren_sp}}), .q(spl_q), .nq(spl_nq) );
 	sp_regbit SPH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nd(sph_bnq), .ld({8{`s3_wren_sp}}), .q(sph_q), .nq(sph_nq) );
@@ -199,9 +208,8 @@ module PC ( CLK5, CLK6, CLK7, d92, w, x, DL, abus, cbus, dbus, zbus, wbus, adl, 
 	wire [7:0] pcl_bnq;		// PCL input buskeeper output  (active low)
 	wire [7:0] pch_bnq;		// PCH input buskeeper output  (active low)
 
-	// For debugging purposes
-	wire [15:0] PC;
-	assign PC = {pch_q, pcl_q};
+	// For debugging
+	(* keep *) wire [15:0] PC = {pch_q, pcl_q};
 
 	pc_regbit PCL [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .nd(pcl_bnq), .ld({8{`s3_wren_pc}}), .q(pcl_q), .nq(pcl_nq) );
 	pc_regbit PCH [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .nres({8{~SYNC_RES}}), .nd(pch_bnq), .ld({8{`s3_wren_pc}}), .q(pch_q), .nq(pch_nq) );

@@ -12,7 +12,7 @@ module Sequencer ( CLK1, CLK2, CLK4, CLK6, CLK8, CLK9, nCLK4, IR, a, d, w, x, AL
 	input CLK9;
 	input nCLK4;
 
-	input [7:0] IR;
+	(* keep *) input [7:0] IR;
 	output [25:0] a;
 	input [106:0] d;
 	input [40:0] w;
