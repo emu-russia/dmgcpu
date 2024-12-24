@@ -1,0 +1,27 @@
+@0100  // .ORG   $100   
+00     // NOP   
+
+// for reference
+
+3E 1F  // LD   A,$1f   
+C6 01  // ADD  A,$1 // should result in $20
+
+// the actual tests
+
+3E 1F  // LD   A,$1f   
+B7     // OR   A    // clear all flags
+CE 01  // ADC  A,$1 // should result in $20
+
+3E 1F  // LD   A,$10   
+37     // SCF       // set carry
+CE 01  // ADC  A,$6 // should result in $21
+
+// check if zero is afecting the results
+
+AF     // XOR A     // set zero
+CE 01  // ADC  A,$1 // should result in $01
+
+3E 00  // LD   A,$0   
+B7     // OR   A    // set zero
+37     // SCF       // set zero and carry
+CE 01  // ADC  A,$1 // should result in $02
