@@ -220,7 +220,7 @@ Random logic (_14 NAND trees_):
 |alu_10|CLK2|e7|alu7 \| (w24&IR3&IR4&IR5) \| (w10&(nIR3\|nIR4\|nIR5)) \| (bc2&x22&(bc1\|bc5))|
 |alu_11|CLK6|ALU_Out1|w0 & ((nIR3&IR4&bc1) \| (IR3&IR4&~bc1) \| (IR3&nIR4&~bc3) \| (nIR3&nIR4&bc3))|
 |alu_12|CLK6|bc3|(f0&w12&nIR3&nIR4&nIR5) \| (f1&w12&IR3&nIR4&nIR5) \| (f2&w12&nIR3&IR4&nIR5) \| (f3&w12&IR3&IR4&nIR5) \| (f4&w12&nIR3&nIR4&IR5) \| (f5&w12&IR3&nIR4&IR5) \| (f6&w12&nIR3&IR4&IR5) \| (f7&w12&IR3&IR4&IR5) \| (AllZeros&(d42\|w3\|w37\|x22)) \| (d58&TempZ) \| (bc3&(x26\|w15\|x21\|w19))|
-|alu_13|CLK2|ALU_to_top ("Carry In")|x27 \| (w37&nIR0) \| (w9&bc1) \| (x24&(nIR3\|~bc1)) \| (w19&bc1) \| (x23&IR3)|
+|alu_13|CLK2|ALU_to_top ("Carry In")|x27 \| (w37&nIR0) \| (w9&bc1) \| (x24&(nIR3\|~bc1)) \| (w19&bc1) \| (x23&IR3&bc1)|
 
 The result is an AND-to-NOR tree (using alu_0 as an example):
 
