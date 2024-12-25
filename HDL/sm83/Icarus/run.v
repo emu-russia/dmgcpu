@@ -163,9 +163,12 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 	wire [15:0] #1 ADR = addrbus;
 	wire [7:0] #1 DAT = databus;
 
+	wire [7:0] serial_data = mem[16'hFF01];
+	wire serial_write = (ADR == 16'hFF02);
+
 	always @(negedge WR) begin
 		mem[ADR] <= DAT;
-		if (ADR == 16'hFF02) begin
+		if (serial_write) begin
 			$write("%c", mem[16'hFF01]);
 		end
 	end
