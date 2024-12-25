@@ -27,11 +27,6 @@ CYCLES=1024
 # Currently dmgcpu relies on a patched version of yosys.
 # Must be builded from source, from this branch: https://github.com/Rodrigodd/yosys/tree/dmgcpu-changes
 
-# DMG_YOSYS = /path/to/patched/yosys
-ifndef DMG_YOSYS
-$(error DMG_YOSYS is not set)
-endif
-
 run:
 	iverilog -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) -DROM=\"$(ROM)\" -DWAVE_FILE=\"$(WAVE_FILE)\" -DCYCLES=$(CYCLES)
 	vvp sm83.run -fst
@@ -91,8 +86,12 @@ clean:
 	rm -f dmg_waves.fst
 	rm -f dmg_waves2.fst
 
+# DMG_YOSYS = /path/to/yosys-fork
 # Use yosys to optmize the code, and write back as verilog
 yosys: yosys.ys
+ifndef DMG_YOSYS
+	error DMG_YOSYS is not set
+endif
 	$(DMG_YOSYS) -s yosys.ys
 
 run_yosys:

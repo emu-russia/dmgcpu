@@ -81,7 +81,6 @@ chtype -map seq_dff_posedge_comp myseqdff
 setattr -mod -set keep_hierarchy 1 BusKeeper
 proc
 flatten
-opt_merge_wires SM83Core
 
 # find tribufs, and propragate them. The tribufs will propagate until they
 # reach a output port, a BusKeepr, or a internal bus. 
@@ -173,7 +172,6 @@ chtype -map BusKeeper mybuffer c:*perm_ff
 
 opt_clean SM83Core
 opt_merge
-opt_merge_wires
 
 # There now should be no BusKeeper
 cd SM83Core
@@ -184,7 +182,7 @@ cd
 tribuf -merge -logic 
 
 # A is a output port, but it does not need to be a tri-state buffer
-tribuf -merge -logic -force w:A %ci1
+tribuf -logic -force w:A %ci1
 
 # From this point onwards, the design should be completely synthesizable
 # (hopefully). So we can apply more aggressive optimizations.

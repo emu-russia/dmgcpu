@@ -50,6 +50,9 @@ module ALU ( CLK2, CLK4, CLK5, CLK6, CLK7, DV, Res, AllZeros, d42, d58, w, x, bc
 	wire ALU_L5; 		// Carry4
 	wire ALU_to_bot;		// Derived from zbus[7] .  As a result of the optimization and transposition of the `bc` derivation circuit, the signal became internal.
 
+	// For debugging
+	(* keep *) wire [7:0] F = {bc[3], bc[2], bc[5], bc[1], 4'h0};
+
 	// Top part (CLA + Sum)
 
 	module6 Sums [7:0] (
@@ -315,7 +318,7 @@ module LargeComb1 ( CLK2, CLK6, CLK7, Temp_Z, AllZeros, d42, d58, w, x, alu, IR,
 		(f[6]&`s2_cb_bit&nIR[3]&IR[4]&IR[5]) |
 		(f[7]&`s2_cb_bit&IR[3]&IR[4]&IR[5]) |
 		(AllZeros&(d42|`s2_op_alu8|`s2_op_incdec8|`s3_alu_daa)) | (d58&Temp_Z) | (bc[3]&(`s3_alu_cpl|`s2_op_add_hl_sxx0|`s3_alu_ccf_scf|`s2_op_add_hl_sx01)) );
-	assign az[13] = ~( `s3_alu_cp | (`s2_op_incdec8&nIR[0]) | (`s2_op_sp_e_sx10&bc[1]) | (`s3_alu_sub_sbc&(nIR[3]|nbc[1])) | (`s2_op_add_hl_sx01&bc[1]) | (`s3_alu_add_adc&IR[3]) );
+	assign az[13] = ~( `s3_alu_cp | (`s2_op_incdec8&nIR[0]) | (`s2_op_sp_e_sx10&bc[1]) | (`s3_alu_sub_sbc&(nIR[3]|nbc[1])) | (`s2_op_add_hl_sx01&bc[1]) | (`s3_alu_add_adc&IR[3]&bc[1]) );
 
 	// Dynamic part
 
