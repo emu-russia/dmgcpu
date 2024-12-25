@@ -1,0 +1,56 @@
+// DAA pseudo code:
+//
+//     if !N:
+//         if C or a > 0x99:
+//             a += 0x60
+//             C = 1
+//         if H or (a & 0x0F) > 0x09:
+//             a += 0x6;
+//     else
+//         if C:
+//             a -= 0x60
+//         if H:
+//             a -= 0x6;
+//     Z = (a == 0)
+//     H = 0
+
+@0100    // .ORG   $100   
+00       // NOP   
+
+31 00 E0 // LD SP, $E000
+
+01 00 01 // LD BC, $0100 
+C5       // PUSH BC     
+F1       // POP AF      // A=01; clear N, H, C
+00       // NOP         // NOPs to check for signals changes due to DAA, and not due the value of A changing
+00       // NOP
+27       // DAA         // A=01
+
+01 00 02 // LD BC, $0200 
+C5       // PUSH BC     
+F1       // POP AF      // A=02; clear N, H, C
+00       // NOP         // NOPs to check for signals changes due to DAA, and not due the value of A changing
+00       // NOP
+27       // DAA         // A=02
+
+01 00 06 // LD BC, $0600 
+C5       // PUSH BC     
+F1       // POP AF      // A=06; clear N, H, C
+00       // NOP         // NOPs to check for signals changes due to DAA, and not due the value of A changing
+00       // NOP
+27       // DAA         // A=06
+
+                        
+AF       // XOR A       // A=0; clear N, H, C
+27       // DAA         // A=0;
+                        
+37       // SCF         // set C
+27       // DAA         // A=60
+                        
+AF       // XOR A       // A=0; clear N, H, C
+3D       // DEC A       // A=ff; set N, H
+27       // DAA         // A=05
+                        
+AF       // XOR A       // A=0; clear N, H, C
+3E BB    // LD A, $BB  // A=BB
+27       // DAA         // A=21; set C
