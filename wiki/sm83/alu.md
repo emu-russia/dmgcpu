@@ -134,7 +134,7 @@ In between is the small logic (8 AND gates implementing logical XOR operation ou
 
 ![module5_tran](/imgstore/modules/sm83/module5_tran.jpg)
 
-![module5_logisim](/logisim/module5_logisim.png)
+![module5_logisim](/logisim/sm83/module5_logisim.png)
 
 The gaps contain AND gates that implement a logical XOR operation based on the G/P Terms outputs (x/h).
 
