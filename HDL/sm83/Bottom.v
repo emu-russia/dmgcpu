@@ -198,9 +198,10 @@ module BottomLeftLogic ( CLK2, bc, bq4, bq5, bq7, Aout, abus, bbus, alu, DV );
 	wire [7:0] abq; 	// abus Bus keepers outputs
 	wire [7:0] bbq; 	// bbus Bus keepers outputs
 
-	assign bq4 = Aout[1] | Aout[2] | Aout[3];
-	assign bq5 = Aout[5] | Aout[6] | Aout[7];
-	assign bq7 = Aout[4] & Aout[7];
+	// Logic bits for DAA
+	assign bq4 = (Aout[1] | Aout[2]) & Aout[3]; // is the lower nibble greater than 9?
+	assign bq5 = (Aout[5] | Aout[6]) & Aout[7]; // is the upper nibble greater than 9?
+	assign bq7 = Aout[4] & Aout[7];             // are both nibbles greater than or equal to 8?
 	
 	// This requires transparent latches, since nobody could set up a abus/bbus. On the actual circuit, they are also present as a memory on the `not` gate.
 	BusKeeper abus_keepers [7:0] ( .d(abus), .q(abq) );
