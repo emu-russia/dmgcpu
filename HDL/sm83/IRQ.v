@@ -46,14 +46,14 @@ module IRQ_Logic ( CLK3, CLK4, CLK5, CLK6, DL, RD, CPU_IRQ_ACK, CPU_IRQ_TRIG, br
 	assign bot_to_Thingy = (A[0]&A[1]&A[2]&A[3]&A[4]&A[5]&A[6]&A[7]&A[8]&A[9]&A[10]&A[11]&A[12]&A[13]&A[14]&A[15]); 	// Addr == 0xffff
 
 	// Priority encoder
-	assign ack[0] = CLK6 ? ~(ifnq[0]&nso) : 1'b1;
-	assign ack[1] = CLK6 ? ~(ifnq[1]&ifq[0]&nso) : 1'b1;
-	assign ack[2] = CLK6 ? ~(ifnq[2]&ifq[0]&ifq[1]&nso) : 1'b1;
-	assign ack[3] = CLK6 ? ~(ifnq[3]&ifq[0]&ifq[1]&ifq[2]&nso) : 1'b1;
-	assign ack[4] = CLK6 ? ~(ifnq[4]&ifq[0]&ifq[1]&ifq[2]&ifq[3]&nso) : 1'b1;
-	assign ack[5] = CLK6 ? ~(ifnq[5]&ifq[0]&ifq[1]&ifq[2]&ifq[3]&ifq[4]&nso) : 1'b1;
-	assign ack[6] = CLK6 ? ~(ifnq[6]&ifq[0]&ifq[1]&ifq[2]&ifq[3]&ifq[4]&ifq[5]&nso) : 1'b1;
-	assign ack[7] = CLK6 ? ~(ifnq[7]&ifq[0]&ifq[1]&ifq[2]&ifq[3]&ifq[4]&ifq[5]&ifq[6]&nso) : 1'b1;
+	assign ack[0] = ~(CLK6 ? ~(ifnq[0]&nso) : 1'b1);
+	assign ack[1] = ~(CLK6 ? ~(ifnq[1]&ifq[0]&nso) : 1'b1);
+	assign ack[2] = ~(CLK6 ? ~(ifnq[2]&ifq[0]&ifq[1]&nso) : 1'b1);
+	assign ack[3] = ~(CLK6 ? ~(ifnq[3]&ifq[0]&ifq[1]&ifq[2]&nso) : 1'b1);
+	assign ack[4] = ~(CLK6 ? ~(ifnq[4]&ifq[0]&ifq[1]&ifq[2]&ifq[3]&nso) : 1'b1);
+	assign ack[5] = ~(CLK6 ? ~(ifnq[5]&ifq[0]&ifq[1]&ifq[2]&ifq[3]&ifq[4]&nso) : 1'b1);
+	assign ack[6] = ~(CLK6 ? ~(ifnq[6]&ifq[0]&ifq[1]&ifq[2]&ifq[3]&ifq[4]&ifq[5]&nso) : 1'b1);
+	assign ack[7] = ~(CLK6 ? ~(ifnq[7]&ifq[0]&ifq[1]&ifq[2]&ifq[3]&ifq[4]&ifq[5]&ifq[6]&nso) : 1'b1);
 
 	// Interrupt address
 	assign bro[3] = ~(CLK6 ? (~(CPU_IRQ_ACK[1]|CPU_IRQ_ACK[3]|CPU_IRQ_ACK[5]|CPU_IRQ_ACK[7])) : 1'b1);
