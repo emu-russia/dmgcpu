@@ -38,12 +38,16 @@ module SM83_Run();
 	wire ASYNC_RESET;
 	wire SYNC_RESET;
 
+	wire [7:0] CPU_IRQ_TRIG;
+
 	Bogus_HW hw (
 		.MREQ(MemReq),
 		.RD(RD),
 		.WR(WR),
 		.databus(dbus),
-		.addrbus(abus) );
+		.addrbus(abus),
+		.CPU_IRQ_TRIG(CPU_IRQ_TRIG),
+		.CPU_IRQ_ACK(irq_ack) );
 
 	// The core requires a rather sophisticated CLK generation circuit.
 
@@ -92,7 +96,7 @@ module SM83_Run();
 		.MREQ(MemReq),
 		.D(dbus),
 		.A(abus),
-		.CPU_IRQ_TRIG({8{1'b0}}),
+		.CPU_IRQ_TRIG(CPU_IRQ_TRIG),
 		.CPU_IRQ_ACK(irq_ack) );
 
 	initial begin
@@ -117,13 +121,15 @@ module SM83_Run();
 
 endmodule // SM83_Run
 
-module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
+module Bogus_HW ( MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_IRQ_ACK );
 
 	input MREQ;
 	input RD;
 	input WR;
 	inout [7:0] databus;
 	input [15:0] addrbus;
+	output [7:0] CPU_IRQ_TRIG;
+	input [7:0] CPU_IRQ_ACK;
 
 	reg [7:0] bootrom[0:255];
 	initial $readmemh("roms/boot.mem", bootrom);
@@ -133,11 +139,15 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 
 	reg in_boot = 1'b1;
 
+	assign CPU_IRQ_TRIG = mem[16'hFF0F];
+
 	integer j;
 	initial begin
 		// Pre-fill the memory with some value so we don't run into `xx`
 		for(j = 0; j < 65536; j = j+1) 
 			mem[j] = 0;
+
+		mem[16'hFF0f] = 8'he0;
 
 		`define STRINGIFY(x) `"x`"
 		`ifdef ROM
@@ -167,10 +177,18 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 	wire serial_write = (ADR == 16'hFF02);
 
 	always @(negedge WR) begin
-		mem[ADR] <= DAT;
+		if (ADR == 16'hFF0f)
+			mem[ADR] <= DAT | 8'he0;
+		else
+			mem[ADR] <= DAT;
+
 		if (serial_write) begin
 			$write("%c", mem[16'hFF01]);
 		end
+	end
+
+	always @(CPU_IRQ_ACK) begin
+		mem[16'hFF0F] <= mem[16'hFF0F] & ~CPU_IRQ_ACK;
 	end
 	
 

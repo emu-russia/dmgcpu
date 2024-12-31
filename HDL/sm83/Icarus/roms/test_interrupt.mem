@@ -14,6 +14,16 @@ FB       // EI
 00       // NOP
 00       // NOP
 00       // NOP
+F3       // DI
+3E 04    // LD A, $04
+EA 0F FF // LD ($FF0F), A
+00       // NOP
+00       // NOP
+EA FF FF // LD ($FFFF), A
+00       // NOP
+00       // NOP
+00       // NOP
+FB       // EI
 00       // NOP
 00       // NOP
 00       // NOP
