@@ -131,6 +131,10 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_IRQ_ACK );
 	output [7:0] CPU_IRQ_TRIG;
 	input [7:0] CPU_IRQ_ACK;
 
+	localparam REG_SERIAL_DATA = 16'hFF01;
+	localparam REG_SERIAL_CONTROL = 16'hFF02;
+	localparam REG_IF = 16'hFF0F;
+
 	reg [7:0] bootrom[0:255];
 	initial $readmemh("roms/boot.mem", bootrom);
 
@@ -139,7 +143,7 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_IRQ_ACK );
 
 	reg in_boot = 1'b1;
 
-	assign CPU_IRQ_TRIG = mem[16'hFF0F];
+	assign CPU_IRQ_TRIG = mem[REG_IF];
 
 	integer j;
 	initial begin
@@ -147,7 +151,7 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_IRQ_ACK );
 		for(j = 0; j < 65536; j = j+1) 
 			mem[j] = 0;
 
-		mem[16'hFF0f] = 8'he0;
+		mem[REG_IF] = 8'he0;
 
 		`define STRINGIFY(x) `"x`"
 		`ifdef ROM
@@ -173,22 +177,22 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_IRQ_ACK );
 	wire [15:0] #1 ADR = addrbus;
 	wire [7:0] #1 DAT = databus;
 
-	wire [7:0] serial_data = mem[16'hFF01];
-	wire serial_write = (ADR == 16'hFF02);
+	wire [7:0] serial_data = mem[REG_SERIAL_DATA];
+	wire serial_write = (ADR == REG_SERIAL_CONTROL);
 
 	always @(negedge WR) begin
-		if (ADR == 16'hFF0F)
+		if (ADR == REG_IF)
 			mem[ADR] <= DAT | 8'he0;
 		else
 			mem[ADR] <= DAT;
 
 		if (serial_write) begin
-			$write("%c", mem[16'hFF01]);
+			$write("%c", mem[REG_SERIAL_DATA]);
 		end
 	end
 
 	always @(CPU_IRQ_ACK) begin
-		mem[16'hFF0F] <= mem[16'hFF0F] & ~CPU_IRQ_ACK;
+		mem[REG_IF] <= mem[REG_IF] & ~CPU_IRQ_ACK;
 	end
 	
 
