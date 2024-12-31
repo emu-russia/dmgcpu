@@ -177,7 +177,7 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_IRQ_ACK );
 	wire serial_write = (ADR == 16'hFF02);
 
 	always @(negedge WR) begin
-		if (ADR == 16'hFF0f)
+		if (ADR == 16'hFF0F)
 			mem[ADR] <= DAT | 8'he0;
 		else
 			mem[ADR] <= DAT;
