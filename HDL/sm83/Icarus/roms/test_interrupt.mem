@@ -1,0 +1,29 @@
+@0100    // .ORG   $100   
+00       // NOP   
+00       // NOP   
+00       // NOP   
+00       // NOP   
+00       // NOP   
+
+AF       // XOR A
+EA FF FF // LD ($FFFF), A
+31 00 E0 // LD SP, $E000
+FB       // EI
+
+// nothing should happen, as there is no enable interrupt
+00       // NOP
+00       // NOP
+00       // NOP
+F3       // DI
+3E 04    // LD A, $04
+EA 0F FF // LD ($FF0F), A
+00       // NOP
+00       // NOP
+EA FF FF // LD ($FFFF), A
+00       // NOP
+00       // NOP
+00       // NOP
+FB       // EI
+00       // NOP
+00       // NOP
+00       // NOP

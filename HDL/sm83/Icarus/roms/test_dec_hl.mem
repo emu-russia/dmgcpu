@@ -1,0 +1,11 @@
+@0100    // .ORG   $100   
+00       // NOP   
+
+3E 80    // LD A, $80
+21 80 FF // LD HL, $FF80 
+77       // LD (HL), A
+35       // DEC (HL)
+35       // DEC (HL)
+35       // DEC (HL)
+35       // DEC (HL)
+35       // DEC (HL)

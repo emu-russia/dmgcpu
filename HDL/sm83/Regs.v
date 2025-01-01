@@ -69,7 +69,13 @@ module RegsBuses ( CLK5, CLK6, w, x, DL, IR, abus, bbus, cbus, dbus, ebus, fbus,
 	assign cbus = `s3_oe_bcreg_to_idu ? ~r6q : 8'bzzzzzzzz;
 	assign bbus = `s3_oe_creg_to_rbus ? ~r6q : 8'bzzzzzzzz;
 	assign bbus = `s3_oe_breg_to_rbus ? ~r7q : 8'bzzzzzzzz;
-	assign dbus = `s3_oe_bcreg_to_idu ? ~r7q : 8'bzzzzzzzz;
+	assign dbus = (~`s2_op_ldh_c_sx00 & `s3_oe_bcreg_to_idu) ? ~r7q : 8'bzzzzzzzz;
+
+	// The instruction LDH A, (C) enables both s2_op_ldh_c_sx00 and
+	// s3_oe_bcreg_to_idu at the same time, causing a conflict. Because of the
+	// use of dynamic logic by the circut, the result favors 0. So the
+	// conflict will resolve to `s2_op_ldh_c_sx00. We simulate that in the
+	// verilog using aditional logic.
 
 	assign Aout = r1q;
 

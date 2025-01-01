@@ -1,0 +1,13 @@
+@0100    // .ORG   $100   
+00       // NOP   
+
+3E AA    // LD A, $aa
+EA 91 FF // LD ($FF91), A
+AF       // XOR A, A
+F0 91    // LDH A, ($91)
+AF       // XOR A, A
+06 bb    // LD B, $bb
+0E 91    // LD C, $80
+F2       // LDH A, C
+
+00
