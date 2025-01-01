@@ -37,7 +37,7 @@ module IRQ_Logic ( CLK3, CLK4, CLK5, CLK6, DL, RD, CPU_IRQ_ACK, CPU_IRQ_TRIG, br
 	// IE/IF
 	module7 IE [7:0] ( .clk({8{CLK6}}), .cclk({8{CLK5}}), .d(DL), .ld({8{Thingy_to_bot}}), .res({8{SYNC_RES}}), .q(ieq), .nq(ienq) );
 	module8 IF [7:0] ( .clk({8{CLK3}}), .cclk({8{CLK4}}), .d(~(ienq&CPU_IRQ_TRIG)), .q(ifq), .nq(ifnq) );
-	assign DL = (RD & bot_to_Thingy) ? ienq : 8'bzzzzzzzz; 	// znand3.
+	assign DL = (RD & bot_to_Thingy) ? ~ieq : 8'bzzzzzzzz; 	// znand3.
 
 	// Breadcrumps
 	assign nso = ~SeqOut_1;
