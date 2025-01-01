@@ -28,19 +28,19 @@ CYCLES=1024
 # Must be builded from source, from this branch: https://github.com/Rodrigodd/yosys/tree/dmgcpu-changes
 
 run:
-	iverilog -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) -DROM=\"$(ROM)\" -DWAVE_FILE=\"$(WAVE_FILE)\" -DCYCLES=$(CYCLES)
+	iverilog -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) "-DROM=\"$(ROM)\"" -DWAVE_FILE=\"$(WAVE_FILE)\" -DCYCLES=$(CYCLES)
 	vvp sm83.run -fst
 
 low:
-	/bin/iverilog -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) -DROM=\"$(ROM)\" -DWAVE_FILE=\"$(WAVE_FILE)\" -DCYCLES=$(CYCLES)
+	/bin/iverilog -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) "-DROM=\"$(ROM)\"" -DWAVE_FILE=\"$(WAVE_FILE)\" -DCYCLES=$(CYCLES)
 	/bin/vvp sm83.run -fst
 
 verbose:
-	iverilog -v -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) -DROM=\"$(ROM)\" -DWAVE_FILE=\"$(WAVE_FILE)\" -DCYCLES=$(CYCLES)
+	iverilog -v -Wall -D ICARUS -s SM83_Run -o sm83.run $(SOURCES) "-DROM=\"$(ROM)\"" -DWAVE_FILE=\"$(WAVE_FILE)\" -DCYCLES=$(CYCLES)
 	vvp -v sm83.run -fst
 
 VERILATOR_OPTS=\
- -DROM=\"$(ROM)\"\
+ "-DROM=\"$(ROM)\""\
  -DWAVE_FILE=\"dmg_waves3.fst\"\
  -DCYCLES=$(CYCLES)\
  --top-module SM83_Run\
@@ -96,5 +96,5 @@ endif
 
 run_yosys:
 	echo "+timescale+1ns/1ns" > command_file.txt
-	iverilog -f command_file.txt -g2012 -Wall -D ICARUS -s SM83_Run -o sm83.yosys.run sm83.yosys.v external_clk.v run.v -DROM=\"$(ROM)\" -DWAVE_FILE=\"dmg_waves2.fst\" -DCYCLES=$(CYCLES)
+	iverilog -f command_file.txt -g2012 -Wall -D ICARUS -s SM83_Run -o sm83.yosys.run sm83.yosys.v external_clk.v run.v "-DROM=\"$(ROM)\"" -DWAVE_FILE=\"dmg_waves2.fst\" -DCYCLES=$(CYCLES)
 	vvp sm83.yosys.run -fst

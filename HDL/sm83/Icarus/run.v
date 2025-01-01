@@ -38,12 +38,18 @@ module SM83_Run();
 	wire ASYNC_RESET;
 	wire SYNC_RESET;
 
+	wire [7:0] CPU_IRQ_TRIG;
+
 	Bogus_HW hw (
+		.CLK(CLK),
+		.RESET(ExternalRESET),
 		.MREQ(MemReq),
 		.RD(RD),
 		.WR(WR),
 		.databus(dbus),
-		.addrbus(abus) );
+		.addrbus(abus),
+		.CPU_IRQ_TRIG(CPU_IRQ_TRIG),
+		.CPU_IRQ_ACK(irq_ack) );
 
 	// The core requires a rather sophisticated CLK generation circuit.
 
@@ -92,7 +98,7 @@ module SM83_Run();
 		.MREQ(MemReq),
 		.D(dbus),
 		.A(abus),
-		.CPU_IRQ_TRIG({8{1'b0}}),
+		.CPU_IRQ_TRIG(CPU_IRQ_TRIG),
 		.CPU_IRQ_ACK(irq_ack) );
 
 	initial begin
@@ -117,13 +123,33 @@ module SM83_Run();
 
 endmodule // SM83_Run
 
-module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
+module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_IRQ_ACK );
 
+	input CLK;
+	input RESET;
 	input MREQ;
 	input RD;
 	input WR;
 	inout [7:0] databus;
 	input [15:0] addrbus;
+	output [7:0] CPU_IRQ_TRIG;
+	input [7:0] CPU_IRQ_ACK;
+
+	localparam REG_SERIAL_DATA = 16'hFF01;
+	localparam REG_SERIAL_CONTROL = 16'hFF02;
+	localparam REG_IF = 16'hFF0F;
+	localparam REG_DIV = 16'hFF04;
+	localparam REG_TIMA = 16'hFF05;
+	localparam REG_TMA = 16'hFF06;
+	localparam REG_TAC = 16'hFF07;
+
+	// Timer registers
+	reg [15:0] DIV = 0;
+	reg [7:0] TIMA = 0;
+	reg [7:0] TMA = 0;
+	reg [2:0] TAC = 0;
+
+	wire counter_bit = TAC[2] && (TAC[1:0] == 2'b00 ? DIV[9] : TAC[1:0] == 2'b01 ? DIV[3] : TAC[1:0] == 2'b10 ? DIV[5] : DIV[7]);
 
 	reg [7:0] bootrom[0:255];
 	initial $readmemh("roms/boot.mem", bootrom);
@@ -133,11 +159,15 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 
 	reg in_boot = 1'b1;
 
+	assign CPU_IRQ_TRIG = mem[REG_IF];
+
 	integer j;
 	initial begin
 		// Pre-fill the memory with some value so we don't run into `xx`
 		for(j = 0; j < 65536; j = j+1) 
 			mem[j] = 0;
+
+		mem[REG_IF] = 8'he0;
 
 		`define STRINGIFY(x) `"x`"
 		`ifdef ROM
@@ -147,6 +177,19 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 		`endif
 	end
 
+	always @(posedge CLK) begin
+		DIV <= DIV + 1;
+	end
+	always @(negedge counter_bit) begin
+		if (RESET)
+			TIMA <= 0;
+		else if (TIMA == 255) begin
+			TIMA <= TMA;
+			mem[REG_IF] <= mem[REG_IF] | 4'h4;
+		end else 
+			TIMA <= TIMA + 1;
+	end
+
 	always @(posedge RD) begin
 		// disable bootrom after entering ROM
 		if (in_boot && addrbus >= 16'h0100) begin
@@ -154,6 +197,10 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 		end
 
 		if (in_boot) value <= bootrom[addrbus[7:0]];
+		else if (ADR == REG_DIV) value <= DIV[15:8];
+		else if (ADR == REG_TIMA) value <= TIMA;
+		else if (ADR == REG_TMA) value <= TMA;
+		else if (ADR == REG_TAC) value <= {5'b1, TAC};
 		else value <= mem[addrbus];
 	end
 
@@ -163,11 +210,25 @@ module Bogus_HW ( MREQ, RD, WR, databus, addrbus );
 	wire [15:0] #1 ADR = addrbus;
 	wire [7:0] #1 DAT = databus;
 
+	wire [7:0] serial_data = mem[REG_SERIAL_DATA];
+	wire serial_write = (ADR == REG_SERIAL_CONTROL);
+
 	always @(negedge WR) begin
-		mem[ADR] <= DAT;
-		if (ADR == 16'hFF02) begin
-			$write("%c", mem[16'hFF01]);
+		if (ADR == REG_IF) mem[ADR] <= DAT | 8'he0;
+		else if (ADR == REG_DIV) DIV <= 0;
+		else if (ADR == REG_TIMA) TIMA <= DAT;
+		else if (ADR == REG_TMA) TMA <= DAT;
+		else if (ADR == REG_TAC) TAC <= DAT[2:0];
+		else
+			mem[ADR] <= DAT;
+
+		if (serial_write) begin
+			$write("%c", mem[REG_SERIAL_DATA]);
 		end
+	end
+
+	always @(CPU_IRQ_ACK) begin
+		mem[REG_IF] <= mem[REG_IF] & ~CPU_IRQ_ACK;
 	end
 	
 
