@@ -143,6 +143,9 @@ module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_
 	localparam REG_TMA = 16'hFF06;
 	localparam REG_TAC = 16'hFF07;
 
+	// Simulate memory banking just enough for running cpu_instrs.gb
+	reg [1:0] BANK_SELECTED = 1'b1;
+
 	// Timer registers
 	reg [15:0] DIV = 16'haba9; // magic value that matches the reference emulator
 	reg [7:0] TIMA = 0;
@@ -157,6 +160,7 @@ module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_
 	reg [7:0] bootrom[0:255];
 	initial $readmemh("roms/boot.mem", bootrom);
 
+	reg [7:0] rom[0:65535];
 	reg [7:0] mem[0:65535];
 	reg [7:0] value;
 
@@ -167,14 +171,16 @@ module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_
 	integer j;
 	initial begin
 		// Pre-fill the memory with some value so we don't run into `xx`
-		for(j = 0; j < 65536; j = j+1) 
+		for(j = 0; j < 65536; j = j+1) begin
 			mem[j] = 0;
+			rom[j] = 0;
+		end
 
 		`define STRINGIFY(x) `"x`"
 		`ifdef ROM
-			$readmemh(`ROM, mem);
+			$readmemh(`ROM, rom);
 		`else
-			$readmemh("roms/bogus_hw.mem", mem);
+			$readmemh("roms/bogus_hw.mem", rom);
 		`endif
 	end
 
@@ -212,6 +218,8 @@ module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_
 		else if (ADR == REG_TAC) value <= {5'h1f, TAC};
 		else if (ADR == REG_IF) value <= {3'h7, IF};
 		else if (ADR >= 16'hff00 && ADR <= 16'hff7f) value <= 16'hff; // IO registers
+		else if (ADR <= 16'h3fff) value <= rom[addrbus];
+		else if (ADR <= 16'h7fff) value <= rom[{BANK_SELECTED[1:0], addrbus[13:0]}];
 		else value <= mem[addrbus];
 	end
 
@@ -230,6 +238,10 @@ module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_
 		else if (ADR == REG_TMA) TMA <= DAT;
 		else if (ADR == REG_TAC) TAC <= DAT[2:0];
 		else if (ADR == REG_IF) IF <= DAT[4:0];
+		else if (ADR <= 16'h7fff) begin
+			// ROM area, switch banks
+			BANK_SELECTED <= DAT[1:0];
+		end
 		else
 			mem[ADR] <= DAT;
 
