@@ -1,4 +1,6 @@
-# DMG PCB
+# Reference DMG PCB
+
+Used for design verification.
 
 DMG-CPU-06 motherboard netlist has been reconstructed from @Gekkio's image:
 
