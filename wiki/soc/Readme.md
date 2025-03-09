@@ -1,13 +1,5 @@
 # DMG-CPU LR35902 SoC
 
-## Purpose of the Research
-
-DMG-CPU is a fairly well researched chip. It is difficult to add something and not to repeat :-) That's why we will try to make the result of the research an addition to what is already known.
-
-The main goal (as in our other projects) is to get a netlist on Verilog, preferably as close as possible to the real chip ("die-perfect"). For this purpose we use the [Deroute utility](https://github.com/emu-russia/Deroute), which allows us to export ready-to-use Verilog at once.
-
-Then the reader has 2 options: either to "understand" the decompiled netlist (which in principle has already been done in @msinger's work), or to use it "without understanding" in other projects.
-
 ## SoC Architecture Overview
 
 After a long analysis, the impressions about the architectural solutions used in DMG-CPU can be expressed as follows:
