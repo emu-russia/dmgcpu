@@ -2,6 +2,7 @@
 
 ## Topics
 
+- [Reference PCB][/wiki/pcb.md]
 - [SoC Overview](/wiki/soc/Readme.md)
 - [I/O Terminals & Bonding Pads](/wiki/soc/pads.md)
 - [Cells Library](/wiki/soc/cells.md)
