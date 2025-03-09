@@ -8,7 +8,7 @@ To get all the information visit the [Wiki](/wiki/Readme.md).
 
 TBD: The SoC landing page and content is not yet fully populated, in process..
 
-# DMG-CPU Progress
+## Progress
 
 |Case|Top-Level|Pads|Memory|DAC|ClkGen|Ser|MMIO|Arb|PPU|APU|SM83|
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -19,3 +19,8 @@ TBD: The SoC landing page and content is not yet fully populated, in process..
 |Verilog                          | | | | |✅|✅| | | | |✅|
 |Design extracted from PlanAhead  | | | | |✅| | | | | |✅|
 |Verification with @msinger       | | | | |✅| | | | | |-|
+
+## Related
+
+- DMG LCD Research: https://github.com/ogamespec/dmg-lcd
+- MBC1 Mapper: https://github.com/emu-russia/mappers/tree/main/MBC1
