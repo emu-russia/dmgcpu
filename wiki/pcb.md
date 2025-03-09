@@ -16,9 +16,13 @@ Verilog model:
 // DMG-CPU-06 PCB netlist
 // Original image by @Gekkio (https://github.com/Gekkio/gb-schematics/blob/main/DMG-CPU-06/schematic/DMG-CPU-06.pdf)
 
-module dmg_pcb (  n_res);
+module dmg_pcb (  sin, sout, sck, n_res, p14);
 
+	input wire sin;
+	output wire sout;
+	inout wire sck;
 	input wire n_res;
+	output wire p14;
 
 	// Wires
 
@@ -56,41 +60,46 @@ module dmg_pcb (  n_res);
 	wire w35;
 	wire w36;
 	wire w37;
+	wire w38;
 
+	assign w6 = sin;
+	assign sout = w7;
+	assign sck = w5;
 	assign w9 = n_res;
+	assign p14 = w25;
 
 	// Instances
 
 	pcb_dmg_cpu u1 (.d(w29), .md(w15), .sck(w5), .sin(w6), .sout(w7), .so1(w3), .so2(w4), .ck1(w1), .ck2(w2), .n_res(w9), .a(w28), .ma(w14), .n_rd(w35), .n_cs(w37), .n_wr(w36), .phi(w27),
-		.t1(1'b0), .t2(1'b0), .cpg(w21), .cp(w20), .cpl(w18), .fr(w17), .ld0(w23), .ld1(w24), .s(w16), .st(w19), .p14(w25), .p15(w26), .p10(w31), .p11(w32), .p12(w33), .p13(w34), .n_mrd(w11), .n_mcs(w12), .n_mwr(w13) );
+		.t1(1'b0), .t2(1'b0), .cpg(w21), .cp(w20), .cpl(w18), .fr(w17), .ld0(w23), .ld1(w24), .s(w16), .st(w19), .p14(w25), .p15(w26), .p10(w31), .p11(w32), .p12(w33), .p13(w34), .n_mrd(w11), .n_mcs(w12), .n_mwr(w13), .vin(w38) );
 	pcb_sys_clock x1 (.ck_out(w1), .ck_in(w2) );
 	pcb_LH5164LN u2 (.a(w14), .n_ce1(w12), .ce2(1'b1), .n_we(w13), .n_oe(w11), .io(w15) );
 	pcb_front_board p2 (.p10(w31), .p11(w32), .p13(w34), .p12(w33), .p14(w25), .p15(w26), .s(w16), .fr(w17), .cp(w20), .ld1(w24), .ld0(w23), .st(w19), .cpl(w18), .cpg(w21), .sp(w22) );
-	pcb_cartridge_slot p1 (.n_res(w9), .phi(w27), .n_wr(w36), .n_rd(w35), .n_cs(w37), .a(w28), .d(w29) );
+	pcb_cartridge_slot p1 (.n_res(w9), .phi(w27), .n_wr(w36), .n_rd(w35), .n_cs(w37), .a(w28), .d(w29), .cart_to_vin(w38) );
 	pcb_aux p3 (.so_right(w3), .so_left(w4), .sp_out(w22) );
-	pcb_link_port p4 (.ser_out(w6), .ser_in(w7), .sck(w5), .p14(w25) );
 	pcb_LH5164LN u3 (.a(w28[12:0]), .n_ce1(w37), .ce2(w28[14]), .n_we(w36), .n_oe(w35), .io(w29) );
 endmodule // dmg_pcb
 
 // Module Definitions [It is possible to wrap here on your primitives]
 
-module pcb_dmg_cpu (  d, md, sck, sin, sout, so1, so2, ck1, ck2, n_res, a, ma, n_rd, n_cs, n_wr, phi, t1, t2, cpg, cp, cpl, fr, ld0, ld1, s, st, p14, p15, p10, p11, p12, p13, n_mrd, n_mcs, n_mwr);
+module pcb_dmg_cpu (  d, md, sck, sin, sout, so1, so2, ck1, ck2, n_res, a, ma, n_rd, n_cs, n_wr, phi,
+	t1, t2, cpg, cp, cpl, fr, ld0, ld1, s, st, p14, p15, p10, p11, p12, p13, n_mrd, n_mcs, n_mwr, vin, n_nmi, m1);
 
 	inout wire [7:0] d;
 	inout wire [7:0] md;
 	inout wire sck;
-	input wire sin;
+	inout wire sin;
 	output wire sout;
 	output wire so1;
 	output wire so2;
 	input wire ck1;
 	output wire ck2;
 	input wire n_res;
-	output wire [15:0] a;
+	inout wire [15:0] a;
 	output wire [12:0] ma;
-	output wire n_rd;
+	inout wire n_rd;
 	output wire n_cs;
-	output wire n_wr;
+	inout wire n_wr;
 	output wire phi;
 	input wire t1;
 	input wire t2;
@@ -108,9 +117,12 @@ module pcb_dmg_cpu (  d, md, sck, sin, sout, so1, so2, ck1, ck2, n_res, a, ma, n
 	inout wire p11;
 	inout wire p12;
 	inout wire p13;
-	output wire n_mrd;
-	output wire n_mcs;
-	output wire n_mwr;
+	inout wire n_mrd;
+	inout wire n_mcs;
+	inout wire n_mwr;
+	input wire vin;
+	input wire n_nmi;
+	output wire m1;
 
 endmodule // pcb_dmg_cpu
 
@@ -152,7 +164,7 @@ module pcb_front_board (  p10, p11, p13, p12, p14, p15, s, fr, cp, ld1, ld0, st,
 
 endmodule // pcb_front_board
 
-module pcb_cartridge_slot (  n_res, phi, n_wr, n_rd, n_cs, a, d);
+module pcb_cartridge_slot (  n_res, phi, n_wr, n_rd, n_cs, a, d, cart_to_vin);
 
 	input wire n_res;
 	input wire phi;
@@ -161,6 +173,7 @@ module pcb_cartridge_slot (  n_res, phi, n_wr, n_rd, n_cs, a, d);
 	input wire n_cs;
 	input wire [15:0] a;
 	inout wire [7:0] d;
+	output wire cart_to_vin;
 
 endmodule // pcb_cartridge_slot
 
@@ -171,13 +184,4 @@ module pcb_aux (  so_right, so_left, sp_out);
 	output wire sp_out;
 
 endmodule // pcb_aux
-
-module pcb_link_port (  ser_out, ser_in, sck, p14);
-
-	output wire ser_out;
-	input wire ser_in;
-	inout wire sck;
-	input wire p14;
-
-endmodule // pcb_link_port
 ```
