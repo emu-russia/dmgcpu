@@ -49,21 +49,25 @@ module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr
 	input wire n_ppu_hard_reset;
 	input wire ppu_mode3;
 	inout wire [7:0] md;
+	input wire sp_bp_cys;
+	input wire tm_bp_cys;
+	input wire n_tm_bp_cys;
+	input wire cpu_vram_oam_rd;
+
+	// Unknowns
+
+	input wire from_ppu2_unk2;
+	input wire from_mmio_unk1;
+	input wire from_ppu1_RAWA;
+
 	output wire arb_unk1;
 	output wire arb_unk2;
 	output wire arb_unk3;
-	input wire from_ppu2_unk2;
 	output wire arb_unk4;
 	output wire arb_unk5;
-	input wire from_mmio_unk1;
 	output wire arb_SUGY;
 	output wire arb_SYZO;
-	input wire sp_bp_cys;
-	input wire tm_bp_cys;
-	input wire from_ppu1_RAWA;
-	input wire n_tm_bp_cys;
-	output wire arb_RYCU;
-	input wire cpu_vram_oam_rd;
 	output wire arb_SERA;
+	output wire arb_RYCU;
 
 endmodule // Arbiter
