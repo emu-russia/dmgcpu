@@ -1,4 +1,4 @@
-module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_rd, n_wr, phi, ck1, ck2, sout, p14, p15, so2, so1, s, fr, cpl, st, cp, cpg, ld0, ld1, n_mwr, ma, n_mrd, n_mcs, vin);
+module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_rd, n_wr, phi, ck1, ck2, sout, p14, p15, so2, so1, s, fr, cpl, st, cp, cpg, ld0, ld1, n_mwr, ma, n_mrd, n_mcs, vin, n_nmi, m1);
 
 	inout wire sck;
 	inout wire [7:0] md;
@@ -36,6 +36,8 @@ module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_
 	inout wire n_mrd;
 	inout wire n_mcs;
 	input wire vin;
+	input wire n_nmi;
+	output wire m1;	
 
 	// Wires
 
@@ -563,6 +565,8 @@ module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_
 	wire w522;
 	wire w523;
 	wire w524;
+	wire w525;
+	wire w526;
 
 	assign sck = w1;
 	assign md[0] = w2;
@@ -641,6 +645,8 @@ module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_
 	assign ma[1] = w75;
 	assign ma[0] = w76;
 	assign w77 = vin;
+	assign w525 = n_nmi;
+	assign m1 = w526;
 
 	// Instances
 
@@ -696,7 +702,7 @@ module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_
 	OBUF_A pad_st (.n_OUTPUT(w161), .PAD_OUT(w56) );
 	OBUF_A pad_cp (.n_OUTPUT(w160), .PAD_OUT(w57) );
 	OBUF_A pad_cpg (.n_OUTPUT(w159), .PAD_OUT(w58) );
-	OBUF_A pad_m1 (.n_OUTPUT(w100) );
+	OBUF_A pad_m1 (.n_OUTPUT(w100), .PAD_OUT(w526) );
 	OBUF_A pad_ld0 (.n_OUTPUT(w158), .PAD_OUT(w59) );
 	OBUF_A pad_ld1 (.n_OUTPUT(w157), .PAD_OUT(w60) );
 	OBUF_A pad_ma8 (.n_OUTPUT(w147), .PAD_OUT(w62) );
@@ -716,7 +722,7 @@ module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_
 	AOBUFFER pad_so2 (.VOUT(w276), .PAD_OUT(w51) );
 	OBUF_B pad_p15 (.n_DRV_HIGH(w273), .DRV_LOW(w274), .PAD_OUT(w50) );
 	OBUF_B pad_p14 (.DRV_LOW(w272), .n_DRV_HIGH(w271), .PAD_OUT(w49) );
-	IBUF_B pad_nnmi (.n_INPUT(w98) );
+	IBUF_B pad_nnmi (.PAD_IN(w525), .n_INPUT(w98) );
 	OBUF_A pad_ncs (.PAD_OUT(w42), .n_OUTPUT(w240) );
 	OBUF_A pad_phi (.PAD_OUT(w45), .n_OUTPUT(w84) );
 	OSC ck1_ck2 (.ENA(w87), .n_CLK(w78), .CK_IN(w46), .CK_OUT(w47) );
@@ -725,7 +731,7 @@ module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_
 	PPU1 ppu1 (.a[0](w101), .a[1](w102), .d[7](w103), .d[6](w104), .d[5](w105), .d[4](w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .a[2](w111), .a[3](w112), .a[4](w113), .a[5](w114), .a[6](w115), .a[7](w116), .a[8](w117), .a[9](w118), .a[10](w119), .a[11](w120), .a[12](w121), .n_ma[12](w144), .n_ma[10](w145), .n_ma[11](w146), .n_ma[8](w147), .n_ma[9](w148), .n_ma[6](w149), .n_ma[5](w150), .n_ma[7](w151), .n_ma[3](w152), .n_ma[2](w153), .n_ma[4](w154), .n_ma[1](w155), .n_ma[0](w156), .lcd_ld1(w157), .lcd_ld0(w158), .lcd_cpg(w159), .lcd_cp(w160), .lcd_st(w161), .lcd_cpl(w162), .lcd_fr(w163), .lcd_s(w164), .CONST0(w259), .n_dma_phi(w337), .ppu_rd(w355), .ppu_wr(w356), .ppu_clk(w365), .vram_to_oam(w366), .ffxx(w395), .n_ppu_hard_reset(w396), .ff46(w397), .nma[9](w398), .fexx(w399), .nma[0](w400), .ff43(w401), .nma[4](w402), .nma[12](w403), .nma[6](w404), .nma[5](w405), .ff42(w406), .nma[11](w407), .nma[10](w408), .sprite_x_flip(w409), .nma[3](w410), .nma[2](w411), .sprite_x_match(w412), .bp_sel(w413), .ppu_mode3(w450), .md[2](w451), .md[5](w452), .md[1](w453), .md[7](w454), .md[0](w455), .md[6](w456), .md[3](w457), .md[4](w458), .v[7](w460), .FF43_D1(w461), .FF43_D0(w462), .n_ppu_clk(w463), .FF43_D2(w464), .h[3](w465), .ppu_mode2(w466), .h[0](w467), .h[1](w468), .vbl(w469), .stop_oam_eval(w470), .obj_color(w471), .vclk2(w472), .from_ppu2_unk1(w473), .ppu1_unk1(w474), .obj_prio(w475), .n_ppu_reset(w476), .h[6](w477), .ppu1_unk2(w483), .nma[7](w484), .nma[8](w485), .nma[1](w486), .v[5](w487), .h[7](w488), .FF40_D3(w489), .FF40_D2(w490), .in_window(w491), .h[5](w492), .v[3](w493), .v[6](w494), .v[4](w495), .v[0](w496), .h[4](w497), .v[2](w498), .h[2](w499), .v[1](w500), .FF40_D1(w501), .sp_bp_cys(w505), .tm_bp_cys(w506), .ppu1_RAWA(w507), .n_tm_bp_cys(w508), .arb_RYCU(w509), .ppu_int_stat(w512), .ppu_int_vbl(w513), .ppu1_XUJU(w517), .bp_cy(w518), .tm_cy(w519), .ppu1_XUJA(w520), .ppu1_XUQU(w521), .ppu1_XOCE(w522), .ppu1_XYSO(w523), .ppu1_XUPY(w524) );
 	PPU2 ppu2 (.cclk(w80), .clk6(w89), .n_reset2(w93), .a[0](w101), .a[1](w102), .d[7](w103), .d[6](w104), .d[5](w105), .d[4](w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .a[2](w111), .a[3](w112), .a[4](w113), .a[5](w114), .a[6](w115), .a[7](w116), .n_oamb[0](w165), .n_oamb[1](w166), .n_oamb[2](w167), .n_oamb[3](w168), .n_oamb[4](w169), .n_oamb[5](w170), .n_oamb[6](w171), .n_oamb[7](w172), .oam_bl_pch(w173), .oa[1](w174), .oa[2](w175), .oa[3](w176), .oa[4](w177), .oa[5](w178), .oa[6](w179), .oa[7](w180), .n_oam_rd(w181), .n_oamb_wr(w182), .n_oama_wr(w183), .n_oama[0](w184), .n_oama[1](w185), .n_oama[2](w186), .n_oama[3](w187), .n_oama[4](w188), .n_oama[5](w189), .n_oama[6](w190), .n_oama[7](w191), .CONST0(w259), .n_dma_phi(w337), .dma_a[0](w338), .dma_a[4](w339), .dma_a[2](w340), .dma_a[6](w341), .dma_a[10](w342), .dma_a[1](w343), .dma_a[5](w344), .dma_a[11](w345), .dma_a[3](w346), .dma_a[7](w347), .dma_a[8](w348), .dma_a[12](w349), .dma_a[9](w350), .dma_run(w351), .soc_wr(w352), .soc_rd(w353), .ppu_rd(w355), .ppu_wr(w356), .ppu_clk(w365), .vram_to_oam(w366), .n_ppu_hard_reset(w396), .nma[9](w398), .fexx(w399), .nma[0](w400), .ff43(w401), .nma[4](w402), .nma[12](w403), .nma[6](w404), .nma[5](w405), .ff42(w406), .nma[11](w407), .nma[10](w408), .sprite_x_flip(w409), .nma[3](w410), .nma[2](w411), .sprite_x_match(w412), .bp_sel(w413), .ppu_mode3(w450), .md[2](w451), .md[5](w452), .md[1](w453), .md[7](w454), .md[0](w455), .md[6](w456), .md[3](w457), .md[4](w458), .from_arb_unk1(w459), .v[7](w460), .FF43_D1(w461), .FF43_D0(w462), .n_ppu_clk(w463), .FF43_D2(w464), .h[3](w465), .ppu_mode2(w466), .h[0](w467), .h[1](w468), .vbl(w469), .stop_oam_eval(w470), .obj_color(w471), .vclk2(w472), .ppu2_unk1(w473), .from_ppu1_unk1(w474), .obj_prio(w475), .n_ppu_reset(w476), .h[6](w477), .from_arb_unk2(w478), .from_arb_unk3(w479), .ppu2_unk2(w480), .from_arb_unk4(w481), .from_arb_unk5(w482), .from_ppu1_unk2(w483), .nma[7](w484), .nma[8](w485), .nma[1](w486), .v[5](w487), .h[7](w488), .FF40_D3(w489), .FF40_D2(w490), .in_window(w491), .h[5](w492), .v[3](w493), .v[6](w494), .v[4](w495), .v[0](w496), .h[4](w497), .v[2](w498), .h[2](w499), .v[1](w500), .FF40_D1(w501), .from_mmio_unk1(w502), .from_arb_SUGY(w503), .from_arb_SYZO(w504), .sp_bp_cys(w505), .cpu_vram_oam_rd(w510), .from_mmio_unk2(w511), .ppu2_CATY(w514), .from_arb_SERA(w515), .from_ppu1_XUJU(w517), .bp_cy(w518), .tm_cy(w519), .from_ppu1_XUJA(w520), .from_ppu1_XUQU(w521), .from_ppu1_XOCE(w522), .from_ppu1_XYSO(w523), .from_ppu1_XUPY(w524) );
 	OAM oam (.n_oamb[0](w165), .n_oamb[1](w166), .n_oamb[2](w167), .n_oamb[3](w168), .n_oamb[4](w169), .n_oamb[5](w170), .n_oamb[6](w171), .n_oamb[7](w172), .oam_bl_pch(w173), .oa[1](w174), .oa[2](w175), .oa[3](w176), .oa[4](w177), .oa[5](w178), .oa[6](w179), .oa[7](w180), .n_oam_rd(w181), .n_oamb_wr(w182), .n_oama_wr(w183), .n_oama[0](w184), .n_oama[1](w185), .n_oama[2](w186), .n_oama[3](w187), .n_oama[4](w188), .n_oama[5](w189), .n_oama[6](w190), .n_oama[7](w191) );
-	HRAM hram (.clk7(w90), .a[0](w101), .a[1](w102), .d[7](w103), .d[6](w104), .d[5](w105), .d[4(w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .a[2](w111), .a[3](w112), .a[4](w113), .a[5](w114), .a[6](w115), .a[7](w116), .soc_wr(w352), .soc_rd(w353), .ffxx(w395) );
+	HRAM hram (.clk7(w90), .a[0](w101), .a[1](w102), .d[7](w103), .d[6](w104), .d[5](w105), .d[4](w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .a[2](w111), .a[3](w112), .a[4](w113), .a[5](w114), .a[6](w115), .a[7](w116), .soc_wr(w352), .soc_rd(w353), .ffxx(w395) );
 	DAC dac (.vin_analog(w275), .so2_analog(w276), .so1_analog(w277), .n_ch1_amp_en(w414), .n_ch2_amp_en(w415), .n_ch3_amp_en(w416), .n_ch4_amp_en(w417), .ch1_out[0](w418), .ch1_out[1](w419), .ch1_out[2](w420), .ch1_out[3](w421), .ch2_out[0](w422), .ch2_out[1](w423), .ch2_out[2](w424), .ch2_out[3](w425), .ch3_out[0](w426), .ch3_out[1](w427), .ch3_out[2](w428), .ch3_out[3](w429), .ch4_out[0](w430), .ch4_out[1](w431), .ch4_out[2](w432), .ch4_out[3](w433), .r_vin_en(w434), .rmixer[0](w435), .rmixer[1](w436), .rmixer[2](w437), .rmixer[3](w438), .l_vin_en(w439), .lmixer[0](w440), .lmixer[1](w441), .lmixer[2](w442), .lmixer[3](w443), .n_rvolume[2](w444), .n_rvolume[1](w445), .n_rvolume[0](w446), .n_lvolume[2](w447), .n_lvolume[1](w448), .n_lvolume[0](w449) );
 	BootROM bootrom (.a[0](w101), .a[1](w102), .d[7](w103), .d[6](w104), .d[5](w105), .d[4](w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .a[2](w111), .a[3](w112), .a[4](w113), .a[5](w114), .a[6](w115), .a[7](w116), .a[8](w117), .a[9](w118), .a[10](w119), .a[11](w120), .a[12](w121), .a[13](w122), .a[14](w123), .a[15](w124), .from_g1_YULA(w516) );
 	Ser ser (.n_reset2(w93), .d[5](w105), .d[6](w104), .d[7](w103), .d[4](w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .n_sin(w252), .sck_dir(w255), .n_sck(w256), .int_serial(w357), .sc_read(w358), .sb_read(w359), .sc_write(w360), .n_sb_write(w361), .lfo_16384Hz(w362), .ser_out(w363), .serial_tick(w364) );

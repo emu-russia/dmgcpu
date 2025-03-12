@@ -1,4 +1,6 @@
-module DAC (  vin_analog, so2_analog, so1_analog, n_ch1_amp_en, n_ch2_amp_en, n_ch3_amp_en, n_ch4_amp_en, ch1_out[0], ch1_out[1], ch1_out[2], ch1_out[3], ch2_out[0], ch2_out[1], ch2_out[2], ch2_out[3], ch3_out[0], ch3_out[1], ch3_out[2], ch3_out[3], ch4_out[0], ch4_out[1], ch4_out[2], ch4_out[3], r_vin_en, rmixer[0], rmixer[1], rmixer[2], rmixer[3], l_vin_en, lmixer[0], lmixer[1], lmixer[2], lmixer[3], n_rvolume[2], n_rvolume[1], n_rvolume[0], n_lvolume[2], n_lvolume[1], n_lvolume[0]);
+module DAC (  vin_analog, so2_analog, so1_analog, n_ch1_amp_en, n_ch2_amp_en, n_ch3_amp_en, n_ch4_amp_en, 
+	ch1_out, ch2_out, ch3_out, ch4_out, 
+	r_vin_en, rmixer, l_vin_en, lmixer, n_rvolume, n_lvolume );
 
 	input wire vin_analog;
 	output wire so2_analog;
@@ -7,37 +9,15 @@ module DAC (  vin_analog, so2_analog, so1_analog, n_ch1_amp_en, n_ch2_amp_en, n_
 	input wire n_ch2_amp_en;
 	input wire n_ch3_amp_en;
 	input wire n_ch4_amp_en;
-	input wire ch1_out[0];
-	input wire ch1_out[1];
-	input wire ch1_out[2];
-	input wire ch1_out[3];
-	input wire ch2_out[0];
-	input wire ch2_out[1];
-	input wire ch2_out[2];
-	input wire ch2_out[3];
-	input wire ch3_out[0];
-	input wire ch3_out[1];
-	input wire ch3_out[2];
-	input wire ch3_out[3];
-	input wire ch4_out[0];
-	input wire ch4_out[1];
-	input wire ch4_out[2];
-	input wire ch4_out[3];
+	input wire [3:0] ch1_out;
+	input wire [3:0] ch2_out;
+	input wire [3:0] ch3_out;
+	input wire [3:0] ch4_out;
 	input wire r_vin_en;
-	input wire rmixer[0];
-	input wire rmixer[1];
-	input wire rmixer[2];
-	input wire rmixer[3];
+	input wire [3:0] rmixer;
 	input wire l_vin_en;
-	input wire lmixer[0];
-	input wire lmixer[1];
-	input wire lmixer[2];
-	input wire lmixer[3];
-	input wire n_rvolume[2];
-	input wire n_rvolume[1];
-	input wire n_rvolume[0];
-	input wire n_lvolume[2];
-	input wire n_lvolume[1];
-	input wire n_lvolume[0];
+	input wire [3:0] lmixer;
+	input wire [2:0] n_rvolume;
+	input wire [2:0] n_lvolume;
 
 endmodule // DAC
