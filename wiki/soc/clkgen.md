@@ -15,7 +15,7 @@ The names of signals of the CLK group have many synonyms used by different autho
 |cpu_wr_sync|output|To MMIO,Arb| |
 |cpu_wr|input|From Core| |
 |ext_cs_en|output|To Arb| |
-|test_1|input|From MMIO| |
+|test_1|input|From MMIO| (Aka T1nT2|
 |cpu_mreq|input|From Core| |
 |sync_reset|output|To Core| |
 |reset|input|From /RESET Pad| |
