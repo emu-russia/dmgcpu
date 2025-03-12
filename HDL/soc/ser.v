@@ -1,4 +1,4 @@
-module ser (  d, n_sb_write, ser_out, serial_tick, n_sin, int_serial, n_sck, sck_dir, sc_write, n_reset2, lfo_16384Hz, sc_read, sb_read);
+module Ser (  d, n_sb_write, ser_out, serial_tick, n_sin, int_serial, n_sck, sck_dir, sc_write, n_reset2, lfo_16384Hz, sc_read, sb_read);
 
 	inout wire [7:0] d;
 	input wire n_sb_write;
@@ -114,7 +114,7 @@ module ser (  d, n_sb_write, ser_out, serial_tick, n_sin, int_serial, n_sck, sck
 	dmg_dffr g27 (.clk(w41), .nr1(w22), .nr2(w22), .d(w40), .q(w38), .nq(w40) );
 	dmg_dffr g28 (.clk(w22), .nr1(w21), .nr2(w21), .d(w35), .q(w36), .nq(w37) );
 	dmg_muxi g29 (.sel(w36), .d1(w38), .d0(w39), .q(w19) );
-endmodule // ser
+endmodule // Ser
 
 
 // WARNING: Cell dmg_dffr:g21 port nq not connected.

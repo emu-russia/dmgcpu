@@ -1,4 +1,4 @@
-module clkgen (  clk8, clk7, clk6, clk5, clk4, clk3, clk2, clk1, cclk, clk9, n_reset2, clk_ena, osc_ena, cpu_wr, test_1, cpu_mreq, reset, osc_stable, n_test_reset, n_clk_in, sync_reset, ext_cs_en, cpu_wr_sync);
+module ClkGen (  clk8, clk7, clk6, clk5, clk4, clk3, clk2, clk1, cclk, clk9, n_reset2, clk_ena, osc_ena, cpu_wr, test_1, cpu_mreq, reset, osc_stable, n_test_reset, n_clk_in, sync_reset, ext_cs_en, cpu_wr_sync);
 
 	output wire clk8;
 	output wire clk7;
@@ -177,7 +177,7 @@ module clkgen (  clk8, clk7, clk6, clk5, clk4, clk3, clk2, clk1, cclk, clk9, n_r
 	dmg_dffrnq_comp g54 (.nr1(w49), .d(w50), .ck(w5), .cck(w6), .nr2(w49), .nq(w58), .q(w9) );
 	dmg_dffrnq_comp g55 (.nr1(w49), .d(w60), .ck(w6), .cck(w5), .nr2(w49), .q(w50) );
 	dmg_dffrnq_comp g56 (.nr1(w49), .d(w62), .ck(w5), .cck(w6), .nr2(w49), .nq(w59), .q(w60) );
-endmodule // clkgen
+endmodule // ClkGen
 
 
 

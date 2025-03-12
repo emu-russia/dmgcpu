@@ -2,6 +2,8 @@
 
 DMG-CPU SoC research.
 
+![demo](/imgstore/soc/demo.png)
+
 Originally, this repository was used to research the SM83 Core included in the SoC, but then the interests were expanded.
 
 To get all the information visit the [Wiki](/wiki/Readme.md).

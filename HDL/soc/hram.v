@@ -1,6 +1,6 @@
 // 8 bit lanes x 4 cols x 32 rows = 1024 bit
 
-module hram (  clk7, soc_rd, soc_wr, d, ffxx, a);
+module HRAM (  clk7, soc_rd, soc_wr, d, ffxx, a);
 
 	input wire clk7;
 	input wire soc_rd;
@@ -137,4 +137,4 @@ module hram (  clk7, soc_rd, soc_wr, d, ffxx, a);
 	dmg_nand g39 (.a(w12), .b(w35), .x(w5) );
 	dmg_nor3 g40 (.a(w34), .b(w8), .c(w6), .x(w7) );
 	sram_row_decode g41 (.n_wl_pch(w11), .wl_ena(w12), .d[0](w19), .d[1](w20), .d[2](w21), .d[3](w22), .d[4](w23), .nd[0](w29), .nd[1](w28), .nd[2](w27), .nd[3](w26), .nd[4](w25), .x(w45) );
-endmodule // hram
+endmodule // HRAM

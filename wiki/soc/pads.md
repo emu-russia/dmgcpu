@@ -36,8 +36,8 @@ Instead of `inout` it will be written `bidir`, since inout is easily confused wi
 |P13-P10|p13-p10|bidir   |IOBUF_B| |
 |P14|p14|output   |OBUF_B| |
 |P15|p15|output   |OBUF_B| |
-|/NMI|n_nmi|not wired   |IBUF_B| |
-|M1|m1|not wired   |OBUF_A| |
+|/NMI|n_nmi|input, not wired   |IBUF_B| |
+|M1|m1|output, not wired   |OBUF_A| |
 
 ## OSC
 
