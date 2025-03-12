@@ -1,7 +1,7 @@
 module PPU1 (  a, d, n_ma, lcd_ld1, lcd_ld0, lcd_cpg, lcd_cp, lcd_st, lcd_cpl, lcd_fr, lcd_s, CONST0, n_dma_phi, ppu_rd, ppu_wr, ppu_clk, vram_to_oam, ffxx, n_ppu_hard_reset, ff46, 
 	nma, fexx, ff43, ff42, sprite_x_flip, sprite_x_match, bp_sel, ppu_mode3, 
-	md, v, FF43_D1, FF43_D0, n_ppu_clk, FF43_D2, h, ppu_mode2, vbl, stop_oam_eval, obj_color, vclk2, from_ppu2_unk1, ppu1_unk1, obj_prio, n_ppu_reset, ppu1_unk2, FF40_D3, FF40_D2, in_window, 
-	FF40_D1, sp_bp_cys, tm_bp_cys, ppu1_RAWA, n_tm_bp_cys, arb_RYCU, ppu_int_stat, ppu_int_vbl, ppu1_XUJU, bp_cy, tm_cy, ppu1_XUJA, ppu1_XUQU, ppu1_XOCE, ppu1_XYSO, ppu1_XUPY);
+	md, v, FF43_D1, FF43_D0, n_ppu_clk, FF43_D2, h, ppu_mode2, vbl, stop_oam_eval, obj_color, vclk2, h_restart, obj_prio_ck, obj_prio, n_ppu_reset, n_dma_phi2_latched, FF40_D3, FF40_D2, in_window, 
+	FF40_D1, sp_bp_cys, tm_bp_cys, ppu1_RAWA, n_tm_bp_cys, arb_fexx_ffxx, ppu_int_stat, ppu_int_vbl, ppu1_XUJY, bp_cy, tm_cy, ppu1_XUJA, ppu1_ma0, ppu1_XOCE, ppu1_XYSO, ppu1_XUPY);
 
 	input wire [15:0] a;
 	inout wire [7:0] d;
@@ -50,11 +50,15 @@ module PPU1 (  a, d, n_ma, lcd_ld1, lcd_ld0, lcd_cpg, lcd_cp, lcd_st, lcd_cpl, l
 	output wire sp_bp_cys;
 	output wire tm_bp_cys;
 	output wire n_tm_bp_cys;
-	input wire arb_RYCU;
+	input wire arb_fexx_ffxx;
 	output wire ppu_int_stat;
 	output wire ppu_int_vbl;
 	output wire bp_cy;
 	output wire tm_cy;
+	input wire h_restart;
+	output wire obj_prio_ck;
+	output wire n_dma_phi2_latched;
+	output wire ppu1_ma0;
 
 	// H/V
 
@@ -63,17 +67,12 @@ module PPU1 (  a, d, n_ma, lcd_ld1, lcd_ld0, lcd_cpg, lcd_cp, lcd_st, lcd_cpl, l
 
 	// Unknowns
 
-	input wire from_ppu2_unk1;
-
-	output wire ppu1_unk1;
-	output wire ppu1_unk2;
-	output wire ppu1_RAWA;
+	output wire ppu1_RAWA; 		// to arb
 	output wire ppu1_XUJA;
-	output wire ppu1_XUQU;
 	output wire ppu1_XOCE;
 	output wire ppu1_XYSO;
 	output wire ppu1_XUPY;
-	output wire ppu1_XUJU;
+	output wire ppu1_XUJY;
 
 endmodule // PPU1
 
@@ -81,9 +80,9 @@ module PPU2 (  cclk, clk6, n_reset2, a, d, n_oamb, oam_bl_pch, oa, n_oam_rd, n_o
 	dma_a, dma_run, 
 	soc_wr, soc_rd, ppu_rd, ppu_wr, ppu_clk, vram_to_oam, n_ppu_hard_reset, 
 	nma, fexx, ff43, ff42, sprite_x_flip, sprite_x_match, bp_sel, ppu_mode3, 
-	md, from_arb_unk1, v[7], FF43_D1, FF43_D0, n_ppu_clk, FF43_D2, h, ppu_mode2, vbl, stop_oam_eval, obj_color, vclk2, ppu2_unk1, from_ppu1_unk1, obj_prio, n_ppu_reset, 
-	from_arb_unk2, from_arb_unk3, ppu2_unk2, from_arb_unk4, from_arb_unk5, from_ppu1_unk2, v, FF40_D3, FF40_D2, in_window, 
-	FF40_D1, from_mmio_unk1, from_arb_SUGY, from_arb_SYZO, sp_bp_cys, cpu_vram_oam_rd, from_mmio_unk2, ppu2_CATY, from_arb_SERA, from_ppu1_XUJU, bp_cy, tm_cy, from_ppu1_XUJA, from_ppu1_XUQU, from_ppu1_XOCE, from_ppu1_XYSO, from_ppu1_XUPY);
+	md, oam_din, v, FF43_D1, FF43_D0, n_ppu_clk, FF43_D2, h, ppu_mode2, vbl, stop_oam_eval, obj_color, vclk2, h_restart, obj_prio_ck, obj_prio, n_ppu_reset, 
+	oam_to_vram, n_dma_phi2_latched, FF40_D3, FF40_D2, in_window, 
+	FF40_D1, dma_addr_ext, sp_bp_cys, cpu_vram_oam_rd, oam_dma_wr, clk6_delay, from_ppu1_XUJY, bp_cy, tm_cy, from_ppu1_XUJA, ma0, from_ppu1_XOCE, from_ppu1_XYSO, from_ppu1_XUPY);
 
 	input wire cclk;
 	input wire clk6;
@@ -134,9 +133,17 @@ module PPU2 (  cclk, clk6, n_reset2, a, d, n_oamb, oam_bl_pch, oa, n_oam_rd, n_o
 	input wire FF40_D1;
 	input wire sp_bp_cys;
 	input wire cpu_vram_oam_rd;
-	output wire ppu2_CATY;
+	output wire clk6_delay;
 	input wire bp_cy;
 	input wire tm_cy;
+	input wire [7:0] oam_din;
+	input wire dma_addr_ext;
+	input wire oam_dma_wr;
+	input wire obj_prio_ck;
+	input wire n_dma_phi2_latched;
+	input wire ma0;
+	output wire h_restart;
+	output wire oam_to_vram;
 
 	// H/V
 	input wire [7:0] h;
@@ -144,26 +151,10 @@ module PPU2 (  cclk, clk6, n_reset2, a, d, n_oamb, oam_bl_pch, oa, n_oam_rd, n_o
 
 	// Unknowns
 
-	input wire from_arb_unk1;
-	input wire from_arb_unk2;
-	input wire from_arb_unk3;	
-	input wire from_arb_unk4;
-	input wire from_arb_unk5;
-	input wire from_arb_SERA;
-	input wire from_arb_SUGY;
-	input wire from_arb_SYZO;	
-	input wire from_mmio_unk1;
-	input wire from_mmio_unk2;
-	input wire from_ppu1_unk1;
-	input wire from_ppu1_unk2;	
 	input wire from_ppu1_XUJA;
-	input wire from_ppu1_XUQU;
 	input wire from_ppu1_XOCE;
 	input wire from_ppu1_XYSO;
 	input wire from_ppu1_XUPY;
-	input wire from_ppu1_XUJU;	
-
-	output wire ppu2_unk1;
-	output wire ppu2_unk2;
+	input wire from_ppu1_XUJY;
 
 endmodule // PPU2
