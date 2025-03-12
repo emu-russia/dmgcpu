@@ -4,7 +4,7 @@ module MMIO (  reset, clk2, clk4, osc_stable, clk_ena, osc_ena, clk6, clk9, n_re
 	n_DRV_HIGH_a, n_INPUT_a, DRV_LOW_a, 
 	n_DRV_HIGH_nrd, n_INPUT_nrd, DRV_LOW_nrd, n_DRV_HIGH_nwr, n_INPUT_nwr, DRV_LOW_nwr, n_t1_frompad, n_t2_frompad, CONST0, n_ena_pu_db, n_dma_phi, 
 	dma_a, dma_run, soc_wr, soc_rd, lfo_512Hz, ppu_rd, ppu_wr, int_serial, sc_read, sb_read, sc_write, n_sb_write, lfo_16384Hz, ppu_clk, vram_to_oam, non_vram_mreq, 
-	test_1, test_2, n_extdb_to_intdb, n_dblatch_to_intdb, n_intdb_to_extdb, n_test_reset, n_ext_addr_en, addr_latch, int_jp, FF60_D1, ffxx, n_ppu_hard_reset, ff46, mmio_unk1, cpu_vram_oam_rd, mmio_unk2, ppu_int_stat, ppu_int_vbl, from_ppu2_CATY);
+	test_1, test_2, n_extdb_to_intdb, n_dblatch_to_intdb, n_intdb_to_extdb, n_test_reset, n_ext_addr_en, addr_latch, int_jp, FF60_D1, ffxx, n_ppu_hard_reset, ff46, dma_addr_ext, cpu_vram_oam_rd, oam_dma_wr, ppu_int_stat, ppu_int_vbl, clk6_delay);
 
 	input wire reset;
 	input wire clk2;
@@ -67,11 +67,11 @@ module MMIO (  reset, clk2, clk4, osc_stable, clk_ena, osc_ena, clk6, clk9, n_re
 	input wire ffxx;
 	input wire n_ppu_hard_reset;
 	input wire ff46;
-	output wire mmio_unk1;
+	output wire dma_addr_ext;
 	output wire cpu_vram_oam_rd;
-	output wire mmio_unk2;
+	output wire oam_dma_wr;
 	input wire ppu_int_stat;
 	input wire ppu_int_vbl;
-	input wire from_ppu2_CATY;
+	input wire clk6_delay;
 
 endmodule // MMIO
