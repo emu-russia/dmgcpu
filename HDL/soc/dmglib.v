@@ -177,3 +177,12 @@ module dmg_muxi (  sel, d1, d0, q);
 	output wire q;
 
 endmodule // dmg_muxi
+
+module dmgcpu_and3 (  a, b, c, x);
+
+	input wire a;
+	input wire b;
+	input wire c;
+	output wire x;
+
+endmodule // dmgcpu_and3

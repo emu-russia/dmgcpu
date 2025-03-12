@@ -614,13 +614,13 @@ module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_
 	dmgcpu_PPU1 ppu1 (.a[0](w101), .a[1](w102), .d[7](w103), .d[6](w104), .d[5](w105), .d[4](w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .a[2](w111), .a[3](w112), .a[4](w113), .a[5](w114), .a[6](w115), .a[7](w116), .a[8](w117), .a[9](w118), .a[10](w119), .a[11](w120), .a[12](w121), .n_ma[12](w144), .n_ma[10](w145), .n_ma[11](w146), .n_ma[8](w147), .n_ma[9](w148), .n_ma[6](w149), .n_ma[5](w150), .n_ma[7](w151), .n_ma[3](w152), .n_ma[2](w153), .n_ma[4](w154), .n_ma[1](w155), .n_ma[0](w156), .lcd_ld1(w157), .lcd_ld0(w158), .lcd_cpg(w159), .lcd_cp(w160), .lcd_st(w161), .lcd_cpl(w162), .lcd_fr(w163), .lcd_s(w164), .CONST0(w259), .n_dma_phi(w337), .ppu_rd(w355), .ppu_wr(w356), .ppu_clk(w365), .vram_to_oam(w366), .ffxx(w395), .n_ppu_hard_reset(w396), .ff46(w397), .nma[9](w398), .fexx(w399), .nma[0](w400), .ff43(w401), .nma[4](w402), .nma[12](w403), .nma[6](w404), .nma[5](w405), .ff42(w406), .nma[11](w407), .nma[10](w408), .sprite_x_flip(w409), .nma[3](w410), .nma[2](w411), .sprite_x_match(w412), .bp_sel(w413) );
 	dmgcpu_PPU2 ppu2 (.cclk(w80), .clk6(w89), .n_reset2(w93), .a[0](w101), .a[1](w102), .d[7](w103), .d[6](w104), .d[5](w105), .d[4](w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .a[2](w111), .a[3](w112), .a[4](w113), .a[5](w114), .a[6](w115), .a[7](w116), .n_oamb[0](w165), .n_oamb[1](w166), .n_oamb[2](w167), .n_oamb[3](w168), .n_oamb[4](w169), .n_oamb[5](w170), .n_oamb[6](w171), .n_oamb[7](w172), .oam_bl_pch(w173), .oa[1](w174), .oa[2](w175), .oa[3](w176), .oa[4](w177), .oa[5](w178), .oa[6](w179), .oa[7](w180), .n_oam_rd(w181), .n_oamb_wr(w182), .n_oama_wr(w183), .n_oama[0](w184), .n_oama[1](w185), .n_oama[2](w186), .n_oama[3](w187), .n_oama[4](w188), .n_oama[5](w189), .n_oama[6](w190), .n_oama[7](w191), .CONST0(w259), .n_dma_phi(w337), .dma_a[0](w338), .dma_a[4](w339), .dma_a[2](w340), .dma_a[6](w341), .dma_a[10](w342), .dma_a[1](w343), .dma_a[5](w344), .dma_a[11](w345), .dma_a[3](w346), .dma_a[7](w347), .dma_a[8](w348), .dma_a[12](w349), .dma_a[9](w350), .dma_run(w351), .soc_wr(w352), .soc_rd(w353), .ppu_rd(w355), .ppu_wr(w356), .ppu_clk(w365), .vram_to_oam(w366), .n_ppu_hard_reset(w396), .nma[9](w398), .fexx(w399), .nma[0](w400), .ff43(w401), .nma[4](w402), .nma[12](w403), .nma[6](w404), .nma[5](w405), .ff42(w406), .nma[11](w407), .nma[10](w408), .sprite_x_flip(w409), .nma[3](w410), .nma[2](w411), .sprite_x_match(w412), .bp_sel(w413) );
 	dmgcpu_OAM oam (.n_oamb[0](w165), .n_oamb[1](w166), .n_oamb[2](w167), .n_oamb[3](w168), .n_oamb[4](w169), .n_oamb[5](w170), .n_oamb[6](w171), .n_oamb[7](w172), .oam_bl_pch(w173), .oa[1](w174), .oa[2](w175), .oa[3](w176), .oa[4](w177), .oa[5](w178), .oa[6](w179), .oa[7](w180), .n_oam_rd(w181), .n_oamb_wr(w182), .n_oama_wr(w183), .n_oama[0](w184), .n_oama[1](w185), .n_oama[2](w186), .n_oama[3](w187), .n_oama[4](w188), .n_oama[5](w189), .n_oama[6](w190), .n_oama[7](w191) );
-	dmgcpu_HRAM hram (.clk7(w90), .a[0](w101), .a[1](w102), .d[7](w103), .d[6](w104), .d[5](w105), .d[4(w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .a[2](w111), .a[3](w112), .a[4](w113), .a[5](w114), .a[6](w115), .a[7](w116), .soc_wr(w352), .soc_rd(w353), .ffxx(w395) );
+	HRAM hram (.clk7(w90), .a[0](w101), .a[1](w102), .d[7](w103), .d[6](w104), .d[5](w105), .d[4(w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .a[2](w111), .a[3](w112), .a[4](w113), .a[5](w114), .a[6](w115), .a[7](w116), .soc_wr(w352), .soc_rd(w353), .ffxx(w395) );
 	dmgcpu_DAC dac (.vin_analog(w275), .so2_analog(w276), .so1_analog(w277) );
 	dmgcpu_BootROM bootrom (.a[0](w101), .a[1](w102), .d[7](w103), .d[6](w104), .d[5](w105), .d[4](w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .a[2](w111), .a[3](w112), .a[4](w113), .a[5](w114), .a[6](w115), .a[7](w116), .a[8](w117), .a[9](w118), .a[10](w119), .a[11](w120), .a[12](w121), .a[13](w122), .a[14](w123), .a[15](w124) );
-	dmgcpu_Ser ser (.n_reset2(w93), .d[5](w105), .d[6](w104), .d[7](w103), .d[4](w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .n_sin(w252), .sck_dir(w255), .n_sck(w256), .int_serial(w357), .sc_read(w358), .sb_read(w359), .sc_write(w360), .n_sb_write(w361), .lfo_16384Hz(w362), .ser_out(w363), .serial_tick(w364) );
-	dmgcpu_ClkGen clkgen (.n_clk_in(w78), .reset(w79), .cclk(w80), .clk1(w81), .clk2(w82), .clk3(w83), .clk4(w84), .osc_stable(w85), .clk_ena(w86), .osc_ena(w87), .clk5(w88), .clk6(w89), .clk7(w90), .clk8(w91), .clk9(w92), .n_reset2(w93), .sync_reset(w94), .cpu_mreq(w95), .ext_cs_en(w96), .cpu_wr_sync(w97), .cpu_wr(w140), .test_1(w369), .n_test_reset(w374) );
+	Ser ser (.n_reset2(w93), .d[5](w105), .d[6](w104), .d[7](w103), .d[4](w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .n_sin(w252), .sck_dir(w255), .n_sck(w256), .int_serial(w357), .sc_read(w358), .sb_read(w359), .sc_write(w360), .n_sb_write(w361), .lfo_16384Hz(w362), .ser_out(w363), .serial_tick(w364) );
+	ClkGen clkgen (.n_clk_in(w78), .reset(w79), .cclk(w80), .clk1(w81), .clk2(w82), .clk3(w83), .clk4(w84), .osc_stable(w85), .clk_ena(w86), .osc_ena(w87), .clk5(w88), .clk6(w89), .clk7(w90), .clk8(w91), .clk9(w92), .n_reset2(w93), .sync_reset(w94), .cpu_mreq(w95), .ext_cs_en(w96), .cpu_wr_sync(w97), .cpu_wr(w140), .test_1(w369), .n_test_reset(w374) );
 	dmgcpu_MMIO mmio (.reset(w79), .clk2(w82), .clk4(w84), .osc_stable(w85), .clk_ena(w86), .osc_ena(w87), .clk6(w89), .clk9(w92), .n_reset2(w93), .cpu_wr_sync(w97), .cpu_m1(w99), .n_cpu_m1(w100), .a[0](w101), .a[1](w102), .d[7](w103), .d[6](w104), .d[5](w105), .d[4](w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .a[2](w111), .a[3](w112), .a[4](w113), .a[5](w114), .a[6](w115), .a[7](w116), .a[8](w117), .a[9](w118), .a[10](w119), .a[11](w120), .a[12](w121), .a[13](w122), .a[14](w123), .cpu_irq_trig[4](w128), .cpu_irq_ack[4](w129), .cpu_irq_trig[3](w130), .cpu_irq_ack[3](w131), .cpu_irq_trig[2](w132), .cpu_irq_ack[2](w133), .cpu_irq_trig[1](w134), .cpu_irq_ack[1](w135), .cpu_irq_trig[0](w136), .cpu_irq_ack[0](w137), .cpu_rd(w139), .cpu_wr(w140), .n_DRV_HIGH_a[14](w195), .n_INPUT_a[14](w196), .DRV_LOW_a[14](w197), .n_DRV_HIGH_a[13](w198), .n_INPUT_a[13](w199), .DRV_LOW_a[13](w200), .n_DRV_HIGH_a[12](w201), .n_INPUT_a[12](w202), .DRV_LOW_a[12](w203), .n_DRV_HIGH_a[11](w204), .n_INPUT_a[11](w205), .DRV_LOW_a[11](w206), .n_DRV_HIGH_a[10](w207), .n_INPUT_a[10](w208), .DRV_LOW_a[10](w209), .n_DRV_HIGH_a[9](w210), .n_INPUT_a[9](w211), .DRV_LOW_a[9](w212), .n_DRV_HIGH_a[8](w213), .n_INPUT_a[8](w214), .DRV_LOW_a[8](w215), .n_DRV_HIGH_nrd(w241), .n_INPUT_nrd(w242), .DRV_LOW_nrd(w243), .n_DRV_HIGH_nwr(w244), .n_INPUT_nwr(w245), .DRV_LOW_nwr(w246), .n_t1_frompad(w247), .n_t2_frompad(w248), .CONST0(w259), .n_ena_pu_db(w315), .n_dma_phi(w337), .dma_a[0](w338), .dma_a[4](w339), .dma_a[2](w340), .dma_a[6](w341), .dma_a[10](w342), .dma_a[1](w343), .dma_a[5](w344), .dma_a[11](w345), .dma_a[3](w346), .dma_a[7](w347), .dma_a[8](w348), .dma_a[12](w349), .dma_a[9](w350), .dma_run(w351), .soc_wr(w352), .soc_rd(w353), .lfo_512Hz(w354), .ppu_rd(w355), .ppu_wr(w356), .int_serial(w357), .sc_read(w358), .sb_read(w359), .sc_write(w360), .n_sb_write(w361), .lfo_16384Hz(w362), .ppu_clk(w365), .vram_to_oam(w366), .dma_a[15](w367), .non_vram_mreq(w368), .test_1(w369), .test_2(w370), .n_extdb_to_intdb(w371), .n_dblatch_to_intdb(w372), .n_intdb_to_extdb(w373), .n_test_reset(w374), .n_ext_addr_en(w375), .addr_latch(w392), .int_jp(w393), .FF60_D1(w394), .ffxx(w395), .n_ppu_hard_reset(w396), .ff46(w397) );
-	dmgcpu_SM83Core core (.RESET(w79), .CLK1(w81), .CLK2(w82), .CLK3(w83), .CLK4(w84), .OSC_STABLE(w85), .CLK_ENA(w86), .OSC_ENA(w87), .CLK5(w88), .CLK6(w89), .CLK7(w90), .CLK8(w91), .CLK9(w92), .SYNC_RESET(w94), .CPU_MREQ(w95), .NMI(w98), .M1(w99), .A[0](w101), .A[1](w102), .D[7](w103), .D[6](w104), .D[5](w105), .D[4](w106), .D[3](w107), .D[2](w108), .D[1](w109), .D[0](w110), .A[2](w111), .A[3](w112), .A[4](w113), .A[5](w114), .A[6](w115), .A[7](w116), .A[8](w117), .A[9](w118), .A[10](w119), .A[11](w120), .A[12](w121), .A[13](w122), .A[14](w123), .A[15](w124), .CPU_IRQ_TRIG[7](1'b0), .CPU_IRQ_TRIG[6](1'b0), .CPU_IRQ_TRIG[5](1'b0), .CPU_IRQ_TRIG[4](w128), .CPU_IRQ_ACK[4](w129), .CPU_IRQ_TRIG[3](w130), .CPU_IRQ_ACK[3](w131), .CPU_IRQ_TRIG[2](w132), .CPU_IRQ_ACK[2](w133), .CPU_IRQ_TRIG[1](w134), .CPU_IRQ_ACK[1](w135), .CPU_IRQ_TRIG[0](w136), .CPU_IRQ_ACK[0](w137), .WAKE(w138), .RD(w139), .WR(w140), .MMIO_REQ(w141), .IPL_REQ(w142), .BUS_DISABLE(w369), .IPL_DISABLE(w370) );
+	SM83Core core (.RESET(w79), .CLK1(w81), .CLK2(w82), .CLK3(w83), .CLK4(w84), .OSC_STABLE(w85), .CLK_ENA(w86), .OSC_ENA(w87), .CLK5(w88), .CLK6(w89), .CLK7(w90), .CLK8(w91), .CLK9(w92), .SYNC_RESET(w94), .CPU_MREQ(w95), .NMI(w98), .M1(w99), .A[0](w101), .A[1](w102), .D[7](w103), .D[6](w104), .D[5](w105), .D[4](w106), .D[3](w107), .D[2](w108), .D[1](w109), .D[0](w110), .A[2](w111), .A[3](w112), .A[4](w113), .A[5](w114), .A[6](w115), .A[7](w116), .A[8](w117), .A[9](w118), .A[10](w119), .A[11](w120), .A[12](w121), .A[13](w122), .A[14](w123), .A[15](w124), .CPU_IRQ_TRIG[7](1'b0), .CPU_IRQ_TRIG[6](1'b0), .CPU_IRQ_TRIG[5](1'b0), .CPU_IRQ_TRIG[4](w128), .CPU_IRQ_ACK[4](w129), .CPU_IRQ_TRIG[3](w130), .CPU_IRQ_ACK[3](w131), .CPU_IRQ_TRIG[2](w132), .CPU_IRQ_ACK[2](w133), .CPU_IRQ_TRIG[1](w134), .CPU_IRQ_ACK[1](w135), .CPU_IRQ_TRIG[0](w136), .CPU_IRQ_ACK[0](w137), .WAKE(w138), .RD(w139), .WR(w140), .MMIO_REQ(w141), .IPL_REQ(w142), .BUS_DISABLE(w369), .IPL_DISABLE(w370) );
 	dmgcpu_Arbiter arb (.clk2(w82), .n_reset2(w93), .cpu_mreq(w95), .ext_cs_en(w96), .cpu_wr_sync(w97), .a[0](w101), .a[1](w102), .d[7](w103), .d[6](w104), .d[5](w105), .d[4](w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .a[2](w111), .a[3](w112), .a[4](w113), .a[5](w114), .a[6](w115), .a[7](w116), .a[8](w117), .a[9](w118), .a[10](w119), .a[11](w120), .a[12](w121), .a[13](w122), .a[14](w123), .a[15](w124), .cpu_wr(w140), .mmio_sel(w141), .boot_sel(w142), .n_DRV_HIGH_a[15](w192), .n_INPUT_a[15](w193), .DRV_LOW_a[15](w194), .n_cs_topad(w240), .CONST0(w259), .n_DRV_HIGH_nmwr(w278), .n_mwr(w279), .DRV_LOW_nmwr(w280), .n_DRV_HIGH_nmrd(w281), .n_mrd(w282), .DRV_LOW_nmrd(w283), .n_DRV_HIGH_nmcs(w284), .n_mcs(w285), .DRV_LOW_nmcs(w286), .n_DRV_HIGH_md[7](w287), .n_md_frompad[7](w288), .DRV_LOW_md[7](w289), .n_md_ena_pu(w290), .n_DRV_HIGH_md[6](w291), .n_md_frompad[6](w292), .DRV_LOW_md[6](w293), .n_DRV_HIGH_md[5](w294), .n_md_frompad[5](w295), .DRV_LOW_md[5](w296), .n_DRV_HIGH_md[4](w297), .n_md_frompad[4](w298), .DRV_LOW_md[4](w299), .n_DRV_HIGH_md[3](w300), .n_md_frompad[3](w301), .DRV_LOW_md[3](w302), .n_DRV_HIGH_md[2](w303), .n_md_frompad[2](w304), .DRV_LOW_md[2](w305), .n_DRV_HIGH_md[1](w306), .n_md_frompad[1](w307), .DRV_LOW_md[1](w308), .n_DRV_HIGH_md[0](w309), .DRV_LOW_md[0](w310), .n_md_frompad[0](w311), .n_DRV_HIGH_d[7](w312), .n_db_frompad[7](w313), .DRV_LOW_d[7](w314), .n_ena_pu_db(w315), .n_DRV_HIGH_d[6](w316), .n_db_frompad[6](w317), .DRV_LOW_d[6](w318), .n_DRV_HIGH_d[5](w319), .n_db_frompad[5](w320), .DRV_LOW_d[5](w321), .n_DRV_HIGH_d[4](w322), .n_db_frompad[4](w323), .DRV_LOW_d[4](w324), .n_DRV_HIGH_d[3](w325), .n_db_frompad[3](w326), .DRV_LOW_d[3](w327), .n_DRV_HIGH_d[2](w328), .n_db_frompad[2](w329), .DRV_LOW_d[2](w330), .n_DRV_HIGH_d[1](w331), .n_db_frompad[1](w332), .DRV_LOW_d[1](w333), .n_DRV_HIGH_d[0](w334), .n_db_frompad[0](w335), .DRV_LOW_a[0](w336), .soc_wr(w352), .soc_rd(w353), .vram_to_oam(w366), .dma_a[15](w367), .non_vram_mreq(w368), .test_1(w369), .n_extdb_to_intdb(w371), .n_dblatch_to_intdb(w372), .n_intdb_to_extdb(w373), .ffxx(w395), .n_ppu_hard_reset(w396) );
 	dmgcpu_APU apu (.cclk(w80), .clk2(w82), .clk4(w84), .clk6(w89), .clk7(w90), .clk9(w92), .n_reset2(w93), .a[0](w101), .a[1](w102), .d[7](w103), .d[6](w104), .d[5](w105), .d[4](w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .a[2](w111), .a[3](w112), .a[4](w113), .a[5](w114), .a[6](w115), .a[7](w116), .cpu_wakeup(w138), .n_DRV_HIGH_a[7](w216), .n_INPUT_a[7](w217), .DRV_LOW_a[7](w218), .n_DRV_HIGH_a[6](w219), .n_INPUT_a[6](w220), .DRV_LOW_a[6](w221), .n_DRV_HIGH_a[5](w222), .n_INPUT_a[5](w223), .DRV_LOW_a[5](w224), .n_DRV_HIGH_a[4](w225), .n_INPUT_a[4](w226), .DRV_LOW_a[4](w227), .n_DRV_HIGH_a[3](w228), .n_INPUT_a[3](w229), .DRV_LOW_a[3](w230), .n_DRV_HIGH_a[2](w231), .n_INPUT_a[2](w232), .DRV_LOW_a[2](w233), .n_DRV_HIGH_a[1](w234), .n_INPUT_a[1](w235), .DRV_LOW_a[1](w236), .n_DRV_HIGH_a[0](w237), .n_INPUT_a[0](w238), .DRV_LOW_a[0](w239), .n_sout_topad(w249), .n_DRV_HIGH_sin(w250), .n_ENA_PU_sin(w251), .DRV_LOW_sin(w253), .n_DRV_HIGH_sck(w254), .sck_dir(w255), .DRV_LOW_sck(w257), .n_DRV_HIGH_p10(w258), .CONST0(w259), .n_p10(w260), .DRV_LOW_p10(w261), .n_DRV_HIGH_p11(w262), .n_p11(w263), .DRV_LOW_p11(w264), .n_DRV_HIGH_p12(w265), .n_p12(w266), .DRV_LOW_p12(w267), .n_DRV_HIGH_p13(w268), .n_p13(w269), .DRV_LOW_p13(w270), .n_DRV_HIGH_p14(w271), .DRV_LOW_p14(w272), .n_DRV_HIGH_p15(w273), .DRV_LOW_p15(w274), .dma_a[0](w338), .dma_a[4](w339), .dma_a[2](w340), .dma_a[6](w341), .dma_a[1](w343), .dma_a[5](w344), .dma_a[3](w346), .dma_a[7](w347), .soc_wr(w352), .soc_rd(w353), .lfo_512Hz(w354), .ser_out(w363), .serial_tick(w364), .test_1(w369), .test_2(w370), .n_ext_addr_en(w375), .ch3_active(w376), .wave_a[2](w377), .wave_a[3](w378), .wave_a[0](w379), .wave_a[1](w380), .wave_rd[0](w381), .wave_rd[1](w382), .wave_rd[2](w383), .wave_rd[3](w384), .wave_rd[4](w385), .wave_rd[5](w386), .wave_rd[6](w387), .wave_rd[7](w388), .n_wave_wr(w389), .wave_bl_pch(w390), .n_wave_rd(w391), .addr_latch(w392), .int_jp(w393), .FF60_D1(w394), .ffxx(w395) );
 	dmgcpu_WaveRAM waveram (.d[7](w103), .d[6](w104), .d[5](w105), .d[4](w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .active(w376), .a[2](w377), .a[3](w378), .a[0](w379), .a[1](w380), .dout[0](w381), .dout[1](w382), .dout[2](w383), .dout[3](w384), .dout[4](w385), .dout[5](w386), .dout[6](w387), .dout[7](w388), .n_wr(w389), .bl_pch(w390), .n_rd(w391) );
@@ -629,87 +629,6 @@ module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_
 endmodule // dmgcpu
 
 // Module Definitions [It is possible to wrap here on your primitives]
-
-module dmgcpu_IOBUF_B (  DRV_LOW, n_INPUT, n_ENA_PU, n_DRV_HIGH, PAD_IO);
-
-	input wire DRV_LOW;
-	output wire n_INPUT;
-	input wire n_ENA_PU;
-	input wire n_DRV_HIGH;
-	inout wire PAD_IO;
-
-endmodule // dmgcpu_IOBUF_B
-
-module dmgcpu_IOBUF_C (  n_DRV_HIGH, n_ENA_PU, DRV_LOW, n_INPUT, PAD_IO);
-
-	input wire n_DRV_HIGH;
-	input wire n_ENA_PU;
-	input wire DRV_LOW;
-	output wire n_INPUT;
-	inout wire PAD_IO;
-
-endmodule // dmgcpu_IOBUF_C
-
-module dmgcpu_IBUF_A (  n_INPUT, PAD_IN);
-
-	output wire n_INPUT;
-	input wire PAD_IN;
-
-endmodule // dmgcpu_IBUF_A
-
-module dmgcpu_IOBUF_A (  PAD_IO, n_DRV_HIGH, DRV_LOW, n_INPUT);
-
-	inout wire PAD_IO;
-	input wire n_DRV_HIGH;
-	input wire DRV_LOW;
-	output wire n_INPUT;
-
-endmodule // dmgcpu_IOBUF_A
-
-module dmgcpu_OBUF_A (  n_OUTPUT, PAD_OUT);
-
-	input wire n_OUTPUT;
-	output wire PAD_OUT;
-
-endmodule // dmgcpu_OBUF_A
-
-module dmgcpu_AOBUFFER (  VOUT, PAD_OUT);
-
-	input wire VOUT;
-	output wire PAD_OUT;
-
-endmodule // dmgcpu_AOBUFFER
-
-module dmgcpu_OBUF_B (  n_DRV_HIGH, DRV_LOW, PAD_OUT);
-
-	input wire n_DRV_HIGH;
-	input wire DRV_LOW;
-	output wire PAD_OUT;
-
-endmodule // dmgcpu_OBUF_B
-
-module dmgcpu_IBUF_B (  PAD_IN, n_INPUT);
-
-	input wire PAD_IN;
-	output wire n_INPUT;
-
-endmodule // dmgcpu_IBUF_B
-
-module dmgcpu_OSC (  ENA, n_CLK, CK_IN, CK_OUT);
-
-	input wire ENA;
-	output wire n_CLK;
-	input wire CK_IN;
-	output wire CK_OUT;
-
-endmodule // dmgcpu_OSC
-
-module dmgcpu_AIBUFFER (  VIN, PAD_IN);
-
-	output wire VIN;
-	input wire PAD_IN;
-
-endmodule // dmgcpu_AIBUFFER
 
 module dmgcpu_PPU1 (  a[0], a[1], d[7], d[6], d[5], d[4], d[3], d[2], d[1], d[0], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], n_ma[12], n_ma[10], n_ma[11], n_ma[8], n_ma[9], n_ma[6], n_ma[5], n_ma[7], n_ma[3], n_ma[2], n_ma[4], n_ma[1], n_ma[0], lcd_ld1, lcd_ld0, lcd_cpg, lcd_cp, lcd_st, lcd_cpl, lcd_fr, lcd_s, CONST0, n_dma_phi, ppu_rd, ppu_wr, ppu_clk, vram_to_oam, ffxx, n_ppu_hard_reset, ff46, nma[9], fexx, nma[0], ff43, nma[4], nma[12], nma[6], nma[5], ff42, nma[11], nma[10], sprite_x_flip, nma[3], nma[2], sprite_x_match, bp_sel);
 
@@ -913,7 +832,7 @@ module dmgcpu_HRAM (  clk7, a[0], a[1], d[7], d[6], d[5], d[4, d[3], d[2], d[1],
 	inout wire d[7];
 	inout wire d[6];
 	inout wire d[5];
-	inout wire d[4;
+	inout wire d[4];
 	inout wire d[3];
 	inout wire d[2];
 	inout wire d[1];
@@ -1145,75 +1064,6 @@ module dmgcpu_MMIO (  reset, clk2, clk4, osc_stable, clk_ena, osc_ena, clk6, clk
 	input wire ff46;
 
 endmodule // dmgcpu_MMIO
-
-module dmgcpu_SM83Core (  RESET, CLK1, CLK2, CLK3, CLK4, OSC_STABLE, CLK_ENA, OSC_ENA, CLK5, CLK6, CLK7, CLK8, CLK9, SYNC_RESET, CPU_MREQ, NMI, M1, A[0], A[1], D[7], D[6], D[5], D[4], D[3], D[2], D[1], D[0], A[2], A[3], A[4], A[5], A[6], A[7], A[8], A[9], A[10], A[11], A[12], A[13], A[14], A[15], CPU_IRQ_TRIG[7], CPU_IRQ_ACK[7], CPU_IRQ_TRIG[6], CPU_IRQ_ACK[6], CPU_IRQ_TRIG[5], CPU_IRQ_ACK[5], CPU_IRQ_TRIG[4], CPU_IRQ_ACK[4], CPU_IRQ_TRIG[3], CPU_IRQ_ACK[3], CPU_IRQ_TRIG[2], CPU_IRQ_ACK[2], CPU_IRQ_TRIG[1], CPU_IRQ_ACK[1], CPU_IRQ_TRIG[0], CPU_IRQ_ACK[0], WAKE, RD, WR, MMIO_REQ, IPL_REQ, BUS_DISABLE, IPL_DISABLE);
-
-	input wire RESET;
-	input wire CLK1;
-	input wire CLK2;
-	input wire CLK3;
-	input wire CLK4;
-	input wire OSC_STABLE;
-	output wire CLK_ENA;
-	output wire OSC_ENA;
-	input wire CLK5;
-	input wire CLK6;
-	input wire CLK7;
-	input wire CLK8;
-	input wire CLK9;
-	input wire SYNC_RESET;
-	output wire CPU_MREQ;
-	input wire NMI;
-	output wire M1;
-	output wire A[0];
-	output wire A[1];
-	inout wire D[7];
-	inout wire D[6];
-	inout wire D[5];
-	inout wire D[4];
-	inout wire D[3];
-	inout wire D[2];
-	inout wire D[1];
-	inout wire D[0];
-	output wire A[2];
-	output wire A[3];
-	output wire A[4];
-	output wire A[5];
-	output wire A[6];
-	output wire A[7];
-	output wire A[8];
-	output wire A[9];
-	output wire A[10];
-	output wire A[11];
-	output wire A[12];
-	output wire A[13];
-	output wire A[14];
-	output wire A[15];
-	input wire CPU_IRQ_TRIG[7];
-	output wire CPU_IRQ_ACK[7];
-	input wire CPU_IRQ_TRIG[6];
-	output wire CPU_IRQ_ACK[6];
-	input wire CPU_IRQ_TRIG[5];
-	output wire CPU_IRQ_ACK[5];
-	input wire CPU_IRQ_TRIG[4];
-	output wire CPU_IRQ_ACK[4];
-	input wire CPU_IRQ_TRIG[3];
-	output wire CPU_IRQ_ACK[3];
-	input wire CPU_IRQ_TRIG[2];
-	output wire CPU_IRQ_ACK[2];
-	input wire CPU_IRQ_TRIG[1];
-	output wire CPU_IRQ_ACK[1];
-	input wire CPU_IRQ_TRIG[0];
-	output wire CPU_IRQ_ACK[0];
-	input wire WAKE;
-	output wire RD;
-	output wire WR;
-	input wire MMIO_REQ;
-	input wire IPL_REQ;
-	input wire BUS_DISABLE;
-	input wire IPL_DISABLE;
-
-endmodule // dmgcpu_SM83Core
 
 module dmgcpu_Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a[0], a[1], d[7], d[6], d[5], d[4], d[3], d[2], d[1], d[0], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13], a[14], a[15], cpu_wr, mmio_sel, boot_sel, n_DRV_HIGH_a[15], n_INPUT_a[15], DRV_LOW_a[15], n_cs_topad, CONST0, n_DRV_HIGH_nmwr, n_mwr, DRV_LOW_nmwr, n_DRV_HIGH_nmrd, n_mrd, DRV_LOW_nmrd, n_DRV_HIGH_nmcs, n_mcs, DRV_LOW_nmcs, n_DRV_HIGH_md[7], n_md_frompad[7], DRV_LOW_md[7], n_md_ena_pu, n_DRV_HIGH_md[6], n_md_frompad[6], DRV_LOW_md[6], n_DRV_HIGH_md[5], n_md_frompad[5], DRV_LOW_md[5], n_DRV_HIGH_md[4], n_md_frompad[4], DRV_LOW_md[4], n_DRV_HIGH_md[3], n_md_frompad[3], DRV_LOW_md[3], n_DRV_HIGH_md[2], n_md_frompad[2], DRV_LOW_md[2], n_DRV_HIGH_md[1], n_md_frompad[1], DRV_LOW_md[1], n_DRV_HIGH_md[0], DRV_LOW_md[0], n_md_frompad[0], n_DRV_HIGH_d[7], n_db_frompad[7], DRV_LOW_d[7], n_ena_pu_db, n_DRV_HIGH_d[6], n_db_frompad[6], DRV_LOW_d[6], n_DRV_HIGH_d[5], n_db_frompad[5], DRV_LOW_d[5], n_DRV_HIGH_d[4], n_db_frompad[4], DRV_LOW_d[4], n_DRV_HIGH_d[3], n_db_frompad[3], DRV_LOW_d[3], n_DRV_HIGH_d[2], n_db_frompad[2], DRV_LOW_d[2], n_DRV_HIGH_d[1], n_db_frompad[1], DRV_LOW_d[1], n_DRV_HIGH_d[0], n_db_frompad[0], DRV_LOW_a[0], soc_wr, soc_rd, vram_to_oam, dma_a[15], non_vram_mreq, test_1, n_extdb_to_intdb, n_dblatch_to_intdb, n_intdb_to_extdb, ffxx, n_ppu_hard_reset);
 
@@ -1468,22 +1318,6 @@ module dmgcpu_WaveRAM (  d[7], d[6], d[5], d[4], d[3], d[2], d[1], d[0], active,
 	input wire n_rd;
 
 endmodule // dmgcpu_WaveRAM
-
-module dmgcpu_and3 (  a, b, c, x);
-
-	input wire a;
-	input wire b;
-	input wire c;
-	output wire x;
-
-endmodule // dmgcpu_and3
-
-module dmgcpu_not (  a, x);
-
-	input wire a;
-	output wire x;
-
-endmodule // dmgcpu_not
 
 
 
