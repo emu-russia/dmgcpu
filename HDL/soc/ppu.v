@@ -1,7 +1,7 @@
 module PPU1 (  a, d, n_ma, lcd_ld1, lcd_ld0, lcd_cpg, lcd_cp, lcd_st, lcd_cpl, lcd_fr, lcd_s, CONST0, n_dma_phi, ppu_rd, ppu_wr, ppu_clk, vram_to_oam, ffxx, n_ppu_hard_reset, ff46, 
 	nma, fexx, ff43, ff42, sprite_x_flip, sprite_x_match, bp_sel, ppu_mode3, 
 	md, v, FF43_D1, FF43_D0, n_ppu_clk, FF43_D2, h, ppu_mode2, vbl, stop_oam_eval, obj_color, vclk2, h_restart, obj_prio_ck, obj_prio, n_ppu_reset, n_dma_phi2_latched, FF40_D3, FF40_D2, in_window, 
-	FF40_D1, sp_bp_cys, tm_bp_cys, ppu1_RAWA, n_tm_bp_cys, arb_fexx_ffxx, ppu_int_stat, ppu_int_vbl, ppu1_XUJY, bp_cy, tm_cy, ppu1_XUJA, ppu1_ma0, ppu1_XOCE, ppu1_XYSO, ppu1_XUPY);
+	FF40_D1, sp_bp_cys, tm_bp_cys, n_sp_bp_mrd, n_tm_bp_cys, arb_fexx_ffxx, ppu_int_stat, ppu_int_vbl, oam_mode3_bl_pch, bp_cy, tm_cy, oam_mode3_nrd, ppu1_ma0, oam_rd_ck, oam_xattr_latch_cck, oam_addr_ck);
 
 	input wire [15:0] a;
 	inout wire [7:0] d;
@@ -59,20 +59,22 @@ module PPU1 (  a, d, n_ma, lcd_ld1, lcd_ld0, lcd_cpg, lcd_cp, lcd_st, lcd_cpl, l
 	output wire obj_prio_ck;
 	output wire n_dma_phi2_latched;
 	output wire ppu1_ma0;
+	output wire n_sp_bp_mrd; 		// to arb
+
+	output wire oam_mode3_nrd;  		// is low when OAM is read during MODE3 (pixel transfer stage)
+	output wire oam_mode3_bl_pch;
+	// @msinger: I guess you already noticed yourself that XUJY(oam_mode3_bl_pch) is the same as XUJA(oam_mode3_nrd), but it is low for a little bit longer.
+	// I don't know why it is longer, but it seems to be used to control the OAM bitline precharging during MODE3. It disables the precharging temporarily so that the read access can be performed.   (#328)
+
+	// OAM Clocks
+	output wire oam_rd_ck;
+	output wire oam_xattr_latch_cck;
+	output wire oam_addr_ck;
 
 	// H/V
 
 	output wire [7:0] h;
 	output wire [7:0] v;
-
-	// Unknowns
-
-	output wire ppu1_RAWA; 		// to arb
-	output wire ppu1_XUJA;
-	output wire ppu1_XOCE;
-	output wire ppu1_XYSO;
-	output wire ppu1_XUPY;
-	output wire ppu1_XUJY;
 
 endmodule // PPU1
 
@@ -82,7 +84,7 @@ module PPU2 (  cclk, clk6, n_reset2, a, d, n_oamb, oam_bl_pch, oa, n_oam_rd, n_o
 	nma, fexx, ff43, ff42, sprite_x_flip, sprite_x_match, bp_sel, ppu_mode3, 
 	md, oam_din, v, FF43_D1, FF43_D0, n_ppu_clk, FF43_D2, h, ppu_mode2, vbl, stop_oam_eval, obj_color, vclk2, h_restart, obj_prio_ck, obj_prio, n_ppu_reset, 
 	oam_to_vram, n_dma_phi2_latched, FF40_D3, FF40_D2, in_window, 
-	FF40_D1, dma_addr_ext, sp_bp_cys, cpu_vram_oam_rd, oam_dma_wr, clk6_delay, from_ppu1_XUJY, bp_cy, tm_cy, from_ppu1_XUJA, ma0, from_ppu1_XOCE, from_ppu1_XYSO, from_ppu1_XUPY);
+	FF40_D1, dma_addr_ext, sp_bp_cys, cpu_vram_oam_rd, oam_dma_wr, clk6_delay, oam_mode3_bl_pch, bp_cy, tm_cy, oam_mode3_nrd, ma0, oam_rd_ck, oam_xattr_latch_cck, oam_addr_ck);
 
 	input wire cclk;
 	input wire clk6;
@@ -144,17 +146,14 @@ module PPU2 (  cclk, clk6, n_reset2, a, d, n_oamb, oam_bl_pch, oa, n_oam_rd, n_o
 	input wire ma0;
 	output wire h_restart;
 	output wire oam_to_vram;
+	input wire oam_mode3_nrd;
+	input wire oam_mode3_bl_pch;
+	input wire oam_rd_ck;
+	input wire oam_xattr_latch_cck;
+	input wire oam_addr_ck;
 
 	// H/V
 	input wire [7:0] h;
 	input wire [7:0] v;
-
-	// Unknowns
-
-	input wire from_ppu1_XUJA;
-	input wire from_ppu1_XOCE;
-	input wire from_ppu1_XYSO;
-	input wire from_ppu1_XUPY;
-	input wire from_ppu1_XUJY;
 
 endmodule // PPU2

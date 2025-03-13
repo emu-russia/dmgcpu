@@ -1,5 +1,3 @@
-*.run
-*.vcd
 out.mem
 verilator_build
 verilator_pgo_build
