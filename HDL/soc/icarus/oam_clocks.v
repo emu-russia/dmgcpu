@@ -1,6 +1,6 @@
-// This demo is needed to find out how the LCD Clock divider works (XUPY, XOCE, XYSO signals)
+// This demo is needed to find out how the OAM PPU Clock divider works (XUPY, XOCE, XYSO signals)
 
-module lcd_clocks();
+module oam_clocks();
 
 	reg n_ppu_reset;
 	reg ppu_clk; 		// PPU 4MHz
@@ -15,19 +15,19 @@ module lcd_clocks();
 	wire g3_nq;
 	DFFR_B g3 ( .clk(ppu_clk), .nres(n_ppu_reset), .d(g3_nq), .nq(g3_nq) ); 		// WUVU
 
-	assign XUPY = ~g3_nq;
-	assign XOCE = ~g1_q;
-	assign XYSO = ~ ( ~(g1_nq | g3_nq));
+	assign XUPY = ~g3_nq; 				// oam_addr_ck
+	assign XOCE = ~g1_q;  						// oam_rd_ck
+	assign XYSO = ~ ( ~(g1_nq | g3_nq)); 	// oam_xattr_latch_cck
 
 	assign HCLK = ~g2_nq;
 
 	initial begin
-		$display("Running lcd_clocks");
+		$display("Running oam_clocks");
 
 		ppu_clk = 1'b0;
 
-		$dumpfile("lcd_clocks.vcd");
-		$dumpvars(0, lcd_clocks);
+		$dumpfile("oam_clocks.vcd");
+		$dumpvars(0, oam_clocks);
 
 		n_ppu_reset = 1'b0;
 		repeat (8) @ (posedge ppu_clk);
@@ -38,7 +38,7 @@ module lcd_clocks();
 		$finish;
 	end
 
-endmodule // lcd_clocks
+endmodule // oam_clocks
 
 module DFFR_B (clk, nres, d, q, nq);
 
