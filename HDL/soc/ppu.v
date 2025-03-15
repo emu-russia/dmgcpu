@@ -1,4 +1,4 @@
-module PPU1 (  a, d, n_ma, lcd_ld1, lcd_ld0, lcd_cpg, lcd_cp, lcd_st, lcd_cpl, lcd_fr, lcd_s, CONST0, n_dma_phi, ppu_rd, ppu_wr, ppu_clk, vram_to_oam, ffxx, n_ppu_hard_reset, ff46, 
+module PPU1 (  a, d, n_ma, n_lcd_ld1, n_lcd_ld0, n_lcd_cpg, n_lcd_cp, n_lcd_st, n_lcd_cpl, n_lcd_fr, n_lcd_s, CONST0, n_dma_phi, ppu_rd, ppu_wr, ppu_clk, vram_to_oam, ffxx, n_ppu_hard_reset, ff46, 
 	nma, fexx, ff43, ff42, sprite_x_flip, sprite_x_match, bp_sel, ppu_mode3, 
 	md, v, FF43_D1, FF43_D0, n_ppu_clk, FF43_D2, h, ppu_mode2, vbl, stop_oam_eval, obj_color, vclk2, h_restart, obj_prio_ck, obj_prio, n_ppu_reset, n_dma_phi2_latched, FF40_D3, FF40_D2, in_window, 
 	FF40_D1, sp_bp_cys, tm_bp_cys, n_sp_bp_mrd, n_tm_bp_cys, arb_fexx_ffxx, ppu_int_stat, ppu_int_vbl, oam_mode3_bl_pch, bp_cy, tm_cy, oam_mode3_nrd, ppu1_ma0, oam_rd_ck, oam_xattr_latch_cck, oam_addr_ck);
@@ -6,14 +6,14 @@ module PPU1 (  a, d, n_ma, lcd_ld1, lcd_ld0, lcd_cpg, lcd_cp, lcd_st, lcd_cpl, l
 	input wire [15:0] a;
 	inout wire [7:0] d;
 	output wire [12:0] n_ma;
-	output wire lcd_ld1;
-	output wire lcd_ld0;
-	output wire lcd_cpg;
-	output wire lcd_cp;
-	output wire lcd_st;
-	output wire lcd_cpl;
-	output wire lcd_fr;
-	output wire lcd_s;
+	output wire n_lcd_ld1;
+	output wire n_lcd_ld0;
+	output wire n_lcd_cpg;
+	output wire n_lcd_cp;
+	output wire n_lcd_st;
+	output wire n_lcd_cpl;
+	output wire n_lcd_fr;
+	output wire n_lcd_s;
 	input wire CONST0;
 	input wire n_dma_phi;
 	input wire ppu_rd;
