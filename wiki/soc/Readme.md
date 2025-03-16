@@ -1,5 +1,9 @@
 # DMG-CPU LR35902 SoC
 
+Top-level layout of the entire SoC:
+
+![dmgcpu_sm](/HDL/soc/design/dmgcpu_sm.png)
+
 ## SoC Architecture Overview
 
 After a long analysis, the impressions about the architectural solutions used in DMG-CPU can be expressed as follows:

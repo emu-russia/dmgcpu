@@ -5,9 +5,9 @@ module HRAM (  clk7, soc_rd, soc_wr, d, ffxx, a);
 	input wire clk7;
 	input wire soc_rd;
 	input wire soc_wr;
-	inout wire [7:0]d;
+	inout wire [7:0] d;
 	input wire ffxx;
-	input wire [7:0]a
+	input wire [7:0] a;
 
 	// Wires
 
@@ -96,14 +96,14 @@ module HRAM (  clk7, soc_rd, soc_wr, d, ffxx, a);
 
 	// Instances
 
-	sram_bit_lane g1 (.db(w39), .n_oe(w10), .n_pch(w9), .oe(w6), .wr(w8), .c[3](w30), .c[2](w33), .c[1](w32), .c[0](w31), .n_bl(w56), .bl(w57) );
-	sram_bit_lane g2 (.db(w40), .n_pch(w9), .n_oe(w10), .oe(w6), .wr(w8), .c[3](w30), .c[2](w33), .c[1](w32), .c[0](w31), .n_bl(w54), .bl(w55) );
-	sram_bit_lane g3 (.db(w41), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .c[3](w30), .c[2](w33), .c[1](w32), .c[0](w31), .n_bl(w52), .bl(w53) );
-	sram_bit_lane g4 (.db(w42), .n_pch(w9), .n_oe(w10), .oe(w6), .wr(w8), .c[3](w30), .c[2](w33), .c[1](w32), .c[0](w31), .n_bl(w50), .bl(w51) );
-	sram_bit_lane g5 (.db(w43), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .c[3](w30), .c[2](w33), .c[1](w32), .c[0](w31), .n_bl(w48), .bl(w49) );
-	sram_bit_lane g6 (.db(w44), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .c[3](w30), .c[2](w33), .c[1](w32), .c[0](w31), .n_bl(w47), .bl(w46) );
-	sram_bit_lane g7 (.db(w37), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .c[3](w30), .c[2](w33), .c[1](w32), .c[0](w31), .n_bl(w60), .bl(w61) );
-	sram_bit_lane g8 (.db(w38), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .c[3](w30), .c[2](w33), .c[1](w32), .c[0](w31), .n_bl(w58), .bl(w59) );
+	sram_bit_lane g1 (.db(w39), .n_oe(w10), .n_pch(w9), .oe(w6), .wr(w8), .c({w30,w33,w32,w31}), .n_bl(w56), .bl(w57) );
+	sram_bit_lane g2 (.db(w40), .n_pch(w9), .n_oe(w10), .oe(w6), .wr(w8), .c({w30,w33,w32,w31}), .n_bl(w54), .bl(w55) );
+	sram_bit_lane g3 (.db(w41), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .c({w30,w33,w32,w31}), .n_bl(w52), .bl(w53) );
+	sram_bit_lane g4 (.db(w42), .n_pch(w9), .n_oe(w10), .oe(w6), .wr(w8), .c({w30,w33,w32,w31}), .n_bl(w50), .bl(w51) );
+	sram_bit_lane g5 (.db(w43), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .c({w30,w33,w32,w31}), .n_bl(w48), .bl(w49) );
+	sram_bit_lane g6 (.db(w44), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .c({w30,w33,w32,w31}), .n_bl(w47), .bl(w46) );
+	sram_bit_lane g7 (.db(w37), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .c({w30,w33,w32,w31}), .n_bl(w60), .bl(w61) );
+	sram_bit_lane g8 (.db(w38), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .c({w30,w33,w32,w31}), .n_bl(w58), .bl(w59) );
 	sram_array g9 (.n_pch(w9), .n_BL(w60), .BL(w61), .WL(w45) );
 	sram_array g10 (.n_pch(w9), .n_BL(w58), .BL(w59), .WL(w45) );
 	sram_array g11 (.n_pch(w9), .n_BL(w56), .BL(w57), .WL(w45) );
@@ -136,5 +136,5 @@ module HRAM (  clk7, soc_rd, soc_wr, d, ffxx, a);
 	dmg_nand g38 (.a(w12), .b(w36), .x(w13) );
 	dmg_nand g39 (.a(w12), .b(w35), .x(w5) );
 	dmg_nor3 g40 (.a(w34), .b(w8), .c(w6), .x(w7) );
-	sram_row_decode g41 (.n_wl_pch(w11), .wl_ena(w12), .d[0](w19), .d[1](w20), .d[2](w21), .d[3](w22), .d[4](w23), .nd[0](w29), .nd[1](w28), .nd[2](w27), .nd[3](w26), .nd[4](w25), .x(w45) );
+	sram_row_decode g41 (.n_wl_pch(w11), .wl_ena(w12), .d({w23,w22,w21,w20,w19}), .nd({w25,w26,w27,w28,w29}), .x(w45) );
 endmodule // HRAM
