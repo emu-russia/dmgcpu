@@ -100,7 +100,7 @@ module PPU2 (  cclk, clk6, n_reset2, a, d, n_oamb, oam_bl_pch, oa, n_oam_rd, n_o
 	inout wire [7:0] n_oama;
 	input wire CONST0;
 	input wire n_dma_phi;
-	input wire [15:0] dma_a; 	// 15, 12:0 are used only
+	input wire [12:0] dma_a;
 	input wire dma_run;
 	input wire soc_wr;
 	input wire soc_rd;
