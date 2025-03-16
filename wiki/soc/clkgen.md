@@ -58,7 +58,7 @@ The `ClkGen` module is responsible for:
 1. **`clk_ena`**: Clock enable signal.
 2. **`osc_ena`**: Oscillator enable signal.
 3. **`cpu_wr`**: CPU write signal.
-4. **`test_1`**: Test signal (used for debugging or testing).
+4. **`test_1`**: Test signal (used for debugging or testing).   TODO: This actually refers to a Master/Slave mode that has not yet been described
 5. **`cpu_mreq`**: CPU memory request signal.
 6. **`reset`**: System reset signal.
 7. **`osc_stable`**: Oscillator stability signal.
@@ -67,7 +67,7 @@ The `ClkGen` module is responsible for:
 
 #### **Outputs**
 1. **`clk1` to `clk9`**: Generated clock signals for various CPU and peripheral components.
-2. **`cclk`**: Core clock signal.
+2. **`cclk`**: Core clock signal.   TODO: DeepSeek for some reason decided that this is for Core, although it is not. Clarify on waves and give a description of the signal
 3. **`n_reset2`**: Active-low reset signal for the system.
 4. **`sync_reset`**: Synchronized reset signal.
 5. **`ext_cs_en`**: External chip select enable signal.
