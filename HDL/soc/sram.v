@@ -1,6 +1,6 @@
 // Common elements of DMG static memory (SRAM)
 
-module sram_bit_lane (  oe, n_oe, n_pch, db, wr, col, n_BL, BL);
+module sram_bit_lane (  oe, n_oe, n_pch, db, wr, col, n_bl, bl);
 
 	input wire oe;
 	input wire n_oe;
@@ -8,8 +8,8 @@ module sram_bit_lane (  oe, n_oe, n_pch, db, wr, col, n_BL, BL);
 	inout wire db;
 	input wire wr;
 	input wire [3:0] col;
-	inout wire [3:0] n_BL;
-	inout wire [3:0] BL;
+	inout wire [3:0] n_bl;
+	inout wire [3:0] bl;
 
 	// Wires
 
@@ -49,18 +49,18 @@ module sram_bit_lane (  oe, n_oe, n_pch, db, wr, col, n_BL, BL);
 	assign w11 = col[1];
 	assign w12 = col[2];
 	assign w13 = col[3];
-	assign n_BL[0] = w14;
-	assign BL[0] = w15;
-	assign BL[1] = w16;
-	assign n_BL[1] = w17;
-	assign n_BL[2] = w18;
-	assign BL[2] = w19;
-	assign BL[3] = w20;
-	assign n_BL[3] = w21;
+	assign n_bl[0] = w14;
+	assign bl[0] = w15;
+	assign bl[1] = w16;
+	assign n_bl[1] = w17;
+	assign n_bl[2] = w18;
+	assign bl[2] = w19;
+	assign bl[3] = w20;
+	assign n_bl[3] = w21;
 
 	// Instances
 
-	col_bidir_mux g1 (.n_bit(w24), .bit(w25), .c[3](w13), .c[2](w12), .c[1](w11), .c[0](w10), .nb[0](w14), .b[0](w15), .b[1](w16), .nb[1](w17), .nb[2](w18), .b[2](w19), .b[3](w20), .nb[3](w21) );
+	col_bidir_mux g1 (.n_bit(w24), .bit(w25), .c({w13,w12,w11,w10}), .nb({w21,w18,w17,w14}), .b({w20,w19,w16,w15}) );
 	dmg_nand g2 (.a(w8), .b(w7), .x(w9) );
 	dmg_not g3 (.x(w7), .a(w4) );
 	dmg_nand g4 (.a(w4), .b(w8), .x(w6) );
@@ -76,22 +76,13 @@ endmodule // sram_bit_lane
 
 // Module Definitions [It is possible to wrap here on your primitives]
 
-module col_bidir_mux (  n_bit, bit, c[3], c[2], c[1], c[0], nb[0], b[0], b[1], nb[1], nb[2], b[2], b[3], nb[3]);
+module col_bidir_mux (  n_bit, bit, c, nb, b);
 
 	inout wire n_bit;
 	inout wire bit;
-	input wire c[3];
-	input wire c[2];
-	input wire c[1];
-	input wire c[0];
-	inout wire nb[0];
-	inout wire b[0];
-	inout wire b[1];
-	inout wire nb[1];
-	inout wire nb[2];
-	inout wire b[2];
-	inout wire b[3];
-	inout wire nb[3];
+	input wire [3:0] c;
+	inout wire [3:0] nb;
+	inout wire [3:0] b;
 
 	// b/nb <=> bit/n_bit controlled by c.
 
