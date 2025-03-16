@@ -18,7 +18,7 @@ After a long analysis, the impressions about the architectural solutions used in
 
 ## Signals
 
-:warning: Generated in DeepSeek and requires refinement. Prompt:
+:warning: Generated in DeepSeek and requires refinement (TODO). Prompt:
 
 Analyze the Verilog source that I will give you and make clear tables of signals, dividing signals into groups (buses, signals working with registers ffxx and similar, separate groups of signals like n_lcd_xxx). Column “signal direction” should be made by analyzing the second part of the text, where I describe the modules partially. The table should contain columns: Name, From, Where to, Description (signal name, from which module, to which module, description). The table should be made in English and in Markdown format. For the name of a group of signals you can use a whole line of the table, and the name of the group should be bolded. If the signal is a bus (inout), then all consumers should be specified in the From and Where To columns.
 Follows by: `dmgcpu.v` + other .v modules.
