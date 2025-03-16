@@ -1,4 +1,4 @@
-# Clock Generator
+# Clock Generator & System Control
 
 ![locator_clkgen](/imgstore/soc/locator_clkgen.jpg)
 
