@@ -1,5 +1,5 @@
 module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr, mmio_sel, boot_sel, 
-	n_DRV_HIGH_a, n_INPUT_a, DRV_LOW_a, n_cs_topad, CONST0, n_DRV_HIGH_nmwr, n_mwr, DRV_LOW_nmwr, n_DRV_HIGH_nmrd, n_mrd, DRV_LOW_nmrd, n_DRV_HIGH_nmcs, n_mcs, DRV_LOW_nmcs, 
+	n_DRV_HIGH_a15, n_INPUT_a15, DRV_LOW_a15, n_cs_topad, CONST0, n_DRV_HIGH_nmwr, n_mwr, DRV_LOW_nmwr, n_DRV_HIGH_nmrd, n_mrd, DRV_LOW_nmrd, n_DRV_HIGH_nmcs, n_mcs, DRV_LOW_nmcs, 
 	n_DRV_HIGH_md, n_md_frompad, DRV_LOW_md, n_md_ena_pu, 
 	n_DRV_HIGH_d, n_db_frompad, DRV_LOW_d, n_ena_pu_db,
 	soc_wr, soc_rd, vram_to_oam, dma_a_15, non_vram_mreq, test_1, n_extdb_to_intdb, n_dblatch_to_intdb, n_intdb_to_extdb, ffxx, n_ppu_hard_reset, ppu_mode3, md, oam_din, oam_to_vram, dma_addr_ext, sp_bp_cys, tm_bp_cys, n_sp_bp_mrd, n_tm_bp_cys, arb_fexx_ffxx, cpu_vram_oam_rd);
@@ -14,9 +14,9 @@ module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr
 	input wire cpu_wr;
 	output wire mmio_sel;
 	output wire boot_sel;
-	output wire [15:0] n_DRV_HIGH_a;
-	input wire [15:0] n_INPUT_a;
-	output wire [15:0] DRV_LOW_a;
+	output wire n_DRV_HIGH_a15;
+	input wire n_INPUT_a15;
+	output wire DRV_LOW_a15;
 	output wire n_cs_topad;
 	output wire CONST0;
 	output wire n_DRV_HIGH_nmwr;
@@ -298,8 +298,8 @@ module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr
 	wire w235;
 
 	assign n_DRV_HIGH_d[5] = w1;
-	assign w2 = n_INPUT_a[15];
-	assign DRV_LOW_a[15] = w61;
+	assign w2 = n_INPUT_a15;
+	assign DRV_LOW_a15 = w61;
 	assign DRV_LOW_d[0] = w62;
 	assign n_DRV_HIGH_d[3] = w65;
 	assign n_DRV_HIGH_d[0] = w66;
@@ -312,7 +312,7 @@ module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr
 	assign DRV_LOW_d[3] = w160;
 	assign w53 = n_db_frompad[2];
 	assign DRV_LOW_d[2] = w161;
-	assign n_DRV_HIGH_a[15] = w111;
+	assign n_DRV_HIGH_a15 = w111;
 	assign DRV_LOW_d[5] = w110;
 	assign w156 = n_db_frompad[1];
 	assign w74 = n_db_frompad[3];
@@ -540,7 +540,7 @@ module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr
 	dmg_notif0 g106 (.n_ena(w159), .a(w158), .x(w27) );
 	dmg_notif0 g107 (.n_ena(w159), .a(w223), .x(w55) );
 	dmg_notif0 g108 (.n_ena(w159), .a(w166), .x(w5) );
-	dmg_notif1 g109 (.n_ena(w7), .a(w124), .x(w55) );
+	dmg_notif1 g109 (.ena(w7), .a(w124), .x(w55) );
 	dmg_bufif0 g110 (.a0(w28), .n_ena(w32), .a1(w28), .x(w35) );
 	dmg_bufif0 g111 (.a0(w69), .n_ena(w68), .a1(w69), .x(w5) );
 	dmg_bufif0 g112 (.a0(w67), .n_ena(w68), .a1(w67), .x(w108) );
@@ -574,7 +574,7 @@ module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr
 	dmg_latch g140 (.ena(w159), .d(w73), .q(w223) );
 	dmg_latch g141 (.ena(w159), .d(w50), .q(w162) );
 	dmg_latch g142 (.ena(w159), .d(w74), .q(w158) );
-	dmg_notif1 g143 (.n_ena(w7), .a(w6), .x(w5) );
+	dmg_notif1 g143 (.ena(w7), .a(w6), .x(w5) );
 	dmg_or g144 (.a(w86), .b(w80), .x(w79) );
 	dmg_or g145 (.a(w13), .b(w11), .x(w12) );
 	dmg_or g146 (.a(w32), .b(w46), .x(w214) );

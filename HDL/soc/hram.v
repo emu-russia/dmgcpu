@@ -96,14 +96,14 @@ module HRAM (  clk7, soc_rd, soc_wr, d, ffxx, a);
 
 	// Instances
 
-	sram_bit_lane g1 (.db(w39), .n_oe(w10), .n_pch(w9), .oe(w6), .wr(w8), .c({w30,w33,w32,w31}), .n_bl(w56), .bl(w57) );
-	sram_bit_lane g2 (.db(w40), .n_pch(w9), .n_oe(w10), .oe(w6), .wr(w8), .c({w30,w33,w32,w31}), .n_bl(w54), .bl(w55) );
-	sram_bit_lane g3 (.db(w41), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .c({w30,w33,w32,w31}), .n_bl(w52), .bl(w53) );
-	sram_bit_lane g4 (.db(w42), .n_pch(w9), .n_oe(w10), .oe(w6), .wr(w8), .c({w30,w33,w32,w31}), .n_bl(w50), .bl(w51) );
-	sram_bit_lane g5 (.db(w43), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .c({w30,w33,w32,w31}), .n_bl(w48), .bl(w49) );
-	sram_bit_lane g6 (.db(w44), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .c({w30,w33,w32,w31}), .n_bl(w47), .bl(w46) );
-	sram_bit_lane g7 (.db(w37), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .c({w30,w33,w32,w31}), .n_bl(w60), .bl(w61) );
-	sram_bit_lane g8 (.db(w38), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .c({w30,w33,w32,w31}), .n_bl(w58), .bl(w59) );
+	sram_bit_lane g1 (.db(w39), .n_oe(w10), .n_pch(w9), .oe(w6), .wr(w8), .col({w30,w33,w32,w31}), .n_bl(w56), .bl(w57) );
+	sram_bit_lane g2 (.db(w40), .n_pch(w9), .n_oe(w10), .oe(w6), .wr(w8), .col({w30,w33,w32,w31}), .n_bl(w54), .bl(w55) );
+	sram_bit_lane g3 (.db(w41), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .col({w30,w33,w32,w31}), .n_bl(w52), .bl(w53) );
+	sram_bit_lane g4 (.db(w42), .n_pch(w9), .n_oe(w10), .oe(w6), .wr(w8), .col({w30,w33,w32,w31}), .n_bl(w50), .bl(w51) );
+	sram_bit_lane g5 (.db(w43), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .col({w30,w33,w32,w31}), .n_bl(w48), .bl(w49) );
+	sram_bit_lane g6 (.db(w44), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .col({w30,w33,w32,w31}), .n_bl(w47), .bl(w46) );
+	sram_bit_lane g7 (.db(w37), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .col({w30,w33,w32,w31}), .n_bl(w60), .bl(w61) );
+	sram_bit_lane g8 (.db(w38), .oe(w6), .n_pch(w9), .n_oe(w10), .wr(w8), .col({w30,w33,w32,w31}), .n_bl(w58), .bl(w59) );
 	sram_array g9 (.n_pch(w9), .n_BL(w60), .BL(w61), .WL(w45) );
 	sram_array g10 (.n_pch(w9), .n_BL(w58), .BL(w59), .WL(w45) );
 	sram_array g11 (.n_pch(w9), .n_BL(w56), .BL(w57), .WL(w45) );

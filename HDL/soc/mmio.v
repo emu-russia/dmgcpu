@@ -24,9 +24,9 @@ module MMIO (  reset, clk2, clk4, osc_stable, clk_ena, osc_ena, clk6, clk9, n_re
 	input wire [4:0] cpu_irq_ack;
 	input wire cpu_rd;
 	input wire cpu_wr;
-	output wire [15:0] n_DRV_HIGH_a;
-	input wire [15:0] n_INPUT_a;
-	output wire [15:0] DRV_LOW_a;
+	output wire [14:8] n_DRV_HIGH_a;
+	input wire [14:8] n_INPUT_a;
+	output wire [14:8] DRV_LOW_a;
 	output wire n_DRV_HIGH_nrd;
 	input wire n_INPUT_nrd;
 	output wire DRV_LOW_nrd;
