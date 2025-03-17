@@ -256,3 +256,29 @@ module dmg_aon (  a0, a1, b, x);
 	output wire x;
 
 endmodule // dmg_aon
+
+module dmg_nor6 (  a, b, c, d, e, f, x);
+
+	input wire a;
+	input wire b;
+	input wire c;
+	input wire d;
+	input wire e;
+	input wire f;
+	output wire x;
+
+endmodule // dmg_nor6
+
+module dmg_nor8 (  a, b, c, d, e, f, g, h, x);
+
+	input wire a;
+	input wire b;
+	input wire c;
+	input wire d;
+	input wire e;
+	input wire f;
+	input wire g;
+	input wire h;
+	output wire x;
+
+endmodule // dmg_nor8
