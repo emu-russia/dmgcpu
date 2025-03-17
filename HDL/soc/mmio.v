@@ -18,7 +18,7 @@ module MMIO (  reset, clk2, clk4, osc_stable, clk_ena, osc_ena, clk6, clk9, n_re
 	input wire cpu_wr_sync;
 	input wire cpu_m1;
 	output wire n_cpu_m1;
-	input wire [14:0] a; 			// a[15] is not used
+	inout wire [14:0] a; 			// a[15] is not used    ⚠️ bidir
 	inout wire [7:0] d;
 	output wire [4:0] cpu_irq_trig;
 	input wire [4:0] cpu_irq_ack;

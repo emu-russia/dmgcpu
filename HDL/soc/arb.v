@@ -9,7 +9,7 @@ module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr
 	input wire cpu_mreq;
 	input wire ext_cs_en;
 	input wire cpu_wr_sync;
-	input wire [15:0] a;
+	inout wire [15:0] a; 			// ⚠️ bidir
 	inout wire [7:0] d;
 	input wire cpu_wr;
 	output wire mmio_sel;
