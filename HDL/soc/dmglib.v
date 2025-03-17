@@ -84,6 +84,25 @@ module dmg_nor3 (  a, b, c, x);
 
 endmodule // dmg_nor3
 
+module dmg_nor4 (  a, b, c, d, x);
+
+	input wire a;
+	input wire b;
+	input wire c;
+	input wire d;
+	output wire x;
+
+endmodule // dmg_nor4
+
+module dmg_or3 (  a, b, c, x);
+
+	input wire a;
+	input wire b;
+	input wire c;
+	output wire x;
+
+endmodule // dmg_or3
+
 module dmg_nor (  a, b, x);
 
 	input wire a;
@@ -150,6 +169,14 @@ module dmg_dffsr (  clk, nres, nset1, nset2, d, q, nq);
 
 endmodule // dmg_dffsr
 
+module dmg_notif0 (  n_ena, a, x);
+
+	input wire n_ena;
+	input wire a;
+	output wire x;
+
+endmodule // dmg_notif0
+
 module dmg_notif1 (  ena, a, x);
 
 	input wire ena;
@@ -157,6 +184,15 @@ module dmg_notif1 (  ena, a, x);
 	output wire x;
 
 endmodule // dmg_notif1
+
+module dmg_bufif0 (  a0, n_ena, a1, x);
+
+	input wire a0;
+	input wire n_ena;
+	input wire a1;
+	output wire x;
+
+endmodule // dmg_bufif0
 
 module dmg_dffr (  clk, nr1, nr2, d, q, nq);
 
@@ -168,6 +204,15 @@ module dmg_dffr (  clk, nr1, nr2, d, q, nq);
 	output wire nq;
 
 endmodule // dmg_dffr
+
+module dmg_mux (  sel, d1, d0, q);
+
+	input wire sel;
+	input wire d1;
+	input wire d0;
+	output wire q;
+
+endmodule // dmg_mux
 
 module dmg_muxi (  sel, d1, d0, q);
 
@@ -186,3 +231,28 @@ module dmg_and3 (  a, b, c, x);
 	output wire x;
 
 endmodule // dmg_and3
+
+module dmg_latch (  ena, d, q, nq);
+
+	input wire ena;
+	input wire d;
+	output wire q;
+	output wire nq;
+
+endmodule // dmg_latch
+
+module dmg_const (  q0, q1);
+
+	output wire q0;
+	output wire q1;
+
+endmodule // dmg_const
+
+module dmg_aon (  a0, a1, b, x);
+
+	input wire a0;
+	input wire a1;
+	input wire b;
+	output wire x;
+
+endmodule // dmg_aon

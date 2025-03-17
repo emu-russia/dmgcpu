@@ -11,12 +11,12 @@ module APU (  cclk, clk2, clk4, clk6, clk7, clk9, n_reset2, a, d, cpu_wakeup, n_
 	input wire clk7;
 	input wire clk9;
 	input wire n_reset2;
-	input wire [7:0] a; 			// 7:0 are used only
+	inout wire [7:0] a; 			// 7:0 are used only   ⚠️ bidir
 	inout wire [7:0] d;
 	output wire cpu_wakeup;
-	output wire [15:0] n_DRV_HIGH_a;
-	input wire [15:0] n_INPUT_a;
-	output wire [15:0] DRV_LOW_a;
+	output wire [7:0] n_DRV_HIGH_a;
+	input wire [7:0] n_INPUT_a;
+	output wire [7:0] DRV_LOW_a;
 	output wire n_sout_topad;
 	output wire n_DRV_HIGH_sin;
 	output wire n_ENA_PU_sin;

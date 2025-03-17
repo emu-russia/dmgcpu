@@ -152,13 +152,13 @@ module pcb_front_board (  p10, p11, p13, p12, p14, p15, s, fr, cp, ld1, ld0, st,
 	inout wire p12;
 	input wire p14;
 	input wire p15;
-	input wire s;
-	input wire fr;
+	input wire s; 			// Common display sync signal (VSync). Used as input value for the Y-Driver shift register
+	input wire fr; 			// LCD alterating signal; FR is used to stop the LCD plating out (destroying the LCD material with DC), it inverts the drivers
 	input wire cp;
 	input wire ld1;
 	input wire ld0;
 	input wire st;
-	input wire cpl;
+	input wire cpl; 		// Signal data latch signal. Used as CLK for Y-Driver chip
 	input wire cpg;
 	input wire sp;
 

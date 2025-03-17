@@ -112,8 +112,8 @@ module write_driver (  n_bl, bl, d, nd);
 
 	output wire n_bl;
 	output wire bl;
-	input wire q;
-	input wire nq;
+	input wire d;
+	input wire nd;
 
 	assign bl = ~nd;
 	assign n_bl = ~d;

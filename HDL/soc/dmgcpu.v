@@ -568,6 +568,10 @@ module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_
 	wire w525;
 	wire w526;
 
+	wire CPU_IRQ_ACK_unused_7;
+	wire CPU_IRQ_ACK_unused_6;
+	wire CPU_IRQ_ACK_unused_5;	
+
 	assign sck = w1;
 	assign md[0] = w2;
 	assign md[1] = w3;
@@ -877,7 +881,6 @@ module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_
 		.cpu_vram_oam_rd(w510),
 		.oam_dma_wr(w511),
 		.clk6_delay(w514),
-		.oam_din_2(w515),
 		.oam_mode3_bl_pch(w517),
 		.bp_cy(w518),
 		.tm_cy(w519),
@@ -994,9 +997,9 @@ module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_
 		.cpu_irq_ack({w129, w131, w133, w135, w137}),
 		.cpu_rd(w139),
 		.cpu_wr(w140),
-		.n_DRV_HIGH_a({1'bz, w195, w198, w201, w204, w207, w210, w213, 8'bz}),
-		.n_INPUT_a({1'bz, w196, w199, w202, w205, w208, w211, w214, 8'bz}),
-		.DRV_LOW_a({1'bz, w197, w200, w203, w206, w209, w212, w215, 8'bz}),
+		.n_DRV_HIGH_a({w195, w198, w201, w204, w207, w210, w213}),
+		.n_INPUT_a({w196, w199, w202, w205, w208, w211, w214}),
+		.DRV_LOW_a({w197, w200, w203, w206, w209, w212, w215}),
 		.n_DRV_HIGH_nrd(w241),
 		.n_INPUT_nrd(w242),
 		.DRV_LOW_nrd(w243),
@@ -1061,13 +1064,13 @@ module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_
 		.CLK8(w91),
 		.CLK9(w92),
 		.SYNC_RESET(w94),
-		.CPU_MREQ(w95),
+		.MREQ(w95),
 		.NMI(w98),
 		.M1(w99),
 		.A({w124, w123, w122, w121, w120, w119, w118, w117, w116, w115, w114, w113, w112, w111, w102, w101}),
 		.D({w103, w104, w105, w106, w107, w108, w109, w110}),
 		.CPU_IRQ_TRIG({1'b0, 1'b0, 1'b0, w128, w130, w132, w134, w136}),
-		.CPU_IRQ_ACK({1'bz, 1'bz, 1'bz, w129, w131, w133, w135, w137}),
+		.CPU_IRQ_ACK({CPU_IRQ_ACK_unused_7, CPU_IRQ_ACK_unused_6, CPU_IRQ_ACK_unused_5, w129, w131, w133, w135, w137}),
 		.WAKE(w138),
 		.RD(w139),
 		.WR(w140),
@@ -1088,9 +1091,9 @@ module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_
 		.cpu_wr(w140),
 		.mmio_sel(w141),
 		.boot_sel(w142),
-		.n_DRV_HIGH_a({w192, 14'bz}),
-		.n_INPUT_a({w193, 14'bz}),
-		.DRV_LOW_a({w194, 14'bz}),
+		.n_DRV_HIGH_a15(w192),
+		.n_INPUT_a15(w193),
+		.DRV_LOW_a15(w194),
 		.n_cs_topad(w240),
 		.CONST0(w259),
 		.n_DRV_HIGH_nmwr(w278),
@@ -1131,8 +1134,7 @@ module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_
 		.n_sp_bp_mrd(w507),
 		.n_tm_bp_cys(w508),
 		.arb_fexx_ffxx(w509),
-		.cpu_vram_oam_rd(w510),
-		.oam_din_2(w515)
+		.cpu_vram_oam_rd(w510)
 	);
 
 	APU apu (
@@ -1146,9 +1148,9 @@ module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_
 		.a({w116, w115, w114, w113, w112, w111, w102, w101}),
 		.d({w103, w104, w105, w106, w107, w108, w109, w110}),
 		.cpu_wakeup(w138),
-		.n_DRV_HIGH_a({8'bz, w216, w219, w222, w225, w228, w231, w234, w237}),
-		.n_INPUT_a({8'bz, w217, w220, w223, w226, w229, w232, w235, w238}),
-		.DRV_LOW_a({8'bz, w218, w221, w224, w227, w230, w233, w236, w239}),
+		.n_DRV_HIGH_a({w216, w219, w222, w225, w228, w231, w234, w237}),
+		.n_INPUT_a({w217, w220, w223, w226, w229, w232, w235, w238}),
+		.DRV_LOW_a({w218, w221, w224, w227, w230, w233, w236, w239}),
 		.n_sout_topad(w249),
 		.n_DRV_HIGH_sin(w250),
 		.n_ENA_PU_sin(w251),
