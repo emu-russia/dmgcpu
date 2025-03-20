@@ -1,5 +1,15 @@
 // Module Definitions [It is possible to wrap here on your primitives]
 
+module dmg_and4 (  a, b, c, d, x);
+
+	input wire a;
+	input wire b;
+	input wire c;
+	input wire d;
+	output wire x;
+
+endmodule // dmg_and4
+
 module dmg_not (  a, x);
 
 	input wire a;
