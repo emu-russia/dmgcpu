@@ -8,19 +8,19 @@
 
 |Signal|Dir|From/Where To|Description|
 |---|---|---|---|
-|sc_write|input|From MMIO| |
-|n_reset2|input|From ClkGen|Global reset signal|
-|lfo_16384Hz|input|From MMIO| |
-|sc_read|input|From MMIO| |
-|sb_read|input|From MMIO| |
-|n_sb_write|input|From MMIO| |
-|d\[7:0\]|bidir| | |
-|n_sck|input| | |
-|sck_dir|output| | |
-|int_serial|output| | |
-|n_sin|input| | |
-|ser_out|output| | |
-|serial_tick|output| | |
+|sc_write|input|From MMIO|Signal to enable serial control write operations. |
+|n_reset2|input|From ClkGen|Active-low Global reset signal|
+|lfo_16384Hz|input|From MMIO|Low-frequency oscillator clock signal (16384 Hz). |
+|sc_read|input|From MMIO|Signal to enable serial control read operations. |
+|sb_read|input|From MMIO|Signal to enable serial buffer read operations. |
+|n_sb_write|input|From MMIO|Active-low signal to enable writing to the serial buffer. |
+|d\[7:0\]|bidir| |Bidirectional data bus for communication with the CPU. |
+|n_sck|input| |Serial clock input for synchronization. |
+|sck_dir|output| |Signal indicating the direction of the serial clock. |
+|int_serial|output| |Interrupt signal for serial communication events. |
+|n_sin|input| |Serial input data line. |
+|ser_out|output| |Serial output data line. |
+|serial_tick|output| |Signal indicating a serial clock tick. |
 
 ## DeepSeek Analysis
 
@@ -36,27 +36,6 @@ The `Ser` module is responsible for:
 2. **Clock Synchronization**: It uses an external clock (`n_sck`) and an internal low-frequency oscillator (`lfo_16384Hz`) to synchronize data transfer.
 3. **Interrupt Generation**: It generates an interrupt signal (`int_serial`) to notify the CPU of data transfer completion or errors.
 4. **Data Buffering**: It uses shift registers and flip-flops to buffer incoming and outgoing data.
-
----
-
-### **Inputs and Outputs**
-
-#### **Inputs**
-1. **`d[7:0]`**: Bidirectional data bus for communication with the CPU.
-2. **`n_sb_write`**: Active-low signal to enable writing to the serial buffer.
-3. **`n_sin`**: Serial input data line.
-4. **`n_sck`**: Serial clock input for synchronization.
-5. **`sc_write`**: Signal to enable serial control write operations.
-6. **`n_reset2`**: Active-low reset signal.
-7. **`lfo_16384Hz`**: Low-frequency oscillator clock signal (16384 Hz).
-8. **`sc_read`**: Signal to enable serial control read operations.
-9. **`sb_read`**: Signal to enable serial buffer read operations.
-
-#### **Outputs**
-1. **`ser_out`**: Serial output data line.
-2. **`serial_tick`**: Signal indicating a serial clock tick.
-3. **`int_serial`**: Interrupt signal for serial communication events.
-4. **`sck_dir`**: Signal indicating the direction of the serial clock.
 
 ---
 
