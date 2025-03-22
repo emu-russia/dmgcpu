@@ -79,22 +79,22 @@ To familiarize yourself with the architecture, it's best to crawl through the an
 
 ## Entites
 
-- Int DB Precharge
-- Int DB -> Ext DB Driver
-- Ext DB -> Int DB Latch + tris
-- VRAM Test Mode Check
-- Sys Decode (part)
-- Ext A15 -> Int A15 tris
-- Int A15 -> Ext A15 Driver
+- Int DB Precharge: controls the Int DB bus precharge
+- Int DB -> Ext DB Driver: connects Int DB to Ext DB
+- Ext DB -> Int DB Latch + tris: memorizes the Ext DB value on the latch (DB Latch)
+- VRAM Test Mode Check: generates the VRAM Test Mode signal (when VRAM is controlled externally)
+- Sys Decode (part): Sys Decode chunks
+- Ext A15 -> Int A15 tris: piece of address bus arbitration
+- Int A15 -> Ext A15 Driver: piece of address bus arbitration
 - /CS Logic
 - /MCS Logic
 - /MRD Logic
 - /MWR Logic
-- Ext DB -> Int DB Latch + tris
-- Ext DB -> OAM DataIn DLatch
-- MD Bus Setup
-- Ext MD -> Int MD tris
-- Int MD -> Ext MD Driver
-- Int MD -> Int DB tris
-- Int DB -> Int MD tris
-- $FF50 BANK Reg
+- Ext DB -> Int DB Latch + tris: connects Ext DB to Int DB
+- Ext DB -> OAM DataIn DLatch: outputs a value from Ext DB for OAM DataIn
+- MD Bus Setup: generates MD bus control signals
+- Ext MD -> Int MD tris: connects Ext MD to Int MD
+- Int MD -> Ext MD Driver: connects Int MD to Ext MD
+- Int MD -> Int DB tris: connects Int MD to Int DB
+- Int DB -> Int MD tris: connects Int DB to Int MD
+- $FF50 BANK Reg: well-known register to disable mapping of the built-in BootROM (write 1 only)
