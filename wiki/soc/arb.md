@@ -5,6 +5,13 @@
 |![arb](/imgstore/soc/arb.jpg)|![arb_netlist](/imgstore/soc/arb_netlist.png)|
 |---|---|
 
+The module is a classic bus arbiter, which can often be found in older chips. It is responsible for connecting external and internal buses to each other, in various combinations.
+It also contains a piece of arbitration for `a[15]`. [^1] 
+
+To familiarize yourself with the architecture, it's best to crawl through the annotated design, everything is quite obvious there. Sys Decode (address space decoder) parts, which are included in this module and output a number of signals for other parts of the chip, look a bit complicated. And the combo circuits for forming `/CS`, `/MCS`, `/MWR` and `/MRD` are of course also complicated (a lot of non-obvious signals form the combinatorial tree).
+
+[^1]: The chip is topologically arranged so that the address bus arbitration is divided into three parts: in [arb](arb.md), in [mmio](mmio.md), and in [apu](apu.md), to equalize wire lengths.
+
 ### Signal Table
 
 :warning: The signal table is derived from DeepSeek and likely requires human refinement.
