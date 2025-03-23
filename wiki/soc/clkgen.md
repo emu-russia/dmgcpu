@@ -10,20 +10,20 @@ The names of signals of the CLK group have many synonyms used by different autho
 
 |Signal|Dir|From/Where To|Description|
 |---|---|---|---|
-|clk_ena|input|From Core| |
-|osc_ena|input|From Core| |
-|cpu_wr_sync|output|To MMIO,Arb| |
-|cpu_wr|input|From Core| |
-|ext_cs_en|output|To Arb| |
-|test_1|input|From MMIO| (Aka T1nT2)|
-|cpu_mreq|input|From Core| |
-|sync_reset|output|To Core| |
-|reset|input|From /RESET Pad| |
-|osc_stable|input|From MMIO| |
-|n_test_reset|input|From MMIO| |
-|n_clk_in|input|From CK1_CK2 Pad| |
-|n_reset2|output|To Ser,MMIO,Arb,PPU,APU|Global reset signal |
-|clk1|output|To Core| (Aka BOWA,ADR_CLK_N)|
+|clk_ena|input|From Core|Clock enable signal. |
+|osc_ena|input|From Core|Oscillator enable signal. |
+|cpu_wr_sync|output|To MMIO,Arb|Synchronized CPU write signal. |
+|cpu_wr|input|From Core|CPU write signal. |
+|ext_cs_en|output|To Arb|External chip select enable signal. |
+|test_1|input|From MMIO|Test signal (used for debugging or testing). (Aka T1nT2)|
+|cpu_mreq|input|From Core|CPU memory request signal. |
+|sync_reset|output|To Core|Synchronized reset signal. |
+|reset|input|From /RESET Pad|System reset signal. |
+|osc_stable|input|From MMIO|Oscillator stability signal. |
+|n_test_reset|input|From MMIO|Active-low test reset signal. |
+|n_clk_in|input|From CK1_CK2 Pad|Active-low external clock input. |
+|n_reset2|output|To Ser,MMIO,Arb,PPU,APU|Active-low Global reset signal |
+|clk1|output|To Core|Generated clock signals for various CPU and peripheral components. (Aka BOWA,ADR_CLK_N)|
 |clk2|output|To Core,MMIO,Arb,APU| (Aka DATA_VALID,ADR_CLK_P)|
 |clk3|output|To Core | (Aka CPU_PHI,DATA_CLK_P)|
 |clk4|output|To Core,MMIO,APU,PHI Pad| (Aka #CPU_PHI,DATA_CLK_N)|
@@ -32,7 +32,7 @@ The names of signals of the CLK group have many synonyms used by different autho
 |clk7|output|To Core,HRAM,APU| (Aka BUKE,LATCH_CLK)|
 |clk8|output|To Core| (Aka BOMA_1MHZ,MAIN_CLK_N)|
 |clk9|output|To Core,MMIO,APU| (Aka BOGA_1MHZ,MAIN_CLK_P)|
-|cclk|output|To APU,PPU| (Aka AZOF)|
+|cclk|output|To APU,PPU|Input clk complement (same as n_clk_in) (Aka AZOF)|
 
 ## DeepSeek Analysis
 
@@ -51,27 +51,6 @@ The `ClkGen` module is responsible for:
 5. **Oscillator Control**: Manages the oscillator enable (`osc_ena`) and stability (`osc_stable`) signals.
 
 ---
-
-### **Inputs and Outputs**
-
-#### **Inputs**
-1. **`clk_ena`**: Clock enable signal.
-2. **`osc_ena`**: Oscillator enable signal.
-3. **`cpu_wr`**: CPU write signal.
-4. **`test_1`**: Test signal (used for debugging or testing).   TODO: This actually refers to a Master/Slave mode that has not yet been described
-5. **`cpu_mreq`**: CPU memory request signal.
-6. **`reset`**: System reset signal.
-7. **`osc_stable`**: Oscillator stability signal.
-8. **`n_test_reset`**: Active-low test reset signal.
-9. **`n_clk_in`**: Active-low external clock input.
-
-#### **Outputs**
-1. **`clk1` to `clk9`**: Generated clock signals for various CPU and peripheral components.
-2. **`cclk`**: Core clock signal.   TODO: DeepSeek for some reason decided that this is for Core, although it is not. Clarify on waves and give a description of the signal
-3. **`n_reset2`**: Active-low reset signal for the system.
-4. **`sync_reset`**: Synchronized reset signal.
-5. **`ext_cs_en`**: External chip select enable signal.
-6. **`cpu_wr_sync`**: Synchronized CPU write signal.
 
 ### **Signal Flow**
 1. **Clock Generation**:
@@ -93,6 +72,10 @@ The `ClkGen` module is responsible for:
 5. **Oscillator Control**:
    - The oscillator enable (`osc_ena`) and stability (`osc_stable`) signals are managed to ensure proper clock generation.
    - These signals ensure that the oscillator is stable before enabling clock generation.
+
+Phase pattern of all CLK outputs:
+
+![clkgen1](/imgstore/waves/clkgen1.png)
 
 ## Map
 

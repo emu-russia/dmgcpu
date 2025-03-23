@@ -1,0 +1,42 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Sun Mar 23 04:37:17 2025
+[*]
+[dumpfile] "C:\Work\dmgcpu\HDL\soc\icarus\test_clkgen.vcd"
+[dumpfile_mtime] "Sun Mar 23 04:35:57 2025"
+[dumpfile_size] 62535
+[savefile] "C:\Work\dmgcpu\HDL\soc\icarus\test_clkgen.gtkw"
+[timestart] 0
+[size] 2560 1009
+[pos] -1 -1
+*-9.000000 2778 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] test_clkgen.
+[treeopen] test_clkgen.clkgen.
+[sst_width] 211
+[signals_width] 174
+[sst_expanded] 1
+[sst_vpaned_height] 298
+@28
+test_clkgen.ck1
+test_clkgen.reset
+test_clkgen.clkgen.n_clk_in
+@200
+-Output Clock Trees
+@28
+test_clkgen.clkgen.clk1
+test_clkgen.clkgen.clk2
+test_clkgen.clkgen.clk3
+test_clkgen.clkgen.clk4
+test_clkgen.clkgen.clk5
+test_clkgen.clkgen.clk6
+test_clkgen.clkgen.clk7
+test_clkgen.clkgen.clk8
+test_clkgen.clkgen.clk9
+test_clkgen.clkgen.cclk
+@200
+-Reset
+@28
+test_clkgen.clkgen.n_reset2
+test_clkgen.clkgen.sync_reset
+[pattern_trace] 1
+[pattern_trace] 0

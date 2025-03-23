@@ -78,7 +78,7 @@ module dmg_dffr (  clk, nr1, nr2, d, q, nq);
 	output wire nq;
 
 	reg val;
-	initial val = 1'bx;
+	initial val = 1'b0;
 
 	always @(posedge clk) begin
 		if (clk)
@@ -107,7 +107,7 @@ module dmg_dffrnq_comp (  nr1, d, ck, cck, nr2, nq, q);
 	output wire q;
 
 	reg val;
-	initial val = 1'bx;
+	initial val = 1'b0;
 
 	always @(posedge ck) begin
 		if (ck)
@@ -136,7 +136,7 @@ module dmg_dffsr (  clk, nres, nset1, nset2, d, q, nq);
 	output wire nq;
 
 	reg val;
-	initial val = 1'bx;
+	initial val = 1'b0;
 
 	always @(posedge clk) begin
 		if (clk)
@@ -394,7 +394,7 @@ module dmg_notif1 (  ena, a, x);
 	input wire a;
 	output wire x;
 
-	assign x = n_ena == 1'b1 ? ~x : 1'bz;
+	assign x = ena == 1'b1 ? ~x : 1'bz;
 
 endmodule // dmg_notif1
 
