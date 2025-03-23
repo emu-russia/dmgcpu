@@ -1,5 +1,8 @@
 # DMG CPU Core
 
+> [!TIP]
+> This section is well developed and the schematics have been verified by simulation. The research for this section is complete.
+
 DMG-01 SM83 core research. The `B` revision of the DMG SoC is being studied.
 
 The core can be found here:

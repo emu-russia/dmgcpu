@@ -1,5 +1,8 @@
 # Clock Generator & System Control
 
+> [!NOTE]
+> In general, we can consider that everything is good here. There may be some minor refinements, but in general "the engine has started"
+
 ![locator_clkgen](/imgstore/soc/locator_clkgen.jpg)
 
 ![clkgen](/imgstore/soc/clkgen.jpg)
