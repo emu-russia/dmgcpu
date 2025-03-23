@@ -80,6 +80,8 @@ Phase pattern of all CLK outputs:
 
 ![clkgen1](/imgstore/waves/clkgen1.png)
 
+If you see a picture like that, then you're good.
+
 ## Map
 
 |Row|Cells|
