@@ -1,4 +1,5 @@
 // This demo is needed to find out how the OAM PPU Clock divider works (XUPY, XOCE, XYSO signals)
+`timescale 1ns/1ns
 
 module oam_clocks();
 
