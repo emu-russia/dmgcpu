@@ -1,5 +1,8 @@
 # Serial Link
 
+> [!NOTE]
+> We need to verify this module somehow. After verification, there will be more confidence that everything is good here. But in general the section looks ok.
+
 ![locator_ser](/imgstore/soc/locator_ser.jpg)
 
 ![ser](/imgstore/soc/ser.jpg)
