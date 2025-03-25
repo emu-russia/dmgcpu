@@ -35,7 +35,7 @@ module MMIO (  reset, clk2, clk4, osc_stable, clk_ena, osc_ena, clk6, clk9, n_re
 	output wire DRV_LOW_nwr;
 	input wire n_t1_frompad;
 	input wire n_t2_frompad;
-	input wire CONST0;
+	inout wire CONST0;
 	output wire n_ena_pu_db;
 	output wire n_dma_phi;
 	output wire [12:0] dma_a;

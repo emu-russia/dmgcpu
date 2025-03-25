@@ -14,7 +14,7 @@ module PPU1 (  a, d, n_ma, n_lcd_ld1, n_lcd_ld0, n_lcd_cpg, n_lcd_cp, n_lcd_st, 
 	output wire n_lcd_cpl;
 	output wire n_lcd_fr;
 	output wire n_lcd_s;
-	input wire CONST0;
+	inout wire CONST0;
 	input wire n_dma_phi;
 	input wire ppu_rd;
 	input wire ppu_wr;
@@ -98,7 +98,7 @@ module PPU2 (  cclk, clk6, n_reset2, a, d, n_oamb, oam_bl_pch, oa, n_oam_rd, n_o
 	output wire n_oamb_wr;
 	output wire n_oama_wr;
 	inout wire [7:0] n_oama;
-	input wire CONST0;
+	inout wire CONST0;
 	input wire n_dma_phi;
 	input wire [12:0] dma_a;
 	input wire dma_run;

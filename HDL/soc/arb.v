@@ -18,7 +18,7 @@ module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr
 	input wire n_INPUT_a15;
 	output wire DRV_LOW_a15;
 	output wire n_cs_topad;
-	output wire CONST0;
+	inout wire CONST0;
 	output wire n_DRV_HIGH_nmwr;
 	input wire n_mwr;
 	output wire DRV_LOW_nmwr;
