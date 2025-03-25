@@ -46,6 +46,68 @@ module dmg_aon (  a0, a1, b, x);
 
 endmodule // dmg_aon
 
+module dmg_aon22 (  a0, a1, b0, b1, x);
+
+	input wire a0;
+	input wire a1;
+	input wire b0;
+	input wire b1;
+	output wire x;
+
+	assign x = (a0 & a1) | (b0 & b1);
+
+endmodule // dmg_aon22
+
+module dmg_aon222 (  a0, a1, b0, b1, c0, c1, x);
+
+	input wire a0;
+	input wire a1;
+	input wire b0;
+	input wire b1;
+	input wire c0;
+	input wire c1;
+	output wire x;
+
+	assign x = (a0 & a1) | (b0 & b1) | (c0 & c1);
+
+endmodule // dmg_aon222
+
+module dmg_aon2222 (  a0, a1, b0, b1, c0, c1, d0, d1, x);
+
+	input wire a0;
+	input wire a1;
+	input wire b0;
+	input wire b1;
+	input wire c0;
+	input wire c1;
+	input wire d0;
+	input wire d1;
+	output wire x;
+
+	assign x = (a0 & a1) | (b0 & b1) | (c0 & c1) | (d0 & d1);
+
+endmodule // dmg_aon2222
+
+module dmg_aon222222 (  a0, a1, b0, b1, c0, c1, d0, d1, e0, e1, f0, f1, x);
+
+	input wire a0;
+	input wire a1;
+	input wire b0;
+	input wire b1;
+	input wire c0;
+	input wire c1;
+	input wire d0;
+	input wire d1;
+	input wire e0;
+	input wire e1;
+	input wire f0;
+	input wire f1;
+	output wire x;
+
+	assign x = (a0 & a1) | (b0 & b1) | (c0 & c1) | (d0 & d1) | (e0 & e1) | (f0 & f1);
+
+endmodule // dmg_aon222222
+
 module dmg_bufif0 (  a0, n_ena, a1, x);
 
 	input wire a0;
@@ -56,6 +118,17 @@ module dmg_bufif0 (  a0, n_ena, a1, x);
 	assign x = n_ena == 1'b0 ? a0 : 1'bz;
 
 endmodule // dmg_bufif0
+
+// TFFD
+module dmg_cnt (  q, d, load, nq, clk);
+
+	output wire q;
+	input wire d;
+	input wire load;
+	output wire nq;
+	input wire clk;
+
+endmodule // dmg_cnt
 
 module dmg_const (  q0, q1);
 
@@ -94,6 +167,33 @@ module dmg_dffr (  clk, nr1, nr2, d, q, nq);
 	assign nq = ~val;
 
 endmodule // dmg_dffr
+
+// DFFR_A
+module dmg_dffr_comp (  nr1, nr2, d, ck, cck, q);
+
+	input wire nr1;
+	input wire nr2;		// not used
+	input wire d;
+	input wire ck;
+	input wire cck;		// not used
+	output wire q;
+
+	reg val;
+	initial val = 1'b0;
+
+	always @(posedge ck) begin
+		if (ck)
+			val <= d;
+	end
+
+	always @(*) begin
+		if (~nr1)
+			val <= 1'b0;
+	end
+
+	assign q = val;
+
+endmodule // dmg_dffr_comp
 
 // DFFR_B1
 module dmg_dffrnq_comp (  nr1, d, ck, cck, nr2, nq, q);
@@ -154,6 +254,16 @@ module dmg_dffsr (  clk, nres, nset1, nset2, d, q, nq);
 	assign nq = ~val;
 endmodule // dmg_dffsr
 
+module dmg_fa (  cin, s, cout, a, b);
+
+	input wire cin;
+	output wire s;
+	output wire cout;
+	input wire a;
+	input wire b;
+
+endmodule // dmg_fa
+
 // D_LATCH_B
 module dmg_latch (  ena, d, q, nq);
 
@@ -174,6 +284,18 @@ module dmg_latch (  ena, d, q, nq);
 	assign nq = ~val;
 
 endmodule // dmg_latch
+
+// DR_LATCH
+module dmg_latchr_comp (  n_ena, d, ena, nres, q, nq);
+
+	input wire n_ena;
+	input wire d;
+	input wire ena;
+	input wire nres;
+	output wire q;
+	output wire nq;
+
+endmodule // dmg_latchr_comp
 
 module dmg_mux (  sel, d1, d0, q);
 
@@ -230,6 +352,19 @@ module dmg_nand4 (  a, b, c, d, x);
 
 endmodule // dmg_nand4
 
+module dmg_nand5 (  a, b, c, d, e, x);
+
+	input wire a;
+	input wire b;
+	input wire c;
+	input wire d;
+	input wire e;
+	output wire x;
+
+	nand (x, a, b, c, d, e);
+
+endmodule // dmg_nand5
+
 module dmg_nand7 (  g, f, e, d, c, b, a, x);
 
 	input wire g;
@@ -244,6 +379,28 @@ module dmg_nand7 (  g, f, e, d, c, b, a, x);
 	nand (x, a, b, c, d, e, f, g);
 
 endmodule // dmg_nand7
+
+module dmg_nand_latch (  nr, ns, nq, q);
+
+	input wire nr;
+	input wire ns;
+	output wire nq;
+	output wire q;
+
+	reg val;
+	initial val = 1'b0;
+
+	always @(*) begin
+		if (~nr)
+			val = 1'b0;
+		else if (~ns)
+			val = 1'b1;
+	end
+
+	assign q = val;
+	assign nq = ~val;
+
+endmodule // dmg_nand_latch
 
 module dmg_nor (  a, b, x);
 
@@ -277,6 +434,19 @@ module dmg_nor4 (  a, b, c, d, x);
 	nor (x, a, b, c, d);
 
 endmodule // dmg_nor4
+
+module dmg_nor5 (  a, b, c, d, e, x);
+
+	input wire a;
+	input wire b;
+	input wire c;
+	input wire d;
+	input wire e;
+	output wire x;
+
+	nor (x, a, b, c, d, e);
+
+endmodule // dmg_nor5
 
 module dmg_nor6 (  a, b, c, d, e, f, x);
 
@@ -359,6 +529,15 @@ module dmg_not3 (  a, x);
 
 endmodule // dmg_not3
 
+module dmg_not4 (  a, x);
+
+	input wire a;
+	output wire x;
+
+	not (x, a);
+
+endmodule // dmg_not4
+
 module dmg_not6 (  a, x);
 
 	input wire a;
@@ -429,3 +608,35 @@ module dmg_or3 (  a, b, c, x);
 	or (x, a, b, c);
 
 endmodule // dmg_or3
+
+module dmg_or4 (  a, b, c, d, x);
+
+	input wire a;
+	input wire b;
+	input wire c;
+	input wire d;
+	output wire x;
+
+	or (x, a, b, c, d);
+
+endmodule // dmg_or4
+
+module dmg_xnor (  x, a, b);
+
+	output wire x;
+	input wire a;
+	input wire b;
+
+	xnor (x, a, b);
+
+endmodule // dmg_xnor
+
+module dmg_xor (  a, b, x);
+
+	input wire a;
+	input wire b;
+	output wire x;
+
+	xor (x, a, b);
+
+endmodule // dmg_xor

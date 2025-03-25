@@ -18,7 +18,7 @@ module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr
 	input wire n_INPUT_a15;
 	output wire DRV_LOW_a15;
 	output wire n_cs_topad;
-	output wire CONST0;
+	inout wire CONST0;
 	output wire n_DRV_HIGH_nmwr;
 	input wire n_mwr;
 	output wire DRV_LOW_nmwr;
@@ -474,7 +474,7 @@ module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr
 	dmg_and g40 (.a(w34), .b(w33), .x(w205) );
 	dmg_and g41 (.a(w112), .b(w23), .x(w22) );
 	dmg_and g42 (.a(w141), .b(w140), .x(w11) );
-	dmg_and g43 (.a(w17), .b(w15), .x(w141) );
+	dmg_and g43 (.a(w17), .b(w16), .x(w141) );
 	dmg_and g44 (.a(w80), .b(w85), .x(w194) );
 	dmg_and g45 (.a(w11), .b(w13), .x(w231) );
 	dmg_nor g46 (.a(w30), .b(w47), .x(w62) );
