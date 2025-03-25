@@ -175,14 +175,14 @@ module dmg_dffr_comp (  nr1, nr2, d, ck, cck, q);
 	input wire nr2;		// not used
 	input wire d;
 	input wire ck;
-	input wire cck;
+	input wire cck;		// not used
 	output wire q;
 
 	reg val;
 	initial val = 1'b0;
 
-	always @(posedge clk) begin
-		if (clk)
+	always @(posedge ck) begin
+		if (ck)
 			val <= d;
 	end
 
@@ -391,9 +391,9 @@ module dmg_nand_latch (  nr, ns, nq, q);
 	initial val = 1'b0;
 
 	always @(*) begin
-		if (~r)
+		if (~nr)
 			val = 1'b0;
-		else if (~s)
+		else if (~ns)
 			val = 1'b1;
 	end
 
