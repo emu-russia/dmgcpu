@@ -13,13 +13,13 @@ The topology is partially marked on the original image, enough to trace intercon
 
 The image is then loaded into Deroute:
 
-![netlist1](imgstore/shop/netlist1.png)
+![netlist1](/imgstore/shop/netlist1.png)
 
 ## Partitioning the module ports
 
 The first step is to mark all top-level ports of the module:
 
-![netlist2](imgstore/shop/netlist2.png)
+![netlist2](/imgstore/shop/netlist2.png)
 
 (`ViasInput`, `ViasOutput`, `ViasInout` entity types are used for ports)
 
@@ -27,7 +27,7 @@ The first step is to mark all top-level ports of the module:
 
 Then you need to arrange all the cells of the module. Here it is convenient to use Copy-Paste operation (Ctrl+C -> Ctrl+V).
 
-![netlist3](imgstore/shop/netlist3.png)
+![netlist3](/imgstore/shop/netlist3.png)
 
 (`Cell` types of different types are used for cells)
 
@@ -35,7 +35,7 @@ Then you need to arrange all the cells of the module. Here it is convenient to u
 
 The most interesting process is untangling the maze of wires. It is convenient to use Ctrl+arrows, Ctrl+Shift+arrows and Shift+Click in Add Vias mode to quickly draw wires.
 
-![netlist4](imgstore/shop/netlist4.png)
+![netlist4](/imgstore/shop/netlist4.png)
 
 (`WireInterconnect` entity type is used for interconnections)
 
@@ -43,6 +43,6 @@ The most interesting process is untangling the maze of wires. It is convenient t
 
 That's all. You just need to click on Export Verilog item in the menu, Deroute utility will start to do its magic and give you a ready Verilog source.
 
-![netlist5](imgstore/shop/netlist5.png)
+![netlist5](/imgstore/shop/netlist5.png)
 
 Then you can feed the resulting Verilog to some EDA (e.g. Xilinx PlanAhead) and get a finished module schematic.
