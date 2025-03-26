@@ -29,7 +29,7 @@ Then you need to arrange all the cells of the module. Here it is convenient to u
 
 ![netlist3](/imgstore/shop/netlist3.png)
 
-(`Cell` types of different types are used for cells)
+(`Cell` entities of different types are used for cells)
 
 ## Interconnects
 
