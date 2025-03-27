@@ -101,3 +101,11 @@ To familiarize yourself with the architecture, it's best to crawl through the an
 - Int MD -> Int DB tris: connects Int MD to Int DB
 - Int DB -> Int MD tris: connects Int DB to Int MD
 - $FF50 BANK Reg: well-known register to disable mapping of the built-in BootROM (write 1 only)
+
+## Map
+
+|Row|Cells|
+|---|---|
+|1|nand, nand, nand, not, nand, nor, nor, nand, nand, nor, not, not, not, latch, notif0, notif0, notif0, latch, latch, const, nor, not, nand, nand, bufif0, not, nor, nor, not2, not2, not2, not2, not2, not2, not2, not2, not2, notif0, not2, not, notif0, notif0, not2, notif0, not2, notif0, notif0, not2, notif0, not2, not2, notif0, not2, bufif0, not2, or, not, notif0, not, notif0, not, notif0, not, notif0, not, notif0, notif0, not, not3, not, or, and, not, not, not, not, not, nand, not, or, not2, not, not2, not2, and4, not2|
+|2|nor, not, nor, bufif0, latch, bufif0, bufif0, latch, bufif0, bufif0, notif0, not2, nand, bufif0, not, latch, notif0, latch, latch, or, or, and, and, or, and, and, or, and, and, nand, nor, and, not, and, not, or, or, and, or, not, not, bufif0, bufif0, bufif0, not, not, not, or, not, notif0, not, nor, not, dffr, not, and, mux, and, nand, not, or, and, not2, or, not2, nor4|
+|3|nor, bufif0, not, bufif0, notif0, not, bufif0, bufif0, bufif0, bufif0, bufif0, bufif0, nor, notif0, bufif0, bufif0, notif0, bufif0, mux, bufif0, mux, bufif0, bufif0, and, nor, or3, and3, aon, nand, and, and, and3, notif1, and, nor6, nand7, nor8, not, notif1, and4, not, and, nand4, not, nand, and, dffr, mux, mux, and, and, not, not, not, not|
