@@ -285,6 +285,16 @@ module dmg_latch (  ena, d, q, nq);
 
 endmodule // dmg_latch
 
+module dmg_latchnq_comp (  n_ena, d, ena, q, nq);
+
+	input wire n_ena;
+	input wire d;
+	input wire ena;
+	output wire q;
+	output wire nq;
+
+endmodule // dmg_latchnq_comp
+
 // DR_LATCH
 module dmg_latchr_comp (  n_ena, d, ena, nres, q, nq);
 
