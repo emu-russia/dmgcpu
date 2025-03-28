@@ -640,31 +640,3 @@ module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr
 	dmg_and g206 (.a(w22), .b(w20), .x(w19) );
 	dmg_and g207 (.a(w22), .b(w92), .x(w91) );
 endmodule // Arbiter
-
-// The errors below are all ok. The conflicting wires are internal d/md buses, and the latch/dffr outputs are really not used
-
-// ERROR: conflicting wire w5
-// ERROR: conflicting wire w27
-// ERROR: conflicting wire w28
-// ERROR: conflicting wire w31
-// ERROR: conflicting wire w34
-// ERROR: conflicting wire w35
-// ERROR: conflicting wire w38
-// ERROR: conflicting wire w45
-// ERROR: conflicting wire w46
-// ERROR: conflicting wire w47
-// ERROR: conflicting wire w55
-// ERROR: conflicting wire w56
-// ERROR: conflicting wire w96
-// ERROR: conflicting wire w108
-// ERROR: conflicting wire w122
-// ERROR: conflicting wire w172
-// WARNING: Cell dmg_latch:g135 port nq not connected.
-// WARNING: Cell dmg_latch:g136 port nq not connected.
-// WARNING: Cell dmg_latch:g137 port nq not connected.
-// WARNING: Cell dmg_latch:g138 port nq not connected.
-// WARNING: Cell dmg_latch:g139 port nq not connected.
-// WARNING: Cell dmg_latch:g140 port nq not connected.
-// WARNING: Cell dmg_latch:g141 port nq not connected.
-// WARNING: Cell dmg_latch:g142 port nq not connected.
-// WARNING: Cell dmg_dffr:g166 port q not connected.
