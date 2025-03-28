@@ -1,9 +1,22 @@
 # APU
 
+> [!CAUTION]
+> Netlist obtained but not verified. The design is not annotated and may contain errors. But critical mass has been gained.
+
 ![locator_apu](/imgstore/soc/locator_apu.jpg)
 
 |![apu](/imgstore/soc/apu.jpg)|![apu_netlist](/imgstore/soc/apu_netlist.png)|
 |---|---|
+
+## Signals
+
+TBD.
+
+## Annotated Design
+
+TBD.
+
+![apu](/HDL/soc/design/apu.png)
 
 ## Map
 
