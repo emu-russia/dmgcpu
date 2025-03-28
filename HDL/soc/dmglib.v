@@ -285,25 +285,71 @@ module dmg_latch (  ena, d, q, nq);
 
 endmodule // dmg_latch
 
-module dmg_latchnq_comp (  n_ena, d, ena, q, nq);
+// D_LATCH_A2
+module dmg_latch_comp (  n_ena, d, ena, q, nq);
 
-	input wire n_ena;
+	input wire n_ena;  	// not used
 	input wire d;
 	input wire ena;
 	output wire q;
 	output wire nq;
+
+	reg val;
+	initial val = 1'b0;
+
+	always @(*) begin
+		if (ena)
+			val = d;
+	end
+
+	assign q = val;
+
+endmodule // dmg_latch_comp
+
+// D_LATCH_A
+module dmg_latchnq_comp (  n_ena, d, ena, q, nq);
+
+	input wire n_ena;  	// not used
+	input wire d;
+	input wire ena;
+	output wire q;
+	output wire nq;
+
+	reg val;
+	initial val = 1'b0;
+
+	always @(*) begin
+		if (ena)
+			val = d;
+	end
+
+	assign q = val;
+	assign nq = ~val;
 
 endmodule // dmg_latchnq_comp
 
 // DR_LATCH
 module dmg_latchr_comp (  n_ena, d, ena, nres, q, nq);
 
-	input wire n_ena;
+	input wire n_ena;  	// not used
 	input wire d;
 	input wire ena;
 	input wire nres;
 	output wire q;
 	output wire nq;
+
+	reg val;
+	initial val = 1'b0;
+
+	always @(*) begin
+		if (ena)
+			val = d;
+		if (~nres)
+			val = 1'b0;
+	end
+
+	assign q = val;
+	assign nq = ~val;
 
 endmodule // dmg_latchr_comp
 
