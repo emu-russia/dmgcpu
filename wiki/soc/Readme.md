@@ -32,7 +32,7 @@ Follows by: `dmgcpu.v` + other .v modules.
 ### **Address and Data Buses**
 | Name       | From        | Where To     | Description                          |
 |------------|-------------|--------------|--------------------------------------|
-| `a`        | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU | Address bus (shared across modules) |
+| `a` [^1]   | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU | Address bus (shared across modules) |
 | `d`        | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU, Ser, WaveRAM | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU, Ser, WaveRAM | Data bus (shared across modules) |
 | `n_ma`     | PPU1        | PPU1         | Inverted memory address bus          |
 | `nma`      | PPU1, PPU2  | PPU1, PPU2   | Inverted memory address bus          |
@@ -41,6 +41,8 @@ Follows by: `dmgcpu.v` + other .v modules.
 | `wave_rd`  | WaveRAM     | APU          | Wave RAM data output bus             |
 
 What does the letter `M` in the name of the PPU and VRAM buses stand for? I don't know... maybe Mario or Metroid? :smiley:
+
+[^1]: The chip is topologically arranged so that the address bus arbitration is divided into three parts: in [arb](arb.md), in [mmio](mmio.md), and in [apu](apu.md), to equalize wire lengths.
 
 ---
 
