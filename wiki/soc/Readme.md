@@ -16,6 +16,10 @@ After a long analysis, the impressions about the architectural solutions used in
 - Macro cells (memory) contain a small number of standard cells :-)
 - These and other features make the DMG-CPU a rather curious "exhibit", but nonetheless interesting to study and dive into the history of a "previous, obviously more advanced civilization"
 
+## Design Overview
+
+TBD.
+
 ## Signals
 
 :warning: Generated in DeepSeek and requires refinement (TODO). Prompt:
@@ -28,13 +32,17 @@ Follows by: `dmgcpu.v` + other .v modules.
 ### **Address and Data Buses**
 | Name       | From        | Where To     | Description                          |
 |------------|-------------|--------------|--------------------------------------|
-| `a`        | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU | Address bus (shared across modules) |
-| `d`        | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU, Ser, WaveRAM | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU, Ser, WaveRAM | Data bus (shared across modules) |
-| `n_ma`     | PPU1        | PPU1         | Inverted memory address bus          |
-| `nma`      | PPU1, PPU2  | PPU1, PPU2   | Inverted memory address bus          |
-| `md`       | PPU1, PPU2, Arbiter | PPU1, PPU2, Arbiter | Memory data bus                     |
+| `a` [^1]   | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU | Internal address bus (shared across modules) |
+| `d`        | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU, Ser, WaveRAM | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU, Ser, WaveRAM | Internal data bus (shared across modules) |
+| `n_ma`     | PPU1        | Pads         | External video memory address bus (inverse hold)          |
+| `nma`      | PPU1, PPU2  | PPU1, PPU2   | Internal video memory address bus between PPUs (inverse hold)          |
+| `md`       | PPU1, PPU2, Arbiter | PPU1, PPU2, Arbiter | Internal video memory data bus             |
 | `oam_din`  | PPU2, Arbiter | PPU2, Arbiter | OAM data input bus                  |
 | `wave_rd`  | WaveRAM     | APU          | Wave RAM data output bus             |
+
+What does the letter `M` in the name of the PPU and VRAM buses stand for? I don't know... maybe Mario or Metroid? :smiley:
+
+[^1]: The chip is topologically arranged so that the address bus arbitration is divided into three parts: in [arb](arb.md), in [mmio](mmio.md), and in [apu](apu.md), to equalize wire lengths.
 
 ---
 
@@ -143,3 +151,7 @@ Follows by: `dmgcpu.v` + other .v modules.
 | `ch4_out`          | APU         | DAC          | Channel 4 output signal              |
 | `r_vin_en`         | APU         | DAC          | Right channel enable signal          |
 | `l_vin_en`         | APU         | DAC          | Left channel enable signal           |
+
+## Revisions
+
+TBD.

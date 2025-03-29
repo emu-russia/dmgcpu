@@ -8,6 +8,10 @@
 |![apu](/imgstore/soc/apu.jpg)|![apu_netlist](/imgstore/soc/apu_netlist.png)|
 |---|---|
 
+It also contains a piece of arbitration for `a[7:0]`. [^1] 
+
+[^1]: The chip is topologically arranged so that the address bus arbitration is divided into three parts: in [arb](arb.md), in [mmio](mmio.md), and in [apu](apu.md), to equalize wire lengths.
+
 ## Signals
 
 TBD.
