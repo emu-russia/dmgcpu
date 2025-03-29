@@ -16,6 +16,10 @@ After a long analysis, the impressions about the architectural solutions used in
 - Macro cells (memory) contain a small number of standard cells :-)
 - These and other features make the DMG-CPU a rather curious "exhibit", but nonetheless interesting to study and dive into the history of a "previous, obviously more advanced civilization"
 
+## Design Overview
+
+TBD.
+
 ## Signals
 
 :warning: Generated in DeepSeek and requires refinement (TODO). Prompt:
@@ -145,3 +149,7 @@ What does the letter `M` in the name of the PPU and VRAM buses stand for? I don'
 | `ch4_out`          | APU         | DAC          | Channel 4 output signal              |
 | `r_vin_en`         | APU         | DAC          | Right channel enable signal          |
 | `l_vin_en`         | APU         | DAC          | Left channel enable signal           |
+
+## Revisions
+
+TBD.
