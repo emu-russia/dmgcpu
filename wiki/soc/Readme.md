@@ -32,11 +32,11 @@ Follows by: `dmgcpu.v` + other .v modules.
 ### **Address and Data Buses**
 | Name       | From        | Where To     | Description                          |
 |------------|-------------|--------------|--------------------------------------|
-| `a` [^1]   | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU | Address bus (shared across modules) |
-| `d`        | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU, Ser, WaveRAM | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU, Ser, WaveRAM | Data bus (shared across modules) |
-| `n_ma`     | PPU1        | PPU1         | Inverted memory address bus          |
-| `nma`      | PPU1, PPU2  | PPU1, PPU2   | Inverted memory address bus          |
-| `md`       | PPU1, PPU2, Arbiter | PPU1, PPU2, Arbiter | Memory data bus                     |
+| `a` [^1]   | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU | Internal address bus (shared across modules) |
+| `d`        | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU, Ser, WaveRAM | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU, Ser, WaveRAM | Internal data bus (shared across modules) |
+| `n_ma`     | PPU1        | Pads         | External video memory address bus (inverse hold)          |
+| `nma`      | PPU1, PPU2  | PPU1, PPU2   | Internal video memory address bus between PPUs (inverse hold)          |
+| `md`       | PPU1, PPU2, Arbiter | PPU1, PPU2, Arbiter | Internal video memory data bus             |
 | `oam_din`  | PPU2, Arbiter | PPU2, Arbiter | OAM data input bus                  |
 | `wave_rd`  | WaveRAM     | APU          | Wave RAM data output bus             |
 
