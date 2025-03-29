@@ -2,6 +2,8 @@
 
 ![dmg_cells](/imgstore/soc/dmg_cells.png)
 
+![dmglib](/imgstore/soc/dmglib.png)
+
 The cells shown are only part of the SHARP cell library (name?), other cell types will probably be found in other chips of this era.
 
 ## Symmetry group
