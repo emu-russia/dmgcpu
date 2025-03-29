@@ -36,6 +36,8 @@ Follows by: `dmgcpu.v` + other .v modules.
 | `oam_din`  | PPU2, Arbiter | PPU2, Arbiter | OAM data input bus                  |
 | `wave_rd`  | WaveRAM     | APU          | Wave RAM data output bus             |
 
+What does the letter `M` in the name of the PPU and VRAM buses stand for? I don't know... maybe Mario or Metroid? :smiley:
+
 ---
 
 ### **Control Signals**
