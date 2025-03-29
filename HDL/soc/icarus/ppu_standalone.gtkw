@@ -1,0 +1,37 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Fri Mar 28 19:22:04 2025
+[*]
+[dumpfile] "C:\Work\dmgcpu\HDL\soc\icarus\ppu_standalone.vcd"
+[dumpfile_mtime] "Fri Mar 28 19:15:07 2025"
+[dumpfile_size] 1093715
+[savefile] "C:\Work\dmgcpu\HDL\soc\icarus\ppu_standalone.gtkw"
+[timestart] 0
+[size] 2560 1009
+[pos] -1 -1
+*-12.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] ppu_standalone.
+[sst_width] 211
+[signals_width] 102
+[sst_expanded] 1
+[sst_vpaned_height] 298
+@28
+ppu_standalone.ppu1_inst.ppu_clk
+ppu_standalone.ppu1_inst.vclk2
+@24
+ppu_standalone.ppu1_inst.v[7:0]
+@22
+ppu_standalone.ppu1_inst.h[7:0]
+@200
+-LCD I/F
+@28
+ppu_standalone.ppu1_inst.n_lcd_cp
+ppu_standalone.ppu1_inst.n_lcd_cpg
+ppu_standalone.ppu1_inst.n_lcd_cpl
+ppu_standalone.ppu1_inst.n_lcd_fr
+ppu_standalone.ppu1_inst.n_lcd_ld0
+ppu_standalone.ppu1_inst.n_lcd_ld1
+ppu_standalone.ppu1_inst.n_lcd_s
+ppu_standalone.ppu1_inst.n_lcd_st
+[pattern_trace] 1
+[pattern_trace] 0
