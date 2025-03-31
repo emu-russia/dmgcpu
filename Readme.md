@@ -20,12 +20,12 @@ Then the reader has 2 options: either to "understand" the decompiled netlist (wh
 
 |Case|Top-Level|Pads|Memory|DAC|ClkGen|Ser|MMIO|Arb|PPU|APU|SM83|
 |---|---|---|---|---|---|---|---|---|---|---|---|
-|Topology                         |✅| | | |✅|✅| |✅| | |✅|
+|Topology                         |✅| | | |✅|✅| |✅| |✅|✅|
 |List of ports with description   |  | | | |✅|✅| | | | |✅|
-|Map of cells/modules             |✅| | | |✅|✅| |✅| | |✅|
-|Netlist                          |✅| | | |✅|✅| |✅| | |✅|
-|Verilog                          |✅| | | |✅|✅| |✅| | |✅|
-|Design extracted from PlanAhead  |✅| | | |✅|✅| |✅| | |✅|
+|Map of cells/modules             |✅| | | |✅|✅| |✅|✅|✅|✅|
+|Netlist                          |✅| | | |✅|✅| |✅| |✅|✅|
+|Verilog                          |✅| | | |✅|✅| |✅| |✅|✅|
+|Design extracted from PlanAhead  |✅| | | |✅|✅| |✅| |✅|✅|
 |Verification with @msinger       |  | | | |✅| | | | | |-|
 
 TBD: The SoC landing page and content is not yet fully populated, in process..
