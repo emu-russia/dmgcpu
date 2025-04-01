@@ -17,6 +17,8 @@ TBD.
 
 TBD.
 
+![ppu2](/HDL/soc/design/ppu2.png)
+
 ## Map
 
 |Row|Cells|
