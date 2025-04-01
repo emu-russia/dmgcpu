@@ -1,7 +1,7 @@
 # PPU2
 
 > [!CAUTION]
-> Section is in the process of gaining critical mass.
+> The netlist and design only, everything is very raw and untested.
 
 ![ppu2](/imgstore/soc/ppu2.jpg)
 
@@ -11,7 +11,7 @@ TBD.
 
 ## Netlist
 
-TBD.
+![ppu2_netlist](/imgstore/soc/ppu2_netlist.png)
 
 ## Annotated Design
 
