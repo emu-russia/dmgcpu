@@ -153,14 +153,11 @@ module dmg_dffr (  clk, nr1, nr2, d, q, nq);
 	reg val;
 	initial val = 1'b0;
 
-	always @(posedge clk) begin
-		if (clk)
-			val <= d;
-	end
-
-	always @(*) begin
+	always @(posedge clk or negedge nr1) begin
 		if (~nr1)
 			val <= 1'b0;
+		else
+			val <= d;
 	end
 
 	assign q = val;
@@ -181,14 +178,11 @@ module dmg_dffr_comp (  nr1, nr2, d, ck, cck, q);
 	reg val;
 	initial val = 1'b0;
 
-	always @(posedge ck) begin
-		if (ck)
-			val <= d;
-	end
-
-	always @(*) begin
+	always @(posedge ck or negedge nr1) begin
 		if (~nr1)
 			val <= 1'b0;
+		else
+			val <= d;
 	end
 
 	assign q = val;
@@ -209,14 +203,11 @@ module dmg_dffrnq_comp (  nr1, d, ck, cck, nr2, nq, q);
 	reg val;
 	initial val = 1'b0;
 
-	always @(posedge ck) begin
-		if (ck)
-			val <= d;
-	end
-
-	always @(*) begin
+	always @(posedge ck or negedge nr1) begin
 		if (~nr1)
 			val <= 1'b0;
+		else
+			val <= d;
 	end
 
 	assign q = val;
@@ -238,16 +229,13 @@ module dmg_dffsr (  clk, nres, nset1, nset2, d, q, nq);
 	reg val;
 	initial val = 1'b0;
 
-	always @(posedge clk) begin
-		if (clk)
-			val <= d;
-	end
-
-	always @(*) begin
+	always @(posedge clk or negedge nres or negedge nset1) begin
 		if (~nres)
 			val <= 1'b0;
 		else if (~nset1)
-			val <= 1'b1;
+			val <= 1'b1;		
+		else
+			val <= d;
 	end
 
 	assign q = val;
