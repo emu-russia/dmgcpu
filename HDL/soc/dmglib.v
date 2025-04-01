@@ -250,6 +250,8 @@ module dmg_fa (  cin, s, cout, a, b);
 	input wire a;
 	input wire b;
 
+	assign {cout, s} = a + b + cin;
+
 endmodule // dmg_fa
 
 module dmg_ha (  a, b, cout, s);
@@ -258,6 +260,9 @@ module dmg_ha (  a, b, cout, s);
 	input wire b;
 	output wire cout;
 	output wire s;
+
+	and (cout, a, b);
+	xor (s, a, b);
 
 endmodule // dmg_ha
 
