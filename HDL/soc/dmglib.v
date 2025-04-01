@@ -153,14 +153,11 @@ module dmg_dffr (  clk, nr1, nr2, d, q, nq);
 	reg val;
 	initial val = 1'b0;
 
-	always @(posedge clk) begin
-		if (clk)
-			val <= d;
-	end
-
-	always @(*) begin
+	always @(posedge clk or negedge nr1) begin
 		if (~nr1)
 			val <= 1'b0;
+		else
+			val <= d;
 	end
 
 	assign q = val;
@@ -181,14 +178,11 @@ module dmg_dffr_comp (  nr1, nr2, d, ck, cck, q);
 	reg val;
 	initial val = 1'b0;
 
-	always @(posedge ck) begin
-		if (ck)
-			val <= d;
-	end
-
-	always @(*) begin
+	always @(posedge ck or negedge nr1) begin
 		if (~nr1)
 			val <= 1'b0;
+		else
+			val <= d;
 	end
 
 	assign q = val;
@@ -209,14 +203,11 @@ module dmg_dffrnq_comp (  nr1, d, ck, cck, nr2, nq, q);
 	reg val;
 	initial val = 1'b0;
 
-	always @(posedge ck) begin
-		if (ck)
-			val <= d;
-	end
-
-	always @(*) begin
+	always @(posedge ck or negedge nr1) begin
 		if (~nr1)
 			val <= 1'b0;
+		else
+			val <= d;
 	end
 
 	assign q = val;
@@ -238,16 +229,13 @@ module dmg_dffsr (  clk, nres, nset1, nset2, d, q, nq);
 	reg val;
 	initial val = 1'b0;
 
-	always @(posedge clk) begin
-		if (clk)
-			val <= d;
-	end
-
-	always @(*) begin
+	always @(posedge clk or negedge nres or negedge nset1) begin
 		if (~nres)
 			val <= 1'b0;
 		else if (~nset1)
-			val <= 1'b1;
+			val <= 1'b1;		
+		else
+			val <= d;
 	end
 
 	assign q = val;
@@ -263,6 +251,15 @@ module dmg_fa (  cin, s, cout, a, b);
 	input wire b;
 
 endmodule // dmg_fa
+
+module dmg_ha (  a, b, cout, s);
+
+	input wire a;
+	input wire b;
+	output wire cout;
+	output wire s;
+
+endmodule // dmg_ha
 
 // D_LATCH_B
 module dmg_latch (  ena, d, q, nq);
@@ -420,6 +417,20 @@ module dmg_nand5 (  a, b, c, d, e, x);
 	nand (x, a, b, c, d, e);
 
 endmodule // dmg_nand5
+
+module dmg_nand6 (  a, b, c, d, e, f, x);
+
+	input wire a;
+	input wire b;
+	input wire c;
+	input wire d;
+	input wire e;
+	input wire f;
+	output wire x;
+
+	nand (x, a, b, c, d, e, f);
+
+endmodule // dmg_nand6
 
 module dmg_nand7 (  g, f, e, d, c, b, a, x);
 
@@ -604,6 +615,7 @@ module dmg_not6 (  a, x);
 endmodule // dmg_not6
 
 // not4+not6
+// Used as compound cell in the clkgen module
 module dmg_not10 (  a, x);
 
 	input wire a;
@@ -632,6 +644,17 @@ module dmg_notif1 (  ena, a, x);
 	assign x = ena == 1'b1 ? ~x : 1'bz;
 
 endmodule // dmg_notif1
+
+module dmg_oai (  a0, a1, b, x);
+
+	input wire a0;
+	input wire a1;
+	input wire b;
+	output wire x;
+
+	assign x = ~((a0 | a1) & b);
+
+endmodule // dmg_oai
 
 module dmg_oan (  a0, a1, b, x);
 

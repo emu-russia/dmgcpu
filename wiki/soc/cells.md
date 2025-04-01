@@ -9,7 +9,8 @@ The cells shown are only part of the SHARP cell library (name?), other cell type
 ## Symmetry group
 
 - In general, the dihedral group 4 (D4) is used for cells
-- As part of modules, cells are usually simply reflected relative to the vertical axis (for ClkGen and Ser modules, cells are additionally rotated “sideways”)
+- By agreement among all researchers ident position of the cell (`e`) - when the ground is on the left
+- As part of modules, cells are usually simply reflected relative to the vertical axis `e <-> b` (for ClkGen and Ser modules, cells are additionally rotated “sideways”)
 - As part of macro cells (memory), cells can be arranged arbitrarily, as is more convenient 
 
 ![Dih4_cycle_graph](/imgstore/Dih4_cycle_graph.png)
@@ -20,7 +21,7 @@ Sequential elements (latch, dff) are presented in two variants: with single-rail
 
 ## Cells list
 
-The following are all cell types, in alphabetical order. The names of cells by @msinger are shown in parentheses (where the correspondence is not obvious)
+The following are all cell types, in alphabetical order. The names of cells by @msinger (http://iceboy.a-singer.de/doc/dmg_cells.html) are shown in parentheses (where the correspondence is not obvious)
 The topology is not complete (m1 is missing in some places), but it is sufficient to understand the cell architecture for reimplementation.
 
 ## and
