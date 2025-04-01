@@ -264,6 +264,15 @@ module dmg_fa (  cin, s, cout, a, b);
 
 endmodule // dmg_fa
 
+module dmg_ha (  a, b, cout, s);
+
+	input wire a;
+	input wire b;
+	output wire cout;
+	output wire s;
+
+endmodule // dmg_ha
+
 // D_LATCH_B
 module dmg_latch (  ena, d, q, nq);
 
@@ -420,6 +429,20 @@ module dmg_nand5 (  a, b, c, d, e, x);
 	nand (x, a, b, c, d, e);
 
 endmodule // dmg_nand5
+
+module dmg_nand6 (  a, b, c, d, e, f, x);
+
+	input wire a;
+	input wire b;
+	input wire c;
+	input wire d;
+	input wire e;
+	input wire f;
+	output wire x;
+
+	nand (x, a, b, c, d, e, f);
+
+endmodule // dmg_nand6
 
 module dmg_nand7 (  g, f, e, d, c, b, a, x);
 
@@ -604,6 +627,7 @@ module dmg_not6 (  a, x);
 endmodule // dmg_not6
 
 // not4+not6
+// Used as compound cell in the clkgen module
 module dmg_not10 (  a, x);
 
 	input wire a;
@@ -632,6 +656,17 @@ module dmg_notif1 (  ena, a, x);
 	assign x = ena == 1'b1 ? ~x : 1'bz;
 
 endmodule // dmg_notif1
+
+module dmg_oai (  a0, a1, b, x);
+
+	input wire a0;
+	input wire a1;
+	input wire b;
+	output wire x;
+
+	assign x = ~((a0 | a1) & b);
+
+endmodule // dmg_oai
 
 module dmg_oan (  a0, a1, b, x);
 
