@@ -116,14 +116,6 @@ module Ser (  d, n_sb_write, ser_out, serial_tick, n_sin, int_serial, n_sck, sck
 	dmg_muxi g29 (.sel(w36), .d1(w38), .d0(w39), .q(w19) );
 endmodule // Ser
 
-
-// WARNING: Cell dmg_dffr:g21 port nq not connected.
-// WARNING: Cell dmg_dffr:g22 port q not connected.
-// WARNING: Cell dmg_dffr:g24 port q not connected.
-// WARNING: Cell dmg_dffr:g25 port q not connected.
-// WARNING: Cell dmg_dffr:g26 port q not connected.
-
-
 module ser_reg_bit (  d, q, db, clk, ie, oe, n_ie, nres);
 
 	input wire d;
