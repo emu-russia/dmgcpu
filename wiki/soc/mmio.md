@@ -1,7 +1,7 @@
 # Memory Mapped I/O
 
 > [!CAUTION]
-> Netlist not obtained.
+> The netlist and design only, everything is very raw and untested.
 
 ![locator_mmio](/imgstore/soc/locator_mmio.jpg)
 
@@ -17,11 +17,13 @@ TBD.
 
 ## Netlist
 
-TBD.
+![mmio_netlist](/imgstore/soc/mmio_netlist.png)
 
 ## Annotated Design
 
 TBD.
+
+![mmio](/HDL/soc/design/mmio.png)
 
 ## Map
 
