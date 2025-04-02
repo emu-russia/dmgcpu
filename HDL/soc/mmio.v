@@ -525,6 +525,7 @@ module MMIO (  reset, clk2, clk4, osc_stable, clk_ena, osc_ena, clk6, clk9, n_re
 	assign w178 = ppu_clk;
 	assign w204 = clk6;
 	assign dma_a[11] = w205;
+	assign w309 = ppu_rd;
 	assign w239 = ppu_wr;
 	assign w182 = clk6_delay;
 	assign dma_a[12] = w156;
