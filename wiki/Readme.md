@@ -1,5 +1,9 @@
 # DMG-CPU Wiki
 
+![Nintendo_DMG_CPU_1](/imgstore/Nintendo_DMG_CPU_1.jpg) [^1]
+
+[^1]: DMG-CPU A Photo by Christian Bassow: https://commons.wikimedia.org/wiki/File:Nintendo_DMG_CPU_1.jpg
+
 ## Topics
 
 - [Reference PCB](/wiki/pcb.md)

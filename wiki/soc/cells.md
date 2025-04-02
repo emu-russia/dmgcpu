@@ -97,6 +97,8 @@ The dual-rail ck/cck signals are obtained locally by demultiplexing the CLK inpu
 
 ![ha](/imgstore/modules/soc/ha.jpg)
 
+![ha_tran](/imgstore/modules/soc/ha_tran.jpg)
+
 ## latch (D_LATCH_B)
 
 ![latch](/imgstore/modules/soc/latch.jpg)
