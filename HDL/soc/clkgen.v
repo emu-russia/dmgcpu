@@ -178,9 +178,3 @@ module ClkGen (  clk8, clk7, clk6, clk5, clk4, clk3, clk2, clk1, cclk, clk9, n_r
 	dmg_dffrnq_comp g55 (.nr1(w49), .d(w60), .ck(w6), .cck(w5), .nr2(w49), .q(w50) );
 	dmg_dffrnq_comp g56 (.nr1(w49), .d(w62), .ck(w5), .cck(w6), .nr2(w49), .nq(w59), .q(w60) );
 endmodule // ClkGen
-
-
-
-// WARNING: Cell dmg_nor_latch:g51 port q not connected.
-// WARNING: Cell dmg_dffrnq_comp:g52 port nq not connected.
-// WARNING: Cell dmg_dffrnq_comp:g55 port nq not connected.
