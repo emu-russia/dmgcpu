@@ -1,7 +1,7 @@
 # APU
 
-> [!CAUTION]
-> Netlist obtained but not verified. The design is not annotated and may contain errors. But critical mass has been gained.
+> [!WARNING]  
+> The research has gained critical mass, the netlist is verified but not annotated. Signal table is missing. Further research is required.
 
 ![locator_apu](/imgstore/soc/locator_apu.jpg)
 

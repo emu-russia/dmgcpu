@@ -1,7 +1,7 @@
 # PPU2
 
-> [!CAUTION]
-> The netlist and design only, everything is very raw and untested.
+> [!WARNING]  
+> The research has gained critical mass, the netlist is verified but not annotated. Signal table is missing. Further research is required.
 
 ![ppu2](/imgstore/soc/ppu2.jpg)
 

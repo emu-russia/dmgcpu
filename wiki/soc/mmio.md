@@ -1,7 +1,7 @@
 # Memory Mapped I/O
 
-> [!CAUTION]
-> The netlist and design only, everything is very raw and untested.
+> [!WARNING]  
+> The research has gained critical mass, the netlist is verified but not annotated. Signal table is missing. Further research is required.
 
 ![locator_mmio](/imgstore/soc/locator_mmio.jpg)
 
