@@ -1,21 +1,21 @@
 [*]
 [*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
-[*] Tue Apr 01 19:33:33 2025
+[*] Fri Apr 04 08:59:22 2025
 [*]
 [dumpfile] "C:\Work\dmgcpu\HDL\soc\icarus\ppu_standalone.vcd"
-[dumpfile_mtime] "Tue Apr 01 19:30:15 2025"
-[dumpfile_size] 4739513
+[dumpfile_mtime] "Fri Apr 04 08:58:38 2025"
+[dumpfile_size] 3361304
 [savefile] "C:\Work\dmgcpu\HDL\soc\icarus\ppu_standalone.gtkw"
 [timestart] 0
-[size] 2106 819
-[pos] -1 -1
-*-15.000000 34500 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[size] 2560 1009
+[pos] -191 -191
+*-14.000000 34500 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] ppu_standalone.
 [treeopen] ppu_standalone.ppu2_inst.
 [sst_width] 211
 [signals_width] 158
 [sst_expanded] 1
-[sst_vpaned_height] 446
+[sst_vpaned_height] 632
 @28
 ppu_standalone.clkgen.reset
 ppu_standalone.clkgen.n_reset2
@@ -29,9 +29,9 @@ ppu_standalone.clkgen.clk6
 ppu_standalone.clkgen.cclk
 ppu_standalone.ppu1_inst.ppu_clk
 ppu_standalone.ppu1_inst.vclk2
-@24
+@25
 ppu_standalone.ppu1_inst.v[7:0]
-@22
+@24
 ppu_standalone.ppu1_inst.h[7:0]
 @200
 -PPU Mode

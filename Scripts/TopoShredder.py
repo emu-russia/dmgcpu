@@ -12,6 +12,9 @@ import os
 import sys
 from PIL import Image
 
+# DecompressionBombWarning: Image size (166166000 pixels) exceeds limit of 89478485 pixels, could be decompression bomb DOS attack.
+Image.MAX_IMAGE_PIXELS = None
+
 def CropImage (src, dest, rect):
 	im = Image.open(src + ".jpg")
 	a = im.crop([rect[0], rect[1], rect[0]+rect[2], rect[1]+rect[3]])

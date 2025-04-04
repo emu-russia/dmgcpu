@@ -382,27 +382,27 @@ module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr
 	assign w192 = n_reset2;
 	assign oam_din[4] = w72;
 	assign oam_din[7] = w71;
-	assign w117 = a[6];
+	assign w117 = a[6];  		// hand-edited
 	assign a[15] = w112;
 	assign w9 = n_ppu_hard_reset;
 	assign ffxx = w114;
 	assign w113 = soc_wr;
 	assign oam_din[5] = w119;
-	assign w118 = a[4];
+	assign w118 = a[4]; 	// hand-edited
 	assign w115 = soc_rd;
-	assign w131 = a[7];
-	assign w132 = a[8];
-	assign w133 = a[9];
-	assign w134 = a[10];
-	assign w135 = a[11];
-	assign w136 = a[12];
-	assign w126 = a[0];
-	assign w127 = a[1];
-	assign w128 = a[2];
-	assign w129 = a[3];
-	assign w130 = a[5];
-	assign w138 = a[14];
-	assign w137 = a[13];
+	assign w131 = a[7]; 	// hand-edited
+	assign w132 = a[8]; 	// hand-edited
+	assign w133 = a[9]; 	// hand-edited
+	assign w134 = a[10]; 	// hand-edited
+	assign w135 = a[11]; 	// hand-edited
+	assign w136 = a[12]; 	// hand-edited
+	assign w126 = a[0]; 	// hand-edited
+	assign w127 = a[1]; 	// hand-edited
+	assign w128 = a[2]; 	// hand-edited
+	assign w129 = a[3]; 	// hand-edited
+	assign w130 = a[5]; 	// hand-edited
+	assign w138 = a[14]; 	// hand-edited
+	assign w137 = a[13]; 	// hand-edited
 	assign boot_sel = w225;
 	assign w25 = test_1;
 	assign w20 = cpu_wr_sync;
@@ -520,21 +520,21 @@ module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr
 	dmg_notif0 g86 (.n_ena(w159), .a(w155), .x(w122) );
 	dmg_notif0 g87 (.n_ena(w159), .a(w162), .x(w47) );
 	dmg_notif0 g88 (.n_ena(w159), .a(w163), .x(w108) );
-	dmg_notif0 g89 (.n_ena(w43), .a(w211), .x(w45) );
-	dmg_notif0 g90 (.n_ena(w43), .a(w100), .x(w38) );
-	dmg_notif0 g91 (.n_ena(w43), .a(w202), .x(w46) );
-	dmg_notif0 g92 (.n_ena(w43), .a(w98), .x(w35) );
-	dmg_notif0 g93 (.n_ena(w43), .a(w209), .x(w96) );
-	dmg_notif0 g94 (.n_ena(w43), .a(w208), .x(w172) );
-	dmg_notif0 g95 (.n_ena(w43), .a(w201), .x(w34) );
-	dmg_notif0 g96 (.n_ena(w43), .a(w99), .x(w56) );
-	dmg_notif0 g97 (.n_ena(w7), .a(w107), .x(w108) );
-	dmg_notif0 g98 (.n_ena(w7), .a(w123), .x(w122) );
-	dmg_notif0 g99 (.n_ena(w7), .a(w95), .x(w27) );
-	dmg_notif0 g100 (.n_ena(w7), .a(w183), .x(w31) );
-	dmg_notif0 g101 (.n_ena(w7), .a(w182), .x(w28) );
-	dmg_notif0 g102 (.n_ena(w7), .a(w230), .x(w47) );
-	dmg_notif0 g103 (.n_ena(w190), .a(w171), .x(w47) );
+	dmg_notif1 g89 (.ena(w43), .a(w211), .x(w45) );
+	dmg_notif1 g90 (.ena(w43), .a(w100), .x(w38) );
+	dmg_notif1 g91 (.ena(w43), .a(w202), .x(w46) );
+	dmg_notif1 g92 (.ena(w43), .a(w98), .x(w35) );
+	dmg_notif1 g93 (.ena(w43), .a(w209), .x(w96) );
+	dmg_notif1 g94 (.ena(w43), .a(w208), .x(w172) );
+	dmg_notif1 g95 (.ena(w43), .a(w201), .x(w34) );
+	dmg_notif1 g96 (.ena(w43), .a(w99), .x(w56) );
+	dmg_notif1 g97 (.ena(w7), .a(w107), .x(w108) );
+	dmg_notif1 g98 (.ena(w7), .a(w123), .x(w122) );
+	dmg_notif1 g99 (.ena(w7), .a(w95), .x(w27) );
+	dmg_notif1 g100 (.ena(w7), .a(w183), .x(w31) );
+	dmg_notif1 g101 (.ena(w7), .a(w182), .x(w28) );
+	dmg_notif1 g102 (.ena(w7), .a(w230), .x(w47) );
+	dmg_notif1 g103 (.ena(w190), .a(w171), .x(w47) );
 	dmg_notif0 g104 (.n_ena(w159), .a(w222), .x(w28) );
 	dmg_notif0 g105 (.n_ena(w159), .a(w164), .x(w31) );
 	dmg_notif0 g106 (.n_ena(w159), .a(w158), .x(w27) );

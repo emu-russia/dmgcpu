@@ -2094,7 +2094,7 @@ module PPU2 (  cclk, clk6, n_reset2, a, d, n_oamb, oam_bl_pch, oa, n_oam_rd, n_o
 	dmg_dffrnq_comp g943 (.nr1(w149), .d(w148), .ck(w648), .cck(w491), .nr2(w149), .nq(w649) );
 	dmg_and3 g944 (.a(w463), .b(w206), .c(w115), .x(w114) );
 	dmg_and3 g945 (.a(w115), .b(w206), .c(w508), .x(w509) );
-	dmg_oan g946 (.a0(w206), .a1(w205), .b(w124), .x(w125) );
+	dmg_aon g946 (.a0(w206), .a1(w205), .b(w124), .x(w125) );
 	dmg_not4 g947 (.a(w392), .x(w1) );
 	dmg_nand3 g948 (.a(w453), .b(w454), .c(w1), .x(w902) );
 	dmg_aon22 g949 (.a0(w207), .a1(w206), .b0(w888), .b1(w456), .x(w889) );

@@ -782,7 +782,7 @@ module MMIO (  reset, clk2, clk4, osc_stable, clk_ena, osc_ena, clk6, clk9, n_re
 	dmg_and4 g207 (.a(w100), .b(w109), .c(w108), .d(w110), .x(w360) );
 	dmg_and4 g208 (.a(w100), .b(w45), .c(w108), .d(w110), .x(w138) );
 	dmg_and3 g209 (.a(w164), .b(w165), .c(w63), .x(w192) );
-	dmg_and3 g210 (.a(w36), .b(w213), .c(w212), .x(w362) );
+	dmg_or3 g210 (.a(w36), .b(w213), .c(w212), .x(w362) );
 	dmg_and4 g211 (.a(w146), .b(w45), .c(w107), .d(w110), .x(w145) );
 	dmg_and4 g212 (.a(w146), .b(w45), .c(w108), .d(w111), .x(w144) );
 	dmg_notif1 g213 (.ena(w138), .a(w105), .x(w31) );
