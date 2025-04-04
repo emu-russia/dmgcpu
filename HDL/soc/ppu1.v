@@ -2018,7 +2018,7 @@ module PPU1 (  a, d, n_ma, n_lcd_ld1, n_lcd_ld0, n_lcd_cpg, n_lcd_cp, n_lcd_st, 
 	dmg_or g833 (.a(w175), .b(w176), .x(w633) );
 	dmg_or g834 (.a(w246), .b(w598), .x(w737) );
 	dmg_or g835 (.a(w648), .b(w594), .x(w593) );
-	dmg_or g836 (.a(w140), .b(w139), .x(w295) );
+	dmg_and g836 (.a(w140), .b(w139), .x(w295) );
 	dmg_nor g837 (.a(w291), .b(w181), .x(w182) );
 	dmg_nand5 g838 (.a(w623), .b(w887), .c(w941), .d(w169), .e(w170), .x(w942) );
 	dmg_xor g839 (.a(w244), .b(w245), .x(w612) );
