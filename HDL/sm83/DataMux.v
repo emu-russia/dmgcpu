@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 
-module DataMux ( CLK, DL_Control1, DL_Control2, DataBus, DL, Res, DataOut, DV, RD_hack, WR_hack);
+module DataMux ( CLK, DL_Control1, DL_Control2, DataBus, DL, Res, DataOut, DV, RD_hack, WR_hack, bot_to_Thingy_hack);
 
 	input CLK; 				// CLK2
 	input DL_Control1;			// 1: Bus disable  (External Test1 aka BUS_DISABLE)
@@ -16,6 +16,7 @@ module DataMux ( CLK, DL_Control1, DL_Control2, DataBus, DL, Res, DataOut, DV, R
 	// need when simulating it without resorting to driving strength.
 	input RD_hack;
 	input WR_hack;
+	input bot_to_Thingy_hack;
 
 	data_mux_bit dmux [7:0] (
 		.clk({8{CLK}}), 
@@ -27,12 +28,13 @@ module DataMux ( CLK, DL_Control1, DL_Control2, DataBus, DL, Res, DataOut, DV, R
 		.DataOut({8{DataOut}}),
 		.dv_bit(DV),
 		.RD_hack(RD_hack),
-		.WR_hack(WR_hack) );
+		.WR_hack(WR_hack),
+		.bot_to_Thingy_hack(bot_to_Thingy_hack) );
 
 endmodule // DataMux
 
 // A combined schematic that combines the two bits of what used to be called DataLatch and DataBridge.
-module data_mux_bit ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus, DataOut, dv_bit, RD_hack, WR_hack);
+module data_mux_bit ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus, DataOut, dv_bit, RD_hack, WR_hack, bot_to_Thingy_hack);
 	
 	input clk;  		// CLK2; All buses are precharged when clk=0.
 	input Test1; 			// External (1: disconnect core databus)
@@ -44,6 +46,7 @@ module data_mux_bit ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus, DataOut, dv_
 	input DataOut;	 		// Gekkio: s3_oe_rbus_to_pbus
 	input RD_hack;
 	input WR_hack;
+	input bot_to_Thingy_hack;
 
 	wire int_to_ext_q; 		// transparent latch to keep DL bus
 	wire ext_to_int_q; 		// transparent latch to keep external databus
@@ -94,11 +97,14 @@ module data_mux_bit ( clk, Test1, Res_to_DL, Res, Int_bus, Ext_bus, DataOut, dv_
 			: ~RD_hack && WR_hack ? int_to_ext_q
 			: 1'b1;
 
+	// don't read from D if also reading from IE
+	wire IntRD_hack = RD_hack && !bot_to_Thingy_hack;
+
 	assign Int_bus = ~clk ? 1'b1
 			: Res_to_DL ? res_q
-			: RD_hack && ~WR_hack ? ext_to_int_q
-			: ~RD_hack && WR_hack && DataOut ? dv_q
-			: ~RD_hack && WR_hack ? 1'bz
+			: IntRD_hack && ~WR_hack ? ext_to_int_q 
+			: ~IntRD_hack && WR_hack && DataOut ? dv_q
+			: ~IntRD_hack && WR_hack ? 1'bz
 			: 1'b1;
 
 endmodule // data_mux_bit
