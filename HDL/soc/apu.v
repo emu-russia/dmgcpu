@@ -2197,11 +2197,11 @@ module APU (  cclk, clk2, clk4, clk6, clk7, clk9, n_reset2, a, d, cpu_wakeup, n_
 	dmg_latchr_comp g575 (.n_ena(w516), .d(w573), .ena(w379), .nres(w519), .nq(w518) );
 	dmg_latchr_comp g576 (.n_ena(w516), .d(w1162), .ena(w379), .nres(w519), .nq(w517) );
 	dmg_nor g577 (.a(w90), .b(w3), .x(w2) );
-	dmg_nor g578 (.a(w104), .b(w403), .x(w206) );
+	dmg_not2 g578 (.a(w104), .x(w206) );
 	dmg_not2 g579 (.a(w103), .x(w62) );
-	dmg_nor g580 (.a(w110), .b(w1037), .x(w208) );
+	dmg_not2 g580 (.a(w110), .x(w208) );
 	dmg_nor g581 (.a(w755), .b(w70), .x(w959) );
-	dmg_nor g582 (.a(w12), .b(w1096), .x(w13) );
+	dmg_not2 g582 (.a(w12), .x(w13) );
 	dmg_nor g583 (.a(w90), .b(w13), .x(w14) );
 	dmg_nor g584 (.a(w546), .b(w70), .x(w1308) );
 	dmg_nor g585 (.a(w70), .b(w1312), .x(w1315) );
@@ -2413,7 +2413,7 @@ module APU (  cclk, clk2, clk4, clk6, clk7, clk9, n_reset2, a, d, cpu_wakeup, n_
 	dmg_nand g791 (.a(w1123), .b(w125), .x(w1148) );
 	dmg_nand g792 (.a(w188), .b(w1297), .x(w915) );
 	dmg_nand g793 (.a(w188), .b(w65), .x(w1178) );
-	dmg_nand g794 (.a(w1178), .b(w1126), .x(w30) );
+	dmg_not2 g794 (.a(w1178), .x(w30) );
 	dmg_nand g795 (.a(w637), .b(w1176), .x(w1177) );
 	dmg_nand g796 (.a(w188), .b(w943), .x(w1006) );
 	dmg_nand g797 (.a(w1131), .b(w611), .x(w67) );
@@ -2883,7 +2883,7 @@ module APU (  cclk, clk2, clk4, clk6, clk7, clk9, n_reset2, a, d, cpu_wakeup, n_
 	dmg_notif1 g1261 (.ena(w582), .a(w513), .x(w183) );
 	dmg_notif1 g1262 (.ena(w582), .a(w645), .x(w55) );
 	dmg_not g1263 (.a(w144), .x(w773) );
-	dmg_notif1 g1264 (.ena(w116), .a(w436), .x(w331) );
+	dmg_notif0 g1264 (.n_ena(w116), .a(w436), .x(w331) );
 	dmg_nand5 g1265 (.a(w134), .b(w133), .c(w129), .d(w1061), .e(w834), .x(w833) );
 	dmg_nand5 g1266 (.a(w956), .b(w578), .c(w112), .d(w800), .e(w801), .x(w1199) );
 	dmg_nand5 g1267 (.a(w502), .b(w353), .c(w91), .d(w355), .e(w1209), .x(w92) );
