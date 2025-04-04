@@ -128,6 +128,19 @@ module dmg_cnt (  q, d, load, nq, clk);
 	output wire nq;
 	input wire clk;
 
+	reg val;
+	initial val = 1'b0;
+
+	always @(negedge clk or posedge load) begin
+		if (load)
+			val <= d;
+		else
+			val <= ~val;
+	end
+
+	assign q = val;
+	assign nq = ~val;
+
 endmodule // dmg_cnt
 
 module dmg_const (  q0, q1);
