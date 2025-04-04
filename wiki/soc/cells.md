@@ -64,6 +64,10 @@ The topology is not complete (m1 is missing in some places), but it is sufficien
 
 ![cnt](/imgstore/modules/soc/cnt.jpg)
 
+![cnt_tran](/imgstore/modules/soc/cnt_tran.jpg)
+
+![dmg_cnt](/logisim/soc/dmg_cnt.png)
+
 ## const
 
 ![const](/imgstore/modules/soc/const.jpg)
