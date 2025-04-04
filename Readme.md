@@ -26,7 +26,7 @@ Then the reader has 2 options: either to "understand" the decompiled netlist (wh
 |Netlist                          |✅	|    |      | 	|✅	   |✅	|✅	 |✅	|✅	|✅	|✅	 |
 |Verilog                          |✅	|    |      | 	|✅	   |✅	|✅	 |✅	|✅	|✅	|✅	 |
 |Design extracted from PlanAhead  |✅	|    |      | 	|✅	   |✅	|✅	 |✅	|✅	|✅	|✅	 |
-|Verification with @msinger       |  	|    |      | 	|✅	   | 	|    | 		| 	| 	|-	 |
+|Verification with @msinger       |✅ 	|    |      |-	|✅	   |✅	|✅	 |✅	|✅	|✅	|-	 |
 
 ## Related
 
