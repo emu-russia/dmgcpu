@@ -1,0 +1,39 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Sat Apr 05 07:45:09 2025
+[*]
+[dumpfile] "C:\Work\dmgcpu\HDL\soc\icarus\apu_standalone.vcd"
+[dumpfile_mtime] "Sat Apr 05 07:40:45 2025"
+[dumpfile_size] 1766841
+[savefile] "C:\Work\dmgcpu\HDL\soc\icarus\apu_standalone.gtkw"
+[timestart] 0
+[size] 2560 1009
+[pos] -165 -165
+*-7.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] apu_standalone.
+[sst_width] 211
+[signals_width] 142
+[sst_expanded] 1
+[sst_vpaned_height] 298
+@200
+-Reset & Clocks
+@28
+apu_standalone.reset
+apu_standalone.n_reset2
+apu_standalone.ck1
+apu_standalone.cclk
+apu_standalone.clk2
+apu_standalone.clk4
+apu_standalone.clk6
+apu_standalone.clk7
+apu_standalone.clk9
+apu_standalone.apu.lfo_512Hz
+@200
+-DAC Inputs
+@22
+apu_standalone.apu.ch1_out[3:0]
+apu_standalone.apu.ch2_out[3:0]
+apu_standalone.apu.ch3_out[3:0]
+apu_standalone.apu.ch4_out[3:0]
+[pattern_trace] 1
+[pattern_trace] 0
