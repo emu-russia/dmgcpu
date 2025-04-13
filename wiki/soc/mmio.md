@@ -21,9 +21,7 @@ TBD.
 
 ## Annotated Design
 
-TBD.
-
-![mmio](/HDL/soc/design/mmio.png)
+![mmio_annotated](/HDL/soc/design/mmio_annotated.png)
 
 ## Map
 
