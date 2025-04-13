@@ -39,13 +39,15 @@ Instead of `inout` it will be written `bidir`, since inout is easily confused wi
 |/NMI|n_nmi|input, not wired   |IBUF_B| |
 |M1|m1|output, not wired   |OBUF_A| |
 
-## OSC
+## IOBUF_A
 
-![pad_ck1_ck2](/imgstore/soc/pad_ck1_ck2.jpg)
+See http://iceboy.a-singer.de/doc/dmg_cells.html#iobuf_a
 
-![ck1_ck2_tran](/logisim/soc/ck1_ck2_tran.png)
+## IOBUF_B
 
-## SCK (IOBUF_C)
+See http://iceboy.a-singer.de/doc/dmg_cells.html#iobuf_b
+
+## IOBUF_C (SCK)
 
 ![pad_sck](/imgstore/soc/pad_sck.jpg)
 
@@ -54,3 +56,33 @@ Instead of `inout` it will be written `bidir`, since inout is easily confused wi
 Revision B has slight changes from Revision A due to the global addition of "combs" to some locations on the chip:
 
 ![pad_sck_rev_b](/imgstore/soc/pad_sck_rev_b.png)
+
+## IBUF_A
+
+See http://iceboy.a-singer.de/doc/dmg_cells.html#ibuf_a
+
+## IBUF_B
+
+See http://iceboy.a-singer.de/doc/dmg_cells.html#ibuf_b
+
+## OBUF_A
+
+See http://iceboy.a-singer.de/doc/dmg_cells.html#obuf_a
+
+## OBUF_B
+
+See http://iceboy.a-singer.de/doc/dmg_cells.html#obuf_b
+
+## OSC
+
+![pad_ck1_ck2](/imgstore/soc/pad_ck1_ck2.jpg)
+
+![ck1_ck2_tran](/logisim/soc/ck1_ck2_tran.png)
+
+## AIBUFFER
+
+See http://iceboy.a-singer.de/doc/dmg_cells.html#aibuf
+
+## AOBUFFER
+
+See http://iceboy.a-singer.de/doc/dmg_cells.html#aobuf
