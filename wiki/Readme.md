@@ -8,6 +8,8 @@
 
 ![cpu_block](/imgstore/soc/cpu_block.png) [^2]
 
+[^2]: GAMEBOY Programming Manual: https://archive.org/details/GameBoyProgManVer1.1
+
 ## Topics
 
 - [Reference PCB](/wiki/pcb.md)
@@ -60,4 +62,4 @@ Signal names are mostly in snake_case notation, if another one is used, it was b
 - Game Boy -related schematics by @Gekkio: https://github.com/Gekkio/gb-schematics/
 - Game Boy hardware research by @Gekkio: https://github.com/Gekkio/gb-research/ . This repository is used for cross-checking circuits and simulation of the SM83 core
 - I will not recommend @furrtek's DMG-CPU-Inside research as it contains a lot of errors and the author seems to have completely lost interest in the project and is not going to fix it
-- [^2]: GAMEBOY Programming Manual: https://archive.org/details/GameBoyProgManVer1.1
+- GAMEBOY Programming Manual: https://archive.org/details/GameBoyProgManVer1.1
