@@ -4,6 +4,12 @@
 
 [^1]: DMG-CPU A Photo by Christian Bassow: https://commons.wikimedia.org/wiki/File:Nintendo_DMG_CPU_1.jpg
 
+## CPU Block Diagram
+
+![cpu_block](/imgstore/soc/cpu_block.png) [^2]
+
+[^2]: GAMEBOY Programming Manual: https://archive.org/details/GameBoyProgManVer1.1
+
 ## Topics
 
 - [Reference PCB](/wiki/pcb.md)
