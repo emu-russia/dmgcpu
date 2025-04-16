@@ -15,7 +15,9 @@ To familiarize yourself with the architecture, it's best to crawl through the an
 
 [^1]: The chip is topologically arranged so that the address bus arbitration is divided into three parts: in [arb](arb.md), in [mmio](mmio.md), and in [apu](apu.md), to equalize wire lengths.
 
-### Signal Table
+### Signals
+
+![arb_ports](/imgstore/soc/arb_ports.png)
 
 :warning: The signal table is derived from DeepSeek and likely requires human refinement.
 

@@ -44,6 +44,8 @@ The MMIO module is a Memory-Mapped Input/Output controller for the DMG-CPU (Game
 
 ## Signals
 
+![mmio_ports](/imgstore/soc/mmio_ports.png)
+
 :warning: The signal table is derived from DeepSeek and likely requires human refinement.
 
 | Signal Name            | Direction | From / Where To                     | Description |

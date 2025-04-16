@@ -4,6 +4,8 @@ By @msinger: http://iceboy.a-singer.de/doc/dmg_cpu_connections.html
 
 ![cpu_desc](/imgstore/sm83/cpu_desc.png)
 
+![sm83_ports](/imgstore/sm83/sm83_ports.png)
+
 |N|I/O|Wire|This Repo|Cell|Description|
 |---|---|---|---|---|---|
 |T1	|O	|FROM_CPU6	|M1 (w26)|LEXY.in	|The M1 signal is 1 when the next opcode is fetched.|

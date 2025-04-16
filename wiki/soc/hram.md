@@ -12,6 +12,10 @@ Features:
 - 32 rows per column
 - 1024 bit total
 
+## Signals
+
+![hram_ports](/imgstore/soc/hram_ports.png)
+
 |Signal|Dir|From/Where To|Description|
 |---|---|---|---|
 | clk7| input|From ClkGen| (Aka BUKE)|

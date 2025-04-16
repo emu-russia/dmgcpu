@@ -7,6 +7,8 @@
 
 ## Signals
 
+![ppu2_ports](/imgstore/soc/ppu2_ports.png)
+
 TBD.
 
 ## Netlist
