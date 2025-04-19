@@ -82,7 +82,7 @@ To familiarize yourself with the architecture, it's best to crawl through the an
 
 ![arb_annotated](/HDL/soc/design/arb_annotated.png)
 
-## Entites
+## Schematics
 
 - Int DB Precharge: controls the Int DB bus precharge
 - Int DB -> Ext DB Driver: connects Int DB to Ext DB

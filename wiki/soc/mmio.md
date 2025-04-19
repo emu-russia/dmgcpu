@@ -118,7 +118,7 @@ The MMIO module is a Memory-Mapped Input/Output controller for the DMG-CPU (Game
 
 ![mmio_annotated](/HDL/soc/design/mmio_annotated.png)
 
-## Entites
+## Schematics
 
 - DMA LowAddr
 - DMA HiAddr
