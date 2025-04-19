@@ -9,6 +9,10 @@
 
 ![ser_netlist](/imgstore/soc/ser_netlist.png)
 
+## Signals
+
+![ser_ports](/imgstore/soc/ser_ports.png)
+
 |Signal|Dir|From/Where To|Description|
 |---|---|---|---|
 |sc_write|input|From MMIO|Signal to enable serial control write operations. |

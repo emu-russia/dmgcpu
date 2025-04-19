@@ -14,6 +14,8 @@ It also contains a piece of arbitration for `a[7:0]`. [^1]
 
 ## Signals
 
+![apu_ports](/imgstore/soc/apu_ports.png)
+
 TBD.
 
 ## Annotated Design
