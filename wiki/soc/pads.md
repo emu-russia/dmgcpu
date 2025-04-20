@@ -4,13 +4,13 @@ Instead of `inout` it will be written `bidir`, since inout is easily confused wi
 
 |Name|Netlist name|Direction|Pad Type|Description|
 |---|---|---|---|---|
-|CK1|ck1|input   |OSC| |
-|CK2|ck2|output   |OSC| |
-|PHI|phi|output   |OBUF_A| |
-|/RES|n_res|input   |IBUF_A| |
+|CK1|ck1|input   |OSC| Input CLK, 4194304 Hz (2^22). Corresponds to the T-cycles of SM83. The power 2 input frequency allowed the internal frequency dividers to be greatly simplified, using conventional shift registers instead of Jhonson counter. |
+|CK2|ck2|output   |OSC| Output inverted value of CK1 if OSC enabled or 0. |
+|PHI|phi|output   |OBUF_A| CK1 ÷ 4. Corresponds to M-cycles of CPU (1 M-cycle = 4 T-cycles) |
+|/RES|n_res|input   |IBUF_A| System Reset |
 |CPU RAM|||||
-|A15-A0|\[15:0\]a|bidir   |IOBUF_A| |
-|D7-D0|\[7:0\]d|bidir   |IOBUF_B| |
+|A15-A0|\[15:0\]a|bidir   |IOBUF_A| External CPU address bus. Bidirectional because it can be switched to Input mode when TEST1 is active. |
+|D7-D0|\[7:0\]d|bidir   |IOBUF_B| External CPU data bus |
 |/RD|n_rd|bidir   |IOBUF_A| |
 |/WR|n_wr|bidir   |IOBUF_A| |
 |/CS|n_cs|output   |OBUF_A| |
@@ -21,8 +21,8 @@ Instead of `inout` it will be written `bidir`, since inout is easily confused wi
 |/MWR|n_mwr|bidir   |IOBUF_A| |
 |/MCS|n_mcs|bidir   |IOBUF_A| |
 |Test Mode|||||
-|T1|t1|input   |IBUF_A| |
-|T2|t2|input   |IBUF_A| |
+|T1|t1|input   |IBUF_A| The main purpose is to disable all internal CPU A/D bus drivers and use values from the outside. |
+|T2|t2|input   |IBUF_A| The main purpose is to disable the internal Boot ROM. Also known as `ROMDIS`. |
 |LCD Driver interface|||||
 |CPG|cpg|output   |OBUF_A| |
 |CPL|cpl|output   |OBUF_A|Signal data latch signal. Used as CLK for Y-Driver chip |
