@@ -1233,4 +1233,3 @@ endmodule // dmgcpu
 // WARNING: Cell SM83Core:core port CPU_IRQ_ACK[7] not connected.
 // WARNING: Cell SM83Core:core port CPU_IRQ_ACK[6] not connected.
 // WARNING: Cell SM83Core:core port CPU_IRQ_ACK[5] not connected.
-// WARNING: Cell not:g2 port x not connected.
