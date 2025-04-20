@@ -751,8 +751,9 @@ module dmgcpu (  sck, md, d, p13, p12, p11, p10, sin, n_res, t2, t1, a, n_cs, n_
 	WaveRAM waveram (.d[7](w103), .d[6](w104), .d[5](w105), .d[4](w106), .d[3](w107), .d[2](w108), .d[1](w109), .d[0](w110), .active(w376), .a[2](w377), .a[3](w378), .a[0](w379), .a[1](w380), .dout[0](w381), .dout[1](w382), .dout[2](w383), .dout[3](w384), .dout[4](w385), .dout[5](w386), .dout[6](w387), .dout[7](w388), .n_wr(w389), .bl_pch(w390), .n_rd(w391) );
 */
 
-	dmg_and3 g1 (.a(1'b0), .b(w142), .c(w353), .x(w516) );
-	dmg_not g2 (.a(w370) );
+	wire not_test_2;
+	dmg_and3 g1 (.a(not_test_2), .b(w142), .c(w353), .x(w516) );
+	dmg_not g2 (.a(w370), .x(not_test_2) );
 
 	PPU1 ppu1 (
 		.a({w121, w120, w119, w118, w117, w116, w115, w114, w113, w112, w111, w102, w101}),
