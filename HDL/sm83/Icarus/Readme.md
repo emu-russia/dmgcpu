@@ -41,8 +41,6 @@ This will create a `dmg_waves3.fst` file that can be opened in [GTKWave](https:/
 
 Note that `sm83.yosys.v` flattens the entire design, so the hierarchy is lost, and many signals are removed. If you need a particular signal, add a `(* keep *)` attribute to it.
 
-Here's the corrected version of your text with typos and grammatical errors fixed:
-
 ## Testing
 
 The CPU is tested by running individual test ROMs from blargg's [cpu_instrs](https://github.com/retrio/gb-test-roms/tree/master/cpu_instrs) test suite (as well as the single ROM version). These ROMs rely very little on other peripherals of the GameBoy besides the CPU core itself. The necessary peripherals are emulated in the module `Bogus_HW` in `run.v`.
