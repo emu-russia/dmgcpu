@@ -115,7 +115,8 @@ module SM83Core (
 		.DataOut(`s3_oe_rbus_to_pbus),
 		.DV(DV),
 		.RD_hack(RD),
-		.WR_hack(WR) );
+		.WR_hack(WR),
+		.bot_to_Thingy_hack(bot_to_Thingy) );
 
 	Decoder1 dec1 (
 		.CLK2(CLK2),

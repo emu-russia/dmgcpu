@@ -1,8 +1,8 @@
 `timescale 1ns/1ns
 
-`define STRINGIFY(x) `"x`"
-
 module SM83_Run();
+	reg [32*8:0] WAVE_FILE = "dmg_wave.vcd";
+	integer CYCLES = 100000;
 
 	reg CLK;
 	/* verilator lint_off UNOPTFLAT */
@@ -101,20 +101,23 @@ module SM83_Run();
 		.CPU_IRQ_TRIG(CPU_IRQ_TRIG),
 		.CPU_IRQ_ACK(irq_ack) );
 
+	reg ret;
+
 	initial begin
-		$display("Running '%s'", `ROM);
+		ret = $value$plusargs("WAVE_FILE=%s", WAVE_FILE);
+		ret = $value$plusargs("CYCLES=%d", CYCLES);
 
 		ExternalRESET = 1'b0;
 		CLK = 1'b0;
 
-		$dumpfile(`WAVE_FILE);
+		$dumpfile(WAVE_FILE);
 		$dumpvars(0, SM83_Run);
 
 		ExternalRESET = 1'b1;
 		repeat (8) @ (posedge CLK);
 		ExternalRESET = 1'b0;
 
-		repeat (`CYCLES) @ (posedge CLK);
+		repeat (CYCLES) @ (posedge CLK);
 
 		$display(""); // breakline after any serial output
 		$writememh ("out.mem", hw.mem);
@@ -124,6 +127,12 @@ module SM83_Run();
 endmodule // SM83_Run
 
 module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_IRQ_ACK );
+
+	reg [32*8:0] ROM = "roms/bogus_hw.mem";
+	reg [32*8:0] BOOT = "roms/boot.mem";
+	integer ret;
+	initial begin 
+	end
 
 	input CLK;
 	input RESET;
@@ -158,7 +167,6 @@ module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_
 	wire counter_bit = TAC[2] && (TAC[1:0] == 2'b00 ? DIV[9] : TAC[1:0] == 2'b01 ? DIV[3] : TAC[1:0] == 2'b10 ? DIV[5] : DIV[7]);
 
 	reg [7:0] bootrom[0:255];
-	initial $readmemh("roms/boot.mem", bootrom);
 
 	reg [7:0] rom[0:65535];
 	reg [7:0] mem[0:65535];
@@ -170,18 +178,20 @@ module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_
 
 	integer j;
 	initial begin
+		ret = $value$plusargs("ROM=%s", ROM);
+		ret = $value$plusargs("BOOT=%s", BOOT);
+
+		$display("BOOT file '%s'", BOOT);
+		$display("ROM file '%s'", ROM);
+
 		// Pre-fill the memory with some value so we don't run into `xx`
 		for(j = 0; j < 65536; j = j+1) begin
 			mem[j] = 0;
 			rom[j] = 0;
 		end
 
-		`define STRINGIFY(x) `"x`"
-		`ifdef ROM
-			$readmemh(`ROM, rom);
-		`else
-			$readmemh("roms/bogus_hw.mem", rom);
-		`endif
+		$readmemh(ROM, rom);
+		$readmemh(BOOT, bootrom);
 	end
 
 	always @(negedge CLK) begin
