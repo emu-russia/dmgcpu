@@ -147,7 +147,7 @@
     <comp lib="1" loc="(1230,440)" name="Controlled Buffer">
       <a name="control" val="left"/>
     </comp>
-    <comp lib="1" loc="(1370,650)" name="NOT Gate">
+    <comp lib="1" loc="(1350,650)" name="NOT Gate">
       <a name="label" val="g1"/>
     </comp>
     <comp lib="1" loc="(1450,490)" name="NAND Gate">
@@ -159,53 +159,57 @@
     <comp lib="1" loc="(1590,630)" name="NOT Gate">
       <a name="label" val="g4"/>
     </comp>
-    <comp lib="8" loc="(1037,482)" name="Text">
+    <comp lib="8" loc="(1035,480)" name="Text">
       <a name="font" val="SansSerif bold 35"/>
       <a name="text" val="~"/>
     </comp>
-    <comp lib="8" loc="(1037,497)" name="Text">
+    <comp lib="8" loc="(1035,495)" name="Text">
       <a name="font" val="SansSerif bold 35"/>
       <a name="text" val="~"/>
     </comp>
-    <comp lib="8" loc="(1120,341)" name="Text">
+    <comp lib="8" loc="(1120,340)" name="Text">
       <a name="text" val="_______"/>
     </comp>
-    <comp lib="8" loc="(1121,363)" name="Text">
+    <comp lib="8" loc="(1120,360)" name="Text">
       <a name="text" val="ENA_PU"/>
     </comp>
-    <comp lib="8" loc="(1134,576)" name="Text">
+    <comp lib="8" loc="(1130,575)" name="Text">
       <a name="text" val="SCK"/>
     </comp>
-    <comp lib="8" loc="(1408,384)" name="Text">
-      <a name="text" val="Phase Splitter"/>
+    <comp lib="8" loc="(1365,500)" name="Text">
+      <a name="text" val="nres"/>
     </comp>
-    <comp lib="8" loc="(1410,565)" name="Text">
-      <a name="font" val="SansSerif italic 14"/>
-      <a name="text" val="delay"/>
+    <comp lib="8" loc="(1373,674)" name="Text">
+      <a name="text" val="nset"/>
     </comp>
-    <comp lib="8" loc="(1418,424)" name="Text">
-      <a name="font" val="SansSerif italic 14"/>
-      <a name="text" val="delay"/>
+    <comp lib="8" loc="(1419,398)" name="Text">
+      <a name="text" val="nand_latch"/>
     </comp>
-    <comp lib="8" loc="(1582,492)" name="Text">
+    <comp lib="8" loc="(1506,622)" name="Text">
+      <a name="text" val="q"/>
+    </comp>
+    <comp lib="8" loc="(1509,477)" name="Text">
+      <a name="text" val="nq"/>
+    </comp>
+    <comp lib="8" loc="(1580,490)" name="Text">
       <a name="text" val=". . . not used"/>
     </comp>
-    <comp lib="8" loc="(1679,609)" name="Text">
+    <comp lib="8" loc="(1675,605)" name="Text">
       <a name="text" val="____________"/>
     </comp>
-    <comp lib="8" loc="(1682,631)" name="Text">
+    <comp lib="8" loc="(1680,630)" name="Text">
       <a name="text" val="sck_frompad"/>
     </comp>
-    <comp lib="8" loc="(423,431)" name="Text">
+    <comp lib="8" loc="(420,430)" name="Text">
       <a name="text" val="g3"/>
     </comp>
-    <comp lib="8" loc="(463,615)" name="Text">
+    <comp lib="8" loc="(460,615)" name="Text">
       <a name="text" val="g4"/>
     </comp>
-    <comp lib="8" loc="(562,228)" name="Text">
+    <comp lib="8" loc="(560,225)" name="Text">
       <a name="text" val="g2"/>
     </comp>
-    <comp lib="8" loc="(781,123)" name="Text">
+    <comp lib="8" loc="(780,120)" name="Text">
       <a name="text" val="g1"/>
     </comp>
     <wire from="(1160,360)" to="(1220,360)"/>
@@ -218,14 +222,14 @@
     <wire from="(1300,510)" to="(1300,570)"/>
     <wire from="(1300,510)" to="(1390,510)"/>
     <wire from="(1300,570)" to="(1300,650)"/>
-    <wire from="(1300,650)" to="(1340,650)"/>
+    <wire from="(1300,650)" to="(1320,650)"/>
     <wire from="(1350,430)" to="(1350,470)"/>
     <wire from="(1350,430)" to="(1490,430)"/>
     <wire from="(1350,470)" to="(1390,470)"/>
+    <wire from="(1350,650)" to="(1390,650)"/>
     <wire from="(1360,570)" to="(1360,610)"/>
     <wire from="(1360,570)" to="(1460,570)"/>
     <wire from="(1360,610)" to="(1390,610)"/>
-    <wire from="(1370,650)" to="(1390,650)"/>
     <wire from="(1450,490)" to="(1460,490)"/>
     <wire from="(1450,630)" to="(1490,630)"/>
     <wire from="(1460,490)" to="(1460,570)"/>
