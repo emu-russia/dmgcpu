@@ -4,8 +4,8 @@ Instead of `inout` it will be written `bidir`, since inout is easily confused wi
 
 |Name|Netlist name|Direction|Pad Type|Description|
 |---|---|---|---|---|
-|CK1|ck1|input   |OSC| Input CLK, 4194304 Hz (2^22). Corresponds to the T-cycles of SM83. The power 2 input frequency allowed the internal frequency dividers to be greatly simplified, using conventional shift registers instead of Jhonson counter. |
-|CK2|ck2|output   |OSC| Output inverted value of CK1 if OSC enabled or 0. |
+|CK1|ck1|input   |OSC| Input CLK, 4194304 Hz (2^22). Corresponds to the T-cycles of SM83. The power 2 input frequency allowed the internal frequency dividers to be greatly simplified, using conventional shift registers instead of Jhonson counter. Aka `XI` |
+|CK2|ck2|output   |OSC| Output inverted value of CK1 if OSC enabled or 0. Aka `XO` |
 |PHI|phi|output   |OBUF_A| CK1 ÷ 4. Corresponds to M-cycles of CPU (1 M-cycle = 4 T-cycles) |
 |/RES|n_res|input   |IBUF_A| System Reset |
 |CPU RAM|||||
