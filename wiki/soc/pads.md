@@ -53,12 +53,12 @@ The most detailed description of the pads that @msinger didn't have originally, 
 
 ## IOBUF_A (PAD_BIDIR)
 
-If the drivers are disabled, the input from the pad is pulled up to a value of 1 (pulled up when NDRV = 0).
+If the drivers are disabled, the pad is pulled up to a value of 1 (pulled up when NDRV = 0).
 
 |NDRV|/PDRV|Pad|
 |----|-----|-----|
 |0|0|1|
-|0|1|1  - pulled up input|
+|0|1|1  - pulled up pad|
 |1|x|0|
 
 In this way the pad is always driven and goes directly to the inverter as an input value:
