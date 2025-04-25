@@ -49,6 +49,8 @@ Instead of `inout` it will be written `bidir`, since inout is easily confused wi
 
 Next is a description of the individual terminal schematics, the names correspond to @msinger's old names (he recently renamed, these names are given in parentheses)
 
+The most detailed description of the pads that @msinger didn't have originally, there's no point in repeating the rest as they've already been researched, I'll just give some comments + link.
+
 ## IOBUF_A (PAD_BIDIR)
 
 See http://iceboy.a-singer.de/doc/dmg_cells.html#pad_bidir
