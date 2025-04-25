@@ -11,41 +11,41 @@ Instead of `inout` it will be written `bidir`, since inout is easily confused wi
 |CPU RAM|||||
 |A15-A0|\[15:0\]a|bidir   |IOBUF_A| External CPU address bus. Bidirectional because it can be switched to Input mode when TEST1 is active. |
 |D7-D0|\[7:0\]d|bidir   |IOBUF_B| External CPU data bus |
-|/RD|n_rd|bidir   |IOBUF_A| |
-|/WR|n_wr|bidir   |IOBUF_A| |
-|/CS|n_cs|output   |OBUF_A| |
+|/RD|n_rd|bidir   |IOBUF_A| CPU RAM Read|
+|/WR|n_wr|bidir   |IOBUF_A| CPU RAM Write|
+|/CS|n_cs|output   |OBUF_A| CPU RAM ChipSelect |
 |PPU VRAM|||||
-|MA12-MA0|\[12:0\]ma|output   |OBUF_A| |
-|MD7-MD0|\[7:0\]md|bidir   |IOBUF_B| |
-|/MRD|n_mrd|bidir   |IOBUF_A| |
-|/MWR|n_mwr|bidir   |IOBUF_A| |
-|/MCS|n_mcs|bidir   |IOBUF_A| |
+|MA12-MA0|\[12:0\]ma|output   |OBUF_A| External PPU VRAM Address bus |
+|MD7-MD0|\[7:0\]md|bidir   |IOBUF_B| External PPU VRAM Data bus|
+|/MRD|n_mrd|bidir   |IOBUF_A| PPU VRAM Read|
+|/MWR|n_mwr|bidir   |IOBUF_A| PPU VRAM Write|
+|/MCS|n_mcs|bidir   |IOBUF_A| PPU VRAM ChipSelect|
 |Test Mode|||||
 |T1|t1|input   |IBUF_A| The main purpose is to disable all internal CPU A/D bus drivers and use values from the outside. |
 |T2|t2|input   |IBUF_A| The main purpose is to disable the internal Boot ROM. Also known as `ROMDIS`. |
 |LCD Driver interface|||||
-|CPG|cpg|output   |OBUF_A| |
+|CPG|cpg|output   |OBUF_A| TBD |
 |CPL|cpl|output   |OBUF_A|Signal data latch signal. Used as CLK for Y-Driver chip |
 |FR|fr|output   |OBUF_A|LCD alterating signal; FR is used to stop the LCD plating out (destroying the LCD material with DC), it inverts the drivers |
 |LD0|ld0|output   |OBUF_A|LCD Data0|
 |LD1|ld1|output   |OBUF_A|LCD Data1|
-|S|s|output   |OBUF_A| |
-|ST|st|output   |OBUF_A| |
+|S|s|output   |OBUF_A| TBD |
+|ST|st|output   |OBUF_A| TBD |
 |Serial Link|||||
-|SCK|sck|bidir   |IOBUF_C| |
-|SIN|sin|bidir   |IOBUF_B| |
-|SOUT|sout|output   |OBUF_A| |
+|SCK|sck|bidir   |IOBUF_C| Serial CLK|
+|SIN|sin|bidir   |IOBUF_B| Serial Data In|
+|SOUT|sout|output   |OBUF_A| Serial Data Out|
 |Audio|||||
-|VIN|vin|input analog   |AIBUFFER| |
-|SO1|so1|output analog   |AOBUFFER| |
-|SO2|so2|output analog   |AOBUFFER| |
+|VIN|vin|input analog   |AIBUFFER| External analog audio input (from cartridge). There is information from other sources that the voltage levels for this signal were so low that using it in the original DMG model was impractical |
+|SO1|so1|output analog   |AOBUFFER| Right analog audio output|
+|SO2|so2|output analog   |AOBUFFER| Left analog audio output|
 |Port P1|||||
-|P13-P10|p13-p10|bidir   |IOBUF_B| |
-|P14|p14|output   |OBUF_B| |
-|P15|p15|output   |OBUF_B| |
+|P13-P10|p13-p10|bidir   |IOBUF_B| From JoyPad matrix |
+|P14|p14|output   |OBUF_B| To JoyPad & Link port|
+|P15|p15|output   |OBUF_B| To JoyPad |
 |Unbonded pads|||||
 |/NMI|n_nmi|input, not wired   |IBUF_B|Non-maskable interrupt |
-|M1|m1|output, not wired   |OBUF_A|SM83 Core is in the M1 cycle |
+|M1|m1|output, not wired   |OBUF_A|SM83 Core is in the M1 cycle (fetch opcode) |
 
 Next is a description of the individual terminal schematics, the names correspond to @msinger's old names (he recently renamed, these names are given in parentheses)
 
