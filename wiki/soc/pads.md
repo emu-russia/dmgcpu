@@ -47,15 +47,17 @@ Instead of `inout` it will be written `bidir`, since inout is easily confused wi
 |/NMI|n_nmi|input, not wired   |IBUF_B|Non-maskable interrupt |
 |M1|m1|output, not wired   |OBUF_A|SM83 Core is in the M1 cycle |
 
-## IOBUF_A
+Next is a description of the individual terminal schematics, the names correspond to @msinger's old names (he recently renamed, these names are given in parentheses)
 
-See http://iceboy.a-singer.de/doc/dmg_cells.html#iobuf_a
+## IOBUF_A (PAD_BIDIR)
 
-## IOBUF_B
+See http://iceboy.a-singer.de/doc/dmg_cells.html#pad_bidir
 
-See http://iceboy.a-singer.de/doc/dmg_cells.html#iobuf_b
+## IOBUF_B (PAD_BIDIR_ENA_PU)
 
-## IOBUF_C (SCK)
+See http://iceboy.a-singer.de/doc/dmg_cells.html#pad_bidir_ena_pu
+
+## IOBUF_C (PAD_BIDIR_SCK)
 
 ![pad_sck](/imgstore/soc/pad_sck.jpg)
 
@@ -65,21 +67,35 @@ Revision B has slight changes from Revision A due to the global addition of "com
 
 ![pad_sck_rev_b](/imgstore/soc/pad_sck_rev_b.png)
 
-## IBUF_A
+## IBUF_A (PAD_IN)
 
-See http://iceboy.a-singer.de/doc/dmg_cells.html#ibuf_a
+Inverting input. The inverter can be considered as a transparent latch (dynamic latch with gate memory), but it hardly makes sense, because all input signals using this pad are always driven.
 
-## IBUF_B
+See http://iceboy.a-singer.de/doc/dmg_cells.html#pad_in
 
-See http://iceboy.a-singer.de/doc/dmg_cells.html#ibuf_b
+## IBUF_B (PAD_IN_PU)
 
-## OBUF_A
+Inverting input with pullup. Used only for /NMI that is not wired out, so the output from the circuit is always 0.
 
-See http://iceboy.a-singer.de/doc/dmg_cells.html#obuf_a
+See http://iceboy.a-singer.de/doc/dmg_cells.html#pad_in_pu
 
-## OBUF_B
+## OBUF_A (PAD_OUT)
 
-See http://iceboy.a-singer.de/doc/dmg_cells.html#obuf_b
+Inverting Output.
+
+See http://iceboy.a-singer.de/doc/dmg_cells.html#pad_out
+
+## OBUF_B (PAD_OUT_DIFF)
+
+Inverting tri-state output. The value is therefore fed to the circuit as a complement (2 wires).
+
+|NDRV|/PDRV|Pad Output|
+|----|-----|-----|
+|0|0|1|
+|0|1|HighZ|
+|1|x|0|
+
+See http://iceboy.a-singer.de/doc/dmg_cells.html#pad_out_diff
 
 ## OSC
 
