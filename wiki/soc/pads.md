@@ -53,13 +53,33 @@ The most detailed description of the pads that @msinger didn't have originally, 
 
 ## IOBUF_A (PAD_BIDIR)
 
+If the drivers are disabled, the input from the pad is pulled up to a value of 1 (pulled up when NDRV = 0).
+
+|NDRV|/PDRV|Pad|
+|----|-----|-----|
+|0|0|1|
+|0|1|1  - pulled up input|
+|1|x|0|
+
+In this way the pad is always driven and goes directly to the inverter as an input value:
+
+|Pad|/INPUT|
+|---|------|
+|0| 1|
+|1| 0|
+|HighZ|0  - inverted pulled up value |
+
 See http://iceboy.a-singer.de/doc/dmg_cells.html#pad_bidir
 
 ## IOBUF_B (PAD_BIDIR_ENA_PU)
 
+It is a combined circuit PAD_OUT_DIFF + PAD_IN_PU. The inverter in the PAD_IN part is a dynamic transparent latch, in case pullup is disabled - the value is stored on the inverter gate for some time.
+
 See http://iceboy.a-singer.de/doc/dmg_cells.html#pad_bidir_ena_pu
 
 ## IOBUF_C (PAD_BIDIR_SCK)
+
+We can call it PAD_BIDIR_ENA_PU_LATCH, i.e. it is analog of PAD_BIDIR_ENA_PU, but instead of transparent latch (inverter) there is nand_latch, which “memorizes” the input value for a longer interval.
 
 ![pad_sck](/imgstore/soc/pad_sck.jpg)
 
