@@ -24,13 +24,13 @@ Instead of `inout` it will be written `bidir`, since inout is easily confused wi
 |T1|t1|input   |IBUF_A| The main purpose is to disable all internal CPU A/D bus drivers and use values from the outside. |
 |T2|t2|input   |IBUF_A| The main purpose is to disable the internal Boot ROM. Also known as `ROMDIS`. |
 |LCD Driver interface|||||
-|CPG|cpg|output   |OBUF_A| TBD |
-|CPL|cpl|output   |OBUF_A|Signal data latch signal. Used as CLK for Y-Driver chip |
+|CPG|cpg|output   |OBUF_A| To X-driver chip TBD |
+|CPL|cpl|output   |OBUF_A|Signal data latch signal. Used as CLK for Y-Driver chip; Also used by X-driver |
 |FR|fr|output   |OBUF_A|LCD alterating signal; FR is used to stop the LCD plating out (destroying the LCD material with DC), it inverts the drivers |
-|LD0|ld0|output   |OBUF_A|LCD Data0|
-|LD1|ld1|output   |OBUF_A|LCD Data1|
-|S|s|output   |OBUF_A| TBD |
-|ST|st|output   |OBUF_A| TBD |
+|LD0|ld0|output   |OBUF_A|LCD Data0, To X-driver chip|
+|LD1|ld1|output   |OBUF_A|LCD Data1, To X-driver chip|
+|S|s|output   |OBUF_A| Common display sync signal (VSync). Used as input value for the Y-driver shift register |
+|ST|st|output   |OBUF_A| To X-driver chip TBD |
 |Serial Link|||||
 |SCK|sck|bidir   |IOBUF_C| Serial CLK|
 |SIN|sin|bidir   |IOBUF_B| Serial Data In|
@@ -41,8 +41,8 @@ Instead of `inout` it will be written `bidir`, since inout is easily confused wi
 |SO2|so2|output analog   |AOBUFFER| Left analog audio output|
 |Port P1|||||
 |P13-P10|p13-p10|bidir   |IOBUF_B| From JoyPad matrix |
-|P14|p14|output   |OBUF_B| To JoyPad & Link port|
-|P15|p15|output   |OBUF_B| To JoyPad |
+|P14|p14|output   |OBUF_B| To JoyPad (U,D,L,R select) & Link port|
+|P15|p15|output   |OBUF_B| To JoyPad (A,B,Select,Start select) |
 |Unbonded pads|||||
 |/NMI|n_nmi|input, not wired   |IBUF_B|Non-maskable interrupt |
 |M1|m1|output, not wired   |OBUF_A|SM83 Core is in the M1 cycle (fetch opcode) |
