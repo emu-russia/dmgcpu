@@ -20,13 +20,13 @@ Then the reader has 2 options: either to "understand" the decompiled netlist (wh
 
 |Case                         |Top-Level|Pads|Memory|DAC|ClkGen|Ser |MMIO|Arb   |PPU|APU|SM83|
 |---------------------------------|-----|----|------|---|------|----|----|------|---|---|----|
-|Topology                         |✅	|    |      | 	|✅	   |✅ 	|✅	 |✅	|✅	|✅	|✅	 |
-|List of ports with description   |  	|    |      | 	|✅	   |✅	|    | 		| 	| 	|✅	 |
-|Map of cells/modules             |✅	|    |      | 	|✅	   |✅	|✅	 |✅	|✅	|✅	|✅	 |
-|Netlist                          |✅	|    |      | 	|✅	   |✅	|✅	 |✅	|✅	|✅	|✅	 |
-|Verilog                          |✅	|    |      | 	|✅	   |✅	|✅	 |✅	|✅	|✅	|✅	 |
-|Design extracted from PlanAhead  |✅	|    |      | 	|✅	   |✅	|✅	 |✅	|✅	|✅	|✅	 |
-|Verification with @msinger       |✅ 	|    |      |-	|✅	   |✅	|✅	 |✅	|✅	|✅	|-	 |
+|Topology                         |✅	|✅	 |      | 	|✅	   |✅ 	|✅	 |✅	|✅	|✅	|✅	 |
+|List of ports with description   |✅ 	|✅	 |      | 	|✅	   |✅	|✅	 |✅	| 	| 	|✅	 |
+|Map of cells/modules             |✅	|-   |      | 	|✅	   |✅	|✅	 |✅	|✅	|✅	|✅	 |
+|Netlist                          |✅	|-   |      | 	|✅	   |✅	|✅	 |✅	|✅	|✅	|✅	 |
+|Verilog                          |✅	|✅	 |      | 	|✅	   |✅	|✅	 |✅	|✅	|✅	|✅	 |
+|Design extracted from PlanAhead  |✅	|-   |      | 	|✅	   |✅	|✅	 |✅	|✅	|✅	|✅	 |
+|Verification with @msinger       |✅ 	|✅	 |      |-	|✅	   |✅	|✅	 |✅	|✅	|✅	|-	 |
 
 ## Related
 

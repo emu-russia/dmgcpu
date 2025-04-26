@@ -5,6 +5,8 @@
 - Letterless Revision: https://siliconpr0n.org/map/nintendo/dmg-cpu/  (by @mcmaster)
 - Revision A: https://siliconpr0n.org/map/nintendo/dmg-cpu-a/  (by @mcmaster)
 - Revision B: https://siliconpr0n.org/map/nintendo/dmg-cpu-b/  (by @mcmaster)
+- Revision B (Cells & MegaCells): https://drive.google.com/drive/u/3/folders/11EcTeWtmXpVKZfzkdOcWubE6-Ka3VMSu
+- Revision B (Pads): https://drive.google.com/drive/u/2/folders/1B_YZys5RnkWCs_l3cic8TrlrKJ8l5g5u
 - Revision C: https://siliconpr0n.org/map/nintendo/dmg-cpu-c/  (by @mcmaster)
 
 ## SM83 Core
