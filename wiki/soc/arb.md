@@ -69,7 +69,7 @@ To familiarize yourself with the architecture, it's best to crawl through the an
 | `ppu_mode3`          | Input     |                      | PPU mode 3 signal.                                                         |
 | `md`                 | Bidir     |                      | Internal MD bus (8-bit).                                                    |
 | `oam_din`            | Output    |                      | OAM data input (8-bit).                                                     |
-| `oam_to_vram`        | Input     |                      | OAM to VRAM transfer signal.                                                |
+| `n_vram_to_oam`      | Input     |                      | 0: VRAM to OAM transfer signal. (active low)                                |
 | `dma_addr_ext`       | Input     |                      | DMA external address signal.                                                |
 | `sp_bp_cys`          | Input     |                      | Sprite buffer page cycle signal.        (?)                                 |
 | `tm_bp_cys`          | Input     |                      | Tile map buffer page cycle signal.      (?)                                 |
