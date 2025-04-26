@@ -1,18 +1,23 @@
 # I/O Terminals & Bonding Pads
 
+> [!TIP]
+> This section is considered complete, minor clarifications may be added, but in general everything is ok here.
+
 Instead of `inout` it will be written `bidir`, since inout is easily confused with input (hello Verilog developers).
+
+Dataset: https://drive.google.com/drive/u/2/folders/1B_YZys5RnkWCs_l3cic8TrlrKJ8l5g5u  (poly)
 
 |Name|Netlist name|Direction|Pad Type|Description|
 |---|---|---|---|---|
 |CK1|ck1|input   |OSC| Input CLK, 4194304 Hz (2^22). Corresponds to the T-cycles of SM83. The power 2 input frequency allowed the internal frequency dividers to be greatly simplified, using conventional shift registers instead of Jhonson counter. Aka `XI` |
 |CK2|ck2|output   |OSC| Output inverted value of CK1 if OSC enabled or 0. Aka `XO` |
-|PHI|phi|output   |OBUF_A| CK1 ÷ 4. Corresponds to M-cycles of CPU (1 M-cycle = 4 T-cycles) |
+|PHI|phi|output   |OBUF_A| CK1 ÷ 4. Corresponds to M-cycles of CPU (1 M-cycle = 4 T-cycles). Used as a CLK inside the cartridge for the needs of the mapper chip. |
 |/RES|n_res|input   |IBUF_A| System Reset |
 |CPU RAM|||||
 |A15-A0|\[15:0\]a|bidir   |IOBUF_A| External CPU address bus. Bidirectional because it can be switched to Input mode when TEST1 is active. |
 |D7-D0|\[7:0\]d|bidir   |IOBUF_B| External CPU data bus |
-|/RD|n_rd|bidir   |IOBUF_A| CPU RAM Read|
-|/WR|n_wr|bidir   |IOBUF_A| CPU RAM Write|
+|/RD|n_rd|bidir   |IOBUF_A| CPU RAM Read; Bidirectionality is controlled by TEST1 Mode|
+|/WR|n_wr|bidir   |IOBUF_A| CPU RAM Write; Bidirectionality is controlled by TEST1 Mode|
 |/CS|n_cs|output   |OBUF_A| CPU RAM ChipSelect |
 |PPU VRAM|||||
 |MA12-MA0|\[12:0\]ma|output   |OBUF_A| External PPU VRAM Address bus |
@@ -53,7 +58,7 @@ The most detailed description of the pads that @msinger didn't have originally, 
 
 ## IOBUF_A (PAD_BIDIR)
 
-If the drivers are disabled, the pad is pulled up to a value of 1 (pulled up when NDRV = 0).
+If the drivers are disabled, the pad is pulled up internally to a value of 1 (pulled up by NDRV = 0).
 
 |NDRV|/PDRV|Pad|
 |----|-----|-----|
@@ -67,7 +72,7 @@ In this way the pad is always driven and goes directly to the inverter as an inp
 |---|------|
 |0| 1|
 |1| 0|
-|HighZ|0  - inverted pulled up value |
+|HighZ|0  - pulled up inverted value |
 
 See http://iceboy.a-singer.de/doc/dmg_cells.html#pad_bidir
 
@@ -88,6 +93,8 @@ We can call it PAD_BIDIR_ENA_PU_LATCH, i.e. it is analog of PAD_BIDIR_ENA_PU, bu
 Revision B has slight changes from Revision A due to the global addition of "combs" to some locations on the chip:
 
 ![pad_sck_rev_b](/imgstore/soc/pad_sck_rev_b.png)
+
+TBD: Move all differencies between SoC revisions to a separate section so that they are not spread out across the entire wiki.
 
 ## IBUF_A (PAD_IN)
 
@@ -121,6 +128,8 @@ See http://iceboy.a-singer.de/doc/dmg_cells.html#pad_out_diff
 
 ## OSC
 
+CLK source with disable option.
+
 ![pad_ck1_ck2](/imgstore/soc/pad_ck1_ck2.jpg)
 
 ![ck1_ck2_tran](/logisim/soc/ck1_ck2_tran.png)
@@ -129,6 +138,10 @@ See http://iceboy.a-singer.de/doc/dmg_cells.html#pad_out_diff
 
 See http://iceboy.a-singer.de/doc/dmg_cells.html#aibuf
 
+TBD: What it represents as an analog circuit
+
 ## AOBUFFER
 
 See http://iceboy.a-singer.de/doc/dmg_cells.html#aobuf
+
+TBD: What it represents as an analog circuit
