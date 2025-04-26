@@ -2,7 +2,7 @@ module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr
 	n_DRV_HIGH_a15, n_INPUT_a15, DRV_LOW_a15, n_cs_topad, CONST0, n_DRV_HIGH_nmwr, n_mwr, DRV_LOW_nmwr, n_DRV_HIGH_nmrd, n_mrd, DRV_LOW_nmrd, n_DRV_HIGH_nmcs, n_mcs, DRV_LOW_nmcs, 
 	n_DRV_HIGH_md, n_md_frompad, DRV_LOW_md, n_md_ena_pu, 
 	n_DRV_HIGH_d, n_db_frompad, DRV_LOW_d, n_ena_pu_db,
-	soc_wr, soc_rd, vram_to_oam, dma_a_15, non_vram_mreq, test_1, n_extdb_to_intdb, n_dblatch_to_intdb, n_intdb_to_extdb, ffxx, n_ppu_hard_reset, ppu_mode3, md, oam_din, oam_to_vram, dma_addr_ext, sp_bp_cys, tm_bp_cys, n_sp_bp_mrd, n_tm_bp_cys, arb_fexx_ffxx, cpu_vram_oam_rd);
+	soc_wr, soc_rd, vram_to_oam, dma_a_15, non_vram_mreq, test_1, n_extdb_to_intdb, n_dblatch_to_intdb, n_intdb_to_extdb, ffxx, n_ppu_hard_reset, ppu_mode3, md, oam_din, n_vram_to_oam, dma_addr_ext, sp_bp_cys, tm_bp_cys, n_sp_bp_mrd, n_tm_bp_cys, arb_fexx_ffxx, cpu_vram_oam_rd);
 
 	input wire clk2;
 	input wire n_reset2;
@@ -50,7 +50,7 @@ module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr
 	input wire ppu_mode3;
 	inout wire [7:0] md;
 	output wire [7:0] oam_din;
-	input wire oam_to_vram;
+	input wire n_vram_to_oam;
 	input wire dma_addr_ext;
 	input wire sp_bp_cys;
 	input wire tm_bp_cys;
@@ -373,7 +373,7 @@ module Arbiter (  clk2, n_reset2, cpu_mreq, ext_cs_en, cpu_wr_sync, a, d, cpu_wr
 	assign w88 = n_mrd;
 	assign w89 = n_mcs;
 	assign w188 = cpu_vram_oam_rd;
-	assign w76 = oam_to_vram;
+	assign w76 = n_vram_to_oam;
 	assign oam_din[3] = w75;
 	assign oam_din[6] = w151;
 	assign w150 = vram_to_oam;
