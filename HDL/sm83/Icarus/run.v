@@ -144,6 +144,9 @@ module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_
 	output [7:0] CPU_IRQ_TRIG;
 	input [7:0] CPU_IRQ_ACK;
 
+	wire [15:0] ADR;
+	wire [7:0] DAT;
+
 	localparam REG_SERIAL_DATA = 16'hFF01;
 	localparam REG_SERIAL_CONTROL = 16'hFF02;
 	localparam REG_IF = 16'hFF0F;
@@ -151,6 +154,7 @@ module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_
 	localparam REG_TIMA = 16'hFF05;
 	localparam REG_TMA = 16'hFF06;
 	localparam REG_TAC = 16'hFF07;
+	localparam REG_STAT = 16'hFF40;
 
 	// Simulate memory banking just enough for running cpu_instrs.gb
 	reg [1:0] BANK_SELECTED = 1'b1;
@@ -161,6 +165,8 @@ module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_
 	reg [7:0] TMA = 0;
 	reg [2:0] TAC = 0;
 
+	reg [7:0] STAT = 8'h00;
+
 	reg [4:0] IF = 0;
 	reg tima_overflow = 0;
 
@@ -170,7 +176,7 @@ module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_
 
 	reg [7:0] rom[0:65535];
 	reg [7:0] mem[0:65535];
-	reg [7:0] value;
+	wire [7:0] value;
 
 	reg in_boot = 1'b1;
 
@@ -194,9 +200,12 @@ module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_
 		$readmemh(BOOT, bootrom);
 	end
 
+	// Timer simulation
+
 	always @(negedge CLK) begin
 		DIV <= DIV + 1;
 	end
+
 	always @(negedge counter_bit) begin
 		if (RESET)
 			TIMA <= 0;
@@ -206,6 +215,7 @@ module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_
 		end else 
 			TIMA <= TIMA + 1;
 	end
+
 	wire tima_reload_delay = DIV[1] && ~counter_bit;
 	always @(posedge tima_reload_delay) begin
 		if (tima_overflow) begin
@@ -215,29 +225,46 @@ module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_
 		end
 	end
 
+	// "Simulate" the LCDC status register. The implementation here does not
+	// resembles the real hardware at all, we only want to see if changes to
+	// this register while the CPU is reading it will make the CPU read a AND
+	// of all different values driven in the bus.
+	reg [3:0] stat_counter = 0;
+	always @(posedge CLK) begin
+		// just change the STAT register with a period non-multiple of 4 or 3
+		if (stat_counter == 11-1) begin
+			STAT[1:0] <= STAT[1:0] + 1;
+			stat_counter <= 0;
+		end else begin
+			stat_counter <= stat_counter + 1;
+		end
+	end
+
+
 	always @(posedge RD) begin
 		// disable bootrom after entering ROM
 		if (in_boot && addrbus >= 16'h0100) begin
 			in_boot = 1'b0;
 		end
-
-		if (in_boot) value <= bootrom[addrbus[7:0]];
-		else if (ADR == REG_DIV) value <= DIV[15:8];
-		else if (ADR == REG_TIMA) value <= TIMA;
-		else if (ADR == REG_TMA) value <= TMA;
-		else if (ADR == REG_TAC) value <= {5'h1f, TAC};
-		else if (ADR == REG_IF) value <= {3'h7, IF};
-		else if (ADR >= 16'hff00 && ADR <= 16'hff7f) value <= 16'hff; // IO registers
-		else if (ADR <= 16'h3fff) value <= rom[addrbus];
-		else if (ADR <= 16'h7fff) value <= rom[{BANK_SELECTED[1:0], addrbus[13:0]}];
-		else value <= mem[addrbus];
 	end
+
+	assign value = in_boot ? bootrom[addrbus[7:0]]
+		: (ADR == REG_DIV) ? DIV[15:8]
+		: (ADR == REG_TIMA) ? TIMA
+		: (ADR == REG_TMA) ? TMA
+		: (ADR == REG_TAC) ? {5'h1f, TAC}
+		: (ADR == REG_IF) ? {3'h7, IF}
+		: (ADR == REG_STAT) ? STAT
+		: (ADR >= 16'hff00 && ADR <= 16'hff7f) ? 8'hff // IO registers
+		: (ADR <= 16'h3fff) ? rom[addrbus]
+		: (ADR <= 16'h7fff) ? rom[{BANK_SELECTED[1:0], addrbus[13:0]}]
+		: mem[addrbus];
 
 	// the CPU changes the address bus and WR signal at the same time, which
 	// causes issues due to order evaluation. To work around this, we extend
 	// the address bus and data bus by one tick.
-	wire [15:0] #1 ADR = addrbus;
-	wire [7:0] #1 DAT = databus;
+	assign #1 ADR = addrbus;
+	assign #1 DAT = databus;
 
 	wire [7:0] serial_data = mem[REG_SERIAL_DATA];
 	wire serial_write = (ADR == REG_SERIAL_CONTROL);
@@ -248,6 +275,7 @@ module Bogus_HW ( CLK, RESET, MREQ, RD, WR, databus, addrbus, CPU_IRQ_TRIG, CPU_
 		else if (ADR == REG_TMA) TMA <= DAT;
 		else if (ADR == REG_TAC) TAC <= DAT[2:0];
 		else if (ADR == REG_IF) IF <= DAT[4:0];
+		else if (ADR == REG_STAT) STAT <= DAT;
 		else if (ADR <= 16'h7fff) begin
 			// ROM area, switch banks
 			BANK_SELECTED <= DAT[1:0];
