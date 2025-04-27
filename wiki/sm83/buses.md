@@ -68,3 +68,5 @@ A few words if the schematic doesn't look very clear.
 	- Several producers can be connected to the bus by hanging additional znand in bunches
 
 From the above, it will be clear why the SM83 uses "inverse hold" for registers.
+
+:warning: Such organization of data output on the bus has one disadvantage: if some producer has placed 0 on the bus, no one will be able to place value 1, because the bus can be driven only by value 0 (using znand), and value 1 gets there only during precharge. Actually a typical case was found recently: https://github.com/msinger/dmg-sim/pull/4 (there is a long discussion there, but you can fill a big cup of coffee, I think it will be interesting reading).
