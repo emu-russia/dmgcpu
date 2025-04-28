@@ -9,7 +9,72 @@
 
 ![ppu1_ports](/imgstore/soc/ppu1_ports.png)
 
-TBD.
+| Signal Name            | Direction | From / Where To             | Description |
+|------------------------|-----------|-----------------------------|-------------|
+| CONST0                 | Bidir     |                             |  |
+| FF43_D0                | Input     |                             |  |
+| FF43_D1                | Input     |                             |  |
+| FF43_D2                | Input     |                             |  |
+| \[12:0\] a             | Input     |                             |  |
+| arb_fexx_ffxx          | Input     |                             |  |
+| \[7:0\] d              | Bidir     |                             |  |
+| ffxx                   | Input     |                             |  |
+| h_restart              | Input     |                             |  |
+| \[7:0\] md             | Bidir     |                             |  |
+| n_dma_phi              | Input     |                             |  |
+| n_ppu_clk              | Input     |                             |  |
+| n_ppu_hard_reset       | Input     |                             |  |
+| \[12:0\] nma           | Bidir     |                             |  |
+| obj_color              | Input     |                             |  |
+| obj_prio               | Input     |                             |  |
+| ppu_clk                | Input     |                             |  |
+| ppu_mode2              | Input     |                             |  |
+| ppu_rd                 | Input     |                             |  |
+| ppu_wr                 | Input     |                             |  |
+| sprite_x_flip          | Input     |                             |  |
+| sprite_x_match         | Input     |                             |  |
+| stop_oam_eval          | Input     |                             |  |
+| vram_to_oam            | Input     |                             |  |
+| FF40_D1                | Output    |                             |  |
+| FF40_D2                | Output    |                             |  |
+| FF40_D3                | Output    |                             |  |
+| bp_cy                  | Output    |                             |  |
+| bp_sel                 | Output    |                             |  |
+| fexx                   | Output    |                             |  |
+| ff42                   | Output    |                             |  |
+| ff43                   | Output    |                             |  |
+| ff46                   | Output    |                             |  |
+| \[7:0\] h              | Output    |                             |  |
+| in_window              | Output    |                             |  |
+| n_dma_phi2_latched     | Output    |                             |  |
+| n_lcd_cp               | Output    |                             |  |
+| n_lcd_cpg              | Output    |                             |  |
+| n_lcd_cpl              | Output    |                             |  |
+| n_lcd_fr               | Output    |                             |  |
+| n_lcd_ld0              | Output    |                             |  |
+| n_lcd_ld1              | Output    |                             |  |
+| n_lcd_s                | Output    |                             |  |
+| n_lcd_st               | Output    |                             |  |
+| \[12:0\] n_ma          | Output    |                             |  |
+| n_ppu_reset            | Output    |                             |  |
+| n_sp_bp_mrd            | Output    |                             |  |
+| n_tm_bp_cys            | Output    |                             |  |
+| oam_addr_ck            | Output    |                             |  |
+| oam_mode3_bl_pch       | Output    |                             |  |
+| oam_mode3_nrd          | Output    |                             |  |
+| oam_rd_ck              | Output    |                             |  |
+| oam_xattr_latch_cck    | Output    |                             |  |
+| obj_prio_ck            | Output    |                             |  |
+| ppu_int_stat           | Output    |                             |  |
+| ppu_int_vbl            | Output    |                             |  |
+| ppu_mode3              | Output    |                             |  |
+| ppu1_ma0               | Output    |                             |  |
+| sp_bp_cys              | Output    |                             |  |
+| tm_bp_cys              | Output    |                             |  |
+| tm_cy                  | Output    |                             |  |
+| \[7:0\] v              | Output    |                             |  |
+| vbl                    | Output    |                             |  |
+| vclk2                  | Output    |                             |  |
 
 ## Netlist
 
