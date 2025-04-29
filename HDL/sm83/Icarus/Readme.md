@@ -5,12 +5,13 @@ Projects for Icarus Verilog (http://iverilog.icarus.com/).
 ## How to Use
 
 - Download Icarus Verilog.
-- Run the simulation using `make` (`ROM` can be any `.mem` file under `roms/`, `CYCLES` is the number of cycles to simulate):
+- Run the simulation using `make` (optional parameters: `ROM` can be any `.mem` file under `roms/`, `CYCLES` is the number of cycles to simulate):
 
 ```bash
 make run ROM=roms/cpu_instrs.mem CYCLES=1000000
 ```
 
+- Use `gmake` instead of `make` for NetBSD, since its native make requires `.` for ifdef / endif directives
 - Open `dmg_waves.fst` in [GTKWave](https://gtkwave.sourceforge.net/) or [Surfer](https://surfer-project.org/).
 - Additionally, you can load prepared signal sets (`debugging_instructions.gtkw`) into GTKWave: File -> Read Save File.
 - Think, scratch your head, fix bugs, redo everything.
