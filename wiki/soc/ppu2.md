@@ -9,7 +9,75 @@
 
 ![ppu2_ports](/imgstore/soc/ppu2_ports.png)
 
-TBD.
+| Signal Name         | Direction | From / Where To             | Description |
+|---------------------|-----------|-----------------------------|-------------|
+| FF40_D1             | Input     |                             |  |
+| FF40_D2             | Input     |                             |  |
+| FF40_D3             | Input     |                             |  |
+| \[7:0\] a           | Input     |                             |  |
+| bp_cy               | Input     |                             |  |
+| bp_sel              | Input     |                             |  |
+| cclk                | Input     |                             |  |
+| clk6                | Input     |                             |  |
+| cpu_vram_oam_rd     | Input     |                             |  |
+| \[12:0\] dma_a      | Input     |                             |  |
+| dma_addr_ext        | Input     |                             |  |
+| dma_run             | Input     |                             |  |
+| fexx                | Input     |                             |  |
+| ff42                | Input     |                             |  |
+| ff43                | Input     |                             |  |
+| \[7:0\] h           | Input     |                             |  |
+| in_window           | Input     |                             |  |
+| ma0                 | Input     |                             |  |
+| n_dma_phi           | Input     |                             |  |
+| n_dma_phi2_latched  | Input     |                             |  |
+| n_ppu_reset         | Input     |                             |  |
+| n_reset2            | Input     |                             |  |
+| oam_addr_ck         | Input     |                             |  |
+| \[7:0\] oam_din     | Input     |                             |  |
+| oam_dma_wr          | Input     |                             |  |
+| oam_mode3_bl_pch    | Input     |                             |  |
+| oam_mode3_nrd       | Input     |                             |  |
+| oam_rd_ck           | Input     |                             |  |
+| oam_xattr_latch_cck | Input     |                             |  |
+| obj_prio_ck         | Input     |                             |  |
+| ppu_mode3           | Input     |                             |  |
+| soc_rd              | Input     |                             |  |
+| soc_wr              | Input     |                             |  |
+| sp_bp_cys           | Input     |                             |  |
+| tm_cy               | Input     |                             |  |
+| \[7:0\] v           | Input     |                             |  |
+| vbl                 | Input     |                             |  |
+| vclk2               | Input     |                             |  |
+| vram_to_oam         | Input     |                             |  |
+| CONST0              | Bidir     |                             |  |
+| FF43_D0             | Output    |                             |  |
+| FF43_D1             | Output    |                             |  |
+| FF43_D2             | Output    |                             |  |
+| clk6_delay          | Output    |                             |  |
+| \[7:0\] d           | Bidir     |                             |  |
+| h_restart           | Output    |                             |  |
+| \[7:0\] md          | Bidir     |                             |  |
+| n_oam_rd            | Output    |                             |  |
+| \[7:0\] n_oama      | Bidir     |                             |  |
+| n_oama_wr           | Output    |                             |  |
+| \[7:0\] n_oamb      | Bidir     |                             |  |
+| n_oamb_wr           | Output    |                             |  |
+| n_ppu_clk           | Output    |                             |  |
+| n_ppu_hard_reset    | Output    |                             |  |
+| \[12:0\] nma        | Bidir     |                             |  |
+| \[7:1\] oa          | Output    |                             |  |
+| oam_bl_pch          | Output    |                             |  |
+| n_vram_to_oam       | Output    |                             |  |
+| obj_color           | Output    |                             |  |
+| obj_prio            | Output    |                             |  |
+| ppu_clk             | Output    |                             |  |
+| ppu_mode2           | Output    |                             |  |
+| ppu_rd              | Output    |                             |  |
+| ppu_wr              | Output    |                             |  |
+| sprite_x_flip       | Output    |                             |  |
+| sprite_x_match      | Output    |                             |  |
+| stop_oam_eval       | Output    |                             |  |
 
 ## Netlist
 
