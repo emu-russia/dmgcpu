@@ -52,6 +52,9 @@ module Bottom ( CLK2, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, Temp_C,
 
 	// Implementation
 
+	wire [7:0] DLq;
+	BusKeeper DL_latch [7:0] (.d(DL), .q(DLq));
+
 	BusPrecharge precharge (
 		.CLK2(CLK2),
 		.DL(DL),
@@ -77,7 +80,7 @@ module Bottom ( CLK2, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, Temp_C,
 		.CLK6(CLK6),
 		.w(w),
 		.x(x),
-		.DL(DL),
+		.DL(DLq),
 		.IR(IR),
 		.abus(abus),
 		.bbus(bbus),
@@ -94,7 +97,7 @@ module Bottom ( CLK2, CLK4, CLK5, CLK6, CLK7, DL, DV, bc, bq4, bq5, bq7, Temp_C,
 		.d60(`s1_op_ld_nn_sp_s010),
 		.w(w),
 		.x(x),
-		.DL(DL),
+		.DL(DLq),
 		.bbus(bbus),
 		.cbus(cbus),
 		.dbus(dbus),

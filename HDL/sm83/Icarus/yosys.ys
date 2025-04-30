@@ -18,13 +18,15 @@ read_verilog \
 
 hierarchy -top SM83Core
 
-write_rtlil sm83.1.rtlil
-
-# I don't remember exactly why these steps are necessary, but they are. If
-# these steps are not included, the BusKeeper inside DataMux is not removed in
-# later steps.
-flatten DataMux
+# In DataMux, the buskeepers res_latch and dv_latch are unecessary, as Res and
+# DV are never tristate, so we just flatten them as simple Buffers here. For
+# ext_to_int we do the same, but because we cannot optimize its BusKeeper, as
+# the `D` can be driven from outside the module. In that case we ensure in the
+# design that `D` is always driven.
 proc DataMux
+flatten data_mux_bit/c:res_latch data_mux_bit/c:dv_latch data_mux_bit/c:ext_to_int %%
+setattr -mod -set keep_hierarchy 1 BusKeeper
+flatten DataMux
 opt_clean -purge DataMux
 opt_clean RegsBuses
 
@@ -78,7 +80,6 @@ chtype -map seq_rs_latch2 mysr
 chtype -map seq_dff_posedge_comp myseqdff
 
 # avoid flattening BusKeeper, because it will be replaced by a $dlatch later on.
-setattr -mod -set keep_hierarchy 1 BusKeeper
 proc
 flatten
 
@@ -154,6 +155,10 @@ module mybuffer(input d, output q);
     assign q = d;
 endmodule
 EOT
+
+opt_clean SM83Core
+# Mege identical BusKeepers
+opt_merge -share_all SM83Core
 
 design -copy-to mybuskeepermap mybuskeeper
 design -copy-to mybuskeepermap8 mybuskeeper8
