@@ -38,21 +38,31 @@ The topology is not complete (m1 is missing in some places), but it is sufficien
 
 ## aon (AO1)
 
+2 AND to 2 OR Non-Inverting.
+
 ![aon](/imgstore/modules/soc/aon.jpg)
 
 ## aon22 (AO2)
+
+2+2 AND to 3 OR Non-Inverting.
 
 ![aon22](/imgstore/modules/soc/aon22.jpg)
 
 ## aon222 (AO3)
 
+2+2+2 AND to 4 OR Non-Inverting.
+
 ![aon222](/imgstore/modules/soc/aon222.jpg)
 
 ## aon2222 (AO4)
 
+2+2+2+2 AND to 5 OR Non-Inverting.
+
 ![aon2222](/imgstore/modules/soc/aon2222.jpg)
 
 ## aon222222 (AO6)
+
+2+2+2+2+2+2 AND to 7 OR Non-Inverting.
 
 ![aon222222](/imgstore/modules/soc/aon222222.jpg)
 
@@ -213,9 +223,13 @@ The dual-rail ck/cck signals are obtained locally by demultiplexing the CLK inpu
 
 ## oai
 
+2 OR to 2 AND Inverting.
+
 ![oai](/imgstore/modules/soc/oai.jpg)
 
 ## oan (OA)
+
+2 OR to 2 AND Non-Inverting.
 
 ![oan](/imgstore/modules/soc/oan.jpg)
 
