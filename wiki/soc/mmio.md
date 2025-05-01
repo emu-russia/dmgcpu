@@ -71,9 +71,9 @@ The MMIO module is a Memory-Mapped Input/Output controller for the DMG-CPU (Game
 | n_reset2               | Input     | From ClkGen                 | Global reset signal (SoC internal) |
 | n_t1_frompad           | Input     | From Pad                    | Test1 Pad input signal (inverted value) |
 | n_t2_frompad           | Input     | From Pad                    | Test2 Pad input signal (inverted value) |
-| non_vram_mreq          | Input     |                             |  |
-| osc_ena                | Input     |                             |  |
-| ppu_clk                | Input     |                             |  |
+| non_vram_mreq          | Input     | From Arb                    | Non-VRAM memory request |
+| osc_ena                | Input     | From Core                   | Crystal oscillator enable. When CPU drives this low, the crystal oscillator gets disabled to save power. This happens during STOP mode. |
+| ppu_clk                | Input     | From PPU2                   | PPU clock |
 | ppu_int_stat           | Input     | From PPU1                   | PPU status interrupt |
 | ppu_int_vbl            | Input     | From PPU1                   | PPU VBLANK interrupt |
 | ppu_rd                 | Input     | From PPU2                   | PPU read signal |
@@ -86,12 +86,12 @@ The MMIO module is a Memory-Mapped Input/Output controller for the DMG-CPU (Game
 | \[14:0\] a             | Bidir     | Global                      | Internal Address bus. For bits 14...8 the arbitration is applied [^1]. Bits 7...0 are read only |
 | addr_latch             | Output    | To APU                      | Address latch signal |
 | \[4:0\] cpu_irq_trig   | Output    | To Core                     | SM83 Core interrupt triggers |
-| cpu_vram_oam_rd        | Output    |                             |  |
+| cpu_vram_oam_rd        | Output    | To Arb, PPU2                |  |
 | \[7:0\] d              | Bidir     | Global                      | Internal Data bus |
 | \[12:0\] dma_a         | Output    |                             | DMA address bus |
 | dma_a_15               | Output    |                             | DMA address bit 15 |
-| dma_addr_ext           | Output    |                             |  |
-| dma_run                | Output    |                             |  |
+| dma_addr_ext           | Output    | To Arb, APU, PPU2           |  |
+| dma_run                | Output    | To PPU2                     | DMA run control |
 | lfo_512Hz              | Output    | To APU                      | 512Hz low-frequency oscillator |
 | lfo_16384Hz            | Output    | To Ser                      | 16384Hz oscillator |
 | \[14:8\] n_DRV_HIGH_a  | Output    | To Pads                     | Drive high control for external address bus |
@@ -99,44 +99,25 @@ The MMIO module is a Memory-Mapped Input/Output controller for the DMG-CPU (Game
 | n_DRV_HIGH_nwr         | Output    | To Pad                      | /WR pad drive high control |
 | n_cpu_m1               | Output    | To Pad                      | Inverted CPU M1 signal |
 | n_dblatch_to_intdb     | Output    | To Arb                      | DB latch to internal DB control |
-| n_dma_phi              | Output    |                             |  |
+| n_dma_phi              | Output    | To PPU1, PPU2               | DMA clock |
 | n_ena_pu_db            | Output    | To Pads                     | 0: External Data bus pull-up enable |
-| n_ext_addr_en          | Output    |                             |  |
+| n_ext_addr_en          | Output    | To APU                      |  |
 | n_extdb_to_intdb       | Output    | To Arb                      | External to internal DB control |
 | n_intdb_to_extdb       | Output    | To Arb                      | Internal to external DB control |
-| n_sb_write             | Output    |                             |  |
-| n_test_reset           | Output    |                             |  |
-| oam_dma_wr             | Output    |                             |  |
-| osc_stable             | Output    |                             | Oscillator stable signal |
-| sb_read                | Output    |                             |  |
-| sc_read                | Output    |                             |  |
-| sc_write               | Output    |                             |  |
+| n_sb_write             | Output    | To Ser                      | 0: SB register write |
+| n_test_reset           | Output    | To ClkGen                   | Test reset signal |
+| oam_dma_wr             | Output    | To PPU2                     | OAM DMA write control |
+| osc_stable             | Output    | To ClkGen                   | Oscillator stable signal |
+| sb_read                | Output    | To Ser                      | SB register read |
+| sc_read                | Output    | To Ser                      | SC register read |
+| sc_write               | Output    | To Ser                      | SC register write |
 | soc_rd                 | Output    | Global                      | SoC read memory operation (@msinger: `CPU_RD`) |
 | soc_wr                 | Output    | Global                      | SoC write memory operation (@msinger: `CPU_WR`) |
-| test_1                 | Output    |                             | Test1 mode - disable all internal CPU A/D bus drivers (@msinger: `T1_nT2`) |
-| test_2                 | Output    |                             | Test2 mode - disable the internal Boot ROM (@msinger: `nT1_T2`) |
-| vram_to_oam            | Output    |                             |  |
+| test_1                 | Output    | Global                      | Test1 mode - disable all internal CPU A/D bus drivers (@msinger: `T1_nT2`) |
+| test_2                 | Output    | Global                      | Test2 mode - disable the internal Boot ROM (@msinger: `nT1_T2`) |
+| vram_to_oam            | Output    | To Arb, PPU1, PPU2          | VRAM to OAM transfer control |
 
 [^2]: The constant 0 is globally scattered throughout the chip. Each large module with cells has a `const` cell whose output 0 is globally connected between all modules (so the input is marked as Bidir).
-
-Old:
-
-| Signal Name            | Direction | From / Where To                     | Description |
-|------------------------|-----------|--------------------------------------|-------------|
-| n_dma_phi              | Output    | To DMA                              | DMA phase control |
-| dma_run                | Output    | To DMA                              | DMA run control |
-| int_serial             | Input     | From serial interface               | Serial interrupt |
-| sc_read, sb_read       | Output    | To serial controller                | Serial controller read signals |
-| sc_write, n_sb_write   | Output    | To serial controller                | Serial controller write signals |
-| ppu_clk                | Input     | From PPU                            | PPU clock |
-| vram_to_oam            | Output    | To PPU                         	   | VRAM to OAM transfer control |
-| non_vram_mreq          | Input     | From memory controller              | Non-VRAM memory request |
-| n_test_reset           | Output    | To test system                      | Test reset signal |
-| n_ext_addr_en          | Output    | To address control                  | External address enable |
-| FF60_D1                | Input     | From register (0xFF60)              | Register bit input |
-| dma_addr_ext           | Output    | To DMA                              | DMA external address control |
-| cpu_vram_oam_rd        | Output    | To CPU/VRAM/OAM                     | CPU VRAM/OAM read control |
-| oam_dma_wr             | Output    | To OAM DMA                          | OAM DMA write control |
 
 ## Netlist
 
