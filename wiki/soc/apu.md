@@ -18,7 +18,7 @@ It also contains a piece of arbitration for `a[7:0]`. [^1]
 
 | Signal Name            | Direction | From / Where To             | Description |
 |------------------------|-----------|-----------------------------|-------------|
-| CONST0                 | Bidir     |                             |  |
+| CONST0                 | Bidir     | Global                      | Constant 0 signal [^2] |
 | \[7:0\] a              | Bidir     |                             |  |
 | addr_latch             | Input     |                             |  |
 | cclk                   | Input     |                             |  |
@@ -89,6 +89,8 @@ It also contains a piece of arbitration for `a[7:0]`. [^1]
 | \[3:0\] rmixer         | Output    |                             |  |
 | \[3:0\] wave_a         | Output    |                             |  |
 | wave_bl_pch            | Output    |                             |  |
+
+[^2]: The constant 0 is globally scattered throughout the chip. Each large module with cells has a `const` cell whose output 0 is globally connected between all modules (so the input is marked as Bidir).
 
 ## Annotated Design
 

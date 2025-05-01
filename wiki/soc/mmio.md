@@ -46,28 +46,84 @@ The MMIO module is a Memory-Mapped Input/Output controller for the DMG-CPU (Game
 
 ![mmio_ports](/imgstore/soc/mmio_ports.png)
 
-:warning: The signal table is derived from DeepSeek and likely requires human refinement.
+| Signal Name            | Direction | From / Where To             | Description |
+|------------------------|-----------|-----------------------------|-------------|
+| FF60_D1                | Input     |                             |  |
+| clk_ena                | Input     |                             | Clock enable |
+| clk2                   | Input     | From ClkGen                 |  |
+| clk4                   | Input     | From ClkGen                 |  |
+| clk6                   | Input     | From ClkGen                 |  |
+| clk6_delay             | Input     |                             | Delayed `clk6` clock signal |
+| clk9                   | Input     | From ClkGen                 |  |
+| \[4:0\] cpu_irq_ack    | Input     | From Core                   | SM83 Core interrupt acknowledgments |
+| cpu_m1                 | Input     | From Core                   | SM83 Core M1 cycle indicator |
+| cpu_rd                 | Input     | From Core                   | SM83 Core read signal |
+| cpu_wr                 | Input     | From Core                   | SM83 Core write signal |
+| cpu_wr_sync            | Input     |                             |  |
+| ffxx                   | Input     |                             |  |
+| ff46                   | Input     |                             |  |
+| int_jp                 | Input     | From APU                    | Joypad interrupt |
+| int_serial             | Input     |                             | Serial interrupt |
+| \[14:8\] n_INPUT_a     | Input     | From Pads                   | External Address bus input |
+| n_INPUT_nrd            | Input     |                             |  |
+| n_INPUT_nwr            | Input     |                             |  |
+| n_ppu_hard_reset       | Input     |                             |  |
+| n_reset2               | Input     | From ClkGen                 | Global reset signal (SoC internal) |
+| n_t1_frompad           | Input     |                             |  |
+| n_t2_frompad           | Input     |                             |  |
+| non_vram_mreq          | Input     |                             |  |
+| osc_ena                | Input     |                             |  |
+| ppu_clk                | Input     |                             |  |
+| ppu_int_stat           | Input     | From PPU1                   | PPU status interrupt |
+| ppu_int_vbl            | Input     | From PPU1                   | PPU VBLANK interrupt |
+| ppu_rd                 | Input     |                             |  |
+| ppu_wr                 | Input     |                             |  |
+| reset                  | Input     | From Pad                    | System reset signal (external) |
+| CONST0                 | Bidir     | Global                      | Constant 0 signal [^2] |
+| \[14:8\] DRV_LOW_a     | Output    | To Pads                     | Drive low control for external address bus |
+| DRV_LOW_nrd            | Output    |                             |  |
+| DRV_LOW_nwr            | Output    |                             |  |
+| \[14:0\] a             | Bidir     | Global                      | Internal Address bus. For bits 14...8 the arbitration is applied [^1]. Bits 7...0 are read only |
+| addr_latch             | Output    |                             |  |
+| \[4:0\] cpu_irq_trig   | Output    | To Core                     | SM83 Core interrupt triggers |
+| cpu_vram_oam_rd        | Output    |                             |  |
+| \[7:0\] d              | Bidir     | Global                      | Internal Data bus |
+| \[12:0\] dma_a         | Output    |                             | DMA address bus |
+| dma_a_15               | Output    |                             | DMA address bit 15 |
+| dma_addr_ext           | Output    |                             |  |
+| dma_run                | Output    |                             |  |
+| lfo_512Hz              | Output    |                             |  |
+| lfo_16384Hz            | Output    |                             |  |
+| \[14:8\] n_DRV_HIGH_a  | Output    | To Pads                     | Drive high control for external address bus |
+| n_DRV_HIGH_nrd         | Output    |                             |  |
+| n_DRV_HIGH_nwr         | Output    |                             |  |
+| n_cpu_m1               | Output    | To Pad                      | Inverted CPU M1 signal |
+| n_dblatch_to_intdb     | Output    |                             |  |
+| n_dma_phi              | Output    |                             |  |
+| n_ena_pu_db            | Output    |                             |  |
+| n_ext_addr_en          | Output    |                             |  |
+| n_extdb_to_intdb       | Output    |                             |  |
+| n_intdb_to_extdb       | Output    |                             |  |
+| n_sb_write             | Output    |                             |  |
+| n_test_reset           | Output    |                             |  |
+| oam_dma_wr             | Output    |                             |  |
+| osc_stable             | Output    |                             | Oscillator stable signal |
+| sb_read                | Output    |                             |  |
+| sc_read                | Output    |                             |  |
+| sc_write               | Output    |                             |  |
+| soc_rd                 | Output    |                             |  |
+| soc_wr                 | Output    |                             |  |
+| test_1                 | Output    |                             |  |
+| test_2                 | Output    |                             |  |
+| vram_to_oam            | Output    |                             |  |
+
+[^2]: The constant 0 is globally scattered throughout the chip. Each large module with cells has a `const` cell whose output 0 is globally connected between all modules (so the input is marked as Bidir).
+
+Old:
 
 | Signal Name            | Direction | From / Where To                     | Description |
 |------------------------|-----------|--------------------------------------|-------------|
-| reset                  | Input     | From Pad                            | System reset signal |
-| clk2, clk4, clk6, clk9 | Input     | Clock generator                     | Various clock inputs |
-| osc_stable             | Output    | To system                           | Oscillator stable signal |
-| clk_ena                | Input     | Clock control                       | Clock enable |
-| osc_ena                | Input     | Oscillator control                  | Oscillator enable |
-| n_reset2               | Input     | Global 			                   | Global reset signal |
 | cpu_wr_sync            | Input     | CPU                                 | Synchronized CPU write |
-| cpu_m1                 | Input     | From Core                           | CPU M1 cycle indicator |
-| n_cpu_m1               | Output    | To Pad                              | Inverted CPU M1 signal |
-| a\[14:0\]              | Bidir     | CPU ↔ Address bus                   | Internal Address bus. For bits 14...8 the arbitration is applied [^1]. Bits 7...0 are read only |
-| d\[7:0\]               | Bidir     | CPU ↔ Data bus                      | Internal Data bus |
-| cpu_irq_trig\[4:0\]    | Output    | To Core                             | SM83 Core interrupt triggers |
-| cpu_irq_ack\[4:0\]     | Input     | From Core                           | SM83 Core interrupt acknowledgments |
-| cpu_rd                 | Input     | From Core                           | SM83 Core read signal |
-| cpu_wr                 | Input     | From Core                           | SM83 Core write signal |
-| n_DRV_HIGH_a\[14:8\]   | Output    | To address drivers                  | Drive high control for address bus |
-| n_INPUT_a\[14:8\]      | Input     | From address bus                    | Address bus input |
-| DRV_LOW_a\[14:8\]      | Output    | To address drivers                  | Drive low control for address bus |
 | n_DRV_HIGH_nrd         | Output    | To read control                     | Read drive high control |
 | n_INPUT_nrd            | Input     | From read control                   | Read input |
 | DRV_LOW_nrd            | Output    | To read control                     | Read drive low control |
@@ -75,11 +131,8 @@ The MMIO module is a Memory-Mapped Input/Output controller for the DMG-CPU (Game
 | n_INPUT_nwr            | Input     | From write control                  | Write input |
 | DRV_LOW_nwr            | Output    | To write control                    | Write drive low control |
 | n_t1_frompad, n_t2_frompad | Input | From TEST pads                      | Test Pad input signals |
-| CONST0                 | Bidir     | Global                              | Constant 0 signal |
 | n_ena_pu_db            | Output    | To pull-up control                  | Data bus pull-up enable |
 | n_dma_phi              | Output    | To DMA                              | DMA phase control |
-| dma_a\[12:0\]          | Output    | To DMA                              | DMA address bus |
-| dma_a_15               | Output    | To DMA                              | DMA address bit 15 |
 | dma_run                | Output    | To DMA                              | DMA run control |
 | soc_wr, soc_rd         | Output    | To SOC                              | SOC write/read controls (@msinger: `CPU_WR`, `CPU_RD`) |
 | lfo_512Hz              | Output    | To system                           | 512Hz low-frequency oscillator |
@@ -98,7 +151,6 @@ The MMIO module is a Memory-Mapped Input/Output controller for the DMG-CPU (Game
 | n_test_reset           | Output    | To test system                      | Test reset signal |
 | n_ext_addr_en          | Output    | To address control                  | External address enable |
 | addr_latch             | Output    | To address control                  | Address latch signal |
-| int_jp                 | Input     | From joypad                         | Joypad interrupt |
 | FF60_D1                | Input     | From register (0xFF60)              | Register bit input |
 | ffxx                   | Input     | From FFxx registers                 | FFxx register area indicator |
 | n_ppu_hard_reset       | Input     | From PPU                            | PPU hard reset |
@@ -106,8 +158,6 @@ The MMIO module is a Memory-Mapped Input/Output controller for the DMG-CPU (Game
 | dma_addr_ext           | Output    | To DMA                              | DMA external address control |
 | cpu_vram_oam_rd        | Output    | To CPU/VRAM/OAM                     | CPU VRAM/OAM read control |
 | oam_dma_wr             | Output    | To OAM DMA                          | OAM DMA write control |
-| ppu_int_stat           | Input     | From PPU                            | PPU status interrupt |
-| ppu_int_vbl            | Input     | From PPU                            | PPU VBLANK interrupt |
 | clk6_delay             | Input     | From delayed clock                  | Delayed `clk6` clock signal |
 
 ## Netlist

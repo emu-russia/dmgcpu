@@ -50,7 +50,7 @@
 | vbl                 | Input     |                             |  |
 | vclk2               | Input     |                             |  |
 | vram_to_oam         | Input     |                             |  |
-| CONST0              | Bidir     |                             |  |
+| CONST0              | Bidir     | Global                      | Constant 0 signal [^2] |
 | FF43_D0             | Output    |                             |  |
 | FF43_D1             | Output    |                             |  |
 | FF43_D2             | Output    |                             |  |
@@ -78,6 +78,8 @@
 | sprite_x_flip       | Output    |                             |  |
 | sprite_x_match      | Output    |                             |  |
 | stop_oam_eval       | Output    |                             |  |
+
+[^2]: The constant 0 is globally scattered throughout the chip. Each large module with cells has a `const` cell whose output 0 is globally connected between all modules (so the input is marked as Bidir).
 
 ## Netlist
 

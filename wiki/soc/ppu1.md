@@ -11,7 +11,7 @@
 
 | Signal Name            | Direction | From / Where To             | Description |
 |------------------------|-----------|-----------------------------|-------------|
-| CONST0                 | Bidir     |                             |  |
+| CONST0                 | Bidir     | Global                      | Constant 0 signal [^2] |
 | FF43_D0                | Input     |                             |  |
 | FF43_D1                | Input     |                             |  |
 | FF43_D2                | Input     |                             |  |
@@ -75,6 +75,8 @@
 | \[7:0\] v              | Output    |                             |  |
 | vbl                    | Output    |                             |  |
 | vclk2                  | Output    |                             |  |
+
+[^2]: The constant 0 is globally scattered throughout the chip. Each large module with cells has a `const` cell whose output 0 is globally connected between all modules (so the input is marked as Bidir).
 
 ## Netlist
 
