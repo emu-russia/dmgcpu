@@ -16,14 +16,14 @@ Features:
 
 ![hram_ports](/imgstore/soc/hram_ports.png)
 
-|Signal|Dir|From/Where To|Description|
-|---|---|---|---|
-| clk7| input|From ClkGen| (Aka BUKE)|
-| soc_rd| input|From MMIO |SoC data bus read (Aka CPU_RD)|
-| soc_wr| input|From MMIO |SoC data bus write (Aka CPU_WR)|
-| d \[7:0\]| bidir| |SoC internal data bus |
-| ffxx| input|From Arb | |
-| a \[7:0\]| input|From Core |SoC internal address bus (lower 8 bits) |
+|Signal      |Dir    |From/Where To|Description|
+|------------|-------|-------------|-------------|
+| clk7       | Input |From ClkGen  | (Aka BUKE)  |
+| soc_rd     | Input |From MMIO    | SoC data bus read (Aka CPU_RD)|
+| soc_wr     | Input |From MMIO    | SoC data bus write (Aka CPU_WR)|
+| \[7:0\] d  | Bidir |             | SoC internal data bus |
+| ffxx       | Input |From Arb     | |
+| \[7:0\] a  | Input |From Core    | SoC internal address bus (lower 8 bits) |
 
 ## Bit lane
 

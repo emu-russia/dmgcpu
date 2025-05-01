@@ -37,7 +37,7 @@ To familiarize yourself with the architecture, it's best to crawl through the an
 | `n_INPUT_a15`        | Input     |                      | Active-low input signal for `a[15]`.                                        |
 | `DRV_LOW_a15`        | Output    |                      | Drive low signal for `a[15]`.                                               |
 | `n_cs_topad`         | Output    |                      | Active-low chip select to pad signal.                                       |
-| `CONST0`             | Output    |                      | Constant 0 signal.                                                          |
+| `CONST0`             | Output    | Global               | Constant 0 signal. [^2]                                                     |
 | `n_DRV_HIGH_nmwr`    | Output    |                      | Active-low drive high signal for `n_mwr`.                                   |
 | `n_mwr`              | Input     |                      | Active-low memory write signal.                                             |
 | `DRV_LOW_nmwr`       | Output    |                      | Drive low signal for `n_mwr`.                                               |
@@ -77,6 +77,8 @@ To familiarize yourself with the architecture, it's best to crawl through the an
 | `n_tm_bp_cys`        | Input     |                      | Active-low tile map buffer page cycle signal.         (?)                   |
 | `arb_fexx_ffxx`      | Output    |                      | Arbitration signal for memory ranges `FExx` and `FFxx`.                     |
 | `cpu_vram_oam_rd`    | Input     |                      | CPU VRAM/OAM read signal.                                                   |
+
+[^2]: The constant 0 is globally scattered throughout the chip. Each large module with cells has a `const` cell whose output 0 is globally connected between all modules (so the input is marked as Bidir).
 
 ## Annotated Design
 

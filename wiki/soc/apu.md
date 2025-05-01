@@ -16,7 +16,81 @@ It also contains a piece of arbitration for `a[7:0]`. [^1]
 
 ![apu_ports](/imgstore/soc/apu_ports.png)
 
-TBD.
+| Signal Name            | Direction | From / Where To             | Description |
+|------------------------|-----------|-----------------------------|-------------|
+| CONST0                 | Bidir     | Global                      | Constant 0 signal [^2] |
+| \[7:0\] a              | Bidir     |                             |  |
+| addr_latch             | Input     |                             |  |
+| cclk                   | Input     |                             |  |
+| clk2                   | Input     |                             |  |
+| clk4                   | Input     |                             |  |
+| clk6                   | Input     |                             |  |
+| clk7                   | Input     |                             |  |
+| clk9                   | Input     |                             |  |
+| \[7:0\] d              | Bidir     |                             |  |
+| \[7:0\] dma_a          | Input     |                             |  |
+| dma_addr_ext           | Input     |                             |  |
+| ffxx                   | Input     |                             |  |
+| lfo_512Hz              | Input     |                             |  |
+| \[7:0\] n_INPUT_a      | Input     |                             |  |
+| n_ext_addr_en          | Input     |                             |  |
+| n_p10                  | Input     |                             |  |
+| n_p11                  | Input     |                             |  |
+| n_p12                  | Input     |                             |  |
+| n_p13                  | Input     |                             |  |
+| n_reset2               | Input     |                             |  |
+| sck_dir                | Input     |                             |  |
+| ser_out                | Input     |                             |  |
+| serial_tick            | Input     |                             |  |
+| soc_rd                 | Input     |                             |  |
+| soc_wr                 | Input     |                             |  |
+| test_1                 | Input     |                             |  |
+| test_2                 | Input     |                             |  |
+| \[7:0\] wave_rd        | Input     |                             |  |
+| \[7:0\] DRV_LOW_a      | Output    |                             |  |
+| DRV_LOW_p10            | Output    |                             |  |
+| DRV_LOW_p11            | Output    |                             |  |
+| DRV_LOW_p12            | Output    |                             |  |
+| DRV_LOW_p13            | Output    |                             |  |
+| DRV_LOW_p14            | Output    |                             |  |
+| DRV_LOW_p15            | Output    |                             |  |
+| DRV_LOW_sck            | Output    |                             |  |
+| DRV_LOW_sin            | Output    |                             |  |
+| FF60_D1                | Output    |                             |  |
+| \[3:0\] ch1_out        | Output    |                             |  |
+| \[3:0\] ch2_out        | Output    |                             |  |
+| ch3_active             | Output    |                             |  |
+| \[3:0\] ch3_out        | Output    |                             |  |
+| \[3:0\] ch4_out        | Output    |                             |  |
+| cpu_wakeup             | Output    |                             |  |
+| int_jp                 | Output    |                             |  |
+| l_vin_en               | Output    |                             |  |
+| \[3:0\] lmixer         | Output    |                             |  |
+| \[7:0\] n_DRV_HIGH_a   | Output    |                             |  |
+| n_DRV_HIGH_p10         | Output    |                             |  |
+| n_DRV_HIGH_p11         | Output    |                             |  |
+| n_DRV_HIGH_p12         | Output    |                             |  |
+| n_DRV_HIGH_p13         | Output    |                             |  |
+| n_DRV_HIGH_p14         | Output    |                             |  |
+| n_DRV_HIGH_p15         | Output    |                             |  |
+| n_DRV_HIGH_sck         | Output    |                             |  |
+| n_DRV_HIGH_sin         | Output    |                             |  |
+| n_ENA_PU_sin           | Output    |                             |  |
+| n_ch1_amp_en           | Output    |                             |  |
+| n_ch2_amp_en           | Output    |                             |  |
+| n_ch3_amp_en           | Output    |                             |  |
+| n_ch4_amp_en           | Output    |                             |  |
+| \[2:0\] n_lvolume      | Output    |                             |  |
+| \[2:0\] n_rvolume      | Output    |                             |  |
+| n_sout_topad           | Output    |                             |  |
+| n_wave_rd              | Output    |                             |  |
+| n_wave_wr              | Output    |                             |  |
+| r_vin_en               | Output    |                             |  |
+| \[3:0\] rmixer         | Output    |                             |  |
+| \[3:0\] wave_a         | Output    |                             |  |
+| wave_bl_pch            | Output    |                             |  |
+
+[^2]: The constant 0 is globally scattered throughout the chip. Each large module with cells has a `const` cell whose output 0 is globally connected between all modules (so the input is marked as Bidir).
 
 ## Annotated Design
 

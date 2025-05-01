@@ -46,69 +46,78 @@ The MMIO module is a Memory-Mapped Input/Output controller for the DMG-CPU (Game
 
 ![mmio_ports](/imgstore/soc/mmio_ports.png)
 
-:warning: The signal table is derived from DeepSeek and likely requires human refinement.
+| Signal Name            | Direction | From / Where To             | Description |
+|------------------------|-----------|-----------------------------|-------------|
+| FF60_D1                | Input     | From APU                    | Value of debug register TEST_PAD.1. DIV operating mode: 0 - DIV is clocked with a 16384 Hz clock (Default); 1 - DIV is clocked with a 1 MHz clock (via `clk9`) |
+| clk_ena                | Input     | From Core                   | Clock enable |
+| clk2                   | Input     | From ClkGen                 |  |
+| clk4                   | Input     | From ClkGen                 |  |
+| clk6                   | Input     | From ClkGen                 |  |
+| clk6_delay             | Input     | From PPU2                   | Delayed `clk6` clock signal |
+| clk9                   | Input     | From ClkGen                 | Used for DIV and TIMA |
+| \[4:0\] cpu_irq_ack    | Input     | From Core                   | SM83 Core interrupt acknowledgments |
+| cpu_m1                 | Input     | From Core                   | SM83 Core M1 cycle indicator |
+| cpu_rd                 | Input     | From Core                   | SM83 Core read signal |
+| cpu_wr                 | Input     | From Core                   | SM83 Core write signal |
+| cpu_wr_sync            | Input     | From ClkGen                 | Synchronized SM83 Core write |
+| ffxx                   | Input     | From Arb                    | FFxx register area indicator |
+| ff46                   | Input     | From PPU1                   | DMA control register ($FF46) operation |
+| int_jp                 | Input     | From APU                    | Joypad interrupt |
+| int_serial             | Input     | From Ser                    | Serial interrupt |
+| \[14:8\] n_INPUT_a     | Input     | From Pads                   | External Address bus input (inverted value) |
+| n_INPUT_nrd            | Input     | From Pad                    | /RD pad input (inverted value) |
+| n_INPUT_nwr            | Input     | From Pad                    | /WR pad input (inverted value) |
+| n_ppu_hard_reset       | Input     | From PPU2                   | PPU hard reset |
+| n_reset2               | Input     | From ClkGen                 | Global reset signal (SoC internal) |
+| n_t1_frompad           | Input     | From Pad                    | Test1 Pad input signal (inverted value) |
+| n_t2_frompad           | Input     | From Pad                    | Test2 Pad input signal (inverted value) |
+| non_vram_mreq          | Input     | From Arb                    | Non-VRAM memory request |
+| osc_ena                | Input     | From Core                   | Crystal oscillator enable. When CPU drives this low, the crystal oscillator gets disabled to save power. This happens during STOP mode. |
+| ppu_clk                | Input     | From PPU2                   | PPU clock |
+| ppu_int_stat           | Input     | From PPU1                   | PPU status interrupt |
+| ppu_int_vbl            | Input     | From PPU1                   | PPU VBLANK interrupt |
+| ppu_rd                 | Input     | From PPU2                   | PPU read signal |
+| ppu_wr                 | Input     | From PPU2                   | PPU write signal |
+| reset                  | Input     | From Pad                    | System reset signal (external) |
+| CONST0                 | Bidir     | Global                      | Constant 0 signal [^2] |
+| \[14:8\] DRV_LOW_a     | Output    | To Pads                     | Drive low control for external address bus |
+| DRV_LOW_nrd            | Output    | To Pad                      | /RD pad drive low control |
+| DRV_LOW_nwr            | Output    | To Pad                      | /WR pad drive low control |
+| \[14:0\] a             | Bidir     | Global                      | Internal Address bus. For bits 14...8 the arbitration is applied [^1]. Bits 7...0 are read only |
+| addr_latch             | Output    | To APU                      | Address latch signal |
+| \[4:0\] cpu_irq_trig   | Output    | To Core                     | SM83 Core interrupt triggers |
+| cpu_vram_oam_rd        | Output    | To Arb, PPU2                |  |
+| \[7:0\] d              | Bidir     | Global                      | Internal Data bus |
+| \[12:0\] dma_a         | Output    |                             | DMA address bus |
+| dma_a_15               | Output    |                             | DMA address bit 15 |
+| dma_addr_ext           | Output    | To Arb, APU, PPU2           |  |
+| dma_run                | Output    | To PPU2                     | DMA run control |
+| lfo_512Hz              | Output    | To APU                      | 512Hz low-frequency oscillator |
+| lfo_16384Hz            | Output    | To Ser                      | 16384Hz oscillator |
+| \[14:8\] n_DRV_HIGH_a  | Output    | To Pads                     | Drive high control for external address bus |
+| n_DRV_HIGH_nrd         | Output    | To Pad                      | /RD pad drive high control |
+| n_DRV_HIGH_nwr         | Output    | To Pad                      | /WR pad drive high control |
+| n_cpu_m1               | Output    | To Pad                      | Inverted CPU M1 signal |
+| n_dblatch_to_intdb     | Output    | To Arb                      | DB latch to internal DB control |
+| n_dma_phi              | Output    | To PPU1, PPU2               | DMA clock |
+| n_ena_pu_db            | Output    | To Pads                     | 0: External Data bus pull-up enable |
+| n_ext_addr_en          | Output    | To APU                      |  |
+| n_extdb_to_intdb       | Output    | To Arb                      | External to internal DB control |
+| n_intdb_to_extdb       | Output    | To Arb                      | Internal to external DB control |
+| n_sb_write             | Output    | To Ser                      | 0: SB register write |
+| n_test_reset           | Output    | To ClkGen                   | Test reset signal |
+| oam_dma_wr             | Output    | To PPU2                     | OAM DMA write control |
+| osc_stable             | Output    | To ClkGen                   | Oscillator stable signal |
+| sb_read                | Output    | To Ser                      | SB register read |
+| sc_read                | Output    | To Ser                      | SC register read |
+| sc_write               | Output    | To Ser                      | SC register write |
+| soc_rd                 | Output    | Global                      | SoC read memory operation (@msinger: `CPU_RD`) |
+| soc_wr                 | Output    | Global                      | SoC write memory operation (@msinger: `CPU_WR`) |
+| test_1                 | Output    | Global                      | Test1 mode - disable all internal CPU A/D bus drivers (@msinger: `T1_nT2`) |
+| test_2                 | Output    | Global                      | Test2 mode - disable the internal Boot ROM (@msinger: `nT1_T2`) |
+| vram_to_oam            | Output    | To Arb, PPU1, PPU2          | VRAM to OAM transfer control |
 
-| Signal Name            | Direction | From / Where To                     | Description |
-|------------------------|-----------|--------------------------------------|-------------|
-| reset                  | Input     | From Pad                            | System reset signal |
-| clk2, clk4, clk6, clk9 | Input     | Clock generator                     | Various clock inputs |
-| osc_stable             | Output    | To system                           | Oscillator stable signal |
-| clk_ena                | Input     | Clock control                       | Clock enable |
-| osc_ena                | Input     | Oscillator control                  | Oscillator enable |
-| n_reset2               | Input     | Global 			                   | Global reset signal |
-| cpu_wr_sync            | Input     | CPU                                 | Synchronized CPU write |
-| cpu_m1                 | Input     | From Core                           | CPU M1 cycle indicator |
-| n_cpu_m1               | Output    | To Pad                              | Inverted CPU M1 signal |
-| a\[14:0\]              | Bidir     | CPU ↔ Address bus                   | Internal Address bus. For bits 14...8 the arbitration is applied [^1]. Bits 7...0 are read only |
-| d\[7:0\]               | Bidir     | CPU ↔ Data bus                      | Internal Data bus |
-| cpu_irq_trig\[4:0\]    | Output    | To Core                             | SM83 Core interrupt triggers |
-| cpu_irq_ack\[4:0\]     | Input     | From Core                           | SM83 Core interrupt acknowledgments |
-| cpu_rd                 | Input     | From Core                           | SM83 Core read signal |
-| cpu_wr                 | Input     | From Core                           | SM83 Core write signal |
-| n_DRV_HIGH_a\[14:8\]   | Output    | To address drivers                  | Drive high control for address bus |
-| n_INPUT_a\[14:8\]      | Input     | From address bus                    | Address bus input |
-| DRV_LOW_a\[14:8\]      | Output    | To address drivers                  | Drive low control for address bus |
-| n_DRV_HIGH_nrd         | Output    | To read control                     | Read drive high control |
-| n_INPUT_nrd            | Input     | From read control                   | Read input |
-| DRV_LOW_nrd            | Output    | To read control                     | Read drive low control |
-| n_DRV_HIGH_nwr         | Output    | To write control                    | Write drive high control |
-| n_INPUT_nwr            | Input     | From write control                  | Write input |
-| DRV_LOW_nwr            | Output    | To write control                    | Write drive low control |
-| n_t1_frompad, n_t2_frompad | Input | From TEST pads                      | Test Pad input signals |
-| CONST0                 | Bidir     | Global                              | Constant 0 signal |
-| n_ena_pu_db            | Output    | To pull-up control                  | Data bus pull-up enable |
-| n_dma_phi              | Output    | To DMA                              | DMA phase control |
-| dma_a\[12:0\]          | Output    | To DMA                              | DMA address bus |
-| dma_a_15               | Output    | To DMA                              | DMA address bit 15 |
-| dma_run                | Output    | To DMA                              | DMA run control |
-| soc_wr, soc_rd         | Output    | To SOC                              | SOC write/read controls (@msinger: `CPU_WR`, `CPU_RD`) |
-| lfo_512Hz              | Output    | To system                           | 512Hz low-frequency oscillator |
-| ppu_rd, ppu_wr         | Input     | From PPU                            | PPU read/write signals |
-| int_serial             | Input     | From serial interface               | Serial interrupt |
-| sc_read, sb_read       | Output    | To serial controller                | Serial controller read signals |
-| sc_write, n_sb_write   | Output    | To serial controller                | Serial controller write signals |
-| lfo_16384Hz            | Output    | To system                           | 16.384Hz oscillator |
-| ppu_clk                | Input     | From PPU                            | PPU clock |
-| vram_to_oam            | Output    | To PPU                         	   | VRAM to OAM transfer control |
-| non_vram_mreq          | Input     | From memory controller              | Non-VRAM memory request |
-| test_1, test_2         | Output    | Global 		                       | Test signals  (@msinger: `T1_nT2`, `nT1_T2`) |
-| n_extdb_to_intdb       | Output    | To data bus control                 | External to internal DB control |
-| n_dblatch_to_intdb     | Output    | To data bus control                 | DB latch to internal DB control |
-| n_intdb_to_extdb       | Output    | To data bus control                 | Internal to external DB control |
-| n_test_reset           | Output    | To test system                      | Test reset signal |
-| n_ext_addr_en          | Output    | To address control                  | External address enable |
-| addr_latch             | Output    | To address control                  | Address latch signal |
-| int_jp                 | Input     | From joypad                         | Joypad interrupt |
-| FF60_D1                | Input     | From register (0xFF60)              | Register bit input |
-| ffxx                   | Input     | From FFxx registers                 | FFxx register area indicator |
-| n_ppu_hard_reset       | Input     | From PPU                            | PPU hard reset |
-| ff46                   | Input     | From register (0xFF46)              | DMA control register |
-| dma_addr_ext           | Output    | To DMA                              | DMA external address control |
-| cpu_vram_oam_rd        | Output    | To CPU/VRAM/OAM                     | CPU VRAM/OAM read control |
-| oam_dma_wr             | Output    | To OAM DMA                          | OAM DMA write control |
-| ppu_int_stat           | Input     | From PPU                            | PPU status interrupt |
-| ppu_int_vbl            | Input     | From PPU                            | PPU VBLANK interrupt |
-| clk6_delay             | Input     | From delayed clock                  | Delayed `clk6` clock signal |
+[^2]: The constant 0 is globally scattered throughout the chip. Each large module with cells has a `const` cell whose output 0 is globally connected between all modules (so the input is marked as Bidir).
 
 ## Netlist
 
