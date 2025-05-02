@@ -15,31 +15,31 @@
 
 The names of signals of the CLK group have many synonyms used by different authors at different times.
 
-|Signal|Dir|From/Where To|Description|
-|---|---|---|---|
-|clk_ena|input|From Core|Clock enable signal. |
-|osc_ena|input|From Core|Oscillator enable signal. |
-|cpu_wr_sync|output|To MMIO,Arb|Synchronized CPU write signal. |
-|cpu_wr|input|From Core|CPU write signal. |
-|ext_cs_en|output|To Arb|External chip select enable signal. |
-|test_1|input|From MMIO|Test signal (used for debugging or testing). (Aka T1nT2)|
-|cpu_mreq|input|From Core|CPU memory request signal. |
-|sync_reset|output|To Core|Synchronized reset signal. |
-|reset|input|From /RESET Pad|System reset signal. |
-|osc_stable|input|From MMIO|Oscillator stability signal. |
-|n_test_reset|input|From MMIO|Active-low test reset signal. |
-|n_clk_in|input|From CK1_CK2 Pad|Active-low external clock input. |
-|n_reset2|output|To Ser,MMIO,Arb,PPU,APU|Active-low Global reset signal |
-|clk1|output|To Core|Generated clock signals for various CPU and peripheral components. (Aka BOWA,ADR_CLK_N)|
-|clk2|output|To Core,MMIO,Arb,APU| (Aka DATA_VALID,ADR_CLK_P)|
-|clk3|output|To Core | (Aka CPU_PHI,DATA_CLK_P)|
-|clk4|output|To Core,MMIO,APU,PHI Pad| (Aka #CPU_PHI,DATA_CLK_N)|
-|clk5|output|To Core| (Aka INC_CLK_N)|
-|clk6|output|To Core,MMIO,PPU,APU| (Aka INC_CLK_P)|
-|clk7|output|To Core,HRAM,APU| (Aka BUKE,LATCH_CLK)|
-|clk8|output|To Core| (Aka BOMA_1MHZ,MAIN_CLK_N)|
-|clk9|output|To Core,MMIO,APU| (Aka BOGA_1MHZ,MAIN_CLK_P)|
-|cclk|output|To APU,PPU|Input clk complement (same as n_clk_in) (Aka AZOF)|
+|Signal        |Dir    |From/Where To           |Description               |
+|--------------|-------|------------------------|--------------------------|
+|clk_ena       |Input  |From Core               | Clock enable signal |
+|osc_ena       |Input  |From Core               | Oscillator enable signal |
+|cpu_wr_sync   |Output |To MMIO,Arb             | Synchronized SM83 Core write signal |
+|cpu_wr        |Input  |From Core               | SM83 Core write signal |
+|ext_cs_en     |Output |To Arb                  | External chip select enable signal |
+|test_1        |Input  |From MMIO               | Test1 mode enable (disable all internal CPU A/D bus drivers). (Aka T1nT2)|
+|cpu_mreq      |Input  |From Core               | SM83 Core memory request signal |
+|sync_reset    |Output |To Core                 | Synchronized reset signal |
+|reset         |Input  |From /RES Pad           | System reset signal |
+|osc_stable    |Input  |From MMIO               | Oscillator stability signal |
+|n_test_reset  |Input  |From MMIO               | Active-low test reset signal |
+|n_clk_in      |Input  |From CK1_CK2 Pad        | Active-low external clock input |
+|n_reset2      |Output |To Ser,MMIO,Arb,PPU,APU | Active-low Global reset signal |
+|clk1          |Output |To Core                 | Generated clock signals for various CPU and peripheral components. (Aka BOWA,ADR_CLK_N)|
+|clk2          |Output |To Core,MMIO,Arb,APU    | (Aka DATA_VALID,ADR_CLK_P)|
+|clk3          |Output |To Core                 | (Aka CPU_PHI,DATA_CLK_P)|
+|clk4          |Output |To Core,MMIO,APU,PHI Pad| (Aka #CPU_PHI,DATA_CLK_N)|
+|clk5          |Output |To Core                 | (Aka INC_CLK_N)|
+|clk6          |Output |To Core,MMIO,PPU,APU    | (Aka INC_CLK_P)|
+|clk7          |Output |To Core,HRAM,APU        | (Aka BUKE,LATCH_CLK)|
+|clk8          |Output |To Core                 | (Aka BOMA_1MHZ,MAIN_CLK_N)|
+|clk9          |Output |To Core,MMIO,APU        | (Aka BOGA_1MHZ,MAIN_CLK_P)|
+|cclk          |Output |To APU,PPU              | Input clk complement (same as n_clk_in) (Aka AZOF)|
 
 ## DeepSeek Analysis
 

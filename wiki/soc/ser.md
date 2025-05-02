@@ -13,21 +13,21 @@
 
 ![ser_ports](/imgstore/soc/ser_ports.png)
 
-|Signal|Dir|From/Where To|Description|
-|---|---|---|---|
-|sc_write|input|From MMIO|Signal to enable serial control write operations. |
-|n_reset2|input|From ClkGen|Active-low Global reset signal|
-|lfo_16384Hz|input|From MMIO|Low-frequency oscillator clock signal (16384 Hz). |
-|sc_read|input|From MMIO|Signal to enable serial control read operations. |
-|sb_read|input|From MMIO|Signal to enable serial buffer read operations. |
-|n_sb_write|input|From MMIO|Active-low signal to enable writing to the serial buffer. |
-|d\[7:0\]|bidir| |Bidirectional data bus for communication with the CPU. |
-|n_sck|input| |Serial clock input for synchronization. |
-|sck_dir|output| |Signal indicating the direction of the serial clock. |
-|int_serial|output| |Interrupt signal for serial communication events. |
-|n_sin|input| |Serial input data line. |
-|ser_out|output| |Serial output data line. |
-|serial_tick|output| |Signal indicating a serial clock tick. |
+|Signal        |Dir    |From/Where To|Description           |
+|--------------|-------|-------------|----------------------|
+|sc_write      |Input  |From MMIO    | Signal to enable serial control write operations |
+|n_reset2      |Input  |From ClkGen  | Active-low Global reset signal|
+|lfo_16384Hz   |Input  |From MMIO    | Low-frequency oscillator clock signal (16384 Hz) |
+|sc_read       |Input  |From MMIO    | Signal to enable serial control read operations |
+|sb_read       |Input  |From MMIO    | Signal to enable serial buffer read operations |
+|n_sb_write    |Input  |From MMIO    | Active-low signal to enable writing to the serial buffer |
+|\[7:0\] d     |Bidir  |Global       | Bidirectional data bus for communication with the CPU |
+|n_sck         |Input  |             | Serial clock input for synchronization |
+|sck_dir       |Output |             | Signal indicating the direction of the serial clock |
+|int_serial    |Output |             | Interrupt signal for serial communication events |
+|n_sin         |Input  |             | Serial input data line |
+|ser_out       |Output |             | Serial output data line |
+|serial_tick   |Output |             | Signal indicating a serial clock tick |
 
 ## DeepSeek Analysis
 
