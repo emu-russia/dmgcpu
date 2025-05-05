@@ -93,7 +93,7 @@ Assignment of Clocks (hypothesis, but pretty sure):
 - clk7: Used for Overlap technique when the circuit "completes" something on the 0th T-cycle of the next M-cycle (e.g. used for fetch-execute overlap in SM83 Core) (@ negedge clk7)
 - clk8+clk9: First T-cycle (0) of the current M-cycle (@ posedge clk9)
 
-To get the "middle" T-cycles (1 and 2) you can use a bit of logic, for instance "If clk4=1 and clk5=0, then the 2nd T-cycle is now being executed".
+To get the "middle" T-cycles (1 and 2) you can use a bit of logic, for instance "If clk4=1 and clk6=0, then the 2nd T-cycle is now being executed".
 
 ## Map
 
