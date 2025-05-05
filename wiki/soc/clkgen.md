@@ -90,7 +90,7 @@ Assignment of Clocks (hypothesis, but pretty sure):
 - clk1+clk2: Prechagre Clock, during clk2=0 all buses are precharged where required. Matches about the same phase as clk8+clk9, but most likely the developers made a separate clock to control the timings precisely (moving the phase slightly with delays as required).
 - clk3+clk4: M-cycle Clock (T ÷ 4)
 - clk5+clk6: Last T-cycle (3) of the current M-cycle (@ posedge clk6)
-- clk7: Used for Overlap technique when the circuit "completes" something on the 0th T-cycle of the next M-cycle (e.g. used for fetch-execute overlap in SM83 Core)
+- clk7: Used for Overlap technique when the circuit "completes" something on the 0th T-cycle of the next M-cycle (e.g. used for fetch-execute overlap in SM83 Core) (@ negedge clk7)
 - clk8+clk9: First T-cycle (0) of the current M-cycle (@ posedge clk9)
 
 To get the "middle" T-cycles (1 and 2) you can use a bit of logic, for instance "If clk4=1 and clk5=0, then the 2nd T-cycle is now being executed".
