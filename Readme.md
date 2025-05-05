@@ -54,7 +54,7 @@ From experience - frequent renaming of signals also contributes to various error
 
 Renaming a signal does not make it work differently :smiley:
 
-Signal names are mostly in snake_case notation, if another one is used, it was before snake_case was decided to be used :)
+Signal names are mostly in `snake_case` notation, if another one is used, it was before snake_case was decided to be used :)
 
 ## Progress
 
