@@ -1,7 +1,7 @@
 # Clock Generator & System Control
 
 > [!NOTE]
-> In general, we can consider that everything is good here. There may be some minor refinements, but in general "the engine has started"
+> In general, we can consider that everything is good here. The "Module Overview" and "Signal Flow" sections were done by DeepSeek based on verilog netlist analysis, everything else was done by meatbag. There may be some minor refinements, but in general "the engine has started"
 
 The `ClkGen` module is a **clock generation and system control unit** for the DMG-CPU (Game Boy CPU). It generates multiple clock signals, manages system resets, and controls external chip select and write synchronization.
 
