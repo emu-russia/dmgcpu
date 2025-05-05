@@ -1,4 +1,4 @@
-# DMG-CPU Wiki
+# DMG-CPU Research Wiki
 
 ![Nintendo_DMG_CPU_1](/imgstore/Nintendo_DMG_CPU_1.jpg) [^1]
 
