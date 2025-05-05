@@ -86,6 +86,15 @@ Phase pattern of all CLK outputs:
 
 If you see a picture like that, then you're good.
 
+Assignment of Clocks (hypothesis, but pretty sure):
+- clk1+clk2: Prechagre Clock, during clk2=0 all buses are precharged where required
+- clk3+clk4: M-cycle Clock (T ÷ 4)
+- clk5+clk6: Last T-cycle (3) of the current M-cycle
+- clk7: Used for Overlap technique when the circuit "completes" something on the 0th T-cycle of the next M-cycle (e.g. used for fetch-execute overlap in SM83 Core)
+- clk8+clk9: First T-cycle (0) of the current M-cycle
+
+To get the "middle" T-cycles (2 and 3) you can use a bit of logic, for instance "If clk4=1 and clk5=0, then the 2nd T-cycle is now being executed".
+
 ## Map
 
 |Row|Cells|
