@@ -1,10 +1,16 @@
 # DMG-CPU LR35902 SoC
 
+## Block Diagram
+
+![cpu_block](/imgstore/soc/cpu_block.png) [^1]
+
+[^1]: GAMEBOY Programming Manual: https://archive.org/details/GameBoyProgManVer1.1
+
 Top-level layout of the entire SoC:
 
 ![dmgcpu_sm](/HDL/soc/design/dmgcpu_sm.png)
 
-## SoC Architecture Overview
+## Architecture Overview
 
 After a long analysis, the impressions about the architectural solutions used in DMG-CPU can be expressed as follows:
 - The topology has already been influenced by the [Mead-Conway revolution](https://en.wikipedia.org/wiki/Mead%E2%80%93Conway_VLSI_chip_design_revolution) - most of the elements are implemented as standard cells, but you can see that the developers have not forgotten the "manual method". Almost the whole SM83 core and macro-cells (embedded memory) and (naturally) DAC are made by "hand"
@@ -32,7 +38,7 @@ Follows by: `dmgcpu.v` + other .v modules.
 ### **Address and Data Buses**
 | Name       | From        | Where To     | Description                          |
 |------------|-------------|--------------|--------------------------------------|
-| `a` [^1]   | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU | Internal address bus (shared across modules) |
+| `a` [^2]   | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU | Internal address bus (shared across modules) |
 | `d`        | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU, Ser, WaveRAM | PPU1, PPU2, HRAM, BootROM, MMIO, SM83Core, Arbiter, APU, Ser, WaveRAM | Internal data bus (shared across modules) |
 | `n_ma`     | PPU1        | Pads         | External video memory address bus (inverse hold)          |
 | `nma`      | PPU1, PPU2  | PPU1, PPU2   | Internal video memory address bus between PPUs (inverse hold)          |
@@ -42,7 +48,7 @@ Follows by: `dmgcpu.v` + other .v modules.
 
 What does the letter `M` in the name of the PPU and VRAM buses stand for? I don't know... maybe Mario or Metroid? :smiley:
 
-[^1]: The chip is topologically arranged so that the address bus arbitration is divided into three parts: in [arb](arb.md), in [mmio](mmio.md), and in [apu](apu.md), to equalize wire lengths.
+[^2]: The chip is topologically arranged so that the address bus arbitration is divided into three parts: in [arb](arb.md), in [mmio](mmio.md), and in [apu](apu.md), to equalize wire lengths.
 
 ---
 
