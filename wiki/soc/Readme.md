@@ -24,7 +24,16 @@ After a long analysis, the impressions about the architectural solutions used in
 
 ## Design Overview
 
-TBD.
+The design will be considered from the point of view of module topology ("pools" of standard cells that can be found on the chip). The description is rather superficial, but it is good for "first sight".
+
+- ClkGen: the task of this module is to distribute a bushy CLK tree to everyone. Discretization within the DMG-CPU is provided by T-cycles. 4 T-cycles make up 1 M-cycle. Those familiar with Z80 will quickly draw a parallel here. As @msinger aptly pointed out - events inside DMG-CPU can occur both "in-space" (when it comes to DFF and edges) and "in-time" (when it comes to latches and levels). Yes, unlike modern solutions based entirely on DFF (synchronous logic), old-school latches have to be taken into account here as well
+- SM83Core: a typical 8-bit processor core, in many respects "imitates" Z80 (IDU, M/T-cycles, instruction set), but in general it is an original child of SHARP engineers
+- Ser: contains the main part of Serial Link logic. The rest of the pieces are in the APU, since they are closer to the pads there
+- Arb: typical arbiter for connecting internal and external buses in various combinations
+- MMIO: contains most of the MMIO devices such as Divider, Timer, DMA Unit and interrupt controller (IF)
+- PPU1: A part of PPU closer to LCD interface, BG and WIN part of the pipeline. Also contains H/V counters which are the driving force for all PPU state machines.
+- PPU2: A part of PPU closer to Objects and OAM ("sprites"). Both parts communicate closely with each other with a bunch of signals
+- APU: Typical sound generator of the "Chiptunes" era. Also contains pieces of logic for Serial Link, JoyPad and address bus arbitration, for the reason that these circuits are closer to the pads
 
 ## Buses
 
