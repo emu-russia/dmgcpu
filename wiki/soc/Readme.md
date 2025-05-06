@@ -50,8 +50,8 @@ This section contains a list of all internal buses. Tables of the other signals 
 | `wave_a`   | APU                  | WaveRAM                         | Wave RAM address bus                 |
 | `wave_rd`  | WaveRAM              | APU                             | Wave RAM data output bus             |
 | `oa`       | PPU2                 | OAM                             | OAM address bus                      |
-| `n_oamb`   | PPU2                 | OAM                             | OAM A data bus (inverse hold)        |
-| `n_oama`   | PPU2                 | OAM                             | OAM B data bus (inverse hold)        |
+| `n_oama`   | PPU2                 | OAM                             | OAM A data bus (inverse hold)        |
+| `n_oamb`   | PPU2                 | OAM                             | OAM B data bus (inverse hold)        |
 | `dma_a`    | MMIO                 | Arb, APU, PPU2                  | DMA address bus. Due to the fact that the address bus arbitration is separated between Arb, MMIO and APU - part of the bus bits go to Arb (15) and APU (7:0). This bus is used directly for DMA needs only in PPU2 |
 
 What does the letter `M` in the name of the PPU and VRAM buses stand for? I don't know... maybe Mario or Metroid? :smiley:
