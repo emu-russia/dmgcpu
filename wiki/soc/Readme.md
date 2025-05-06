@@ -33,7 +33,7 @@ This section contains a list of all internal buses. Tables of the other signals 
 | Name       | From        | Where To     | Description                          |
 |------------|-------------|--------------|--------------------------------------|
 | `a` [^2]   | Core / Arb+MMIO+APU  | HRAM, BootROM, PPU1, PPU2, APU  | Internal address bus. In TEST1 mode, all internal address bus drivers are disabled and the value comes from the outside, together with the Arb+MMIO+APU modules (for reason [^2]) instead of the SM83 core. |
-| `d`        | Global               | Global                          | Internal data bus. In TEST1 mode all internal drivers are not allowed to drive the data bus. During clk2=0 the data bus is precharged from 4 places at once (3 prechargers in different modules and 1 precharger in SM83 Core) |
+| `d`        | Global               | Global                          | Internal data bus. In TEST1 mode all internal drivers are not allowed to drive the data bus. During clk2=0 (and if TEST1 Mode is disabled) the data bus is precharged from 4 places at once (3 prechargers in different modules and 1 precharger in SM83 Core) |
 | `n_ma`     | PPU1                 | Pads                            | External video memory address bus (inverse hold)          |
 | `nma`      | PPU1, PPU2           | PPU1, PPU2                      | Internal video memory address bus between PPUs (inverse hold)   |
 | `md`       | PPU1, PPU2, Arbiter  | PPU1, PPU2, Arbiter             | Internal video memory data bus       |
