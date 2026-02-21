@@ -40,3 +40,10 @@ by @msinger (Discussion #13)
 There is also an SM83 research by @Gekkio: https://github.com/Gekkio/gb-research/tree/main/sm83-cpu-core
 
 All places where there is any parallel with his research (signal names) are marked as `Gekkio`.
+
+## Michael Singer Research
+
+Michael Singer (@msinger) also conducted the SM83 research, results can be found here:
+
+- [SM83 Schematics](https://iceboy.a-singer.de/doc/sm83_sch.pdf)
+- [Visual SM83](https://iceboy.a-singer.de/visual6502/expert-sm83.html)
