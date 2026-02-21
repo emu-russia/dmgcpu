@@ -58,21 +58,23 @@ The most detailed description of the pads that @msinger didn't have originally, 
 
 ## IOBUF_A (PAD_BIDIR)
 
-If the drivers are disabled, the pad is pulled up internally to a value of 1 (pulled up by NDRV = 0).
+![pad_bidir](/imgstore/soc/pad_bidir.jpg)
+
+Pad does not have an internal pullup. Pullup can be enabled with the combination NDRV = 0, /PDRV = 0. In this case, the external value will be pulled to 1 if it is defined as HighZ.
 
 |NDRV|/PDRV|Pad|
 |----|-----|-----|
-|0|0|1|
-|0|1|1  - pulled up pad|
+|0|0|1 (pulled up)|
+|0|1|HighZ|
 |1|x|0|
 
-In this way the pad is always driven and goes directly to the inverter as an input value:
+The /INPUT input port comes from the input CMOS inverter, which also acts as a dynamic latch if the input is in the HighZ state (holding the value on the FET gates for a while):
 
 |Pad|/INPUT|
 |---|------|
 |0| 1|
 |1| 0|
-|HighZ|0  - pulled up inverted value |
+|HighZ|The dynamic latch returns the inverted value of the pad for a period of time when it was driven.|
 
 See http://iceboy.a-singer.de/doc/dmg_cells.html#pad_bidir
 
