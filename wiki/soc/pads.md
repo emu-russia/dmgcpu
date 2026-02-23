@@ -138,12 +138,14 @@ CLK source with disable option.
 
 ## AIBUFFER
 
+It is a direct connection passing through an always-open transmission gate.
+
 See http://iceboy.a-singer.de/doc/dmg_cells.html#aibuf
 
 TBD: What it represents as an analog circuit
 
 ## AOBUFFER
 
-See http://iceboy.a-singer.de/doc/dmg_cells.html#aobuf
+It is a direct conductive connection.
 
-TBD: What it represents as an analog circuit
+See http://iceboy.a-singer.de/doc/dmg_cells.html#aobuf
