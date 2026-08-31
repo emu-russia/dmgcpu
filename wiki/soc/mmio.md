@@ -7,38 +7,16 @@
 
 ![mmio](/imgstore/soc/mmio.jpg)
 
-## Module Description (DeepSeek)
+## Module Description
 
-:warning: I gave him Verilog and asked him to tell me what he thought. It came out a little crooked, but it'll do.
+Contains most of the MMIO devices: Divider, Timer, DMA unit and interrupt controller (IF).
 
-The MMIO module is a Memory-Mapped Input/Output controller for the DMG-CPU (Game Boy CPU). It handles:
-
-1. **Address and Data Bus Management**:
-   - Controls bidirectional address (a\[14:8\] [^1]) and data (d\[7:0\]) buses
-   - Manages bus drivers (DRV_HIGH/DRV_LOW signals)
-   - Handles address latching (addr_latch)
-
-2. **Interrupt Handling**:
-   - Processes and generates CPU interrupts (cpu_irq_trig/cpu_irq_ack)
-   - Handles interrupts from various sources (PPU, serial, joypad)
-
-3. **DMA Control**:
-   - Manages DMA operations (dma_a, dma_run, dma_addr_ext)
-   - Controls OAM DMA (oam_dma_wr, vram_to_oam)
-
-4. **Clock and Timing**:
-   - Generates low-frequency oscillators (lfo_512Hz, lfo_16384Hz)
-   - Works with multiple clock domains (clk2, clk4, clk6, clk9)
-
-5. **Peripheral Control**:
-   - Interfaces with PPU (ppu_rd, ppu_wr, ppu_int_*)
-   - Obtains serial controller register control signals (sc_*, sb_*)
-   - Manages global SOC read/write mode (soc_wr, soc_rd)
-
-6. **System Control**:
-   - Handles reset signals (reset, n_reset2)
-   - Manages test modes (test_1, test_2, n_test_reset)
-   - Controls data bus isolation (n_*db_* signals)
+- Address/data bus: controls the bidirectional `a[14:8]` [^1] and `d[7:0]` buses, the bus drivers (`DRV_HIGH`/`DRV_LOW`) and the address latch (`addr_latch`)
+- Interrupts: collects the interrupt sources (PPU, serial, joypad) and generates the CPU interrupts (`cpu_irq_trig`/`cpu_irq_ack`)
+- DMA: DMA control signals (`dma_a`, `dma_run`, `dma_addr_ext`), including OAM DMA (`oam_dma_wr`, `vram_to_oam`)
+- Clocks: generates the low-frequency oscillators (`lfo_512Hz`, `lfo_16384Hz`); uses `clk2`, `clk4`, `clk6`, `clk9`
+- Peripherals: PPU interface (`ppu_rd`, `ppu_wr`, `ppu_int_*`), serial register controls (`sc_*`, `sb_*`), global SoC read/write mode (`soc_wr`, `soc_rd`)
+- System control: resets (`reset`, `n_reset2`), test modes (`test_1`, `test_2`, `n_test_reset`), data bus isolation (`n_*db_*`)
 
 [^1]: The chip is topologically arranged so that the address bus arbitration is divided into three parts: in [arb](arb.md), in [mmio](mmio.md), and in [apu](apu.md), to equalize wire lengths.
 
