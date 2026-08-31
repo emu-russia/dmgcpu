@@ -61,7 +61,7 @@ Signal names are mostly in `snake_case` notation, if another one is used, it was
 |Case                         |Top-Level|Pads|Memory|DAC|ClkGen|Ser |MMIO|Arb   |PPU|APU|SM83|
 |---------------------------------|-----|----|------|---|------|----|----|------|---|---|----|
 |Topology                         |✅	|✅	 |      | 	|✅	   |✅ 	|✅	 |✅	|✅	|✅	|✅	 |
-|List of ports with description   |✅ 	|✅	 |      | 	|✅	   |✅	|✅	 |✅	| 	| 	|✅	 |
+|List of ports with description   |✅ 	|✅	 |✅     |✅	|✅	   |✅	|✅	 |✅	|✅	|✅	|✅	 |
 |Map of cells/modules             |✅	|-   |      | 	|✅	   |✅	|✅	 |✅	|✅	|✅	|✅	 |
 |Netlist                          |✅	|-   |      | 	|✅	   |✅	|✅	 |✅	|✅	|✅	|✅	 |
 |Verilog                          |✅	|✅	 |      | 	|✅	   |✅	|✅	 |✅	|✅	|✅	|✅	 |

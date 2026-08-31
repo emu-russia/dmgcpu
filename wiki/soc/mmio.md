@@ -64,11 +64,11 @@ Contains most of the MMIO devices: Divider, Timer, DMA unit and interrupt contro
 | \[14:0\] a             | Bidir     | Global                      | Internal Address bus. For bits 14...8 the arbitration is applied [^1]. Bits 7...0 are read only |
 | addr_latch             | Output    | To APU                      | Address latch signal |
 | \[4:0\] cpu_irq_trig   | Output    | To Core                     | SM83 Core interrupt triggers |
-| cpu_vram_oam_rd        | Output    | To Arb, PPU2                |  |
+| cpu_vram_oam_rd        | Output    | To Arb, PPU2                | CPU VRAM/OAM read strobe |
 | \[7:0\] d              | Bidir     | Global                      | Internal Data bus |
-| \[12:0\] dma_a         | Output    |                             | DMA address bus |
-| dma_a_15               | Output    |                             | DMA address bit 15 |
-| dma_addr_ext           | Output    | To Arb, APU, PPU2           |  |
+| \[12:0\] dma_a         | Output    | To PPU2, APU                | DMA address bus (bits 12:0; APU receives 7:0) |
+| dma_a_15               | Output    | To Arb                      | DMA address bit 15 |
+| dma_addr_ext           | Output    | To Arb, APU, PPU2           | DMA address for external memory |
 | dma_run                | Output    | To PPU2                     | DMA run control |
 | lfo_512Hz              | Output    | To APU                      | 512Hz low-frequency oscillator |
 | lfo_16384Hz            | Output    | To Ser                      | 16384Hz oscillator |
@@ -78,8 +78,8 @@ Contains most of the MMIO devices: Divider, Timer, DMA unit and interrupt contro
 | n_cpu_m1               | Output    | To Pad                      | Inverted CPU M1 signal |
 | n_dblatch_to_intdb     | Output    | To Arb                      | DB latch to internal DB control |
 | n_dma_phi              | Output    | To PPU1, PPU2               | DMA clock |
-| n_ena_pu_db            | Output    | To Pads                     | 0: External Data bus pull-up enable |
-| n_ext_addr_en          | Output    | To APU                      |  |
+| n_ena_pu_db            | Output    | To Pads, Arb                | 0: External Data bus pull-up enable |
+| n_ext_addr_en          | Output    | To APU                      | External address enable (active low, TEST1 mode) |
 | n_extdb_to_intdb       | Output    | To Arb                      | External to internal DB control |
 | n_intdb_to_extdb       | Output    | To Arb                      | Internal to external DB control |
 | n_sb_write             | Output    | To Ser                      | 0: SB register write |

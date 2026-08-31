@@ -18,11 +18,11 @@ Features:
 
 |Signal      |Dir    |From/Where To|Description|
 |------------|-------|-------------|-------------|
-| clk7       | Input |From ClkGen  | (Aka BUKE)  |
+| clk7       | Input |From ClkGen  | Clock 7 (Aka BUKE, LATCH_CLK); write timing clock |
 | soc_rd     | Input |From MMIO    | SoC data bus read (Aka CPU_RD)|
 | soc_wr     | Input |From MMIO    | SoC data bus write (Aka CPU_WR)|
-| \[7:0\] d  | Bidir |             | SoC internal data bus |
-| ffxx       | Input |From Arb     | |
+| \[7:0\] d  | Bidir |Global       | SoC internal data bus |
+| ffxx       | Input |From Arb     | FFxx register area indicator (HRAM occupies FF80-FFFE) |
 | \[7:0\] a  | Input |From Core    | SoC internal address bus (lower 8 bits) |
 
 ## Bit lane
