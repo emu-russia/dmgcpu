@@ -3,15 +3,12 @@
 > [!NOTE]
 > We need to verify this module somehow. After verification, there will be more confidence that everything is good here. But in general the section looks ok.
 
-The `Ser` module implements a **serial communication interface** for the DMG-CPU (Game Boy CPU). This module handles the transmission and reception of serial data, including clock synchronization, data buffering, and interrupt generation.
+Serial Link is split between Ser and APU: a large chunk is located in the APU, because it is closer to the pads (the APU also houses the debug register TEST_PAD, $FF60). Ser contains the core logic of the interface itself.
 
-The `Ser` module is responsible for:
-1. **Serial Data Transmission and Reception**: It manages the bidirectional flow of serial data between the CPU and external devices.
-2. **Clock Synchronization**: It uses an external clock (`n_sck`) and an internal low-frequency oscillator (`lfo_16384Hz`) to synchronize data transfer.
-3. **Interrupt Generation**: It generates an interrupt signal (`int_serial`) to notify the CPU of data transfer completion or errors.
-4. **Data Buffering**: It uses shift registers and flip-flops to buffer incoming and outgoing data.
-
-A large chunk of Serial Link is located in the APU, because it is closer to the pads. The APU also houses the debug register TEST_PAD ($FF60). The Ser module contains the core logic of the serial interface itself.
+What Ser does:
+- Transfers serial data in both directions via the 8-bit shift register formed by `ser_reg_bit` cells
+- Synchronizes the transfer with the external clock (`n_sck`) or the internal low-frequency oscillator (`lfo_16384Hz`)
+- Generates the `int_serial` interrupt on transfer completion
 
 ![locator_ser](/imgstore/soc/locator_ser.jpg)
 
@@ -41,40 +38,17 @@ A large chunk of Serial Link is located in the APU, because it is closer to the 
 
 ## Key Functionality
 
-### **1. Data Buffering and Shifting**
-- The module uses eight `ser_reg_bit` instances (`g1` to `g8`) to form an 8-bit shift register.
-- Data is shifted in/out serially based on the clock signals (`w6`, `w8`).
-- The bidirectional data bus (`d[7:0]`) is connected to the shift registers for reading/writing data.
-
-### **2. Clock Synchronization**
-- The external clock (`n_sck`) and internal oscillator (`lfo_16384Hz`) are used to generate synchronized clock signals (`w5`, `w6`, `w7`, `w8`).
-- The `serial_tick` signal is generated to indicate clock ticks for data transfer.
-
-### **3. Interrupt Generation**
-- The `int_serial` signal is generated to notify the CPU of serial communication events.
-- Flip-flops (`g23` to `g26`) are used to debounce and synchronize the interrupt signal.
-
-### **4. Direction Control**
-- The `sck_dir` signal controls the direction of the serial clock.
-- A multiplexer (`g29`) selects between the internal oscillator and external clock based on `sck_dir`.
+- Shift register: eight `ser_reg_bit` instances (`g1`..`g8`) form the 8-bit shift register. Data is shifted in/out on `w6`/`w8`; the shift register connects to the data bus `d[7:0]` for reading/writing.
+- Clock: `w5`..`w8` are derived from `n_sck` and `lfo_16384Hz`; `serial_tick` marks the clock ticks of the transfer.
+- Interrupt: `int_serial` is generated through flip-flops `g23`..`g26`.
+- Direction: `sck_dir` controls the direction of the serial clock; a mux (`g29`) selects between the internal oscillator and the external clock.
 
 ## Signal Flow
 
-1. **Data Input**:
-   - Serial data is received on `n_sin` and buffered in the shift registers (`g1` to `g8`).
-   - The data is then made available on the bidirectional data bus (`d[7:0]`) when `sb_read` is active.
-
-2. **Data Output**:
-   - Data from the CPU is written to the shift registers via `d[7:0]` when `n_sb_write` is active.
-   - The data is shifted out serially on `ser_out`.
-
-3. **Clock and Control**:
-   - The clock signals (`w5`, `w6`, `w7`, `w8`) are generated from `n_sck` and `lfo_16384Hz`.
-   - The `serial_tick` signal (`w17`) is used to synchronize data transfer.
-
-4. **Interrupt Handling**:
-   - The `int_serial` signal is generated based on data transfer completion or errors.
-   - Flip-flops (`g23` to `g26`) ensure the interrupt signal is stable and synchronized.
+- Input: `n_sin` -> shift register (`g1`..`g8`); the value appears on `d[7:0]` when `sb_read` is active.
+- Output: on `n_sb_write` the shift register is loaded from `d[7:0]` and shifts the data out on `ser_out`.
+- Clock: `w5`..`w8` are generated from `n_sck`/`lfo_16384Hz`; `serial_tick` (`w17`) synchronizes the transfer.
+- Interrupt: transfer completion raises `int_serial`, stabilized by flip-flops `g23`..`g26`.
 
 ## ser_reg_bit
 
