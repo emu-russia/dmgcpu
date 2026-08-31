@@ -4,6 +4,16 @@
 
 ![bootrom](/imgstore/soc/bootrom.jpg)
 
+## Signals
+
+|Signal       |Dir    |From/Where To   |Description|
+|-------------|-------|----------------|-----------|
+| \[15:0\] a  |Input  |From Core       | SoC internal address bus (full 16 bits) |
+| \[7:0\] d   |Bidir  |Global          | SoC internal data bus |
+| from_g1_YULA|Input  |From g1 (Arb)   | Boot ROM read enable: active when the BootROM is selected (`boot_sel`), the SoC reads (`soc_rd`) and Test2 (ROMDIS) is not set |
+
+The BootROM is enabled only while the CPU is fetching from the IPL area (address `$0000-$00FF`), i.e. before the `$FF50` register is written. The `from_g1_YULA` signal is produced by a small gate (`g1`) in the top level of the chip, combining `boot_sel`, `soc_rd` and `!test_2`.
+
 ## Mask (Revision A)
 
 ```

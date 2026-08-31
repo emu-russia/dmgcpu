@@ -1,7 +1,7 @@
 # PPU2
 
 > [!WARNING]  
-> The research has gained critical mass, the netlist is verified but not annotated. Signal table is missing. Further research is required.
+> The research has gained critical mass, the netlist is verified but not annotated. The signal table is filled based on the netlist, but the descriptions require human verification. Further research is required.
 
 ![ppu2](/imgstore/soc/ppu2.jpg)
 
@@ -11,73 +11,73 @@
 
 | Signal Name         | Direction | From / Where To             | Description |
 |---------------------|-----------|-----------------------------|-------------|
-| FF40_D1             | Input     |                             |  |
-| FF40_D2             | Input     |                             |  |
-| FF40_D3             | Input     |                             |  |
-| \[7:0\] a           | Input     |                             |  |
-| bp_cy               | Input     |                             |  |
-| bp_sel              | Input     |                             |  |
-| cclk                | Input     |                             |  |
-| clk6                | Input     |                             |  |
-| cpu_vram_oam_rd     | Input     |                             |  |
-| \[12:0\] dma_a      | Input     |                             |  |
-| dma_addr_ext        | Input     |                             |  |
-| dma_run             | Input     |                             |  |
-| fexx                | Input     |                             |  |
-| ff42                | Input     |                             |  |
-| ff43                | Input     |                             |  |
-| \[7:0\] h           | Input     |                             |  |
-| in_window           | Input     |                             |  |
-| ma0                 | Input     |                             |  |
-| n_dma_phi           | Input     |                             |  |
-| n_dma_phi2_latched  | Input     |                             |  |
-| n_ppu_reset         | Input     |                             |  |
-| n_reset2            | Input     |                             |  |
-| oam_addr_ck         | Input     |                             |  |
-| \[7:0\] oam_din     | Input     |                             |  |
-| oam_dma_wr          | Input     |                             |  |
-| oam_mode3_bl_pch    | Input     |                             |  |
-| oam_mode3_nrd       | Input     |                             |  |
-| oam_rd_ck           | Input     |                             |  |
-| oam_xattr_latch_cck | Input     |                             |  |
-| obj_prio_ck         | Input     |                             |  |
-| ppu_mode3           | Input     |                             |  |
-| soc_rd              | Input     |                             |  |
-| soc_wr              | Input     |                             |  |
-| sp_bp_cys           | Input     |                             |  |
-| tm_cy               | Input     |                             |  |
-| \[7:0\] v           | Input     |                             |  |
-| vbl                 | Input     |                             |  |
-| vclk2               | Input     |                             |  |
-| vram_to_oam         | Input     |                             |  |
+| FF40_D1             | Input     | From PPU1                   | LCDC register ($FF40) bit 1 (OBJ enable) |
+| FF40_D2             | Input     | From PPU1                   | LCDC register ($FF40) bit 2 (OBJ size) |
+| FF40_D3             | Input     | From PPU1                   | LCDC register ($FF40) bit 3 (BG tile map select) |
+| \[7:0\] a           | Input     | From Core                   | Internal address bus (VRAM access, 8 bits) |
+| bp_cy               | Input     | From PPU1                   | Buffer page cycle |
+| bp_sel              | Input     | From PPU1                   | Buffer page select |
+| cclk                | Input     | From ClkGen                 | Input clk complement (same as n_clk_in) (Aka AZOF) |
+| clk6                | Input     | From ClkGen                 | Clock 6 (Aka INC_CLK_P) |
+| cpu_vram_oam_rd     | Input     | From MMIO                   | CPU VRAM/OAM read strobe |
+| \[12:0\] dma_a      | Input     | From MMIO                   | DMA address bus |
+| dma_addr_ext        | Input     | From MMIO                   | DMA address (external memory) |
+| dma_run             | Input     | From MMIO                   | DMA run control |
+| fexx                | Input     | From PPU1                   | FExx register area indicator (VRAM/OAM) |
+| ff42                | Input     | From PPU1                   | SCX register ($FF42) access indicator |
+| ff43                | Input     | From PPU1                   | SCY register ($FF43) access indicator |
+| \[7:0\] h           | Input     | From PPU1                   | H counter (LX) value |
+| in_window           | Input     | From PPU1                   | In-window indicator |
+| ma0                 | Input     | From PPU1                   | VRAM address bit 0 (MA0) |
+| n_dma_phi           | Input     | From MMIO                   | DMA clock (inverted) |
+| n_dma_phi2_latched  | Input     | From PPU1                   | Latched inverted DMA clock 2 |
+| n_ppu_reset         | Input     | From PPU1                   | PPU reset (active low) |
+| n_reset2            | Input     | From ClkGen                 | Global reset (active low) |
+| oam_addr_ck         | Input     | From PPU1                   | OAM address clock |
+| \[7:0\] oam_din     | Input     | From Arb                    | OAM data input bus |
+| oam_dma_wr          | Input     | From MMIO                   | OAM DMA write strobe |
+| oam_mode3_bl_pch    | Input     | From PPU1                   | OAM bitline precharge during MODE3 |
+| oam_mode3_nrd       | Input     | From PPU1                   | OAM read during MODE3 (active low) |
+| oam_rd_ck           | Input     | From PPU1                   | OAM read clock |
+| oam_xattr_latch_cck | Input     | From PPU1                   | OAM X attribute latch clock |
+| obj_prio_ck         | Input     | From PPU1                   | Object priority clock |
+| ppu_mode3           | Input     | From PPU1                   | PPU Mode 3 (pixel transfer) indicator |
+| soc_rd              | Input     | From MMIO                   | SoC read strobe |
+| soc_wr              | Input     | From MMIO                   | SoC write strobe |
+| sp_bp_cys           | Input     | From PPU1                   | Sprite buffer page cycle |
+| tm_cy               | Input     | From PPU1                   | Tile map cycle |
+| \[7:0\] v           | Input     | From PPU1                   | V counter (LY) value |
+| vbl                 | Input     | From PPU1                   | VBLANK indicator |
+| vclk2               | Input     | From PPU1                   | VRAM clock 2 |
+| vram_to_oam         | Input     | From MMIO                   | VRAM to OAM transfer enable (DMA) |
 | CONST0              | Bidir     | Global                      | Constant 0 signal [^2] |
-| FF43_D0             | Output    |                             |  |
-| FF43_D1             | Output    |                             |  |
-| FF43_D2             | Output    |                             |  |
-| clk6_delay          | Output    |                             |  |
-| \[7:0\] d           | Bidir     |                             |  |
-| h_restart           | Output    |                             |  |
-| \[7:0\] md          | Bidir     |                             |  |
-| n_oam_rd            | Output    |                             |  |
-| \[7:0\] n_oama      | Bidir     |                             |  |
-| n_oama_wr           | Output    |                             |  |
-| \[7:0\] n_oamb      | Bidir     |                             |  |
-| n_oamb_wr           | Output    |                             |  |
-| n_ppu_clk           | Output    |                             |  |
-| n_ppu_hard_reset    | Output    |                             |  |
-| \[12:0\] nma        | Bidir     |                             |  |
-| \[7:1\] oa          | Output    |                             |  |
-| oam_bl_pch          | Output    |                             |  |
-| n_vram_to_oam       | Output    |                             |  |
-| obj_color           | Output    |                             |  |
-| obj_prio            | Output    |                             |  |
-| ppu_clk             | Output    |                             |  |
-| ppu_mode2           | Output    |                             |  |
-| ppu_rd              | Output    |                             |  |
-| ppu_wr              | Output    |                             |  |
-| sprite_x_flip       | Output    |                             |  |
-| sprite_x_match      | Output    |                             |  |
-| stop_oam_eval       | Output    |                             |  |
+| FF43_D0             | Output    | To PPU1                     | SCY register ($FF43) bit 0 |
+| FF43_D1             | Output    | To PPU1                     | SCY register ($FF43) bit 1 |
+| FF43_D2             | Output    | To PPU1                     | SCY register ($FF43) bit 2 |
+| clk6_delay          | Output    | To MMIO                     | Delayed clock 6 |
+| \[7:0\] d           | Bidir     | Global                      | Internal data bus |
+| h_restart           | Output    | To PPU1                     | H counter restart |
+| \[7:0\] md          | Bidir     | Global                      | Internal video memory data bus (VRAM) |
+| n_oam_rd            | Output    | To OAM                      | OAM read enable (active low) |
+| \[7:0\] n_oama      | Bidir     | To/From OAM                 | OAM port A data bus (inverse hold) |
+| n_oama_wr           | Output    | To OAM                      | OAM port A write enable (active low) |
+| \[7:0\] n_oamb      | Bidir     | To/From OAM                 | OAM port B data bus (inverse hold) |
+| n_oamb_wr           | Output    | To OAM                      | OAM port B write enable (active low) |
+| n_ppu_clk           | Output    | To PPU1                     | PPU clock (inverted) |
+| n_ppu_hard_reset    | Output    | To MMIO, Arb, PPU1          | PPU hard reset (active low) |
+| \[12:0\] nma        | Bidir     | Global                      | Internal video memory address bus between PPUs (inverse hold) |
+| \[7:1\] oa          | Output    | To OAM                      | OAM address (bits 7:1; bit 0 is not used) |
+| oam_bl_pch          | Output    | To OAM                      | OAM bitline precharge |
+| n_vram_to_oam       | Output    | To Arb                      | VRAM to OAM transfer (inverted) |
+| obj_color           | Output    | To PPU1                     | Object color |
+| obj_prio            | Output    | To PPU1                     | Object priority |
+| ppu_clk             | Output    | To MMIO, PPU1               | PPU clock |
+| ppu_mode2           | Output    | To PPU1                     | PPU Mode 2 (OAM scan) indicator |
+| ppu_rd              | Output    | To MMIO, PPU1               | PPU read strobe |
+| ppu_wr              | Output    | To MMIO, PPU1               | PPU write strobe |
+| sprite_x_flip       | Output    | To PPU1                     | Sprite X flip |
+| sprite_x_match      | Output    | To PPU1                     | Sprite X match |
+| stop_oam_eval       | Output    | To PPU1                     | Stop OAM evaluation |
 
 [^2]: The constant 0 is globally scattered throughout the chip. Each large module with cells has a `const` cell whose output 0 is globally connected between all modules (so the input is marked as Bidir).
 

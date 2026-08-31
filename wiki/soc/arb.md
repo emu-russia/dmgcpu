@@ -19,64 +19,64 @@ To familiarize yourself with the architecture, it's best to crawl through the an
 
 ![arb_ports](/imgstore/soc/arb_ports.png)
 
-:warning: The signal table is derived from DeepSeek and likely requires human refinement.
+The signal table is derived from the netlist.
 
 | Signal Name          | Direction | From / Where To      | Description                                                                 |
 |----------------------|-----------|----------------------|-----------------------------------------------------------------------------|
-| `clk2`               | Input     |                      | Clock signal for the module (is used for Internal DB Precharge)            |
-| `n_reset2`           | Input     |                      | Global Active-low reset signal.                                            |
-| `cpu_mreq`           | Input     |                      | CPU memory request signal.                                                 |
-| `ext_cs_en`          | Input     |                      | External chip select enable signal.                                         |
-| `cpu_wr_sync`        | Input     |                      | Synchronized CPU write signal.                                              |
-| `a`                  | Bidir     |                      | Address bus (16-bit). `a[15]` is bidirectional, `a[14:0]` are inputs.       |
-| `d`                  | Bidir     |                      | Internal Data bus (8-bit).                                                  |
-| `cpu_wr`             | Input     |                      | CPU write signal.                                                           |
-| `mmio_sel`           | Output    |                      | Memory-mapped I/O select signal.                                            |
-| `boot_sel`           | Output    |                      | Boot select signal.                                                         |
-| `n_DRV_HIGH_a15`     | Output    |                      | Active-low drive high signal for `a[15]`.                                   |
-| `n_INPUT_a15`        | Input     |                      | Active-low input signal for `a[15]`.                                        |
-| `DRV_LOW_a15`        | Output    |                      | Drive low signal for `a[15]`.                                               |
-| `n_cs_topad`         | Output    |                      | Active-low chip select to pad signal.                                       |
-| `CONST0`             | Output    | Global               | Constant 0 signal. [^2]                                                     |
-| `n_DRV_HIGH_nmwr`    | Output    |                      | Active-low drive high signal for `n_mwr`.                                   |
-| `n_mwr`              | Input     |                      | Active-low memory write signal.                                             |
-| `DRV_LOW_nmwr`       | Output    |                      | Drive low signal for `n_mwr`.                                               |
-| `n_DRV_HIGH_nmrd`    | Output    |                      | Active-low drive high signal for `n_mrd`.                                   |
-| `n_mrd`              | Input     |                      | Active-low memory read signal.                                              |
-| `DRV_LOW_nmrd`       | Output    |                      | Drive low signal for `n_mrd`.                                               |
-| `n_DRV_HIGH_nmcs`    | Output    |                      | Active-low drive high signal for `n_mcs`.                                   |
-| `n_mcs`              | Input     |                      | Active-low memory chip select signal.                                       |
-| `DRV_LOW_nmcs`       | Output    |                      | Drive low signal for `n_mcs`.                                               |
-| `n_DRV_HIGH_md`      | Output    |                      | Active-low drive high signal for `md` (8-bit).                              |
-| `n_md_frompad`       | Input     |                      | Active-low `md` input from pad (8-bit).                                     |
-| `DRV_LOW_md`         | Output    |                      | Drive low signal for `md` (8-bit).                                          |
-| `n_md_ena_pu`        | Output    |                      | Active-low `md` enable pull-up signal.                                      |
-| `n_DRV_HIGH_d`       | Output    |                      | Active-low drive high signal for `d` (8-bit).                               |
-| `n_db_frompad`       | Input     |                      | Active-low data bus input from pad (8-bit).                                 |
-| `DRV_LOW_d`          | Output    |                      | Drive low signal for `d` (8-bit).                                           |
-| `n_ena_pu_db`        | Input     |                      | Active-low enable pull-up signal for data bus.                              |
-| `soc_wr`             | Input     |                      | System-on-Chip write signal.                                                |
-| `soc_rd`             | Input     |                      | System-on-Chip read signal.                                                 |
-| `vram_to_oam`        | Input     |                      | VRAM to OAM transfer signal.                                                |
-| `dma_a_15`           | Input     |                      | DMA address bit 15 signal.                                                  |
-| `non_vram_mreq`      | Output    |                      | Non-VRAM memory request signal.                                             |
-| `test_1`             | Input     |                      | Test signal 1.                                                              |
-| `n_extdb_to_intdb`   | Input     |                      | Active-low external data bus to internal data bus signal.                   |
-| `n_dblatch_to_intdb` | Input     |                      | Active-low data bus latch to internal data bus signal.                      |
-| `n_intdb_to_extdb`   | Input     |                      | Active-low internal data bus to external data bus signal.                   |
-| `ffxx`               | Output    |                      | Signal indicating access to memory range `FFxx`.                            |
-| `n_ppu_hard_reset`   | Input     |                      | Active-low PPU hard reset signal.                                           |
-| `ppu_mode3`          | Input     |                      | PPU mode 3 signal.                                                         |
-| `md`                 | Bidir     |                      | Internal MD bus (8-bit).                                                    |
-| `oam_din`            | Output    |                      | OAM data input (8-bit).                                                     |
-| `n_vram_to_oam`      | Input     |                      | 0: VRAM to OAM transfer signal. (active low)                                |
-| `dma_addr_ext`       | Input     |                      | DMA external address signal.                                                |
-| `sp_bp_cys`          | Input     |                      | Sprite buffer page cycle signal.        (?)                                 |
-| `tm_bp_cys`          | Input     |                      | Tile map buffer page cycle signal.      (?)                                 |
-| `n_sp_bp_mrd`        | Input     |                      | Active-low sprite buffer page memory read signal. (?)                       |
-| `n_tm_bp_cys`        | Input     |                      | Active-low tile map buffer page cycle signal.         (?)                   |
-| `arb_fexx_ffxx`      | Output    |                      | Arbitration signal for memory ranges `FExx` and `FFxx`.                     |
-| `cpu_vram_oam_rd`    | Input     |                      | CPU VRAM/OAM read signal.                                                   |
+| `clk2`               | Input     | From ClkGen          | Clock signal for the module (is used for Internal DB Precharge)            |
+| `n_reset2`           | Input     | From ClkGen          | Global Active-low reset signal.                                            |
+| `cpu_mreq`           | Input     | From Core            | CPU memory request signal.                                                 |
+| `ext_cs_en`          | Input     | From ClkGen          | External chip select enable signal.                                         |
+| `cpu_wr_sync`        | Input     | From ClkGen          | Synchronized CPU write signal.                                              |
+| `a`                  | Bidir     | Global               | Address bus (16-bit). `a[15]` is bidirectional, `a[14:0]` are inputs.       |
+| `d`                  | Bidir     | Global               | Internal Data bus (8-bit).                                                  |
+| `cpu_wr`             | Input     | From Core            | CPU write signal.                                                           |
+| `mmio_sel`           | Output    | To Core              | Memory-mapped I/O select signal (`MMIO_REQ`).                               |
+| `boot_sel`           | Output    | To Core              | Boot select signal (`IPL_REQ`).                                             |
+| `n_DRV_HIGH_a15`     | Output    | To A15 Pad           | Active-low drive high signal for `a[15]`.                                   |
+| `n_INPUT_a15`        | Input     | From A15 Pad         | Active-low input signal for `a[15]`.                                        |
+| `DRV_LOW_a15`        | Output    | To A15 Pad           | Drive low signal for `a[15]`.                                               |
+| `n_cs_topad`         | Output    | To /CS Pad           | Active-low chip select to pad signal.                                       |
+| `CONST0`             | Bidir     | Global               | Constant 0 signal. [^2]                                                     |
+| `n_DRV_HIGH_nmwr`    | Output    | To /MWR Pad          | Active-low drive high signal for `n_mwr`.                                   |
+| `n_mwr`              | Input     | From /MWR Pad        | Active-low memory write signal.                                             |
+| `DRV_LOW_nmwr`       | Output    | To /MWR Pad          | Drive low signal for `n_mwr`.                                               |
+| `n_DRV_HIGH_nmrd`    | Output    | To /MRD Pad          | Active-low drive high signal for `n_mrd`.                                   |
+| `n_mrd`              | Input     | From /MRD Pad        | Active-low memory read signal.                                              |
+| `DRV_LOW_nmrd`       | Output    | To /MRD Pad          | Drive low signal for `n_mrd`.                                               |
+| `n_DRV_HIGH_nmcs`    | Output    | To /MCS Pad          | Active-low drive high signal for `n_mcs`.                                   |
+| `n_mcs`              | Input     | From /MCS Pad        | Active-low memory chip select signal.                                       |
+| `DRV_LOW_nmcs`       | Output    | To /MCS Pad          | Drive low signal for `n_mcs`.                                               |
+| `n_DRV_HIGH_md`      | Output    | To MD Pads           | Active-low drive high signal for `md` (8-bit).                              |
+| `n_md_frompad`       | Input     | From MD Pads         | Active-low `md` input from pad (8-bit).                                     |
+| `DRV_LOW_md`         | Output    | To MD Pads           | Drive low signal for `md` (8-bit).                                          |
+| `n_md_ena_pu`        | Output    | To MD Pads           | Active-low `md` enable pull-up signal.                                      |
+| `n_DRV_HIGH_d`       | Output    | To D Pads            | Active-low drive high signal for `d` (8-bit).                               |
+| `n_db_frompad`       | Input     | From D Pads          | Active-low data bus input from pad (8-bit).                                 |
+| `DRV_LOW_d`          | Output    | To D Pads            | Drive low signal for `d` (8-bit).                                           |
+| `n_ena_pu_db`        | Input     | From MMIO            | Active-low enable pull-up signal for data bus.                              |
+| `soc_wr`             | Input     | From MMIO            | System-on-Chip write signal.                                                |
+| `soc_rd`             | Input     | From MMIO            | System-on-Chip read signal.                                                 |
+| `vram_to_oam`        | Input     | From MMIO            | VRAM to OAM transfer signal.                                                |
+| `dma_a_15`           | Input     | From MMIO            | DMA address bit 15 signal.                                                  |
+| `non_vram_mreq`      | Output    | To MMIO              | Non-VRAM memory request signal.                                             |
+| `test_1`             | Input     | From MMIO            | Test1 mode - disable all internal CPU A/D bus drivers.                      |
+| `n_extdb_to_intdb`   | Input     | From MMIO            | Active-low external data bus to internal data bus signal.                   |
+| `n_dblatch_to_intdb` | Input     | From MMIO            | Active-low data bus latch to internal data bus signal.                      |
+| `n_intdb_to_extdb`   | Input     | From MMIO            | Active-low internal data bus to external data bus signal.                   |
+| `ffxx`               | Output    | To MMIO, HRAM, APU, PPU1 | Signal indicating access to memory range `FFxx`.                       |
+| `n_ppu_hard_reset`   | Input     | From PPU2            | Active-low PPU hard reset signal.                                           |
+| `ppu_mode3`          | Input     | From PPU1            | PPU mode 3 signal.                                                         |
+| `md`                 | Bidir     | Global               | Internal MD bus (8-bit).                                                    |
+| `oam_din`            | Output    | To PPU2              | OAM data input (8-bit).                                                     |
+| `n_vram_to_oam`      | Input     | From PPU2            | 0: VRAM to OAM transfer signal. (active low)                                |
+| `dma_addr_ext`       | Input     | From MMIO            | DMA external address signal.                                                |
+| `sp_bp_cys`          | Input     | From PPU1            | Sprite buffer page cycle - bus cycle when the PPU fetches sprite data into its buffer. |
+| `tm_bp_cys`          | Input     | From PPU1            | Tile map buffer page cycle - bus cycle when the PPU fetches tile map data.  |
+| `n_sp_bp_mrd`        | Input     | From PPU1            | Active-low sprite buffer page memory read.                                 |
+| `n_tm_bp_cys`        | Input     | From PPU1            | Active-low tile map buffer page cycle.                                     |
+| `arb_fexx_ffxx`      | Output    | To PPU1              | Arbitration signal for memory ranges `FExx` and `FFxx`.                     |
+| `cpu_vram_oam_rd`    | Input     | From MMIO            | CPU VRAM/OAM read signal.                                                   |
 
 [^2]: The constant 0 is globally scattered throughout the chip. Each large module with cells has a `const` cell whose output 0 is globally connected between all modules (so the input is marked as Bidir).
 

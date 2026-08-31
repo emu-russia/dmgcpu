@@ -1,7 +1,7 @@
 # APU
 
 > [!WARNING]  
-> The research has gained critical mass, the netlist is verified but not annotated. Signal table is missing. Further research is required.
+> The research has gained critical mass, the netlist is verified but not annotated. The signal table is filled based on the netlist, but the descriptions require human verification. Further research is required.
 
 ![locator_apu](/imgstore/soc/locator_apu.jpg)
 
@@ -19,76 +19,76 @@ It also contains a piece of arbitration for `a[7:0]`. [^1]
 | Signal Name            | Direction | From / Where To             | Description |
 |------------------------|-----------|-----------------------------|-------------|
 | CONST0                 | Bidir     | Global                      | Constant 0 signal [^2] |
-| \[7:0\] a              | Bidir     |                             |  |
-| addr_latch             | Input     |                             |  |
-| cclk                   | Input     |                             |  |
-| clk2                   | Input     |                             |  |
-| clk4                   | Input     |                             |  |
-| clk6                   | Input     |                             |  |
-| clk7                   | Input     |                             |  |
-| clk9                   | Input     |                             |  |
-| \[7:0\] d              | Bidir     |                             |  |
-| \[7:0\] dma_a          | Input     |                             |  |
-| dma_addr_ext           | Input     |                             |  |
-| ffxx                   | Input     |                             |  |
-| lfo_512Hz              | Input     |                             |  |
-| \[7:0\] n_INPUT_a      | Input     |                             |  |
-| n_ext_addr_en          | Input     |                             |  |
-| n_p10                  | Input     |                             |  |
-| n_p11                  | Input     |                             |  |
-| n_p12                  | Input     |                             |  |
-| n_p13                  | Input     |                             |  |
-| n_reset2               | Input     |                             |  |
-| sck_dir                | Input     |                             |  |
-| ser_out                | Input     |                             |  |
-| serial_tick            | Input     |                             |  |
-| soc_rd                 | Input     |                             |  |
-| soc_wr                 | Input     |                             |  |
-| test_1                 | Input     |                             |  |
-| test_2                 | Input     |                             |  |
-| \[7:0\] wave_rd        | Input     |                             |  |
-| \[7:0\] DRV_LOW_a      | Output    |                             |  |
-| DRV_LOW_p10            | Output    |                             |  |
-| DRV_LOW_p11            | Output    |                             |  |
-| DRV_LOW_p12            | Output    |                             |  |
-| DRV_LOW_p13            | Output    |                             |  |
-| DRV_LOW_p14            | Output    |                             |  |
-| DRV_LOW_p15            | Output    |                             |  |
-| DRV_LOW_sck            | Output    |                             |  |
-| DRV_LOW_sin            | Output    |                             |  |
-| FF60_D1                | Output    |                             |  |
-| \[3:0\] ch1_out        | Output    |                             |  |
-| \[3:0\] ch2_out        | Output    |                             |  |
-| ch3_active             | Output    |                             |  |
-| \[3:0\] ch3_out        | Output    |                             |  |
-| \[3:0\] ch4_out        | Output    |                             |  |
-| cpu_wakeup             | Output    |                             |  |
-| int_jp                 | Output    |                             |  |
-| l_vin_en               | Output    |                             |  |
-| \[3:0\] lmixer         | Output    |                             |  |
-| \[7:0\] n_DRV_HIGH_a   | Output    |                             |  |
-| n_DRV_HIGH_p10         | Output    |                             |  |
-| n_DRV_HIGH_p11         | Output    |                             |  |
-| n_DRV_HIGH_p12         | Output    |                             |  |
-| n_DRV_HIGH_p13         | Output    |                             |  |
-| n_DRV_HIGH_p14         | Output    |                             |  |
-| n_DRV_HIGH_p15         | Output    |                             |  |
-| n_DRV_HIGH_sck         | Output    |                             |  |
-| n_DRV_HIGH_sin         | Output    |                             |  |
-| n_ENA_PU_sin           | Output    |                             |  |
-| n_ch1_amp_en           | Output    |                             |  |
-| n_ch2_amp_en           | Output    |                             |  |
-| n_ch3_amp_en           | Output    |                             |  |
-| n_ch4_amp_en           | Output    |                             |  |
-| \[2:0\] n_lvolume      | Output    |                             |  |
-| \[2:0\] n_rvolume      | Output    |                             |  |
-| n_sout_topad           | Output    |                             |  |
-| n_wave_rd              | Output    |                             |  |
-| n_wave_wr              | Output    |                             |  |
-| r_vin_en               | Output    |                             |  |
-| \[3:0\] rmixer         | Output    |                             |  |
-| \[3:0\] wave_a         | Output    |                             |  |
-| wave_bl_pch            | Output    |                             |  |
+| \[7:0\] a              | Bidir     | Global                      | Internal address bus (bits 7:0). Contains a piece of the address bus arbitration [^1] |
+| addr_latch             | Input     | From MMIO                   | Address latch signal (used to latch the external address in TEST1 mode) |
+| cclk                   | Input     | From ClkGen                 | Input clk complement (same as n_clk_in) (Aka AZOF) |
+| clk2                   | Input     | From ClkGen                 | Clock 2 (Aka DATA_VALID, ADR_CLK_P) |
+| clk4                   | Input     | From ClkGen                 | Clock 4 (Aka #CPU_PHI, DATA_CLK_N) |
+| clk6                   | Input     | From ClkGen                 | Clock 6 (Aka INC_CLK_P) |
+| clk7                   | Input     | From ClkGen                 | Clock 7 (Aka BUKE, LATCH_CLK) |
+| clk9                   | Input     | From ClkGen                 | Clock 9 (Aka BOGA_1MHZ, MAIN_CLK_P) |
+| \[7:0\] d              | Bidir     | Global                      | Internal data bus |
+| \[7:0\] dma_a          | Input     | From MMIO                   | DMA address bus (bits 7:0) |
+| dma_addr_ext           | Input     | From MMIO                   | DMA address (external memory) |
+| ffxx                   | Input     | From Arb                    | FFxx register area indicator (APU registers are at FF10-FF3F) |
+| lfo_512Hz              | Input     | From MMIO                   | 512 Hz low-frequency oscillator (envelope/frame sequencer clock) |
+| \[7:0\] n_INPUT_a      | Input     | From Pads                   | Address bus input value (inverted) from pads a7..a0 |
+| n_ext_addr_en          | Input     | From MMIO                   | External address enable (active low, TEST1 mode) |
+| n_p10                  | Input     | From P10 Pad                | Joypad matrix input (inverted) |
+| n_p11                  | Input     | From P11 Pad                | Joypad matrix input (inverted) |
+| n_p12                  | Input     | From P12 Pad                | Joypad matrix input (inverted) |
+| n_p13                  | Input     | From P13 Pad                | Joypad matrix input (inverted) |
+| n_reset2               | Input     | From ClkGen                 | Global reset (active low) |
+| sck_dir                | Input     | From Ser                    | Serial clock direction (internal oscillator vs external clock) |
+| ser_out                | Input     | From Ser                    | Serial output data |
+| serial_tick            | Input     | From Ser                    | Serial clock tick |
+| soc_rd                 | Input     | From MMIO                   | SoC read strobe |
+| soc_wr                 | Input     | From MMIO                   | SoC write strobe |
+| test_1                 | Input     | From MMIO                   | Test1 mode - disable all internal CPU A/D bus drivers |
+| test_2                 | Input     | From MMIO                   | Test2 mode - disable the internal Boot ROM |
+| \[7:0\] wave_rd        | Input     | From WaveRAM                | Wave RAM data output |
+| \[7:0\] DRV_LOW_a      | Output    | To Pads                     | Drive-low control for address bus (bits 7:0) pads |
+| DRV_LOW_p10            | Output    | To P10 Pad                  | Drive-low control for P10 pad |
+| DRV_LOW_p11            | Output    | To P11 Pad                  | Drive-low control for P11 pad |
+| DRV_LOW_p12            | Output    | To P12 Pad                  | Drive-low control for P12 pad |
+| DRV_LOW_p13            | Output    | To P13 Pad                  | Drive-low control for P13 pad |
+| DRV_LOW_p14            | Output    | To P14 Pad                  | Drive-low control for P14 pad |
+| DRV_LOW_p15            | Output    | To P15 Pad                  | Drive-low control for P15 pad |
+| DRV_LOW_sck            | Output    | To SCK Pad                  | Drive-low control for SCK pad |
+| DRV_LOW_sin            | Output    | To SIN Pad                  | Drive-low control for SIN pad |
+| FF60_D1                | Output    | To MMIO                     | TEST_PAD register ($FF60) bit 1: DIV clock mode select (0: 16384 Hz, 1: 1 MHz via clk9) |
+| \[3:0\] ch1_out        | Output    | To DAC                      | Channel 1 digital amplitude |
+| \[3:0\] ch2_out        | Output    | To DAC                      | Channel 2 digital amplitude |
+| ch3_active             | Output    | To WaveRAM                  | Wave channel (CH3) active enable |
+| \[3:0\] ch3_out        | Output    | To DAC                      | Channel 3 digital amplitude |
+| \[3:0\] ch4_out        | Output    | To DAC                      | Channel 4 digital amplitude |
+| cpu_wakeup             | Output    | To Core                     | CPU wake-up from STOP mode |
+| int_jp                 | Output    | To MMIO                     | Joypad interrupt request |
+| l_vin_en               | Output    | To DAC                      | Left channel VIN (external audio) enable |
+| \[3:0\] lmixer         | Output    | To DAC                      | Left mixer: channel routing to the left output (NR51) |
+| \[7:0\] n_DRV_HIGH_a   | Output    | To Pads                     | Drive-high control (inverted) for address bus (bits 7:0) pads |
+| n_DRV_HIGH_p10         | Output    | To P10 Pad                  | Drive-high control (inverted) for P10 pad |
+| n_DRV_HIGH_p11         | Output    | To P11 Pad                  | Drive-high control (inverted) for P11 pad |
+| n_DRV_HIGH_p12         | Output    | To P12 Pad                  | Drive-high control (inverted) for P12 pad |
+| n_DRV_HIGH_p13         | Output    | To P13 Pad                  | Drive-high control (inverted) for P13 pad |
+| n_DRV_HIGH_p14         | Output    | To P14 Pad                  | Drive-high control (inverted) for P14 pad |
+| n_DRV_HIGH_p15         | Output    | To P15 Pad                  | Drive-high control (inverted) for P15 pad |
+| n_DRV_HIGH_sck         | Output    | To SCK Pad                  | Drive-high control (inverted) for SCK pad |
+| n_DRV_HIGH_sin         | Output    | To SIN Pad                  | Drive-high control (inverted) for SIN pad |
+| n_ENA_PU_sin           | Output    | To SIN Pad                  | SIN pad pull-up enable (active low) |
+| n_ch1_amp_en           | Output    | To DAC                      | Channel 1 amplifier enable (active low) |
+| n_ch2_amp_en           | Output    | To DAC                      | Channel 2 amplifier enable (active low) |
+| n_ch3_amp_en           | Output    | To DAC                      | Channel 3 amplifier enable (active low) |
+| n_ch4_amp_en           | Output    | To DAC                      | Channel 4 amplifier enable (active low) |
+| \[2:0\] n_lvolume      | Output    | To DAC                      | Left volume (active low, NR50) |
+| \[2:0\] n_rvolume      | Output    | To DAC                      | Right volume (active low, NR50) |
+| n_sout_topad           | Output    | To SOUT Pad                 | Serial output to pad (inverted) |
+| n_wave_rd              | Output    | To WaveRAM                  | Wave RAM read (active low) |
+| n_wave_wr              | Output    | To WaveRAM                  | Wave RAM write (active low) |
+| r_vin_en               | Output    | To DAC                      | Right channel VIN (external audio) enable |
+| \[3:0\] rmixer         | Output    | To DAC                      | Right mixer: channel routing to the right output (NR51) |
+| \[3:0\] wave_a         | Output    | To WaveRAM                  | Wave RAM address bus (16 bytes) |
+| wave_bl_pch            | Output    | To WaveRAM                  | Wave RAM bitline precharge |
 
 [^2]: The constant 0 is globally scattered throughout the chip. Each large module with cells has a `const` cell whose output 0 is globally connected between all modules (so the input is marked as Bidir).
 
