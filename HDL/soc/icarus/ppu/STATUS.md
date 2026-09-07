@@ -152,6 +152,16 @@ CPU `w403`/store `w444`, g419/g421); way forward: author makes the groups
 phase-exclusive, or the sprite test continues on the scan-only bus model
 toward the PPU1 handshake.
 
+### Path b taken - sprite pixels reach LD0/LD1 (round 30)
+
+`gen_weakbus.py` now also generates `ppu2_m2only.v` (non-scan oa-chain
+drivers gated off while `ppu_mode2`=1; mode-3 store re-read groups intact).
+Dev test `tb_ppu_sprite_e2e` (sprite entry 1: Y=16, X=16, tile 1, BG zero):
+`obj_prio_ck` ~10-11 pulses/line, `sp_bp_cys` + `sprite_x_match` pulse,
+one in-use flag set; LD shows sprite colour-01 pixels at LX ~7..14 on the
+visible rows. Netlist untouched; still dev - remaining: entry-0 words not
+visited by the scan sequence, LX off-by-one, author g419/g421 phase review.
+
 ## What is needed to finish the sprite test
 
 1. Author review/fix of the suspected items above (or confirmation that the

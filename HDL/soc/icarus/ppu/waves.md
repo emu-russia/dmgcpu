@@ -434,6 +434,22 @@ fetches switch from the BG map ($9800 / 0x1800) to the window map ($9C00 /
   (b) the sprite testbench uses the scan-only bus model (like
   `ppu2_scanonly.v`) and continues with the PPU1 handshake.
 
+  Round-30 (path b - sprite pixels reach LD0/LD1): `gen_weakbus.py` now also
+  emits `ppu2_m2only.v`: the 18 non-scan oa-chain drivers are disabled while
+  `ppu_mode2` is high (n_ena = orig | ppu_mode2) so the mode-2 scan address
+  is stable/even, while in mode 3 the store re-read (w444) and the other
+  groups work again. Dev test `tb_ppu_sprite_e2e` (sprite in OAM entry 1:
+  Y=16, X=16, tile 1 filled in VRAM, BG zero) on `ppu2_m2only.v`:
+  * `obj_prio_ck` pulses ~10-11x per line, `sp_bp_cys` and
+    `sprite_x_match` pulse, one in-use flag is set - the PPU1/PPU2 sprite
+    process runs (mode-2 claims -> mode-3 compare/fetch);
+  * the LD stream carries sprite colour-01 pixels at LX ~7..14 on the
+    visible rows (off-by-one vs the expected X-8=8 start - sampler/X
+    alignment), nothing on the other rows;
+  * netlist untouched; still dev (entry 0 words 0/1 not visited by the
+    scan sequence; the author's g419/g421 phase review remains the real
+    fix).
+
   ![tb_ppu_sprites_scan](/HDL/soc/icarus/ppu/waves/tb_ppu_sprites_scan.png)
 
   Wave regenerated (round 27) from the default run, one line window
