@@ -135,6 +135,16 @@ the scroll adders behave together.
   are supposed to kick the ring out of this state is the open question
   (likely needs PPU2's `sprite_x_match`/store feedback).
 
+  Round-7: `w844 = h_restart` (ppu1 assign) - so the ring IS reset at the
+  end of every scanline (`w816 = ~(w530|w531|h_restart)`), yet it re-latches
+  to its terminal state (w226=1/w228=1) within the next few clocks and
+  `obj_prio_ck` still never pulses in any sampled mode-2 or mode-3 window.
+  Also note PPU2's per-slot in-use dffr `g611–g628` have d-terms built from
+  the *mode-3* compare flags (`w332 = FF40_D1 & ppu_mode3` gated) while the
+  store banks capture during mode 2 - the exact mode-2/mode-3 interleaving
+  of "claim" vs "capture" is not yet reproducible and needs schematic-level
+  sprite scheduling data.
+
   ![tb_ppu_sprites_scan](/HDL/soc/icarus/ppu/waves/tb_ppu_sprites_scan.png)
 
   Not promoted to a regression test yet.
