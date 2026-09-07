@@ -354,7 +354,8 @@ The joint testbench (`HDL/soc/icarus/ppu`, see [waves.md](../../HDL/soc/icarus/p
 
 - the per-line rhythm: **456 clock ticks per scanline**, mode 2 (**OAM scan) ≈ 80 ticks**, mode 3 (BG fetch) starts right after mode 2, LY increments once per line, `h_restart` pulses at line end;
 - the **BG fetch pipeline**: in mode 3 PPU2 places the scroll-adder results on `nma` (map row `(V+SCY)>>3` at `nma[9:5]`, column `(H+SCX)>>3` at `nma[4:0]`, vertical fine `(V+SCY)&7` at `nma[3:1]` — see [PPU2](ppu2.md), block 2), PPU1 captures the tile-map byte and then the two tile-data bytes at the row given by `LY&7` (`$8010`-style `tile*16 + row*2` addressing with the tile index from the map byte), and the pixel serializer emits **160 LD0/LD1 samples per line** matching the VRAM content through the palette mux; the **scroll adders** were verified end-to-end by the `tb_ppu_scroll` test (SCY=1 → map row `(LY+SCY)>>3`; SCX=8 → first fetched map column `SCX>>3`);
-- register write/read through the CPU bus: LCDC/SCY/SCX/BGP store the written values, `ppu_rd`/`ppu_wr` are produced by PPU2 from `soc_rd`/`soc_wr`, LY read-back tracks the V counter.
+- register write/read through the CPU bus: LCDC/SCY/SCX/BGP store the written values, `ppu_rd`/`ppu_wr` are produced by PPU2 from `soc_rd`/`soc_wr`, LY read-back tracks the V counter;
+- the **WIN layer**: with LCDC.5/6 + WY/WX programmed (window covering the screen), the tile-map fetches switch to the window tile map ($9C00 with LCDC.6=1) — the WY/WX compare and `in_window` muxing of this page's block 5 are verified by `tb_ppu_window`.
 
 ## Open questions
 

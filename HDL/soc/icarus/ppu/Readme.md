@@ -12,6 +12,10 @@ Regression testbench for the DMG-CPU PPU gate netlists (`HDL/soc/ppu1.v`,
 | `merge_bus_aliases.py` | Tool: rewrites `assign d[7] = w79;` style aliases (inout bus bits) into true net aliases by renaming `w79` → `d[7]` and deleting the alias + orphaned wire declarations. Only touches `d/md/nma/n_oama/n_oamb`. |
 | `tb_ppu_regs.v` | Register write/read + reset + counter/mode smoke test. |
 | `tb_ppu_bg_scanline.v` | BG rendering test: mode2/3 per-line rhythm, VRAM BG fetch, pixel serialization on LD0/LD1. |
+| `tb_ppu_scroll.v` | SCY/SCX scroll test: PPU2 V+SCY / H+SCX adders change the fetched tile-map row/column. |
+| `tb_ppu_window.v` | Window (WIN) test: with LCDC.6 the tile-map fetches switch to the $9C00 window map. |
+| `tb_ppu_sprites.v` | (dev) mode-2 OAM scan bring-up - see waves.md. |
+| `tb_ppu_oam_cpu.v` | (dev) CPU->OAM write path bring-up - see waves.md. |
 | `*.bat` | Windows compile & run wrappers. `run_all.bat` runs every test. |
 | `waves/` | Waveform images, one per test. |
 | `waves.md` | Documentation of the tests with embedded wave images. |
