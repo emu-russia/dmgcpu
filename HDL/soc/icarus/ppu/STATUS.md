@@ -109,6 +109,18 @@ Y-test AND6 never high, store window `w852` never opens, `obj_prio_ck`
 presented; the scan word stream / byte<->word<->port mapping remains the
 open item.
 
+### Weak `oa` accepted as the default bus model (round 27)
+
+Per the round-23 experiment the oa-chain nodes are now simulated as
+discharge-only + keepers by default: `gen_weakbus.py` produces
+`ppu2_weakbus.v` (24 oa-chain notif0 -> `dmg_notif0_od` in
+`bus_weak_cells.v`, pullups on `w497/w146/w500/w554/w641/w49`); every PPU
+test compile uses it (bus model only - `ppu2.v` untouched). `oa` x:
+mode 2 0/1280, idle 0/5168 (residual only in mode 3); scan addresses
+defined, words {7,15,...,79}/mode 2. Regression suite 7/7 ALL PASS
+(incl. `tb_ppu_frame`); sprite wave regenerated. Sprite claim still
+inert (see blockers above).
+
 ## What is needed to finish the sprite test
 
 1. Author review/fix of the suspected items above (or confirmation that the

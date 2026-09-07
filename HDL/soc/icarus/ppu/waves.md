@@ -370,12 +370,29 @@ fetches switch from the BG map ($9800 / 0x1800) to the window map ($9C00 /
   <->port mapping is the remaining open item (see PPU2 open questions).
   The 6 fast regression tests AND `tb_ppu_frame` pass with the new model.
 
+  Round-27 (weak `oa` accepted as the default bus model): the round-23
+  discharge-only experiment became the standard simulation model for the
+  PPU testbench. `gen_weakbus.py` generates `ppu2_weakbus.v` from
+  `ppu2_merged.v` (the 24 oa-chain notif0 mux drivers -> open-drain
+  `dmg_notif0_od` in `bus_weak_cells.v`; pullup keepers on
+  `w497/w146/w500/w554/w641/w49`); all PPU test compiles now use it instead
+  of `ppu2_merged.v`. **Simulator bus model only - `ppu2.v` untouched.**
+  Results: `oa` x gone in mode 2 (0/1280 samples) and idle (0/5168);
+  residual x only in mode 3 (sprite compare/store re-fetch, bus unused for
+  the BG stream); scan addresses now fully defined, walking words
+  {7,15,23,...,79} per mode 2; full regression suite (7/7, incl.
+  `tb_ppu_frame`) ALL PASS; sprite-scan wave regenerated (red pixels
+  42000 -> ~15900). `obj_prio_ck`/`sp_bp_cys` remain flat and the Y-test
+  AND6 still never passes with sprites in all 40 OAM entries - the sprite
+  claim is gated upstream as documented (rounds 13-26), not by the oa
+  bus x.
+
   ![tb_ppu_sprites_scan](/HDL/soc/icarus/ppu/waves/tb_ppu_sprites_scan.png)
 
-  Wave regenerated (round 24) from the current netlist run, one line window
+  Wave regenerated (round 27) from the default run, one line window
   (t = 29 000..58 000 ns): mode 2 shows the OAM scan - `oa` steps 39 word
-  addresses while `n_oam_rd`/`oam_bl_pch` pulse; `oa` still reads `x` in the
-  idle phases (round-23 weak-oa probe removes that `x` but does not open the
-  store); `obj_prio_ck` and `sp_bp_cys` stay flat - no slot claimed.
+  addresses (defined; weak-bus default) while `n_oam_rd`/`oam_bl_pch`
+  pulse; residual `oa` x only in mode 3 (compare phase); `obj_prio_ck` and
+  `sp_bp_cys` stay flat - no slot claimed.
 
   Not promoted to a regression test yet.

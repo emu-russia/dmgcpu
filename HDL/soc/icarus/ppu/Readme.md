@@ -108,6 +108,25 @@ the VCDs behind them.
 The adapted Icarus/GTKWave skill for future DMG-CPU testbenches (APU, MMIO,
 ...) lives in [`HDL/soc/icarus/gtkwave-skill.md`](../gtkwave-skill.md).
 
+## Bus modelling (testbench)
+
+The precharged inverse-hold buses of the PPU are simulated with dynamic-bus
+semantics (issue #390, round 27):
+
+- The six PPU2 oa-chain nodes (`w497/w146/w500/w554/w641/w49`) are modelled
+  as **discharge-only + keepers**: the notif0 mux groups become open-drain
+  (`dmg_notif0_od` in `bus_weak_cells.v`) and a `pullup` holds the precharge
+  level, so overlapping enables no longer drive the node to x. Applied by
+  `gen_weakbus.py` → generated `ppu2_weakbus.v` (used in all PPU test
+  compiles instead of `ppu2_merged.v`). **This is a simulator bus model only -
+  `HDL/soc/ppu2.v` is NOT modified.**
+- The OAM macro pads (`n_oama`/`n_oamb`) are inverse-hold: precharge
+  keepers + discharge-only pads in `oam_ram.v` (round 26).
+
+Residual x: `oa` is clean in mode 2 and idle; it can still read `x` in
+mode 3 (sprite compare / store re-fetch phase, bus unused for the BG pixel
+stream).
+
 ## Notes
 
 - `HDL/soc/dmglib.v` needed one bug fix for simulation: `dmg_notif0/1`
