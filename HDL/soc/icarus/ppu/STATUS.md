@@ -19,6 +19,7 @@ and the wiki pages `wiki/soc/ppu1.md` / `wiki/soc/ppu2.md`.
 | `tb_ppu_oam_cpu` | 🟡 dev | CPU OAM write lands word-addressed; strobe timing needs SoC model |
 | `tb_ppu_oam_read` | 🟡 dev | CPU OAM read return path needs SoC cycle timing |
 | `tb_ppu_dma` | 🟡 dev | VRAM->OAM DMA needs the MMIO DMA controller/arbiter model |
+| `tb_ppu_ring_init0` | 🟡 dev (round 22) | no-reset FF init-0 probe: boot-state report + per-line `obj_prio_ck` / OAM-clock / Y-test counters |
 
 Run everything: `run_all.sh` (or `run_all.bat` on Windows); `tb_ppu_frame` is
 slow and included.
@@ -50,6 +51,28 @@ slow and included.
 - STAT read-back (round 15/16): at LY==LYC the LYC interrupt fires but
   `$FF41` reads `0xC2/0xC3` (bit2=0, bit7=1); netlist chain `g859/g906/
   g280/w546/w736` documented in wiki/soc/ppu1.md.
+
+## No-reset FF "init-0" probe (round 22) - not the blocker
+
+Per the checklist, the no-reset triggers were pinned to `0` instead of `x`
+in the test (`tb_ppu_ring_init0`, dev). Result:
+
+- Power-on: dmglib dffr-family cells declare `initial val = 1'b0`, so at
+  boot all no-reset FFs read 0/1 (never `x`); the PPU1 sprite ring
+  `g286/g287-g289/g325/g326` is deterministic and resets (`w816` dips) at
+  every `h_restart`. Only FFs clocked from undefined data keep `x`: PPU1
+  `g882-g889` and PPU2 scan-address bits `g942/g943` (mode-2 scan).
+- Forced-0 run (clones `dmg_*_nr0` in `temp/nr0`: `x` clocked into a
+  no-reset FF stores 0): scan register fully defined (`010000`) each line,
+  `g882-g889` = 0. Result unchanged - `obj_prio_ck` still 0 edges/line,
+  PPU1 `(w228&w229&w241)` never 1, PPU2 Y-test AND6 (`w816`) never high,
+  store window `w852` 0 edges.
+
+Conclusion: the no-reset-FF `x` is NOT the cause of the silent
+`obj_prio_ck` (the ring is reset each line but never opens its pulse
+window; the PPU2 Y-test never passes with the current `oa`/port-B phase
+timing). The no-reset FFs remain a real silicon concern (undetermined
+power-up, no garbage recovery) and stay reported to the author.
 
 ## What is needed to finish the sprite test
 

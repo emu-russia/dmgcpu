@@ -43,6 +43,7 @@ Regression testbench for the DMG-CPU PPU gate netlists (`HDL/soc/ppu1.v`,
 | OAM macro (interface of the empty `oam.v` stub) | `oam_ram.v` — behavioral model (2 ports/80 words, bitline hold, port B = even bytes) |
 | LCD driver interface (output-only) | `lcd_stub.v` — consumer stub (samples LD0/LD1 on /CP into a 160-px line buffer) |
 | OAM mode-2 scan / sprite store / compare | `tb_ppu_sprites` — dev (scan + ports defined; `obj_prio_ck` inert -> store not claimed; see waves.md) |
+| No-reset FF "init-0" probe (round 22) | `tb_ppu_ring_init0` — dev (proves no-reset FFs boot at 0; forcing them to 0 leaves `obj_prio_ck` inert -> not a power-on-`x` issue; see waves.md) |
 
 ### Functional-block coverage (per wiki/soc/ppu1.md and wiki/soc/ppu2.md)
 

@@ -262,8 +262,10 @@ fetches switch from the BG map ($9800 / 0x1800) to the window map ($9C00 /
     clocks the ten per-slot in-use dffr `g611–g628`) never pulses, so no
     slot is ever claimed, `sp_bp_cys` never fires and the LD stream stays
     BG-only. `obj_prio_ck = ~(w239|w240)` (ppu1 `g494`/`g832`); `w240`
-    (nand3 `g751` on the sprite-process FFs `g322/g287/g314`) and `w239`
-    (`g286` nq) never dip low in the simulated lines.
+    (nand3 `g751` on the sprite-process FFs `g322/g287/g314`) never dips low
+    (`w229`/`w241` never reach 1 together with `w228`); `w239` (`g286` nq)
+    dips low only briefly right after `h_restart` while the ring runs
+    (round-22 probe).
   * next step: map PPU1's sprite-clock domain (the mode-3 fetch/prio FFs
     clocked off `w596/ppu_clk`, `w815`, ring `g282–g285/g316/g317/g319`)
     and its handshake with PPU2's `stop_oam_eval`/store before the sprite
@@ -290,6 +292,31 @@ fetches switch from the BG map ($9800 / 0x1800) to the window map ($9C00 /
   store banks capture during mode 2 - the exact mode-2/mode-3 interleaving
   of "claim" vs "capture" is not yet reproducible and needs schematic-level
   sprite scheduling data.
+
+  Round-22 (no-reset FF "init-0" probe, `tb_ppu_ring_init0`): per the
+  checklist, the no-reset triggers (`nr1 = nr2 = const-1`) were pinned to
+  `0` instead of `x` for the test. Two runs were compared:
+  * Power-on state: the dmglib dffr-family cells (`dffr`, `dffr_comp`,
+    `dffrnq_comp`, `dffsr`, latches, `cnt`) all declare `initial val = 0`,
+    so at boot every such FF reads 0/1 - never x; the PPU1 sprite ring
+    (`g286`/`g287–g289`/`g325`/`g326`) is fully deterministic and the ring
+    reset term `w816` dips every line. The FFs that *still* hold `x` are
+    exactly those clocked from undefined data while their reset never
+    fires: PPU1 `g882–g889` (`dffr_comp` bank) and PPU2 scan-address bits
+    `g942`/`g943` (clocked by `oam_addr_ck`, `d` from the scan counter)
+    keep `x` during the whole mode-2 scan.
+  * Forced-0 run (test-only cell clones `dmg_*_nr0` in `temp/nr0`, an
+    `x` clocked into a no-reset FF stores 0): `g882–g889` = 0, the PPU2
+    scan-address register fully defined (`010000`) every line. Result
+    **unchanged**: `obj_prio_ck` 0 rising edges per line (5 lines),
+    PPU1 `(w228 & w229 & w241)` never 1, PPU2 Y-test AND6 (`w816`) never
+    high, store window `w852` 0 edges, `w530` never high.
+  => the no-reset-FF `x` state is NOT the reason `obj_prio_ck` is silent:
+  the ring is reset at every `h_restart` yet never opens the pulse window,
+  and on the PPU2 side the OAM Y-test never passes with the current `oa`/
+  port-B phase timing. The no-reset FFs remain a real netlist/silicon issue
+  (undetermined power-up, no recovery from garbage) - still reported to the
+  author - but they are not the testbench blocker.
 
   ![tb_ppu_sprites_scan](/HDL/soc/icarus/ppu/waves/tb_ppu_sprites_scan.png)
 

@@ -367,7 +367,7 @@ The joint testbench (`HDL/soc/icarus/ppu`, see [waves.md](../../HDL/soc/icarus/p
 
 - The exact division of labor between PPU1 and PPU2 for the sprite logic: PPU1 contains the sprite pixel data path, the X-flip, the ring counter and the LAST_SPRITE detection, while PPU2 owns the OAM scan itself. The PPU2 side is now analysed in [PPU2](ppu2.md) (mode-2 scan engine, 10-slot sprite store, compare); the OAM-port byte organisation and the store↔slot schedule are still being pinned down by the sprite testbench (see [PPU2 open questions](ppu2.md)).
 - The precise dot-level timing of the fetch phases (how `w44` pulses map to the 2-dot VRAM access rhythm) is not fully derived here; the testbench shows one tile-map + two tile-data fetches per 8-pixel group but the exact sub-dot schedule remains to be written up.
-- The `dffr_comp` bank `g882–g889` is interpreted as the sprite tile-index/address register; its exact capture source (during mode 2 via `md`, or during mode 3) should be confirmed with a waveform dump of the sprite-fetch test.
+- The `dffr_comp` bank `g882–g889` is interpreted as the sprite tile-index/address register; its exact capture source (during mode 2 via `md`, or during mode 3) should be confirmed with a waveform dump of the sprite-fetch test. (Round-22 probe: no async reset (`nr1 = w47 = const1`) and the cells hold `x` during operation because they are clocked with undefined data; forcing them to 0 does not change the inert `obj_prio_ck`.)
 - The role of the ring counter's seven flip-flops vs the 10-sprite store of the DMG (the ring is probably reused for groups of sprites) needs verification.
 
 ## Suspected netlist issues (reported to the author, NOT fixed here)
@@ -391,8 +391,13 @@ The joint testbench (`HDL/soc/icarus/ppu`, see [waves.md](../../HDL/soc/icarus/p
   interrupt fires from the same flag - needs an author check.
 - **`g325`/`g326` (ppu1.v:1510-1511)** — the `w530` window dividers of the
   sprite-process ring reset term have **no async reset** (`nr1 = w47 =
-  const1`); together with the no-reset FFs reported in ppu2.md they leave
-  `x` state at power-up until the first clock.
+  const1`). In the testbench they power up deterministic (dmglib
+  `dffr` cells declare `initial val = 0`); the no-reset "init-0" probe
+  (round 22, `tb_ppu_ring_init0`) pins every no-reset trigger to 0 - even
+  when clocked with `x` - and shows `obj_prio_ck` is still silent, i.e. the
+  missing reset is a real silicon concern (undetermined power-up, no
+  garbage recovery), not the cause of the inert sprite path (see
+  [waves.md](../../HDL/soc/icarus/ppu/waves.md)).
 
 ## References
 

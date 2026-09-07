@@ -353,11 +353,16 @@ rather than patched in this repository:
 
 1. **PPU2 scan-address register has no reset** (ppu2.v:2089-2094, `g938–g943`, six
    `dffrnq_comp`, clk `w648` = `oam_addr_ck`): their async reset `nr1` is
-   hard-wired to `w149` (const `g527.q1` = 1), i.e. they are never reset and
-   hold `x` until the first `oam_addr_ck` edge after power-up. Probably
-   intentional (reloaded every scan), but if the first scan / `stop_oam_eval`
-   count after `n_ppu_hard_reset` must be deterministic, they should reset
-   from the `w252/w650` tree.
+   hard-wired to `w149` (const `g527.q1` = 1), i.e. they are never reset.
+   In the testbench they power up deterministic (dmglib `dffrnq_comp`
+   declares `initial val = 0`) but can clock in `x` from the scan-counter
+   data (`g942`/`g943` hold `x` during the whole mode-2 scan). The no-reset
+   "init-0" probe (round 22, `tb_ppu_ring_init0`) pins them to 0 even when
+   clocked with `x` - the scan register then reads a defined `010000` every
+   line, yet the Y-test AND6 and the store window `w852` still never open.
+   So the missing reset is a real silicon concern (undetermined power-up,
+   no garbage recovery), not the cause of the inert store path (see
+   [waves.md](../../HDL/soc/icarus/ppu/waves.md)).
 2. **PPU1 `g652` looks like a second LCDC.D7 latch** next to `g656`:
    *reported round 9:* during mode 2 the `oa` scan group (`n_ena w518 =` on
    `g419`, ppu2.v:1570)
