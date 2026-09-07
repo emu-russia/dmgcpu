@@ -1,9 +1,9 @@
-module PPU2 (  cclk, clk6, n_reset2, a, d, n_oamb, oam_bl_pch, oa, n_oam_rd, n_oamb_wr, n_oama_wr, n_oama, CONST0, n_dma_phi, 
-	dma_a, dma_run, 
-	soc_wr, soc_rd, ppu_rd, ppu_wr, ppu_clk, vram_to_oam, n_ppu_hard_reset, 
-	nma, fexx, ff43, ff42, sprite_x_flip, sprite_x_match, bp_sel, ppu_mode3, 
-	md, oam_din, v, FF43_D1, FF43_D0, n_ppu_clk, FF43_D2, h, ppu_mode2, vbl, stop_oam_eval, obj_color, vclk2, h_restart, obj_prio_ck, obj_prio, n_ppu_reset, 
-	n_vram_to_oam, n_dma_phi2_latched, FF40_D3, FF40_D2, in_window, 
+module PPU2 (  cclk, clk6, n_reset2, a, d, n_oamb, oam_bl_pch, oa, n_oam_rd, n_oamb_wr, n_oama_wr, n_oama, CONST0, n_dma_phi,
+	dma_a, dma_run,
+	soc_wr, soc_rd, ppu_rd, ppu_wr, ppu_clk, vram_to_oam, n_ppu_hard_reset,
+	nma, fexx, ff43, ff42, sprite_x_flip, sprite_x_match, bp_sel, ppu_mode3,
+	md, oam_din, v, FF43_D1, FF43_D0, n_ppu_clk, FF43_D2, h, ppu_mode2, vbl, stop_oam_eval, obj_color, vclk2, h_restart, obj_prio_ck, obj_prio, n_ppu_reset,
+	n_vram_to_oam, n_dma_phi2_latched, FF40_D3, FF40_D2, in_window,
 	FF40_D1, dma_addr_ext, sp_bp_cys, cpu_vram_oam_rd, oam_dma_wr, clk6_delay, oam_mode3_bl_pch, bp_cy, tm_cy, oam_mode3_nrd, ma0, oam_rd_ck, oam_xattr_latch_cck, oam_addr_ck);
 
 	input wire cclk;

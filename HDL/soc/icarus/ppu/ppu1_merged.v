@@ -1,6 +1,6 @@
-module PPU1 (  a, d, n_ma, n_lcd_ld1, n_lcd_ld0, n_lcd_cpg, n_lcd_cp, n_lcd_st, n_lcd_cpl, n_lcd_fr, n_lcd_s, CONST0, n_dma_phi, ppu_rd, ppu_wr, ppu_clk, vram_to_oam, ffxx, n_ppu_hard_reset, ff46, 
-	nma, fexx, ff43, ff42, sprite_x_flip, sprite_x_match, bp_sel, ppu_mode3, 
-	md, v, FF43_D1, FF43_D0, n_ppu_clk, FF43_D2, h, ppu_mode2, vbl, stop_oam_eval, obj_color, vclk2, h_restart, obj_prio_ck, obj_prio, n_ppu_reset, n_dma_phi2_latched, FF40_D3, FF40_D2, in_window, 
+module PPU1 (  a, d, n_ma, n_lcd_ld1, n_lcd_ld0, n_lcd_cpg, n_lcd_cp, n_lcd_st, n_lcd_cpl, n_lcd_fr, n_lcd_s, CONST0, n_dma_phi, ppu_rd, ppu_wr, ppu_clk, vram_to_oam, ffxx, n_ppu_hard_reset, ff46,
+	nma, fexx, ff43, ff42, sprite_x_flip, sprite_x_match, bp_sel, ppu_mode3,
+	md, v, FF43_D1, FF43_D0, n_ppu_clk, FF43_D2, h, ppu_mode2, vbl, stop_oam_eval, obj_color, vclk2, h_restart, obj_prio_ck, obj_prio, n_ppu_reset, n_dma_phi2_latched, FF40_D3, FF40_D2, in_window,
 	FF40_D1, sp_bp_cys, tm_bp_cys, n_sp_bp_mrd, n_tm_bp_cys, arb_fexx_ffxx, ppu_int_stat, ppu_int_vbl, oam_mode3_bl_pch, bp_cy, tm_cy, oam_mode3_nrd, ppu1_ma0, oam_rd_ck, oam_xattr_latch_cck, oam_addr_ck);
 
 	input wire [12:0] a;
