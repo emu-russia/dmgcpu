@@ -53,7 +53,6 @@ slow and included.
   g280/w546/w736` documented in wiki/soc/ppu1.md.
 
 ## No-reset FF "init-0" probe (round 22) - not the blocker
-
 Per the checklist, the no-reset triggers were pinned to `0` instead of `x`
 in the test (`tb_ppu_ring_init0`, dev). Result:
 
@@ -73,6 +72,26 @@ Conclusion: the no-reset-FF `x` is NOT the cause of the silent
 window; the PPU2 Y-test never passes with the current `oa`/port-B phase
 timing). The no-reset FFs remain a real silicon concern (undetermined
 power-up, no garbage recovery) and stay reported to the author.
+
+### Weak / discharge-only `oa` bus (round 23) - also not the blocker
+
+Per the checklist the `oa` bus was made "weak": the six oa-chain
+inverse-hold nodes (`w497/w146/w500/w554/w641/w49`, each driven by four
+`notif0` mux groups) were re-modelled as precharged nodes - pullup keepers +
+open-drain drivers (`dmg_notif0_od`; variant netlists + probes in
+`temp/weak/`, gitignored). Result: the bus and the scan address become fully
+deterministic (baseline Y-test group is `x` ~85% of mode 2); the scan
+schedule length is unchanged (39 steps) but the row sequence shifts
+(baseline words {2,4,...,78}, weak {7,15,...,79}) - both start above word 0.
+Even with a visible sprite in **every** OAM entry, lines LY 1..15: Y-test
+AND6 `w816` never high, port B reads zero in all sampled phases, store
+window `w852` never opens, `obj_prio_ck` 0 edges/line - in both variants.
+
+Conclusion: oa contention is not the blocker either; the port-B read data
+never reaches the Y-test as a passing compare (read phase not sampled
+statically, or Y-test term polarity/bounds inverted - see the `w852/w817`
+polarity open question in wiki/soc/ppu2.md). Needs schematic-level two-phase
+timing / OAM macro byte mapping (author or msinger ground truth).
 
 ## What is needed to finish the sprite test
 

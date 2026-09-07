@@ -318,6 +318,33 @@ fetches switch from the BG map ($9800 / 0x1800) to the window map ($9C00 /
   (undetermined power-up, no recovery from garbage) - still reported to the
   author - but they are not the testbench blocker.
 
+  Round-23 (weak / discharge-only `oa` experiment): per the checklist, the
+  `oa` bus was made "weak": the six oa-chain inverse-hold nodes
+  (`w497/w146/w500/w554/w641/w49`, each driven by four `notif0` mux groups -
+  scan `w518`, port-B `w475`, CPU `w403`, store `w444`, idle `w48`) were
+  re-modelled as precharged nodes: pullup keepers + open-drain drivers
+  (`dmg_notif0_od`, a strong-0 pull only when enabled AND data=1; polarity
+  preserved). Variant netlists + probes live in `temp/weak/` (gitignored).
+  Result:
+  * the oa-chain nodes and the scan address become fully deterministic
+    (baseline: the Y-test group is `x` ~85% of the mode-2 time);
+  * scan schedule length is unchanged (39 `oam_addr_ck` steps per mode 2),
+    but the row sequence shifts (baseline walks 16-bit words {2,4,…,78},
+    weak walks {7,15,…,79}) - the "discharge-only changes scan addressing
+    polarity" effect documented earlier; both schedules start at word > 0,
+    i.e. they never present entry 0 of the model;
+  * even with a sprite (Y=16, visible on LY 0..7) in **every** OAM entry,
+    lines LY 1..15: the Y-test AND6 `w816` (ppu2) never goes high in either
+    variant, the store window `w852` never opens, port B `n_oamb` reads zero
+    in every sampled phase, `obj_prio_ck` stays at 0 edges/line.
+  => oa bus contention is not the blocker either. The port-B read data never
+  demonstrably reaches the Y-test adder as a passing compare: either the OAM
+  read happens in a phase the static model never samples, or the Y-test term
+  polarity/bounds are inverted (pass could be the all-zero group, not the
+  AND6 = 1 we probe - see the w852/w817 polarity open question). Needs the
+  schematic-level two-phase timing / macro byte mapping (author or msinger
+  ground truth), as already stated in the open questions.
+
   ![tb_ppu_sprites_scan](/HDL/soc/icarus/ppu/waves/tb_ppu_sprites_scan.png)
 
   Not promoted to a regression test yet.
