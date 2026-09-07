@@ -378,6 +378,11 @@ The joint testbench (`HDL/soc/icarus/ppu`, see [waves.md](../../HDL/soc/icarus/p
   Either the read-back polarity for bits 2/7 is inverse-hold (the d-bit
   drivers g859/g854 etc. feed `nq` sources) or bit 2 is only asserted
   briefly; worth an author check (ppu1.v STAT read path, block 2/14).
+  Netlist detail (round 16): bit2 read = `q` of `g906` (nor_latch s=`w546`,
+  r=`w737` = hard-reset | STAT-write); `w546` = `g280` dffr sampling the live
+  `LY==LYC` compare (`w736`) on the /4 OAM clock `w509`; the compare equals 1
+  for the whole line, so the observed 0 is unexpected given the LYC
+  interrupt fires from the same flag - needs an author check.
 - **`g325`/`g326` (ppu1.v:1510-1511)** — the `w530` window dividers of the
   sprite-process ring reset term have **no async reset** (`nr1 = w47 =
   const1`); together with the no-reset FFs reported in ppu2.md they leave
