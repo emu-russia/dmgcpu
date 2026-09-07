@@ -105,8 +105,14 @@ the scroll adders behave together.
 ## Work in progress
 
 - `tb_ppu_sprites.v` (dev): brings up the mode-2 OAM scan with a real OAM
-  model — scan addresses and the OAM read bus are now defined after the
-  tristate `===` fix; sprite attribute capture (`obj_color`/`obj_prio`/
-  `sprite_x_flip`) toggles during the scan. Remaining work: the precharge
-  half-cycle handling and the mode-3 sprite-match / pixel output, then it
-  will be promoted to a regression test with asserts.
+  model — scan addresses and the OAM read bus are defined after the
+  tristate `===` fix and sprite attribute capture (`obj_color`/`obj_prio`/
+  `sprite_x_flip`) toggles during the scan. Round-3/4 findings: the byte-
+  ↔port mapping alone does not explain the remaining x (tested both lane
+  layouts), and with OBJ enabled the mode-3 window currently overruns
+  (~35 µs vs ~11 µs BG-only, the sprite-buffer cycle fires only once, late)
+  — i.e. the sprite *rendering* path is not yet reproducible. The blocker is
+  the OAM-macro precharge/capture phase semantics and the mode-3 sprite
+  fetch scheduling, which are not derivable from the repo alone (the `OAM`
+  netlist is an empty stub); cross-checking against @msinger's schematics /
+  dmg-sim is the next step. Not promoted to a regression test yet.
