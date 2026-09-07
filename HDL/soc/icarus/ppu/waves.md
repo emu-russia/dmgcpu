@@ -104,15 +104,25 @@ the scroll adders behave together.
 
 ## Work in progress
 
-- `tb_ppu_sprites.v` (dev): brings up the mode-2 OAM scan with a real OAM
-  model — scan addresses and the OAM read bus are defined after the
-  tristate `===` fix and sprite attribute capture (`obj_color`/`obj_prio`/
-  `sprite_x_flip`) toggles during the scan. Round-3/4 findings: the byte-
-  ↔port mapping alone does not explain the remaining x (tested both lane
-  layouts), and with OBJ enabled the mode-3 window currently overruns
-  (~35 µs vs ~11 µs BG-only, the sprite-buffer cycle fires only once, late)
-  — i.e. the sprite *rendering* path is not yet reproducible. The blocker is
-  the OAM-macro precharge/capture phase semantics and the mode-3 sprite
-  fetch scheduling, which are not derivable from the repo alone (the `OAM`
-  netlist is an empty stub); cross-checking against @msinger's schematics /
-  dmg-sim is the next step. Not promoted to a regression test yet.
+- `tb_ppu_sprites.v` (dev): brings up the mode-2 OAM scan with the
+  dedicated OAM SRAM model (`oam_ram.v`).
+
+  State after the OAM model rework (round 6):
+  * with OBJ enabled the **mode-3 window no longer overruns** (normal
+    ~11 µs / 173 ticks per line — the earlier ~35 µs stall is gone);
+  * the mode-2 scan runs on the word bus `oa` and both OAM ports present
+    defined data (bitline-hold model);
+  * the sprite pixel path is still **inert**: `obj_prio_ck` (PPU1 → PPU2,
+    clocks the ten per-slot in-use dffr `g611–g628`) never pulses, so no
+    slot is ever claimed, `sp_bp_cys` never fires and the LD stream stays
+    BG-only. `obj_prio_ck = ~(w239|w240)` (ppu1 `g494`/`g832`); `w240`
+    (nand3 `g751` on the sprite-process FFs `g322/g287/g314`) and `w239`
+    (`g286` nq) never dip low in the simulated lines.
+  * next step: map PPU1's sprite-clock domain (the mode-3 fetch/prio FFs
+    clocked off `w596/ppu_clk`, `w815`, ring `g282–g285/g316/g317/g319`)
+    and its handshake with PPU2's `stop_oam_eval`/store before the sprite
+    can be claimed and rendered.
+
+  ![tb_ppu_sprites_scan](/HDL/soc/icarus/ppu/waves/tb_ppu_sprites_scan.png)
+
+  Not promoted to a regression test yet.

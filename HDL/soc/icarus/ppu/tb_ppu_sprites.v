@@ -39,16 +39,26 @@ module tb_ppu_sprites;
 		env.cpu_write(16'hFF47, 8'hE4);
 		env.cpu_write(16'hFF48, 8'hE4);   // OBP0
 
-		// run 2 lines
-		// wait for the 3rd mode2 window and sample oa bits every 512 ns
-		while (!env.ppu_mode2) @(posedge env.ppu_clk);
-		begin : oasamp
+		// probe the PPU1 obj_prio_ck / sprite-ring chain inside a mode2 window
+		begin : probe
 			integer q;
-			for (q = 0; q < 8; q = q + 1) begin
-				$display("t=%0t mode2=%b oa=%b w497=%b w146=%b w500=%b en(w48)=%b en(w518)=%b en(w475)=%b en(w403)=%b en(w444)=%b",
-				  $time, env.ppu_mode2, env.oa, env.ppu2.w497, env.ppu2.w146, env.ppu2.w500,
-				  env.ppu2.w48, env.ppu2.w518, env.ppu2.w475, env.ppu2.w403, env.ppu2.w444);
-				#512;
+			// sample the very first mode-2 scan (line 0, sprite Y=16 in range)
+			#1;
+			for (q = 0; q < 1300; q = q + 1) begin
+				if ((q % 100) == 0) begin
+					$display("S t=%0t m2=%b oa=%0d B=%b A=%b w475=%b w476=%b w120=%b walker=%b%b%b%b",
+					  $time, env.ppu_mode2, env.oa, env.n_oamb, env.n_oama,
+					  env.ppu2.w475, env.ppu2.w476, env.ppu2.w120,
+					  env.ppu2.g610.val, env.ppu2.g633.val, env.ppu2.g629.val, env.ppu2.g634.val);
+				end
+				if (env.ppu1.w291 === 1'b1) begin
+					$display("P t=%0t m2=%b opc(w291)=%b w290=%b w239=%b w240=%b ring=%b%b%b%b,%b,%b,%b w509=%b w416=%b w405=%b w44=%b",
+					  $time, env.ppu_mode2, env.ppu1.w291, env.ppu1.w290, env.ppu1.w239, env.ppu1.w240,
+					  env.ppu1.g282.val, env.ppu1.g283.val, env.ppu1.g284.val, env.ppu1.g285.val,
+					  env.ppu1.g316.val, env.ppu1.g317.val, env.ppu1.g319.val,
+					  env.ppu1.w509, env.ppu1.w416, env.ppu1.w405, env.ppu1.w44);
+				end
+				#128;
 			end
 		end
 		repeat (1000) @(posedge env.ppu_clk);

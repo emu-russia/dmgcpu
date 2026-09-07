@@ -1,0 +1,8 @@
+{
+ "signals": [
+  {"name":"Modes","signals":["tb_ppu_sprites.env.ppu_mode2","tb_ppu_sprites.env.ppu_mode3","tb_ppu_sprites.env.stop_oam_eval"]},
+  {"name":"OAM interface","signals":["tb_ppu_sprites.env.ppu2.oa[7:1]","tb_ppu_sprites.env.n_oam_rd","tb_ppu_sprites.env.oam_bl_pch","tb_ppu_sprites.env.n_oama[7:0]","tb_ppu_sprites.env.n_oamb[7:0]"]},
+  {"name":"Sprite store clocks","signals":["tb_ppu_sprites.env.ppu2.obj_prio_ck","tb_ppu_sprites.env.ppu1.sp_bp_cys"]},
+  {"name":"Counters","signals":["tb_ppu_sprites.env.h[7:0]","tb_ppu_sprites.env.v[7:0]"]}
+ ]
+}
