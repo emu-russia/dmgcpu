@@ -11,7 +11,7 @@
 // is counted as nonzero by the == check - ignore it (it is the only
 // "pixel" on lines without a sprite).
 `timescale 1ns/1ns
-module tb_e2e;
+module tb_ppu_sprite_e2e;
 	ppu_env env();
 	integer k;
 
@@ -31,6 +31,8 @@ module tb_e2e;
 	end
 
 	initial begin
+		$dumpfile("tb_ppu_sprite_e2e.vcd");
+		$dumpvars(0, tb_ppu_sprite_e2e);
 		#(64*8); env.reset = 1'b0; #(64*4);
 		// VRAM: BG empty; sprite tile 1 ($8010): plane0 = FF, plane1 = 00
 		for (k = 0; k < 8; k = k + 1) begin

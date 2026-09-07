@@ -449,6 +449,13 @@ fetches switch from the BG map ($9800 / 0x1800) to the window map ($9C00 /
   * netlist untouched; still dev (entry 0 words 0/1 not visited by the
     scan sequence; the author's g419/g421 phase review remains the real
     fix).
+  ![tb_ppu_sprite_e2e](/HDL/soc/icarus/ppu/waves/tb_ppu_sprite_e2e.png)
+
+  Wave (t = 30 000..117 000 ns, two visible rows) on the `ppu2_m2only.v`
+  bus model: modes 2/3, `obj_prio_ck`/`sp_bp_cys`/`sprite_x_match`
+  pulsing, `oa` stepping the scan words, and the LD0/LD1 lines carrying
+  the sprite colour pixels during the pixel phase.
+
 
   ![tb_ppu_sprites_scan](/HDL/soc/icarus/ppu/waves/tb_ppu_sprites_scan.png)
 

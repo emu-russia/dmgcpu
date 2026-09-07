@@ -1,0 +1,9 @@
+{
+ "signals": [
+  {"name":"Modes","signals":["tb_ppu_sprite_e2e.env.ppu_mode2","tb_ppu_sprite_e2e.env.ppu_mode3","tb_ppu_sprite_e2e.env.stop_oam_eval"]},
+  {"name":"Sprite process","signals":["tb_ppu_sprite_e2e.env.obj_prio_ck","tb_ppu_sprite_e2e.env.sp_bp_cys","tb_ppu_sprite_e2e.env.sprite_x_match"]},
+  {"name":"OAM","signals":["tb_ppu_sprite_e2e.env.ppu2.oa[7:1]","tb_ppu_sprite_e2e.env.n_oamb[7:0]","tb_ppu_sprite_e2e.env.n_oam_rd"]},
+  {"name":"LCD pixels","signals":["tb_ppu_sprite_e2e.env.n_lcd_ld0","tb_ppu_sprite_e2e.env.n_lcd_ld1","tb_ppu_sprite_e2e.env.n_lcd_cpl"]},
+  {"name":"Counters","signals":["tb_ppu_sprite_e2e.env.h[7:0]","tb_ppu_sprite_e2e.env.v[7:0]"]}
+ ]
+}
