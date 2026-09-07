@@ -239,6 +239,15 @@ the LX (h) and LY (v) counters and the LCD line timing (/CPL, /CP), from the
 
 ![mode_fsm_line](/HDL/soc/icarus/ppu/waves/tb_ppu_mode_fsm_line.png)
 
+## Test 9 — mid-line BG→WIN switch wave (matrix config C10)
+
+Wave of one scanline with the window starting mid-line (WY=0, WX=50 =>
+active from LX = WX-7 = 43): `in_window` rises inside mode 3, the VRAM
+fetches switch from the BG map ($9800 / 0x1800) to the window map ($9C00 /
+0x1C00) and the LD pixel pattern changes between the two tile contents.
+
+![win_mid](/HDL/soc/icarus/ppu/waves/tb_ppu_win_mid.png)
+
 ## Work in progress
 
 - `tb_ppu_sprites.v` (dev): brings up the mode-2 OAM scan with the
