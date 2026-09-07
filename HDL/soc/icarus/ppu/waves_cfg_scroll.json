@@ -1,0 +1,9 @@
+{
+ "signals": [
+  {"name":"Clocks / reset","signals":["tb_ppu_scroll.env.reset","tb_ppu_scroll.env.ppu_clk"]},
+  {"name":"PPU modes","signals":["tb_ppu_scroll.env.ppu_mode2","tb_ppu_scroll.env.ppu_mode3"]},
+  {"name":"Counters","signals":["tb_ppu_scroll.env.h[7:0]","tb_ppu_scroll.env.v[7:0]"]},
+  {"name":"VRAM address/data","signals":["tb_ppu_scroll.env.vram.ma[12:0]","tb_ppu_scroll.env.vram.md[7:0]"]},
+  {"name":"LCD","signals":["tb_ppu_scroll.env.ppu1.n_lcd_cp","tb_ppu_scroll.env.ppu1.n_lcd_ld0","tb_ppu_scroll.env.ppu1.n_lcd_ld1"]}
+ ]
+}

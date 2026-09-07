@@ -81,6 +81,16 @@ What the wave shows (2–65 µs):
   tile row produces a stable `10`/`01` per-pixel pattern through the palette
   mux, ~160 samples per visible line.
 
+## Test 3 — `tb_ppu_scroll` (SCY/SCX scroll adders)
+
+Scenario: SCY=1, SCX=8 with a per-column/per-row unique tile map, then two
+checks on the real VRAM addresses fetched by PPU2's scroll adders
+(`wiki/soc/ppu2.md` block 2): with `SCY=1` the tile-map row fetched at
+`LY=8` is `(LY+SCY)>>3 = 1`, and with `SCX=8` the first map column fetched
+at the line start is `SCX>>3 = 1`.
+
+![tb_ppu_scroll](/HDL/soc/icarus/ppu/waves/tb_ppu_scroll.png)
+
 ## Work in progress
 
 - `tb_ppu_sprites.v` (dev): brings up the mode-2 OAM scan with a real OAM
