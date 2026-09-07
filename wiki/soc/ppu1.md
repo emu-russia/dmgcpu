@@ -364,6 +364,18 @@ The joint testbench (`HDL/soc/icarus/ppu`, see [waves.md](../../HDL/soc/icarus/p
 - The `dffr_comp` bank `g882–g889` is interpreted as the sprite tile-index/address register; its exact capture source (during mode 2 via `md`, or during mode 3) should be confirmed with a waveform dump of the sprite-fetch test.
 - The role of the ring counter's seven flip-flops vs the 10-sprite store of the DMG (the ring is probably reused for groups of sprites) needs verification.
 
+## Suspected netlist issues (reported to the author, NOT fixed here)
+
+- **`g652` (ppu1.v:1837)** — `latchr_comp` with the $FF40 write enable
+  (`ena w84`), data `D7` (`w79`) and reset `w82`; its output `w149` is read
+  only by `g305`. Looks like a duplicate capture of `LCDC.7` next to `g656`
+  (which drives `w81`); probably an intentional layout copy, but it is not
+  documented in the register table above.
+- **`g325`/`g326` (ppu1.v:1510-1511)** — the `w530` window dividers of the
+  sprite-process ring reset term have **no async reset** (`nr1 = w47 =
+  const1`); together with the no-reset FFs reported in ppu2.md they leave
+  `x` state at power-up until the first clock.
+
 ## References
 
 - [DMG-CPU Schematics by @msinger](https://github.com/msinger/dmg-schematics/) — schematic pages `ppu_decode`, `background`, `bg_win_cycles`, `bg_px_shifter`, `sp_px_shifter`, `palettes`, `pixel_mux`, `lcd`, `sprite_*`, `ff41_stat` correspond to the blocks above.

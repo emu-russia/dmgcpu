@@ -345,7 +345,7 @@ store/handshake state. Mapping that handshake is the next research step.
 Per the issue workflow, suspected problems in `ppu1.v`/`ppu2.v` are reported
 rather than patched in this repository:
 
-1. **PPU2 scan-address register has no reset** (`g938–g943`, six
+1. **PPU2 scan-address register has no reset** (ppu2.v:2089-2094, `g938–g943`, six
    `dffrnq_comp`, clk `w648` = `oam_addr_ck`): their async reset `nr1` is
    hard-wired to `w149` (const `g527.q1` = 1), i.e. they are never reset and
    hold `x` until the first `oam_addr_ck` edge after power-up. Probably
@@ -353,10 +353,12 @@ rather than patched in this repository:
    count after `n_ppu_hard_reset` must be deterministic, they should reset
    from the `w252/w650` tree.
 2. **PPU1 `g652` looks like a second LCDC.D7 latch** next to `g656`:
-   *reported round 9:* during mode 2 the `oa` scan group (`n_ena w518 =
+   *reported round 9:* during mode 2 the `oa` scan group (`n_ena w518 =` on
+   `g419`, ppu2.v:1570)
    !ppu_mode2`) and the port-B-adder const group (`n_ena w475 = !w476`) can
    be **enabled simultaneously** when the Y-test sum bit `w476` is 1
-   (observed directly, waves.md), driving the same `oa` nodes to opposite
+   vs the port-B const group (`g421`, ppu2.v:1572) - (observed directly,
+   waves.md), driving the same `oa` nodes to opposite
    rails. On a static full-drive model this is contention `x`; check whether
    these two `oa` mux phases are supposed to be separated in time (dynamic
    precharge/evaluate) or whether one of the enable terms is wrong.
