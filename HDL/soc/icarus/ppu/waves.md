@@ -102,6 +102,39 @@ the scroll adders behave together.
 
 ![tb_ppu_window](/HDL/soc/icarus/ppu/waves/tb_ppu_window.png)
 
+### Why `oa[7:1]` shows red (`x`) in the sprite waves
+
+Red in the rendered waves is the `x` (unknown) state. `oa` is red during
+most non-mode-2 stretches and in the "precharge" half of every 128 ns OAM
+access inside mode 2. Direct probe of the `oa` drivers (e.g. at t=30016,
+mode 2) shows the cause:
+
+```
+X t=30016 m2=1 oa=0000xxx w497=x  en518=0 en475=0 w476=1   <- x (contention)
+X t=30020 m2=1 oa=0000100 w497=1  en518=0 en475=x w476=x   <- clean (scan only)
+```
+
+- `oa[i]` is buffered by inverters from notif-driven nodes (`oa[1]=not(w497)`, ...).
+  The scan group (`n_ena w518 = !ppu_mode2`) drives the counter value; the
+  port-B adder group (`n_ena w475 = !w476`) drives constants.
+- Whenever the Y-test adder sum bit `w476` is 1 (port-B data defined), `w475`
+  goes low **while the scan group is also low**, and the two notif0 cells
+  drive the same node to opposite rails (`w69=0` -> 1 vs `w149=1` -> 0) -
+  full-drive contention gives `x`.
+- When the captured port-B byte is `x` (`w476=x`), `w475=x` and the port-B
+  group is off (the `===` enable compare treats x as disabled), so the scan
+  runs clean - but then the Y-test/store cannot work either.
+
+So the red `oa` is a *driven* `x` from two oa mux groups overlapping in
+time (scan group + Y-adder group), i.e. the dynamic two-phase (precharge /
+evaluate) separation of the oa bus is not reproduced by the static
+simulation. This is the same precharge-phase modelling issue that blocks the
+sprite store; a discharge-only tristate model removes the contention but
+changes the scan addressing polarity (documented in wiki/soc/ppu2.md open
+questions). Resolving it needs the real two-phase bus timing (or the
+author's netlist review of the `g938–g943`/`g325–g326` no-reset FFs and the
+`oa` mux phases).
+
 ## Work in progress
 
 - `tb_ppu_sprites.v` (dev): brings up the mode-2 OAM scan with the
