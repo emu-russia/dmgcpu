@@ -167,6 +167,16 @@ never clock (obj_prio_ck never pulses). So the whole claim path is gated on
 the missing obj_prio_ck pulses - confirming the handshake deadlock is on the
 PPU1 side, not in the OAM model.
 
+Round-13: obj_prio_ck has ZERO rising edges over 4 full lines
+(edge-detection probe), although h_restart pulses each line and the sprite
+ring reset term w816 = ~(w530|w531|h_restart) does dip. obj_prio_ck =
+~(w239|w240); w240 (nand3 over the sprite-process FFs g322/g314/g287) stays
+high because w229/w241 never reach 1 together - the g287-g289 ring never
+leaves its latched state (w226=1,w228=1) after boot, so the claimed
+"restart each line" never produces process-clock pulses. The FSM boot state
+depends on the no-reset FFs reported to the author. Sprite research is
+paused here pending the author's netlist fixes.
+
 To unblock: (a) author fixes/confirms the suspected netlist items, and/or
 (b) schematic-level two-phase bus timing (msinger pages) is made available,
 then the sprite test can be completed from the current bring-up state
