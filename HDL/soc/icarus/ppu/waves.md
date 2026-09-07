@@ -91,6 +91,17 @@ at the line start is `SCX>>3 = 1`.
 
 ![tb_ppu_scroll](/HDL/soc/icarus/ppu/waves/tb_ppu_scroll.png)
 
+## Test 4 — `tb_ppu_window` (WIN layer: WY/WX + window tile map)
+
+Scenario: LCDC = $F1 (LCD + BG + WIN on, window tile map $9C00 via LCDC.6),
+WY=0, WX=7 so the window covers the whole visible area. The test verifies
+that the PPU tile-map fetches come from the **$9C00 window map** (address
+0x1C00..0x1DFF) with the window tile data, i.e. the PPU1 window logic
+(in_window / WY/WX compare / map select) and the PPU2 `!in_window` gating of
+the scroll adders behave together.
+
+![tb_ppu_window](/HDL/soc/icarus/ppu/waves/tb_ppu_window.png)
+
 ## Work in progress
 
 - `tb_ppu_sprites.v` (dev): brings up the mode-2 OAM scan with a real OAM
