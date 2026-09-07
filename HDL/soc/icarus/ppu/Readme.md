@@ -84,6 +84,24 @@ Details, wave images and the research handoff are in [waves.md](waves.md);
 the status snapshot and author checklist are in [STATUS.md](STATUS.md).
 | CPU OAM write & VRAM→OAM DMA data paths | `tb_ppu_oam_cpu`, `tb_ppu_dma` — dev (need SoC arbiter/MMIO timing) |
 
+## Reproducing the waves
+
+The VCD files and `.run` binaries are git-ignored - they are produced by the
+tests. To regenerate everything from a clean clone:
+
+```
+# 1) run the tests (each dumps <test>.vcd)
+./run_all.sh                      # fast suite; add tb_ppu_frame for the slow full-frame test
+# 2) open the traces in GTKWave (v3.3.128 save files)
+gtkwave tb_ppu_regs.gtkw          # etc. (files are committed, VCDs must exist)
+# 3) re-render the wave PNGs (needs the vcd2png.py renderer)
+python3 vcd2png.py tb_ppu_regs.vcd waves/tb_ppu_regs.png --cfg waves_cfg_regs.json ...
+```
+
+The `.gtkw` save files and the PNGs in `waves/` are committed, so a fresh
+clone shows the documentation immediately; re-running the tests refreshes
+the VCDs behind them.
+
 ## Notes
 
 - `HDL/soc/dmglib.v` needed one bug fix for simulation: `dmg_notif0/1`
