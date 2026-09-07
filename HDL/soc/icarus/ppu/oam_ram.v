@@ -7,7 +7,7 @@
 //   n_oam_rd    - read enable, active low
 //   n_oama_wr   - port A write enable, active low
 //   n_oamb_wr   - port B write enable, active low
-//   n_oama/n_oamb - bidirectional data buses (inverse-hold: ~data)
+//   n_oama/n_oamb - bidirectional data buses
 //
 // Ground truth used (msinger "DMG-CPU cells", dmg_cells.html#sram,
 // Variant A is used in OAM):
@@ -18,14 +18,27 @@
 //     Port B therefore carries Y/tile bytes and port A the X/flags bytes
 //     (matches the netlist: the Y test reads port B; obj_color/obj_prio/
 //     sprite_x_flip are port-A attribute bits 4/7/5).
-//   * 6T cells, dynamic NMOS access: bitlines are precharged before each
-//     access and the data pad is driven as D = ~bit during a read
-//     ("inverse-hold"); writes sample the bus and store ~bus.
-//   * Between accesses the bitlines hold their level (dynamic storage);
-//     the model therefore keeps the last read value on the buses instead of
-//     releasing them to z (which otherwise pollutes PPU2's capture latches).
+//   * 6T cells, dynamic NMOS access.
 //
-// The model is used by ppu_env.v in place of the (empty) HDL/soc/oam.v stub.
+// Bus convention - INVERSE HOLD (same as `d`, `md`, `nma`, `oa`):
+//   the pads carry the INVERSE of the data value (data = ~pad).  The idle /
+//   precharged level is HIGH (= data 0); a logic-1 data bit is signalled by
+//   pulling the pad LOW (discharge).  PPU2's scan-capture stage stores the
+//   pad level directly (dmg_latch g733-g748, no inversion), i.e. it works on
+//   the inverse level - the model keeps this convention end to end:
+//   read:  pad = ~mem[word]   (bit 1 -> pad low, bit 0 -> pad high/precharge)
+//   write: mem[word] = ~pad    (sampled at the write strobe edge)
+//
+// Model style (round 26, after the "red x" reports): the macro pads are
+// open-drain (discharge-only) against always-on pullup keepers instead of a
+// strong continuous `~data` tristate.  This reproduces the SRAM precharge:
+//   * idle / between accesses the bus sits at its precharged level (1);
+//   * during a read the macro only pulls down the pads whose stored bit is 1;
+//   * during a write the macro releases the pads (PPU2 drives them);
+// and it removes the strong-drive collisions with PPU2's own pad drivers
+// (which produced x) without changing the single-driver polarity.
+// The old model drove ~data strongly and idled at bus level 0 - wrong for an
+// inverse-hold bus.  Regression suite (6 fast tests) passes with this model.
 `timescale 1ns/1ns
 
 module oam_ram (
@@ -39,48 +52,55 @@ module oam_ram (
 );
 	// 160 OAM bytes. Byte address = 2*word + {0 for port B, 1 for port A}.
 	reg [7:0] mem [0:159];
-	reg [7:0] oama_data;
-	reg [7:0] oamb_data;
-	reg [7:0] oama_hold;
-	reg [7:0] oamb_hold;
-	reg [6:0] last_oa;
+	reg [7:0] hold_a, hold_b;   // last read data, kept between reads
 	integer i;
+
+	// precharge keepers (the SRAM bitline precharge, static approximation)
+	pullup (n_oama[0]); pullup (n_oama[1]); pullup (n_oama[2]); pullup (n_oama[3]);
+	pullup (n_oama[4]); pullup (n_oama[5]); pullup (n_oama[6]); pullup (n_oama[7]);
+	pullup (n_oamb[0]); pullup (n_oamb[1]); pullup (n_oamb[2]); pullup (n_oamb[3]);
+	pullup (n_oamb[4]); pullup (n_oamb[5]); pullup (n_oamb[6]); pullup (n_oamb[7]);
 
 	initial begin
 		for (i = 0; i < 160; i = i + 1)
 			mem[i] = 8'h00;
-		oama_hold = 8'hFF;   // precharged level (logical 0 on the bus)
-		oamb_hold = 8'hFF;
-		last_oa   = 7'b0000000;
+		hold_a = 8'h00;   // idle: no discharges -> pads stay at precharge 1
+		hold_b = 8'h00;
 	end
 
-	wire [6:0] word = oa;            // 0..79
-	wire [6:0] hold = last_oa;       // word address of the last access
+	wire [6:0] word = oa;
 
-	// Drive the ports during a read; between accesses keep the last value
-	// (bitline hold). On a write the macro samples the bus and the pads are
-	// released (PPU2 drives them).
-	assign n_oama = (n_oama_wr === 1'b0) ? 8'bz : ~oama_data;
-	assign n_oamb = (n_oamb_wr === 1'b0) ? 8'bz : ~oamb_data;
+	// data value presented: mem during the read, the last read between reads
+	wire [7:0] da = (n_oam_rd === 1'b0) ? mem[{word, 1'b1}] : hold_a;
+	wire [7:0] db = (n_oam_rd === 1'b0) ? mem[{word, 1'b0}] : hold_b;
 
-	always @(*) begin
-		if (n_oam_rd === 1'b0) begin
-			oama_data = mem[{word, 1'b1}];
-			oamb_data = mem[{word, 1'b0}];
-		end else begin
-			oama_data = oama_hold;
-			oamb_data = oamb_hold;
-		end
-	end
+	// discharge-only pad drive: bit stored 1 -> pull the pad low (bus 0 =
+	// data 1); otherwise hi-Z (the keeper holds the precharge 1 = data 0).
+	// hi-Z during writes (PPU2 drives the pads).
+	assign n_oama[0] = (n_oama_wr === 1'b0 || da[0] !== 1'b1) ? 1'bz : 1'b0;
+	assign n_oama[1] = (n_oama_wr === 1'b0 || da[1] !== 1'b1) ? 1'bz : 1'b0;
+	assign n_oama[2] = (n_oama_wr === 1'b0 || da[2] !== 1'b1) ? 1'bz : 1'b0;
+	assign n_oama[3] = (n_oama_wr === 1'b0 || da[3] !== 1'b1) ? 1'bz : 1'b0;
+	assign n_oama[4] = (n_oama_wr === 1'b0 || da[4] !== 1'b1) ? 1'bz : 1'b0;
+	assign n_oama[5] = (n_oama_wr === 1'b0 || da[5] !== 1'b1) ? 1'bz : 1'b0;
+	assign n_oama[6] = (n_oama_wr === 1'b0 || da[6] !== 1'b1) ? 1'bz : 1'b0;
+	assign n_oama[7] = (n_oama_wr === 1'b0 || da[7] !== 1'b1) ? 1'bz : 1'b0;
+	assign n_oamb[0] = (n_oamb_wr === 1'b0 || db[0] !== 1'b1) ? 1'bz : 1'b0;
+	assign n_oamb[1] = (n_oamb_wr === 1'b0 || db[1] !== 1'b1) ? 1'bz : 1'b0;
+	assign n_oamb[2] = (n_oamb_wr === 1'b0 || db[2] !== 1'b1) ? 1'bz : 1'b0;
+	assign n_oamb[3] = (n_oamb_wr === 1'b0 || db[3] !== 1'b1) ? 1'bz : 1'b0;
+	assign n_oamb[4] = (n_oamb_wr === 1'b0 || db[4] !== 1'b1) ? 1'bz : 1'b0;
+	assign n_oamb[5] = (n_oamb_wr === 1'b0 || db[5] !== 1'b1) ? 1'bz : 1'b0;
+	assign n_oamb[6] = (n_oamb_wr === 1'b0 || db[6] !== 1'b1) ? 1'bz : 1'b0;
+	assign n_oamb[7] = (n_oamb_wr === 1'b0 || db[7] !== 1'b1) ? 1'bz : 1'b0;
 
-	// latch the read data (and its address) at the end of each read window
+	// hold the read data at the end of each read window (before oa changes)
 	always @(posedge n_oam_rd) begin
-		if (oama_data !== 8'bz) oama_hold = oama_data;
-		if (oamb_data !== 8'bz) oamb_hold = oamb_data;
-		last_oa = oa;
+		hold_a <= mem[{word, 1'b1}];
+		hold_b <= mem[{word, 1'b0}];
 	end
 
-	// write sampling (the bus carries ~data while the strobe is low)
+	// write sampling (the pads carry ~data while the strobe is low)
 	always @(negedge n_oama_wr)
 		mem[{word, 1'b1}] <= ~n_oama;
 	always @(negedge n_oamb_wr)

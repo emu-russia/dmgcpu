@@ -93,6 +93,22 @@ statically, or Y-test term polarity/bounds inverted - see the `w852/w817`
 polarity open question in wiki/soc/ppu2.md). Needs schematic-level two-phase
 timing / OAM macro byte mapping (author or msinger ground truth).
 
+### OAM A/B inverse-hold model fix + weak buses (round 26)
+
+`n_oama`/`n_oamb` are inverse-hold buses (idle = precharge HIGH = data 0);
+PPU2's scan capture stores the pad level directly (`dmg_latch g733-g748`).
+Committed `oam_ram.v` reworked to precharge keepers + discharge-only pads
+(pad low for stored 1, hi-Z during writes): `x` on the ports drops from
+320/6000 samples (old strong-`~data` drive) to 0/6000. All 6 fast tests and
+`tb_ppu_frame` still ALL PASS. Test-only variants in `temp/oamweak/` (PPU2
+OAM-port drivers open-drain, + weak oa, + swapped port mapping) - in every
+combination with a visible sprite in all 40 OAM entries, lines LY 1..15:
+Y-test AND6 never high, store window `w852` never opens, `obj_prio_ck`
+0 edges/line. Read dumps show defined pad levels while the scan walks words
+{5,7,15,...} - the Y bytes (even words under the model layout) are never
+presented; the scan word stream / byte<->word<->port mapping remains the
+open item.
+
 ## What is needed to finish the sprite test
 
 1. Author review/fix of the suspected items above (or confirmation that the

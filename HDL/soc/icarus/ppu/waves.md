@@ -345,6 +345,31 @@ fetches switch from the BG map ($9800 / 0x1800) to the window map ($9C00 /
   schematic-level two-phase timing / macro byte mapping (author or msinger
   ground truth), as already stated in the open questions.
 
+  Round-26 (OAM A/B buses "weak" + inverse-hold model fix): the ports
+  `n_oama`/`n_oamb` are inverse-hold buses like `oa`/`nma` (idle =
+  precharged HIGH = data 0; data = ~pad level). PPU2's scan-capture stage
+  stores the pad level *directly* (`dmg_latch g733-g748`, no inversion), so
+  the macro must present levels, not data. The committed `oam_ram.v` was
+  reworked (round 26):
+  * old model drove a strong continuous `~data` tristate and idled the bus
+    at level 0 - wrong for an inverse-hold bus, and it collided (x) with
+    PPU2's own pad drivers: measured `x` on `n_oama`/`n_oamb` in 320/6000
+    samples (~5%) over 6 lines;
+  * new model: always-on pullup keepers (precharge = 1) + discharge-only
+    pads (a stored 1 pulls the pad low), hi-Z during writes - measured
+    `x` on `n_oama`/`n_oamb` = 0/6000 samples (red gone from the ports).
+  Test-only variants (temp/oamweak): (a) PPU2 OAM-port write drivers
+  converted to open-drain (`dmg_notif0_od`, 48 cells), (b) combined with
+  the round-23 weak `oa`, (c) port A/B byte mapping swapped. In every
+  combination, with a visible sprite (Y=16) in ALL 40 OAM entries and
+  LY 1..15: the Y-test AND6 (`w816`, ppu2) never passes, the store window
+  `w852` never opens, `obj_prio_ck` stays at 0 edges/line. Read-phase
+  dumps show defined pad levels (e.g. 0xFE = data 1 bit) while the scan
+  walks words {5,7,15,...} - under the model's byte layout the Y bytes
+  (even words) are never presented, i.e. the scan word stream / byte<->word
+  <->port mapping is the remaining open item (see PPU2 open questions).
+  The 6 fast regression tests AND `tb_ppu_frame` pass with the new model.
+
   ![tb_ppu_sprites_scan](/HDL/soc/icarus/ppu/waves/tb_ppu_sprites_scan.png)
 
   Wave regenerated (round 24) from the current netlist run, one line window
