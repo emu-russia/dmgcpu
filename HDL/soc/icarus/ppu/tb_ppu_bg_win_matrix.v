@@ -131,10 +131,23 @@ module tb_ppu_bg_win_matrix;
 		$display("C8 0xB9 BG1+WIN0:  m0=%0d m1=%0d ld=%0d", r0, r1, rl);
 		chk("C8 window $9800 dominates", 1'b1, r0 > r1 * 10 && r0 > 5);
 
-		// ---- C9: LCD on, BG off, WIN off, SCY/SCX present -> still no fetch ----
+		// ---- C9: LCD on, BG off, WIN off ----
 		run_cfg(8'h80, 8'hF0, 8'h07, 1, r0, r1, rl, r3);
 		$display("C9 0x80 (again):  m0=%0d m1=%0d", r0, r1);
 		$display("INFO C9 fetcher runs from map0 with BG/WIN off (m0=%0d)", r0);
+
+		// ---- C10: BG $9800 + WIN $9C00, WY=0, WX=50 -> mid-line BG->WIN ----
+		run_cfg(8'hE1, 8'h00, 8'h32, 1, r0, r1, rl, r3);
+		$display("C10 BG0+WIN1 WX=50:  m0=%0d m1=%0d", r0, r1);
+		chk("C10 both maps fetched (mid-line window switch)", 1'b1, r0 > 5 && r1 > 5);
+
+		// ---- C11: WIN with WX=3 (WX<7). Observed: the window still covers
+		// the whole line (WX-7 wraps negative => window start <=0), so the
+		// $9C00 window map dominates - matches the netlist comparator.
+		run_cfg(8'hE1, 8'h00, 8'h03, 1, r0, r1, rl, r3);
+		$display("C11 BG0+WIN1 WX=3:  m0=%0d m1=%0d", r0, r1);
+		$display("INFO C11 WX<7 -> window active whole line (window map dominates)");
+		chk("C11 window map dominates for WX<7", 1'b1, r1 > r0 * 10 && r1 > 5);
 
 		if (errors == 0)
 			$display("RESULT: ALL PASS");

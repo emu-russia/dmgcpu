@@ -223,6 +223,8 @@ which tile map ($9800/$9C00) the fetches come from for the active layers:
 | C6 | 0xE1 | BG $9800 + WIN $9C00, WY=0 (whole-screen window) | PASS (map1 dominates) |
 | C7 | 0xE1 | same, WY=40 (window below LY<40) | PASS (BG map0 only) |
 | C8 | 0xB9 | BG $9C00 + WIN $9800, WY=0 | PASS (map0/window dominates) |
+| C10 | 0xE1 | BG $9800 + WIN $9C00, WY=0, WX=50 | PASS (both maps: mid-line BG->WIN switch, m0=13/m1=30) |
+| C11 | 0xE1 | same, WX=3 (WX<7) | PASS (window covers the whole line - comparator WX-7 wraps negative) |
 
 `RESULT: ALL PASS`.
 
