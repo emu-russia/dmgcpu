@@ -102,6 +102,21 @@ module tb_ppu_bg_scanline;
 		// after a full line the V counter advanced
 		check("v advanced past 0", 1'b1, env.v > 0);
 
+		// LCD stub sanity: it must have collected /CP pulses and pixels
+		begin : stubinfo
+			integer lc, pc, fc;
+			reg [1:0] p0;
+			env.lcd.get_counts(lc, pc, fc);
+			env.lcd.get_line(0, p0);
+			$display("lcd_stub: lines=%0d pixels=%0d frames=%0d cp=%0d line0pix=%b",
+			         lc, pc, fc, env.lcd.cp_cnt, p0);
+			if (env.lcd.cp_cnt > 200) begin
+				$display("PASS lcd_stub collected /CP pulses");
+			end else begin
+				$display("FAIL lcd_stub /CP count too low: %0d", env.lcd.cp_cnt);
+				errors = errors + 1;
+			end
+		end
 		if (errors == 0)
 			$display("RESULT: ALL PASS");
 		else

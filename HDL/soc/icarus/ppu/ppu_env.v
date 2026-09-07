@@ -21,44 +21,8 @@
 
 `timescale 1ns/1ns
 
-// ---------------------------------------------------------------------------
-// Behavioral OAM RAM macro (stub interface of HDL/soc/oam.v)
-// ---------------------------------------------------------------------------
-module oam_env (
-	input  wire        oam_bl_pch,
-	input  wire [7:1]  oa,          // address, bit 0 not used
-	input  wire        n_oam_rd,    // read enable, active low
-	input  wire        n_oama_wr,   // port A write, active low
-	input  wire        n_oamb_wr,   // port B write, active low
-	inout  wire [7:0]  n_oama,      // port A data bus (inverse hold)
-	inout  wire [7:0]  n_oamb       // port B data bus (inverse hold)
-);
-	// OAM is 160 bytes; the macro is modeled as 256 bytes (the 7-bit word
-	// address with lsb ignored maps to byte pairs). Port A and Port B are
-	// two independent byte ports on the same array.
-	reg [7:0] mem [0:255];
-	reg [7:0] oama_data;
-	reg [7:0] oamb_data;
-	integer i;
-	initial begin
-		for (i = 0; i < 256; i = i + 1)
-			mem[i] = 8'h00;
-	end
+// (OAM RAM behavioral model lives in oam_ram.v - module oam_ram)
 
-	// Data buses are precharged (pulled to 1) when not written.
-	// During a read the macro drives the inverse-hold value.
-	always @(*) begin
-		oama_data = mem[{oa, 1'b0}];
-		oamb_data = mem[{oa, 1'b1}];
-	end
-	assign n_oama = (!n_oam_rd || !n_oama_wr) ? ~oama_data : 8'bz;
-	assign n_oamb = (!n_oam_rd || !n_oamb_wr) ? ~oamb_data : 8'bz;
-
-	always @(negedge n_oama_wr)
-		mem[{oa, 1'b0}] <= ~n_oama;
-	always @(negedge n_oamb_wr)
-		mem[{oa, 1'b1}] <= ~n_oamb;
-endmodule
 
 // ---------------------------------------------------------------------------
 // Behavioral VRAM (external LH5164-like 8Kx8 SRAM, DMG-CPU-06 PCB)
@@ -341,7 +305,18 @@ module ppu_env;
 		.oam_addr_ck(oam_addr_ck)
 	);
 
-	oam_env oam (
+	lcd_stub lcd (
+		.n_lcd_ld0(n_lcd_ld0),
+		.n_lcd_ld1(n_lcd_ld1),
+		.n_lcd_cp(n_lcd_cp),
+		.n_lcd_cpg(n_lcd_cpg),
+		.n_lcd_cpl(n_lcd_cpl),
+		.n_lcd_st(n_lcd_st),
+		.n_lcd_s(n_lcd_s),
+		.n_lcd_fr(n_lcd_fr)
+	);
+
+	oam_ram oam (
 		.oam_bl_pch(oam_bl_pch),
 		.oa(oa),
 		.n_oam_rd(n_oam_rd),
