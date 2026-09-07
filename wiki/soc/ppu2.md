@@ -340,6 +340,25 @@ fetch/prio FFs clocked off `w596` = ppu_clk / `w815`, ring
 `g282–g285/g316/g317/g319`) does not start without the corresponding PPU2
 store/handshake state. Mapping that handshake is the next research step.
 
+## Suspected netlist issues (reported to the author, NOT fixed here)
+
+Per the issue workflow, suspected problems in `ppu1.v`/`ppu2.v` are reported
+rather than patched in this repository:
+
+1. **PPU2 scan-address register has no reset** (`g938–g943`, six
+   `dffrnq_comp`, clk `w648` = `oam_addr_ck`): their async reset `nr1` is
+   hard-wired to `w149` (const `g527.q1` = 1), i.e. they are never reset and
+   hold `x` until the first `oam_addr_ck` edge after power-up. Probably
+   intentional (reloaded every scan), but if the first scan / `stop_oam_eval`
+   count after `n_ppu_hard_reset` must be deterministic, they should reset
+   from the `w252/w650` tree.
+2. **PPU1 `g652` looks like a second LCDC.D7 latch** next to `g656`:
+   `g652` (`latchr_comp`, ena `w84` = the $FF40 write enable, d = `w79` =
+   D7, nres `w82` = same reset family) drives `w149`, which is read only by
+   dffr `g305`, while `g656` (same ena/d/reset) drives `w81` = LCDC.7.
+   Probably an intentional copy for layout, but it is undocumented
+   (`wiki/soc/ppu1.md` lists the LCDC bank as g649–g657).
+
 ## Open questions
 
 - **OAM bus idle/precharge state.** The behavioural testbench shows that
