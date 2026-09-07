@@ -32,6 +32,44 @@ Regression testbench for the DMG-CPU PPU gate netlists (`HDL/soc/ppu1.v`,
 | OAM macro (interface of the empty `oam.v` stub) | `oam_ram.v` — behavioral model (2 ports/80 words, bitline hold, port B = even bytes) |
 | LCD driver interface (output-only) | `lcd_stub.v` — consumer stub (samples LD0/LD1 on /CP into a 160-px line buffer) |
 | OAM mode-2 scan / sprite store / compare | `tb_ppu_sprites` — dev (scan + ports defined; `obj_prio_ck` inert -> store not claimed; see waves.md) |
+
+### Functional-block coverage (per wiki/soc/ppu1.md and wiki/soc/ppu2.md)
+
+Legend: ✅ verified by a passing test · 🟡 partially verified / dev · ⬜ open (blocked, see waves.md "Research handoff").
+
+| PPU1 block (ppu1.md) | Status | Evidence |
+|---|---|---|
+| 1 Register decode | ✅ | regs: writes to $FF40-4B decoded; no cross-writes |
+| 2 PPU registers | ✅ | regs: read-back SCY/SCX/BGP/LCDC/LY |
+| 3 H counter (LX) | ✅ | regs/bg: h counts, 456-tick line |
+| 4 V counter (LY) | 🟡 | regs: LY read-back tracks v; LY=144/153 wrap not sim. (frame too slow) |
+| 5 Window logic | ✅ | window: $9C00 fetches with WY/WX |
+| 6 BG/WIN fetch sequencer | ✅ | bg/scroll/window: mode2/3, fetch rhythm |
+| 7 VRAM address generation | ✅ | bg/scroll: map/data fetch addresses; SCY/SCX adders |
+| 8 BG pixel shifter | ✅ | bg: LD stream matches tile data through BGP |
+| 9 Sprite pixel path | ⬜ | needs sprite store (blocked) |
+| 10 Sprite selection ring / LAST_SPRITE | 🟡 | ring toggles in mode 2; completion condition open |
+| 11 Palettes + pixel mux | ✅ | bg: color pattern through BGP on LD0/LD1 |
+| 12 LCD driver timing | ✅ | lcd_stub: /CP pulses, /ST//CPL per line |
+| 13 OAM parse clocks (mode 2) | 🟡 | oam_addr_ck/oam_rd_ck run; obj_prio_ck inert (blocked) |
+| 14 Interrupt outputs (STAT/VBL) | ⬜ | needs full-frame sim (slow) |
+| 15 Reset/clock generation | ✅ | regs: n_ppu_reset/hard-reset behaviour |
+| 16 DMA interface | 🟡 | dev tb_ppu_dma (needs SoC arbiter timing) |
+
+| PPU2 block (ppu2.md) | Status | Evidence |
+|---|---|---|
+| 1 SCY/SCX registers | ✅ | regs read-back; scroll test effects |
+| 2 Scroll adders + nma drive | ✅ | scroll test: (V+SCY)>>3, (H+SCX)>>3 |
+| 3 Port-B adder (Y test) | 🟡 | Y-test adder values observed; store not claimed (blocked) |
+| 4 Mode-2 scan engine | 🟡 | mode2 80-tick; oa word stepping; stop_oam_eval pulses |
+| 5 OAM port/address muxes | 🟡 | CPU OAM write lands word-addressed; strobe x issue (dev) |
+| 6 Sprite-store capture stage | ⬜ | attr stage x half-cycles (blocked) |
+| 7 10-slot sprite store | ⬜ | no slot claimed (obj_prio_ck inert) |
+| 8 Sprite compare (mode 3) | ⬜ | sprite_x_match never asserts |
+| 9 Clock/reset generation | ✅ | ppu_clk=cclk, n_ppu_hard_reset, ppu_rd/wr passthrough |
+| 10 DMA/CPU-OAM write | 🟡 | dev tb_ppu_oam_cpu / tb_ppu_dma |
+
+Details, wave images and the research handoff are in [waves.md](waves.md).
 | CPU OAM write & VRAM→OAM DMA data paths | `tb_ppu_oam_cpu`, `tb_ppu_dma` — dev (need SoC arbiter/MMIO timing) |
 
 ## Notes
