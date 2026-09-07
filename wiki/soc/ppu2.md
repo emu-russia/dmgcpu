@@ -315,6 +315,11 @@ Note: **the PPU dot clock is the external complement clock `cclk`** — PPU2 doe
   lanes (observed with a bitline-hold macro), but the byte↔port layout and
   the precharge-phase timing need the schematic-level OAM macro timing
   (the repo OAM module `HDL/soc/oam.v` is an empty stub).
+- The **OAM port A/B mapping** was tested both ways (A = even byte and
+  A = odd byte of the 16-bit word) with the sprite testbench: the mode-2
+  scan cadence and the attribute-capture x-half-cycles are identical in both
+  layouts, so the byte↔port mapping alone does not explain the residual x;
+  it must be combined with the real precharge/capture phase timing.
 - The exact **byte ↔ OAM-port mapping** (port A = attribute byte, port B = Y byte, CPU port B, DMA parity alternation) needs confirmation with the OAM model; the repo OAM netlist is a stub (`HDL/soc/oam.v`).
 - The **sprite-compare semantics**: the stored 8-bit field is matched against the H counter in mode 3 — whether the port-A byte read during the scan is literally the sprite X (making the names `obj_color`/`obj_prio`/`sprite_x_flip` re-examinable at the PPU1 boundary) or the equality gates serve a different scheduling function. A line with known OAM contents (sprite testbench) will pin this down.
 - The exact **slot↔OAM-entry↔enable schedule** (which of the 40 scan addresses land in which of the 10 slots, and how the "10 maximum" is enforced).
