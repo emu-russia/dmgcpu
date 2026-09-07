@@ -29,7 +29,9 @@ Regression testbench for the DMG-CPU PPU gate netlists (`HDL/soc/ppu1.v`,
 | BG rendering pipeline (fetch → serializer → LD0/LD1) | `tb_ppu_bg_scanline` — ALL PASS |
 | SCY / SCX scroll adders (PPU2 V+SCY, H+SCX on nma) | `tb_ppu_scroll` — ALL PASS |
 | WIN layer (WY/WX, LCDC.6 window map $9C00) | `tb_ppu_window` — ALL PASS |
-| OAM mode-2 scan / sprite store / compare | `tb_ppu_sprites` — dev (oa scan runs, attr stage x on precharge half-cycles; see waves.md) |
+| OAM macro (interface of the empty `oam.v` stub) | `oam_ram.v` — behavioral model (2 ports/80 words, bitline hold, port B = even bytes) |
+| LCD driver interface (output-only) | `lcd_stub.v` — consumer stub (samples LD0/LD1 on /CP into a 160-px line buffer) |
+| OAM mode-2 scan / sprite store / compare | `tb_ppu_sprites` — dev (scan + ports defined; `obj_prio_ck` inert -> store not claimed; see waves.md) |
 | CPU OAM write & VRAM→OAM DMA data paths | `tb_ppu_oam_cpu`, `tb_ppu_dma` — dev (need SoC arbiter/MMIO timing) |
 
 ## Notes

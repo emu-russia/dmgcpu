@@ -326,6 +326,20 @@ From the [DMG-CPU cells reference](https://iceboy.a-singer.de/doc/dmg_cells.html
   exact column/byte<->port encoding inside the 2×OAM macros still needs the
   schematic pages (the repo OAM module is an empty stub).
 
+## Testbench state of the sprite store (round 6)
+
+The behavioural OAM model (`HDL/soc/icarus/ppu/oam_ram.v`: two ports over
+80 16-bit words, port B = even bytes, bitline hold) removed the earlier
+mode-3 overrun: with OBJ enabled the mode-2/3 line rhythm is now normal. The
+sprite *store* still never claims a slot because the per-slot in-use dffr
+`g611–g628` are clocked by `obj_prio_ck` (input from PPU1), and in the
+simulated lines `obj_prio_ck = ~(w239|w240)` (`ppu1` `g494`/`g832`) never
+pulses (`w239` = `nq` of `g286`, `w240` = nand3 `g751` over the
+sprite-process FFs `g322/g287/g314`): PPU1's sprite-clock domain (mode-3
+fetch/prio FFs clocked off `w596` = ppu_clk / `w815`, ring
+`g282–g285/g316/g317/g319`) does not start without the corresponding PPU2
+store/handshake state. Mapping that handshake is the next research step.
+
 ## Open questions
 
 - **OAM bus idle/precharge state.** The behavioural testbench shows that
