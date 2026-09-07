@@ -348,11 +348,19 @@ During Mode 2 (OAM scan) PPU1 generates the timing for PPU2's OAM read sequence:
 |9|dffr, dffr, dffr, dffr, not, notif0, notif0, notif0, notif0, not2, nand3, not, not2, nand5, not, nand5, nand5, nand5, nand5, nand5, nand5, nand5, nand5, not, not, nand5, nand5, or, and, and, nor_latch, and, latchr_comp, notif0, latchr_comp, not, and, latchr_comp, and, and, not2, notif0, notif0, not2, and, not, not, not, notif0, not2, not2, notif0, notif0, notif0, nor_latch, notif0, and, not, dffr, nor, dffr, dffsr, nand, notif1, nand, nand, not, dffsr, or3, not, and, dffsr, not, dffsr, dffsr, nand, not, nand, dffsr, aon2222, aon2222, not, not, nand, not, dffsr, nand, not|
 |10|dffr, not2, notif0, notif0, notif0, nor, not2, notif0, notif0, notif0, notif0, not, nand, notif0, not, notif0, and, notif0, notif0, nor3, not, notif0, notif0, not, and, not, not2, not2, not, not2, dffr, not2, dffr, not2, not, not, nor_latch, and, not, not, xor, not, nand3, not, notif0, latchr_comp, notif0, latchr_comp, latchr_comp, latchr_comp, not, nand5, and, not2, and, and, xor, dffr, not2, and, not, not, not, not, and, not, not, not, not2, not2, not, and, not, dffr, nand, not, not, latchr_comp, not2, not, nor, not, not, not, nand, nand, not2, and, and, not, not, nand, not, not, and, notif0, latchnq_comp, notif0, latchnq_comp, nand, notif0, latchnq_comp, notif0, latchnq_comp, notif0, latchnq_comp, not, nand, notif0, latchnq_comp, not, notif0, latchnq_comp, not, latchnq_comp, notif0, nand, not, nand, nand, dffsr, not, not|
 
+## Verified by the PPU testbench (issue #390)
+
+The joint testbench (`HDL/soc/icarus/ppu`, see [waves.md](../../HDL/soc/icarus/ppu/waves.md)) runs the real `PPU1`+`PPU2` netlists together with behavioral VRAM/OAM models and confirmed:
+
+- the per-line rhythm: **456 clock ticks per scanline**, mode 2 (**OAM scan) ≈ 80 ticks**, mode 3 (BG fetch) starts right after mode 2, LY increments once per line, `h_restart` pulses at line end;
+- the **BG fetch pipeline**: in mode 3 PPU2 places the scroll-adder results on `nma` (map row `(V+SCY)>>3` at `nma[9:5]`, column `(H+SCX)>>3` at `nma[4:0]`, vertical fine `(V+SCY)&7` at `nma[3:1]` — see [PPU2](ppu2.md), block 2), PPU1 captures the tile-map byte and then the two tile-data bytes at the row given by `LY&7` (`$8010`-style `tile*16 + row*2` addressing with the tile index from the map byte), and the pixel serializer emits **160 LD0/LD1 samples per line** matching the VRAM content through the palette mux;
+- register write/read through the CPU bus: LCDC/SCY/SCX/BGP store the written values, `ppu_rd`/`ppu_wr` are produced by PPU2 from `soc_rd`/`soc_wr`, LY read-back tracks the V counter.
+
 ## Open questions
 
-- The exact division of labor between PPU1 and PPU2 for the sprite logic: PPU1 contains the sprite pixel data path, the X-flip, the ring counter and the LAST_SPRITE detection, while PPU2 owns the OAM scan itself. The boundary needs a simulation cross-check (e.g. with @msinger's [dmg-sim](https://github.com/msinger/dmg-sim)).
-- The precise dot-level timing of the fetch phases (how `w44` pulses map to the 2-dot VRAM access rhythm) is not derived here; it requires simulation.
-- The `dffr_comp` bank `g882–g889` is interpreted as the sprite tile-index/address register; its exact capture source (during mode 2 via `md`, or during mode 3) should be confirmed with a waveform dump.
+- The exact division of labor between PPU1 and PPU2 for the sprite logic: PPU1 contains the sprite pixel data path, the X-flip, the ring counter and the LAST_SPRITE detection, while PPU2 owns the OAM scan itself. The PPU2 side is now analysed in [PPU2](ppu2.md) (mode-2 scan engine, 10-slot sprite store, compare); the OAM-port byte organisation and the store↔slot schedule are still being pinned down by the sprite testbench (see [PPU2 open questions](ppu2.md)).
+- The precise dot-level timing of the fetch phases (how `w44` pulses map to the 2-dot VRAM access rhythm) is not fully derived here; the testbench shows one tile-map + two tile-data fetches per 8-pixel group but the exact sub-dot schedule remains to be written up.
+- The `dffr_comp` bank `g882–g889` is interpreted as the sprite tile-index/address register; its exact capture source (during mode 2 via `md`, or during mode 3) should be confirmed with a waveform dump of the sprite-fetch test.
 - The role of the ring counter's seven flip-flops vs the 10-sprite store of the DMG (the ring is probably reused for groups of sprites) needs verification.
 
 ## References

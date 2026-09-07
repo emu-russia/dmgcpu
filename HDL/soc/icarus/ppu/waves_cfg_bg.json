@@ -1,0 +1,9 @@
+{
+ "signals": [
+  {"name":"Clocks","signals":["tb_ppu_bg_scanline.env.reset","tb_ppu_bg_scanline.env.ppu_clk","tb_ppu_bg_scanline.env.n_ppu_clk"]},
+  {"name":"PPU modes","signals":["tb_ppu_bg_scanline.env.ppu_mode2","tb_ppu_bg_scanline.env.ppu_mode3","tb_ppu_bg_scanline.env.h_restart"]},
+  {"name":"Counters","signals":["tb_ppu_bg_scanline.env.h[7:0]","tb_ppu_bg_scanline.env.v[7:0]"]},
+  {"name":"VRAM bus (fetch)","signals":["tb_ppu_bg_scanline.env.nma[12:0]","tb_ppu_bg_scanline.env.md[7:0]"]},
+  {"name":"LCD output","signals":["tb_ppu_bg_scanline.env.ppu1.n_lcd_cp","tb_ppu_bg_scanline.env.ppu1.n_lcd_cpl","tb_ppu_bg_scanline.env.ppu1.n_lcd_ld0","tb_ppu_bg_scanline.env.ppu1.n_lcd_ld1"]}
+ ]
+}
