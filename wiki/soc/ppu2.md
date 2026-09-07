@@ -353,6 +353,13 @@ rather than patched in this repository:
    count after `n_ppu_hard_reset` must be deterministic, they should reset
    from the `w252/w650` tree.
 2. **PPU1 `g652` looks like a second LCDC.D7 latch** next to `g656`:
+   *reported round 9:* during mode 2 the `oa` scan group (`n_ena w518 =
+   !ppu_mode2`) and the port-B-adder const group (`n_ena w475 = !w476`) can
+   be **enabled simultaneously** when the Y-test sum bit `w476` is 1
+   (observed directly, waves.md), driving the same `oa` nodes to opposite
+   rails. On a static full-drive model this is contention `x`; check whether
+   these two `oa` mux phases are supposed to be separated in time (dynamic
+   precharge/evaluate) or whether one of the enable terms is wrong.
    `g652` (`latchr_comp`, ena `w84` = the $FF40 write enable, d = `w79` =
    D7, nres `w82` = same reset family) drives `w149`, which is read only by
    dffr `g305`, while `g656` (same ena/d/reset) drives `w81` = LCDC.7.
