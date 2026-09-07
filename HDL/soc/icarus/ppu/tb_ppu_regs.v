@@ -90,6 +90,23 @@ module tb_ppu_regs;
 		end else
 			$display("PASS LY readback %02x tracks v", rd);
 
+		// register read-back through the CPU bus (PPU2 SCY/SCX, PPU1 BGP/LCDC)
+		begin : regread
+			reg [7:0] rb;
+			env.cpu_read(16'hFF42, rb);   // SCY
+			if (rb !== 8'h21) begin $display("FAIL SCY readback %02x != 21", rb); errors=errors+1; end
+			else $display("PASS SCY readback %02x", rb);
+			env.cpu_read(16'hFF43, rb);   // SCX
+			if (rb !== 8'h07) begin $display("FAIL SCX readback %02x != 07", rb); errors=errors+1; end
+			else $display("PASS SCX readback %02x", rb);
+			env.cpu_read(16'hFF47, rb);   // BGP
+			if (rb !== 8'hE4) begin $display("FAIL BGP readback %02x != E4", rb); errors=errors+1; end
+			else $display("PASS BGP readback %02x", rb);
+			env.cpu_read(16'hFF40, rb);   // LCDC
+			if (rb !== 8'h91) begin $display("FAIL LCDC readback %02x != 91", rb); errors=errors+1; end
+			else $display("PASS LCDC readback %02x", rb);
+		end
+
 		if (errors == 0)
 			$display("RESULT: ALL PASS");
 		else
