@@ -7,7 +7,9 @@ Regression testbench for the DMG-CPU PPU gate netlists (`HDL/soc/ppu1.v`,
 
 | File | Purpose |
 |------|---------|
-| `ppu_env.v` | Reusable PPU test environment: real `ClkGen` + `PPU1` + `PPU2` netlists, behavioral OAM RAM and VRAM models, and a small "CPU+MMIO+Arb" stand-in with register read/write tasks. The pads between the CPU die and the VRAM die are modeled (MA inversion, /MCS//MRD//MWR, MD bus). |
+| `ppu_env.v` | Reusable PPU test environment: real `ClkGen` + `PPU1` + `PPU2` netlists, behavioral VRAM + OAM models and a small "CPU+MMIO+Arb" stand-in with register read/write tasks. The pads between the CPU die and the VRAM die are modeled (MA inversion, /MCS//MRD//MWR, MD bus). |
+| `oam_ram.v` | Behavioral OAM SRAM model (interface of the empty `HDL/soc/oam.v` stub): two 8-bit ports over 80 16-bit words (= 40 OAM entries), port B = even bytes, bitline hold, inverse-hold `~data` pads. |
+| `lcd_stub.v` | Consumer stub for the (output-only) LCD driver interface: samples LD0/LD1 on /CP into a 160-px line buffer, counts pixels/lines/frames. |
 | `ppu1_merged.v`, `ppu2_merged.v` | The PPU netlists with the bidirectional-bus alias `assign`s merged into real net aliases (see `merge_bus_aliases.py`). Without this Icarus cannot simulate register writes: the internal bus wires never see the CPU data. Regenerate with `python3 merge_bus_aliases.py ../../ppu1.v ppu1_merged.v` and `python3 merge_bus_aliases.py ../../ppu2.v ppu2_merged.v` from this directory. |
 | `merge_bus_aliases.py` | Tool: rewrites `assign d[7] = w79;` style aliases (inout bus bits) into true net aliases by renaming `w79` → `d[7]` and deleting the alias + orphaned wire declarations. Only touches `d/md/nma/n_oama/n_oamb`. |
 | `tb_ppu_regs.v` | Register write/read + reset + counter/mode smoke test. |
