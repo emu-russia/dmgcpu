@@ -19,6 +19,7 @@ and the wiki pages `wiki/soc/ppu1.md` / `wiki/soc/ppu2.md`.
 | `tb_ppu_oam_cpu` | 🟡 dev | CPU OAM write lands word-addressed; strobe timing needs SoC model |
 | `tb_ppu_oam_read` | 🟡 dev | CPU OAM read return path needs SoC cycle timing |
 | `tb_ppu_dma` | 🟡 dev | VRAM->OAM DMA needs the MMIO DMA controller/arbiter model |
+| `tb_ppu_ring_init0` | 🟡 dev (round 22) | no-reset FF init-0 probe: boot-state report + per-line `obj_prio_ck` / OAM-clock / Y-test counters |
 
 Run everything: `run_all.sh` (or `run_all.bat` on Windows); `tb_ppu_frame` is
 slow and included.
@@ -50,6 +51,116 @@ slow and included.
 - STAT read-back (round 15/16): at LY==LYC the LYC interrupt fires but
   `$FF41` reads `0xC2/0xC3` (bit2=0, bit7=1); netlist chain `g859/g906/
   g280/w546/w736` documented in wiki/soc/ppu1.md.
+
+## No-reset FF "init-0" probe (round 22) - not the blocker
+Per the checklist, the no-reset triggers were pinned to `0` instead of `x`
+in the test (`tb_ppu_ring_init0`, dev). Result:
+
+- Power-on: dmglib dffr-family cells declare `initial val = 1'b0`, so at
+  boot all no-reset FFs read 0/1 (never `x`); the PPU1 sprite ring
+  `g286/g287-g289/g325/g326` is deterministic and resets (`w816` dips) at
+  every `h_restart`. Only FFs clocked from undefined data keep `x`: PPU1
+  `g882-g889` and PPU2 scan-address bits `g942/g943` (mode-2 scan).
+- Forced-0 run (clones `dmg_*_nr0` in `temp/nr0`: `x` clocked into a
+  no-reset FF stores 0): scan register fully defined (`010000`) each line,
+  `g882-g889` = 0. Result unchanged - `obj_prio_ck` still 0 edges/line,
+  PPU1 `(w228&w229&w241)` never 1, PPU2 Y-test AND6 (`w816`) never high,
+  store window `w852` 0 edges.
+
+Conclusion: the no-reset-FF `x` is NOT the cause of the silent
+`obj_prio_ck` (the ring is reset each line but never opens its pulse
+window; the PPU2 Y-test never passes with the current `oa`/port-B phase
+timing). The no-reset FFs remain a real silicon concern (undetermined
+power-up, no garbage recovery) and stay reported to the author.
+
+### Weak / discharge-only `oa` bus (round 23) - also not the blocker
+
+Per the checklist the `oa` bus was made "weak": the six oa-chain
+inverse-hold nodes (`w497/w146/w500/w554/w641/w49`, each driven by four
+`notif0` mux groups) were re-modelled as precharged nodes - pullup keepers +
+open-drain drivers (`dmg_notif0_od`; variant netlists + probes in
+`temp/weak/`, gitignored). Result: the bus and the scan address become fully
+deterministic (baseline Y-test group is `x` ~85% of mode 2); the scan
+schedule length is unchanged (39 steps) but the row sequence shifts
+(baseline words {2,4,...,78}, weak {7,15,...,79}) - both start above word 0.
+Even with a visible sprite in **every** OAM entry, lines LY 1..15: Y-test
+AND6 `w816` never high, port B reads zero in all sampled phases, store
+window `w852` never opens, `obj_prio_ck` 0 edges/line - in both variants.
+
+Conclusion: oa contention is not the blocker either; the port-B read data
+never reaches the Y-test as a passing compare (read phase not sampled
+statically, or Y-test term polarity/bounds inverted - see the `w852/w817`
+polarity open question in wiki/soc/ppu2.md). Needs schematic-level two-phase
+timing / OAM macro byte mapping (author or msinger ground truth).
+
+### OAM A/B inverse-hold model fix + weak buses (round 26)
+
+`n_oama`/`n_oamb` are inverse-hold buses (idle = precharge HIGH = data 0);
+PPU2's scan capture stores the pad level directly (`dmg_latch g733-g748`).
+Committed `oam_ram.v` reworked to precharge keepers + discharge-only pads
+(pad low for stored 1, hi-Z during writes): `x` on the ports drops from
+320/6000 samples (old strong-`~data` drive) to 0/6000. All 6 fast tests and
+`tb_ppu_frame` still ALL PASS. Test-only variants in `temp/oamweak/` (PPU2
+OAM-port drivers open-drain, + weak oa, + swapped port mapping) - in every
+combination with a visible sprite in all 40 OAM entries, lines LY 1..15:
+Y-test AND6 never high, store window `w852` never opens, `obj_prio_ck`
+0 edges/line. Read dumps show defined pad levels while the scan walks words
+{5,7,15,...} - the Y bytes (even words under the model layout) are never
+presented; the scan word stream / byte<->word<->port mapping remains the
+open item.
+
+### Weak `oa` accepted as the default bus model (round 27)
+
+Per the round-23 experiment the oa-chain nodes are now simulated as
+discharge-only + keepers by default: `gen_weakbus.py` produces
+`ppu2_weakbus.v` (24 oa-chain notif0 -> `dmg_notif0_od` in
+`bus_weak_cells.v`, pullups on `w497/w146/w500/w554/w641/w49`); every PPU
+test compile uses it (bus model only - `ppu2.v` untouched). `oa` x:
+mode 2 0/1280, idle 0/5168 (residual only in mode 3); scan addresses
+defined, words {7,15,...,79}/mode 2. Regression suite 7/7 ALL PASS
+(incl. `tb_ppu_frame`); sprite wave regenerated. Sprite claim still
+inert (see blockers above).
+
+### Y-test root cause (round 28) - comparator is fine, addressing is not
+
+Decisive probe (temp/oamweak/tb_ytest_all10*): with every OAM byte = 0x10
+the Y-test B operand (latched port-B level, `dmg_latchnq_comp` g204-g250,
+en `w120`) = 0x10, AND6 `w816` = 1 and the store window `w852` opens 39x
+per line on LY 1..7 and correctly fails on LY=8 - the comparator, the
+AND6 polarity (pass = 1) and the store logic work. Real content failed
+only because port B never presented a Y byte during the mode-2 scan:
+default netlist -> `oa` low bits x (g419/g421 enable overlap) -> no read
+(B operand 0x00); weakbus -> contested low bits resolve to odd words
+{7,15,...,79} -> port B carries tile bytes (0x01). The remaining blocker
+is the oa scan word<->byte<->port mapping / row schedule (even words
+2k hold entry-k Y bytes under the model layout), to be pinned against the
+schematic or the author's scan-address/oa-phase review. `obj_prio_ck`
+(PPU1) remains flat even when the store fires - the PPU1 side of the
+handshake is the next item once addressing is fixed.
+
+### Scan-only oa bus - claims fire (round 29)
+
+Variant `ppu2_scanonly.v` (temp/oamweak; weakbus + the 18 non-scan
+oa-chain drivers disabled, only the mode-2 scan group `w518` drives):
+scan address stable and EVEN (words {2,4,...,78}); with realistic content
+(Y=16 in entries 1..39) the Y-test `w816` = 1 on LY 1..7 (0 on LY=8) and
+the store window `w852` opens ~38x per line - slots are claimed. Entry 0
+(words 0/1) is not visited by this sequence. `obj_prio_ck` (PPU1) still
+flat. Conclusion: the oa addressing corruption in the static sim comes
+from the overlapping oa-chain mux groups (scan `w518` vs port-B `w475`/
+CPU `w403`/store `w444`, g419/g421); way forward: author makes the groups
+phase-exclusive, or the sprite test continues on the scan-only bus model
+toward the PPU1 handshake.
+
+### Path b taken - sprite pixels reach LD0/LD1 (round 30)
+
+`gen_weakbus.py` now also generates `ppu2_m2only.v` (non-scan oa-chain
+drivers gated off while `ppu_mode2`=1; mode-3 store re-read groups intact).
+Dev test `tb_ppu_sprite_e2e` (sprite entry 1: Y=16, X=16, tile 1, BG zero):
+`obj_prio_ck` ~10-11 pulses/line, `sp_bp_cys` + `sprite_x_match` pulse,
+one in-use flag set; LD shows sprite colour-01 pixels at LX ~7..14 on the
+visible rows. Netlist untouched; still dev - remaining: entry-0 words not
+visited by the scan sequence, LX off-by-one, author g419/g421 phase review.
 
 ## What is needed to finish the sprite test
 
