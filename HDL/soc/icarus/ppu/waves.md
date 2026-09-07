@@ -414,6 +414,26 @@ fetches switch from the BG map ($9800 / 0x1800) to the window map ($9C00 /
   against the schematic or the author's review of the scan-address and oa
   mux phases.
 
+  Round-29 (scan-only oa bus - sprite claims fire): variant `ppu2_scanonly.v`
+  (temp/oamweak; ppu2_weakbus with the 18 non-scan oa-chain drivers
+  disabled - only the mode-2 scan group `w518` drives) makes the scan
+  address stable and EVEN: words {2,4,...,78} per mode 2. With realistic
+  content (Y=16 in OAM entries 1..39, tiles elsewhere):
+  * Y-test `w816` = 1 on LY 1..7, correctly 0 on LY=8;
+  * the store window `w852` opens ~38x per line on the visible lines
+    (slots are claimed; entry 0 sits at words 0/1 and is not visited by
+    this scan sequence - the sequence covers entries 1..39 under the model
+    layout);
+  * `obj_prio_ck`/`sp_bp_cys` (PPU1) still 0 edges - the PPU1 side of the
+    claim/compare handshake is the remaining item (unchanged).
+  => the mode-2 oa addressing corruption was caused by the *overlapping*
+  oa-chain mux groups in the static sim (scan `w518` vs port-B `w475`/
+  CPU `w403`/store `w444`, author issue g419/g421): they flip the address
+  to x or odd words depending on the bus model. Two ways forward:
+  (a) author makes the groups phase-exclusive in `ppu2.v`, or
+  (b) the sprite testbench uses the scan-only bus model (like
+  `ppu2_scanonly.v`) and continues with the PPU1 handshake.
+
   ![tb_ppu_sprites_scan](/HDL/soc/icarus/ppu/waves/tb_ppu_sprites_scan.png)
 
   Wave regenerated (round 27) from the default run, one line window

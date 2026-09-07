@@ -138,6 +138,20 @@ schematic or the author's scan-address/oa-phase review. `obj_prio_ck`
 (PPU1) remains flat even when the store fires - the PPU1 side of the
 handshake is the next item once addressing is fixed.
 
+### Scan-only oa bus - claims fire (round 29)
+
+Variant `ppu2_scanonly.v` (temp/oamweak; weakbus + the 18 non-scan
+oa-chain drivers disabled, only the mode-2 scan group `w518` drives):
+scan address stable and EVEN (words {2,4,...,78}); with realistic content
+(Y=16 in entries 1..39) the Y-test `w816` = 1 on LY 1..7 (0 on LY=8) and
+the store window `w852` opens ~38x per line - slots are claimed. Entry 0
+(words 0/1) is not visited by this sequence. `obj_prio_ck` (PPU1) still
+flat. Conclusion: the oa addressing corruption in the static sim comes
+from the overlapping oa-chain mux groups (scan `w518` vs port-B `w475`/
+CPU `w403`/store `w444`, g419/g421); way forward: author makes the groups
+phase-exclusive, or the sprite test continues on the scan-only bus model
+toward the PPU1 handshake.
+
 ## What is needed to finish the sprite test
 
 1. Author review/fix of the suspected items above (or confirmation that the
