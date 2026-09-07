@@ -128,19 +128,32 @@ X t=30020 m2=1 oa=0000100 w497=1  en518=0 en475=x w476=x   <- clean (scan only)
 So the red `oa` is a *driven* `x` from two oa mux groups overlapping in
 time (scan group + Y-adder group), i.e. the dynamic two-phase (precharge /
 evaluate) separation of the oa bus is not reproduced by the static
-simulation. This is the same precharge-phase modelling issue that blocks the
-sprite store; a discharge-only tristate model removes the contention but
-changes the scan addressing polarity (documented in wiki/soc/ppu2.md open
-questions). Resolving it needs the real two-phase bus timing (or the
-author's netlist review of the `g938–g943`/`g325–g326` no-reset FFs and the
-`oa` mux phases).
+simulation. (Historical; superseded by rounds 22-30: the no-reset FFs are
+NOT the cause - round 22; the discharge-only/keeper bus models remove the
+`x` - rounds 27-30, `gen_weakbus.py` -> `ppu2_weakbus.v`/`ppu2_m2only.v`;
+the underlying mux-group overlap (g419/g421) remains an author/schematic
+question, see waves.md rounds 28-30.)
 
 ## Research handoff (sprite/OAM block)
 
-Status of the OAM/sprite datapath investigation (rounds 1-10), for the
-author or a later session:
+> **Historical log (rounds 1-21).** The current state is round 30 — see the
+> "Work in progress" section below (rounds 22-30). Short status:
+>
+> * Regression suite: **7/7 ALL PASS**.
+> * Y-test comparator: verified correct (round 28 — passes LY 1..7, fails
+>   LY=8 once port B carries a valid Y byte).
+> * Sprite path (round 30, dev): claims, `obj_prio_ck` (~10-11/line),
+>   `sp_bp_cys`, `sprite_x_match` and sprite colour pixels on LD0/LD1 run
+>   under the **workaround bus model `ppu2_m2only.v`** (gen_weakbus.py,
+>   netlists untouched). Root cause of the earlier failure: the static sim
+>   cannot separate the overlapping oa mux groups (scan `w518` vs
+>   port-B `w475`/CPU `w403`/store `w444`, g419/g421), which corrupts the
+>   mode-2 scan address (x / odd words) so port B never presents the Y
+>   bytes.
 
-**Verified / working (regression suite, 4/4 ALL PASS):** CPU register
+**Historical (rounds 1-21):**
+
+**Verified / working (regression suite):** CPU register
 write+read-back (LCDC/SCY/SCX/BGP/LY - PPU1 and PPU2 read paths), 456-tick
 line / 80-tick mode-2 rhythm, BG fetch & pixel stream, SCY/SCX scroll
 adders, WIN layer, OAM SRAM model (`oam_ram.v`), LCD stub (`lcd_stub.v`).
@@ -180,8 +193,11 @@ ring reset term w816 = ~(w530|w531|h_restart) does dip. obj_prio_ck =
 high because w229/w241 never reach 1 together - the g287-g289 ring never
 leaves its latched state (w226=1,w228=1) after boot, so the claimed
 "restart each line" never produces process-clock pulses. The FSM boot state
-depends on the no-reset FFs reported to the author. Sprite research is
-paused here pending the author's netlist fixes.
+depends on the no-reset FFs reported to the author. Sprite research was
+paused here pending the author's netlist fixes. (Superseded: rounds 22-30
+continued below — no-reset FF boot state was ruled out, the oa mux-group
+overlap was identified as the static-sim blocker, and the m2only bus-model
+workaround runs the sprite path end to end.)
 
 To unblock: (a) author fixes/confirms the suspected netlist items, and/or
 (b) schematic-level two-phase bus timing (msinger pages) is made available,
@@ -203,7 +219,8 @@ Full synthetic scene with real content: BG map $9800 (tile 1 checker), WIN
 map $9C00 (tile 2, WY=160 so the window is configured but below the
 observed lines), one OBJ (Y=16, X=8, tile 1). Checks the combined mode
 rhythm and the BG pixel stream; the sprite pixel output is not engaged yet
-(open blocker - INFO line, see STATUS.md).
+in this (weakbus-default) run - see the round-30 e2e wave below for the
+sprite path under the `ppu2_m2only.v` workaround.
 
 ![tb_ppu_scene](/HDL/soc/icarus/ppu/waves/tb_ppu_scene.png)
 
@@ -337,7 +354,10 @@ fetches switch from the BG map ($9800 / 0x1800) to the window map ($9C00 /
     lines LY 1..15: the Y-test AND6 `w816` (ppu2) never goes high in either
     variant, the store window `w852` never opens, port B `n_oamb` reads zero
     in every sampled phase, `obj_prio_ck` stays at 0 edges/line.
-  => oa bus contention is not the blocker either. The port-B read data never
+  => oa bus contention x as such was not the blocker either (later rounds
+  28-30 refined this: the *group overlap* corrupts the scan address, and
+  that is exactly what keeps port B from delivering the Y bytes to the
+  Y-test). The port-B read data never
   demonstrably reaches the Y-test adder as a passing compare: either the OAM
   read happens in a phase the static model never samples, or the Y-test term
   polarity/bounds are inverted (pass could be the all-zero group, not the
