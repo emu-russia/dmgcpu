@@ -81,6 +81,21 @@ module tb_ppu_regs;
 		check("mode2 seen", 1'b1, mode2_seen > 0);
 		check("mode3 seen", 1'b1, mode3_seen > 0);
 
+		// STAT mode bits readback: mode2 -> bits[1:0]=2, mode3 -> 3
+		begin : statbits
+			reg [7:0] st;
+			while (!env.ppu_mode2) @(posedge env.ppu_clk);
+			env.cpu_read(16'hFF41, st);
+			$display("STAT during mode2: %02x (bits1:0=%0d)", st, st[1:0]);
+			if (st[1:0] !== 2'b10) begin $display("FAIL STAT mode bits not 2 in mode2"); errors=errors+1; end
+			else $display("PASS STAT mode bits = 2 in mode2");
+			while (!env.ppu_mode3) @(posedge env.ppu_clk);
+			env.cpu_read(16'hFF41, st);
+			$display("STAT during mode3: %02x (bits1:0=%0d)", st, st[1:0]);
+			if (st[1:0] !== 2'b11) begin $display("FAIL STAT mode bits not 3 in mode3"); errors=errors+1; end
+			else $display("PASS STAT mode bits = 3 in mode3");
+		end
+
 		// LY readback while the PPU is running
 		env.cpu_read(16'hFF44, rd);
 		$display("LY readback = %02x, v = %02x (allow +/- few ticks)", rd, env.v);

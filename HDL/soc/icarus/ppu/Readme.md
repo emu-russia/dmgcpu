@@ -63,7 +63,7 @@ Legend: ✅ verified by a passing test · 🟡 partially verified / dev · ⬜ o
 | 11 Palettes + pixel mux | ✅ | bg: color pattern through BGP on LD0/LD1 |
 | 12 LCD driver timing | ✅ | lcd_stub: /CP pulses, /ST//CPL per line |
 | 13 OAM parse clocks (mode 2) | 🟡 | oam_addr_ck/oam_rd_ck run; obj_prio_ck inert (blocked) |
-| 14 Interrupt outputs (STAT/VBL) | ✅ | `tb_ppu_frame`: vbl at LY>=144, ppu_int_vbl pulses (full-frame sim, ~5 min) |
+| 14 Interrupt outputs (STAT/VBL) | ✅ | `tb_ppu_frame`: vbl at LY>=144, ppu_int_vbl pulses; regs: STAT mode bits read 2/3 in mode2/3, LYC int at LY==LYC |
 | 15 Reset/clock generation | ✅ | regs: n_ppu_reset/hard-reset behaviour |
 | 16 DMA interface | 🟡 | dev tb_ppu_dma (needs SoC arbiter timing) |
 
