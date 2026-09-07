@@ -102,6 +102,11 @@ The `.gtkw` save files and the PNGs in `waves/` are committed, so a fresh
 clone shows the documentation immediately; re-running the tests refreshes
 the VCDs behind them.
 
+## Related tooling
+
+The adapted Icarus/GTKWave skill for future DMG-CPU testbenches (APU, MMIO,
+...) lives in [`HDL/soc/icarus/gtkwave-skill.md`](../gtkwave-skill.md).
+
 ## Notes
 
 - `HDL/soc/dmglib.v` needed one bug fix for simulation: `dmg_notif0/1`
