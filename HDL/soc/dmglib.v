@@ -649,7 +649,13 @@ module dmg_notif0 (  n_ena, a, x);
 	input wire a;
 	output wire x;
 
-	assign x = n_ena == 1'b0 ? ~x : 1'bz;
+	// Inverting tristate: drives the inverse of the data while enabled
+	// (active-low enable), hi-Z otherwise. The bus convention is
+	// "inverse hold": see wiki/soc/ppu1.md (Bus conventions).
+	// (The previously committed body `~x` was a self-referential
+	// combinational loop that never drove the bus; fixed for the
+	// PPU testbench bring-up, issue #390.)
+	assign x = n_ena == 1'b0 ? ~a : 1'bz;
 
 endmodule // dmg_notif0
 
@@ -659,7 +665,9 @@ module dmg_notif1 (  ena, a, x);
 	input wire a;
 	output wire x;
 
-	assign x = ena == 1'b1 ? ~x : 1'bz;
+	// Inverting tristate: drives the inverse of the data while enabled
+	// (active-high enable), hi-Z otherwise (see dmg_notif0).
+	assign x = ena == 1'b1 ? ~a : 1'bz;
 
 endmodule // dmg_notif1
 
