@@ -123,6 +123,18 @@ the scroll adders behave together.
     and its handshake with PPU2's `stop_oam_eval`/store before the sprite
     can be claimed and rendered.
 
+  Round-6 trace of that domain: the process FFs `g287–g289` form a
+  self-timed ring (`w227=!w228`, clocks `w815=~(ppu_clk & w226&w228)` and
+  `w964`), whose async reset `w816 = ~(w530|w531|w844)` is released only
+  when `w530 = w184&w185` is low (`w184/w185` = free-running dividers
+  `g326/g325` on `ppu_clk`, themselves **without reset**: `nr1=w47=const1`)
+  and `w531 = !n_ppu_reset` is low. In the simulation the ring sits in the
+  latched rest state (w226=1, w228=1) and never starts: `w239`/`w240`
+  (→ `obj_prio_ck = ~(w239|w240)`) never pulse, so PPU2 never claims a
+  sprite slot. Whether `w530`'s dot window / `w844` and the store handshake
+  are supposed to kick the ring out of this state is the open question
+  (likely needs PPU2's `sprite_x_match`/store feedback).
+
   ![tb_ppu_sprites_scan](/HDL/soc/icarus/ppu/waves/tb_ppu_sprites_scan.png)
 
   Not promoted to a regression test yet.
