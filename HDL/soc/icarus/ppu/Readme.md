@@ -17,6 +17,11 @@ Regression testbench for the DMG-CPU PPU gate netlists (`HDL/soc/ppu1.v`,
 | `tb_ppu_scroll.v` | SCY/SCX scroll test: PPU2 V+SCY / H+SCX adders change the fetched tile-map row/column. |
 | `tb_ppu_window.v` | Window (WIN) test: with LCDC.6 the tile-map fetches switch to the $9C00 window map. |
 | `tb_ppu_frame.v` | Full-frame test (slow, ~5 min): VBlank at LY=144, V wrap 153->0, `ppu_int_vbl` pulse. |
+| `tb_ppu_sprites.v` | (dev) mode-2 OAM scan / sprite store bring-up - see STATUS.md and waves.md. |
+| `tb_ppu_oam_cpu.v` | (dev) CPU->OAM write path bring-up - see STATUS.md. |
+| `tb_ppu_oam_read.v` | (dev) CPU->OAM read path bring-up - see STATUS.md. |
+| `tb_ppu_dma.v` | (dev) VRAM->OAM DMA bring-up - see STATUS.md. |
+| `STATUS.md` | Status snapshot, blockers and the author checklist. |
 | `tb_ppu_sprites.v` | (dev) mode-2 OAM scan bring-up - see waves.md. |
 | `tb_ppu_oam_cpu.v` | (dev) CPU->OAM write path bring-up - see waves.md. |
 | `*.bat` | Windows compile & run wrappers. `run_all.bat` runs every test. |
@@ -72,7 +77,8 @@ Legend: ✅ verified by a passing test · 🟡 partially verified / dev · ⬜ o
 | 9 Clock/reset generation | ✅ | ppu_clk=cclk, n_ppu_hard_reset, ppu_rd/wr passthrough |
 | 10 DMA/CPU-OAM write | 🟡 | dev tb_ppu_oam_cpu / tb_ppu_dma |
 
-Details, wave images and the research handoff are in [waves.md](waves.md).
+Details, wave images and the research handoff are in [waves.md](waves.md);
+the status snapshot and author checklist are in [STATUS.md](STATUS.md).
 | CPU OAM write & VRAM→OAM DMA data paths | `tb_ppu_oam_cpu`, `tb_ppu_dma` — dev (need SoC arbiter/MMIO timing) |
 
 ## Notes
