@@ -159,6 +159,14 @@ lists in wiki/soc/ppu1.md & ppu2.md):
    register, `PPU1 g325/g326` window dividers, plus `PPU1 g652` looks like a
    duplicate LCDC.D7 latch) - reported to the author, NOT patched here.
 
+Round-12 observation: sampled over lines v=1..10, the ten 8-bit store banks
+(g650/g668/g647/g637/g659/g642/g670/g664/g677/g635) all stay 0x00 - the
+mode-2 capture path never opens because each bank's async reset stays
+asserted while its per-slot in-use dffr (`g611-g628`) q = 0, and those dffr
+never clock (obj_prio_ck never pulses). So the whole claim path is gated on
+the missing obj_prio_ck pulses - confirming the handshake deadlock is on the
+PPU1 side, not in the OAM model.
+
 To unblock: (a) author fixes/confirms the suspected netlist items, and/or
 (b) schematic-level two-phase bus timing (msinger pages) is made available,
 then the sprite test can be completed from the current bring-up state
