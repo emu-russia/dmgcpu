@@ -197,6 +197,16 @@ that VBLANK (`vbl` from PPU1) asserts at LY>=144, the V counter wraps
 
 ![tb_ppu_frame](/HDL/soc/icarus/ppu/waves/tb_ppu_frame.png)
 
+## Test 6 — `tb_ppu_scene` (synthetic scene: LCD+BG+WIN+OBJ together)
+
+Full synthetic scene with real content: BG map $9800 (tile 1 checker), WIN
+map $9C00 (tile 2, WY=160 so the window is configured but below the
+observed lines), one OBJ (Y=16, X=8, tile 1). Checks the combined mode
+rhythm and the BG pixel stream; the sprite pixel output is not engaged yet
+(open blocker - INFO line, see STATUS.md).
+
+![tb_ppu_scene](/HDL/soc/icarus/ppu/waves/tb_ppu_scene.png)
+
 ## Work in progress
 
 - `tb_ppu_sprites.v` (dev): brings up the mode-2 OAM scan with the

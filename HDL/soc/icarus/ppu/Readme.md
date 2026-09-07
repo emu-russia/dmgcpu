@@ -17,6 +17,7 @@ Regression testbench for the DMG-CPU PPU gate netlists (`HDL/soc/ppu1.v`,
 | `tb_ppu_scroll.v` | SCY/SCX scroll test: PPU2 V+SCY / H+SCX adders change the fetched tile-map row/column. |
 | `tb_ppu_window.v` | Window (WIN) test: with LCDC.6 the tile-map fetches switch to the $9C00 window map. |
 | `tb_ppu_frame.v` | Full-frame test (slow, ~5 min): VBlank at LY=144, V wrap 153->0, `ppu_int_vbl` pulse. |
+| `tb_ppu_scene.v` | Synthetic scene (LCD+BG+WIN+OBJ with content): combined mode rhythm + BG pixel stream. |
 | `tb_ppu_sprites.v` | (dev) mode-2 OAM scan / sprite store bring-up - see STATUS.md and waves.md. |
 | `tb_ppu_oam_cpu.v` | (dev) CPU->OAM write path bring-up - see STATUS.md. |
 | `tb_ppu_oam_read.v` | (dev) CPU->OAM read path bring-up - see STATUS.md. |
@@ -55,7 +56,7 @@ Legend: ✅ verified by a passing test · 🟡 partially verified / dev · ⬜ o
 | 6 BG/WIN fetch sequencer | ✅ | bg/scroll/window: mode2/3, fetch rhythm |
 | 7 VRAM address generation | ✅ | bg/scroll: map/data fetch addresses; SCY/SCX adders |
 | 8 BG pixel shifter | ✅ | bg: LD stream matches tile data through BGP |
-| 9 Sprite pixel path | ⬜ | needs sprite store (blocked) |
+| 9 Sprite pixel path | ⬜ | tb_ppu_scene includes an OBJ; sprite fetch not engaged (blocked, STATUS.md) |
 | 10 Sprite selection ring / LAST_SPRITE | 🟡 | ring toggles in mode 2; completion condition open |
 | 11 Palettes + pixel mux | ✅ | bg: color pattern through BGP on LD0/LD1 |
 | 12 LCD driver timing | ✅ | lcd_stub: /CP pulses, /ST//CPL per line |
