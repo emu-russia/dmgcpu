@@ -1,0 +1,19 @@
+{
+ "signals": [
+  {"name":"Mode state machine","signals":[
+     "tb_ppu_bg_scanline.env.ppu2.ppu_mode2",
+     "tb_ppu_bg_scanline.env.ppu2.ppu_mode3",
+     "tb_ppu_bg_scanline.env.ppu2.stop_oam_eval",
+     "tb_ppu_bg_scanline.env.ppu2.h_restart",
+     "tb_ppu_bg_scanline.env.ppu2.vclk2",
+     "tb_ppu_bg_scanline.env.ppu2.oam_addr_ck",
+     "tb_ppu_bg_scanline.env.ppu2.oam_rd_ck",
+     "tb_ppu_bg_scanline.env.ppu2.obj_prio_ck"]},
+  {"name":"Counters LX (h) / LY (v)","signals":[
+     "tb_ppu_bg_scanline.env.h[7:0]",
+     "tb_ppu_bg_scanline.env.v[7:0]"]},
+  {"name":"LCD line timing","signals":[
+     "tb_ppu_bg_scanline.env.ppu1.n_lcd_cpl",
+     "tb_ppu_bg_scanline.env.ppu1.n_lcd_cp"]}
+ ]
+}

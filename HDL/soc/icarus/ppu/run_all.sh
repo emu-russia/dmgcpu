@@ -4,7 +4,7 @@
 cd "$(dirname "$0")"
 SRC="../../dmglib.v ../../clkgen.v ppu1_merged.v ppu2_merged.v ppu_env.v oam_ram.v lcd_stub.v"
 FAIL=0
-for t in tb_ppu_regs tb_ppu_bg_scanline tb_ppu_scroll tb_ppu_window tb_ppu_scene tb_ppu_frame; do
+for t in tb_ppu_regs tb_ppu_bg_scanline tb_ppu_bg_win_matrix tb_ppu_scroll tb_ppu_window tb_ppu_scene tb_ppu_frame; do
   echo "=== $t ==="
   iverilog -D ICARUS -g2012 -o $t.run $SRC $t.v || { echo "$t: COMPILE FAIL"; FAIL=1; continue; }
   vvp $t.run 2>&1 | grep -E 'RESULT|FAIL' | tail -1 || FAIL=1

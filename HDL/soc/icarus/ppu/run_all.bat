@@ -4,4 +4,5 @@ call tb_ppu_regs.bat
 call tb_ppu_bg_scanline.bat
 call tb_ppu_scroll.bat
 call tb_ppu_window.bat
+call tb_ppu_bg_win_matrix.bat
 call tb_ppu_scene.bat

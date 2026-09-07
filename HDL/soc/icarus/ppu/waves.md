@@ -207,6 +207,36 @@ rhythm and the BG pixel stream; the sprite pixel output is not engaged yet
 
 ![tb_ppu_scene](/HDL/soc/icarus/ppu/waves/tb_ppu_scene.png)
 
+## Test 7 — `tb_ppu_bg_win_matrix` (all BG/WIN layer combinations)
+
+Sweeps the LCDC layer combinations (BG enable/bit0, BG map select/bit3,
+WIN enable/bit5, WIN map select/bit6, LCD/bit7) with WY/WX, and verifies
+which tile map ($9800/$9C00) the fetches come from for the active layers:
+
+| # | LCDC | Layers / window | Result |
+|---|---|---|---|
+| C1/C9 | 0x80 | LCD only (no layers) | frame runs; fetcher still walks map0 (INFO, DMG layer bits gate the pixel mux, not the fetcher) |
+| C2 | 0x91 | BG $9800 | PASS (map0 dominates) |
+| C3 | 0x99 | BG $9C00 | PASS (map1 dominates) |
+| C4 | 0xA0 | WIN $9800, WY=0 | PASS (map0 dominates) |
+| C5 | 0xE0 | WIN $9C00, WY=0 | PASS (map1 dominates) |
+| C6 | 0xE1 | BG $9800 + WIN $9C00, WY=0 (whole-screen window) | PASS (map1 dominates) |
+| C7 | 0xE1 | same, WY=40 (window below LY<40) | PASS (BG map0 only) |
+| C8 | 0xB9 | BG $9C00 + WIN $9800, WY=0 | PASS (map0/window dominates) |
+
+`RESULT: ALL PASS`.
+
+## Test 8 — Mode state machine and LX/LY waves
+
+Waves of the PPU mode handshake (mode 2 / mode 3 / stop_oam_eval /
+h_restart / vclk2, the mode-2 OAM clocks oam_addr_ck/oam_rd_ck/obj_prio_ck),
+the LX (h) and LY (v) counters and the LCD line timing (/CPL, /CP), from the
+`tb_ppu_bg_scanline` run. Two scanlines (left) and one line zoom (right):
+
+![mode_fsm](/HDL/soc/icarus/ppu/waves/tb_ppu_mode_fsm.png)
+
+![mode_fsm_line](/HDL/soc/icarus/ppu/waves/tb_ppu_mode_fsm_line.png)
+
 ## Work in progress
 
 - `tb_ppu_sprites.v` (dev): brings up the mode-2 OAM scan with the

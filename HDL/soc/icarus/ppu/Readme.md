@@ -18,6 +18,8 @@ Regression testbench for the DMG-CPU PPU gate netlists (`HDL/soc/ppu1.v`,
 | `tb_ppu_window.v` | Window (WIN) test: with LCDC.6 the tile-map fetches switch to the $9C00 window map. |
 | `tb_ppu_frame.v` | Full-frame test (slow, ~5 min): VBlank at LY=144, V wrap 153->0, `ppu_int_vbl` pulse. |
 | `tb_ppu_scene.v` | Synthetic scene (LCD+BG+WIN+OBJ with content): combined mode rhythm + BG pixel stream. |
+| `tb_ppu_bg_win_matrix.v` | BG/WIN layer combination matrix (map select bit3/bit6 x enable bit0/bit5 x WY/WX). |
+| `tb_ppu_mode_fsm.gtkw` | GTKWave save for the mode state machine + LX/LY waves. |
 | `tb_ppu_sprites.v` | (dev) mode-2 OAM scan / sprite store bring-up - see STATUS.md and waves.md. |
 | `tb_ppu_oam_cpu.v` | (dev) CPU->OAM write path bring-up - see STATUS.md. |
 | `tb_ppu_oam_read.v` | (dev) CPU->OAM read path bring-up - see STATUS.md. |
@@ -52,8 +54,8 @@ Legend: ✅ verified by a passing test · 🟡 partially verified / dev · ⬜ o
 | 2 PPU registers | ✅ | regs: read-back SCY/SCX/BGP/LCDC/LY |
 | 3 H counter (LX) | ✅ | regs/bg: h counts, 456-tick line |
 | 4 V counter (LY) | ✅ | regs + `tb_ppu_frame`: LY read-back, VBlank at LY=144, wrap 153->0 |
-| 5 Window logic | ✅ | window: $9C00 fetches with WY/WX |
-| 6 BG/WIN fetch sequencer | ✅ | bg/scroll/window: mode2/3, fetch rhythm |
+| 5 Window logic | ✅ | window: $9C00 fetches with WY/WX; bg_win_matrix C4-C8 (map select x WY) |
+| 6 BG/WIN fetch sequencer | ✅ | bg/scroll/window/scene/bg_win_matrix: mode2/3 rhythm + layer map selects |
 | 7 VRAM address generation | ✅ | bg/scroll: map/data fetch addresses; SCY/SCX adders |
 | 8 BG pixel shifter | ✅ | bg: LD stream matches tile data through BGP |
 | 9 Sprite pixel path | ⬜ | tb_ppu_scene includes an OBJ; sprite fetch not engaged (blocked, STATUS.md) |
