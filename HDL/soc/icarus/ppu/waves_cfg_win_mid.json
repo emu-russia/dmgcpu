@@ -1,0 +1,8 @@
+{
+ "signals": [
+  {"name":"Mode / window","signals":["tb_ppu_win_mid.env.ppu2.ppu_mode2","tb_ppu_win_mid.env.ppu2.ppu_mode3","tb_ppu_win_mid.env.ppu2.in_window"]},
+  {"name":"Counters","signals":["tb_ppu_win_mid.env.h[7:0]","tb_ppu_win_mid.env.v[7:0]"]},
+  {"name":"VRAM fetch (BG $9800 -> WIN $9C00)","signals":["tb_ppu_win_mid.env.ppu1.nma[12:0]","tb_ppu_win_mid.env.vram.md[7:0]"]},
+  {"name":"LCD","signals":["tb_ppu_win_mid.env.ppu1.n_lcd_cp","tb_ppu_win_mid.env.ppu1.n_lcd_ld0","tb_ppu_win_mid.env.ppu1.n_lcd_ld1"]}
+ ]
+}

@@ -1,0 +1,39 @@
+[*]
+[*] GTKWave Analyzer v3.3.128 (w)1999-2026 BSI
+[*]
+[*] generated for HDL/soc/icarus/ppu (issue #390)
+[*]
+[dumpfile] "tb_ppu_window.vcd"
+[timestart] 0
+[size] 1920 1000
+[pos] -1 -1
+*-0.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb_ppu_window
+[sst_width] 250
+[signals_width] 200
+[sst_expanded] 1
+[sst_vpaned_height] 400
+@28
+tb_ppu_window.env.reset
+@28
+tb_ppu_window.env.ppu_clk
+@28
+tb_ppu_window.env.ppu_mode2
+@28
+tb_ppu_window.env.ppu_mode3
+@28
+tb_ppu_window.env.in_window
+@22
+tb_ppu_window.env.h[7:0]
+@22
+tb_ppu_window.env.v[7:0]
+@22
+tb_ppu_window.env.vram.ma[12:0]
+@22
+tb_ppu_window.env.vram.md[7:0]
+@28
+tb_ppu_window.env.ppu1.n_lcd_cp
+@28
+tb_ppu_window.env.ppu1.n_lcd_ld0
+[pattern_trace] 1
+[pattern_trace] 0

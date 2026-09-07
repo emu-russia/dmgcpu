@@ -1,0 +1,7 @@
+{
+ "signals": [
+  {"name":"Mode / frame","signals":["tb_ppu_frame.env.ppu_clk","tb_ppu_frame.ppu_mode2","tb_ppu_frame.ppu_mode3"]},
+  {"name":"Counters","signals":["tb_ppu_frame.v[7:0]","tb_ppu_frame.h[7:0]"]},
+  {"name":"VBlank","signals":["tb_ppu_frame.vbl"]}
+ ]
+}

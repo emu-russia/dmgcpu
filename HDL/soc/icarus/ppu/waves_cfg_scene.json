@@ -1,0 +1,8 @@
+{
+ "signals": [
+  {"name":"Modes","signals":["tb_ppu_scene.env.ppu_mode2","tb_ppu_scene.env.ppu_mode3"]},
+  {"name":"VRAM","signals":["tb_ppu_scene.env.vram.ma[12:0]","tb_ppu_scene.env.vram.md[7:0]"]},
+  {"name":"LCD","signals":["tb_ppu_scene.env.ppu1.n_lcd_cp","tb_ppu_scene.env.ppu1.n_lcd_ld0","tb_ppu_scene.env.ppu1.n_lcd_ld1"]},
+  {"name":"OBJ","signals":["tb_ppu_scene.env.ppu1.sp_bp_cys","tb_ppu_scene.env.ppu2.sprite_x_match"]}
+ ]
+}
