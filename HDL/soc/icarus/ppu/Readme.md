@@ -16,6 +16,7 @@ Regression testbench for the DMG-CPU PPU gate netlists (`HDL/soc/ppu1.v`,
 | `tb_ppu_bg_scanline.v` | BG rendering test: mode2/3 per-line rhythm, VRAM BG fetch, pixel serialization on LD0/LD1. |
 | `tb_ppu_scroll.v` | SCY/SCX scroll test: PPU2 V+SCY / H+SCX adders change the fetched tile-map row/column. |
 | `tb_ppu_window.v` | Window (WIN) test: with LCDC.6 the tile-map fetches switch to the $9C00 window map. |
+| `tb_ppu_frame.v` | Full-frame test (slow, ~5 min): VBlank at LY=144, V wrap 153->0, `ppu_int_vbl` pulse. |
 | `tb_ppu_sprites.v` | (dev) mode-2 OAM scan bring-up - see waves.md. |
 | `tb_ppu_oam_cpu.v` | (dev) CPU->OAM write path bring-up - see waves.md. |
 | `*.bat` | Windows compile & run wrappers. `run_all.bat` runs every test. |
@@ -44,7 +45,7 @@ Legend: ✅ verified by a passing test · 🟡 partially verified / dev · ⬜ o
 | 1 Register decode | ✅ | regs: writes to $FF40-4B decoded; no cross-writes |
 | 2 PPU registers | ✅ | regs: read-back SCY/SCX/BGP/LCDC/LY |
 | 3 H counter (LX) | ✅ | regs/bg: h counts, 456-tick line |
-| 4 V counter (LY) | 🟡 | regs: LY read-back tracks v; LY=144/153 wrap not sim. (frame too slow) |
+| 4 V counter (LY) | ✅ | regs + `tb_ppu_frame`: LY read-back, VBlank at LY=144, wrap 153->0 |
 | 5 Window logic | ✅ | window: $9C00 fetches with WY/WX |
 | 6 BG/WIN fetch sequencer | ✅ | bg/scroll/window: mode2/3, fetch rhythm |
 | 7 VRAM address generation | ✅ | bg/scroll: map/data fetch addresses; SCY/SCX adders |
@@ -54,7 +55,7 @@ Legend: ✅ verified by a passing test · 🟡 partially verified / dev · ⬜ o
 | 11 Palettes + pixel mux | ✅ | bg: color pattern through BGP on LD0/LD1 |
 | 12 LCD driver timing | ✅ | lcd_stub: /CP pulses, /ST//CPL per line |
 | 13 OAM parse clocks (mode 2) | 🟡 | oam_addr_ck/oam_rd_ck run; obj_prio_ck inert (blocked) |
-| 14 Interrupt outputs (STAT/VBL) | ⬜ | needs full-frame sim (slow) |
+| 14 Interrupt outputs (STAT/VBL) | ✅ | `tb_ppu_frame`: vbl at LY>=144, ppu_int_vbl pulses (full-frame sim, ~5 min) |
 | 15 Reset/clock generation | ✅ | regs: n_ppu_reset/hard-reset behaviour |
 | 16 DMA interface | 🟡 | dev tb_ppu_dma (needs SoC arbiter timing) |
 

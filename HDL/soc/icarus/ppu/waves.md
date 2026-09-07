@@ -183,6 +183,14 @@ then the sprite test can be completed from the current bring-up state
 (`tb_ppu_sprites.v` already runs the scan; OAM model and LCD stub are in
 place).
 
+## Test 5 — `tb_ppu_frame` (V counter / VBlank / wrap, full frame)
+
+Full-frame simulation (~4.55 ms sim time, slow): with the LCD on, checks
+that VBLANK (`vbl` from PPU1) asserts at LY>=144, the V counter wraps
+153->0 at the frame end and `ppu_int_vbl` pulses (PPU1 blocks 4 and 14).
+
+![tb_ppu_frame](/HDL/soc/icarus/ppu/waves/tb_ppu_frame.png)
+
 ## Work in progress
 
 - `tb_ppu_sprites.v` (dev): brings up the mode-2 OAM scan with the
