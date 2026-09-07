@@ -176,6 +176,8 @@ module ppu_env;
 	pullup (nma[12]);
 	pullup (d[0]); pullup (d[1]); pullup (d[2]); pullup (d[3]);
 	pullup (d[4]); pullup (d[5]); pullup (d[6]); pullup (d[7]);
+	pullup (oa[1]); pullup (oa[2]); pullup (oa[3]); pullup (oa[4]);
+	pullup (oa[5]); pullup (oa[6]); pullup (oa[7]);
 
 	ClkGen clkgen (
 		.clk_ena(1'b1),

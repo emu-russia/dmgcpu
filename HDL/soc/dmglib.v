@@ -115,7 +115,7 @@ module dmg_bufif0 (  a0, n_ena, a1, x);
 	input wire a1;  			// not used
 	output wire x;
 
-	assign x = n_ena == 1'b0 ? a0 : 1'bz;
+	assign x = (n_ena === 1'b0) ? a0 : 1'bz;
 
 endmodule // dmg_bufif0
 
@@ -655,7 +655,7 @@ module dmg_notif0 (  n_ena, a, x);
 	// (The previously committed body `~x` was a self-referential
 	// combinational loop that never drove the bus; fixed for the
 	// PPU testbench bring-up, issue #390.)
-	assign x = n_ena == 1'b0 ? ~a : 1'bz;
+	assign x = (n_ena === 1'b0) ? ~a : 1'bz;
 
 endmodule // dmg_notif0
 
@@ -667,7 +667,7 @@ module dmg_notif1 (  ena, a, x);
 
 	// Inverting tristate: drives the inverse of the data while enabled
 	// (active-high enable), hi-Z otherwise (see dmg_notif0).
-	assign x = ena == 1'b1 ? ~a : 1'bz;
+	assign x = (ena === 1'b1) ? ~a : 1'bz;
 
 endmodule // dmg_notif1
 
