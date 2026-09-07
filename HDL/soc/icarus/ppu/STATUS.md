@@ -11,7 +11,10 @@ and the wiki pages `wiki/soc/ppu1.md` / `wiki/soc/ppu2.md`.
 | `tb_ppu_bg_scanline` | ✅ ALL PASS | BG fetch pipeline, pixel stream on LD0/LD1, 456-tick line |
 | `tb_ppu_scroll` | ✅ ALL PASS | PPU2 V+SCY / H+SCX scroll adders on the VRAM bus |
 | `tb_ppu_window` | ✅ ALL PASS | WIN layer, LCDC.6 window tile map $9C00 |
+| `tb_ppu_bg_win_matrix` | ✅ ALL PASS | BG/WIN combination matrix (C1..C11): map selects bit3/bit6 x enables x WY/WX incl. mid-line switch |
+| `tb_ppu_scene` | ✅ ALL PASS | synthetic LCD+BG+WIN+OBJ scene (mode rhythm + BG pixel stream) |
 | `tb_ppu_frame` | ✅ ALL PASS (slow, ~5 min) | VBlank at LY>=144, V wrap 153->0, ppu_int_vbl, LYC==LY interrupt |
+| `tb_ppu_win_mid` | ✅ (aux run for waves) | mid-line BG->WIN switch wave source |
 | `tb_ppu_sprites` | 🟡 dev | mode-2 OAM scan runs; sprite store/compare not claimed (see blockers) |
 | `tb_ppu_oam_cpu` | 🟡 dev | CPU OAM write lands word-addressed; strobe timing needs SoC model |
 | `tb_ppu_oam_read` | 🟡 dev | CPU OAM read return path needs SoC cycle timing |
