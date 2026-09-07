@@ -6,11 +6,13 @@
 // through the CPU bus and checks that PPU2 pulses an OAM write strobe and
 // that the OAM model memory receives the data at the expected word/port.
 //
-// STATUS: with the current OAM model the writes land (word address = a[7:1],
-// both port lanes) but the write strobes n_oama_wr/n_oamb_wr still ride x
-// because internal precharge nodes of the port-select decode (w863/w508)
-// float when idle - the dynamic-bus phase model needs the schematic-level
-// OAM timing (open question in wiki/soc/ppu2.md).
+// STATUS (round 3): the port-select x roots in the port-B capture latches
+// (w119/w315/w110...) which are uninitialized until the first mode-2 scan;
+// priming them by rendering a line with the LCD on changes behavior, and a
+// clean write requires the real MMIO arbitration timing (CPU OAM writes are
+// only safe in mode 0/1 windows). Kept as a bring-up reference; the DMA and
+// CPU->OAM write regressions need the SoC-level arbiter model - see the
+// open questions in wiki/soc/ppu2.md.
 `timescale 1ns/1ns
 
 module tb_ppu_oam_cpu;
@@ -38,6 +40,14 @@ module tb_ppu_oam_cpu;
 		env.reset = 1'b0;
 		#(64*4);
 
+		// run one scanline with the LCD on so the OAM capture latches
+		// (which feed the port-select decode) hold defined values, like a
+		// real chip that has already rendered lines before the write
+		env.cpu_write(16'hFF40, 8'h91);   // LCD + BG on
+		repeat (456 + 128) @(posedge env.ppu_clk);
+		env.cpu_write(16'hFF40, 8'h00);   // LCD off for the bus test
+		repeat (64) @(posedge env.ppu_clk);
+
 		// write OAM entry 0 ($FE00..$FE03): Y, X, tile, flags
 		env.cpu_write(16'hFE00, 8'h10);   // Y = 16
 		env.cpu_write(16'hFE01, 8'h20);   // X = 32
@@ -52,6 +62,10 @@ module tb_ppu_oam_cpu;
 		$display("word1: mem[2]=%02x mem[3]=%02x", env.oam.mem[2], env.oam.mem[3]);
 		$display("word2: mem[4]=%02x mem[5]=%02x", env.oam.mem[4], env.oam.mem[5]);
 		$display("word3: mem[6]=%02x mem[7]=%02x", env.oam.mem[6], env.oam.mem[7]);
+		$display("dump mem[0..15]: %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
+		         env.oam.mem[0],env.oam.mem[1],env.oam.mem[2],env.oam.mem[3],env.oam.mem[4],
+		         env.oam.mem[5],env.oam.mem[6],env.oam.mem[7],env.oam.mem[8],env.oam.mem[9],
+		         env.oam.mem[10],env.oam.mem[11],env.oam.mem[12],env.oam.mem[13],env.oam.mem[14],env.oam.mem[15]);
 
 		// Observed netlist behaviour (regression lock): each CPU OAM write
 		// drives BOTH port lanes (n_oama == n_oamb == data) at the word
