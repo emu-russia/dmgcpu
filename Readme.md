@@ -25,6 +25,7 @@ Then the reader has 2 options: either to "understand" the decompiled netlist (wh
 - [Memory-mapped I/O](/wiki/soc/mmio.md)
 - [HRAM](/wiki/soc/hram.md)
 - [PPU](/wiki/soc/ppu.md) ([PPU testbench](/HDL/soc/icarus/ppu/waves.md))
+- [Icarus testbenches & tooling](/HDL/soc/icarus/Readme.md) ([GTKWave skill](/HDL/soc/icarus/gtkwave-skill.md))
 - [OAM](/wiki/soc/oam.md)
 - [APU](/wiki/soc/apu.md)
 - [Wave RAM](/wiki/soc/waveram.md)
