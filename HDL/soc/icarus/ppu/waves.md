@@ -347,4 +347,10 @@ fetches switch from the BG map ($9800 / 0x1800) to the window map ($9C00 /
 
   ![tb_ppu_sprites_scan](/HDL/soc/icarus/ppu/waves/tb_ppu_sprites_scan.png)
 
+  Wave regenerated (round 24) from the current netlist run, one line window
+  (t = 29 000..58 000 ns): mode 2 shows the OAM scan - `oa` steps 39 word
+  addresses while `n_oam_rd`/`oam_bl_pch` pulse; `oa` still reads `x` in the
+  idle phases (round-23 weak-oa probe removes that `x` but does not open the
+  store); `obj_prio_ck` and `sp_bp_cys` stay flat - no slot claimed.
+
   Not promoted to a regression test yet.
