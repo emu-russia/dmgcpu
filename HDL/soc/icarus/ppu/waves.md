@@ -135,6 +135,36 @@ questions). Resolving it needs the real two-phase bus timing (or the
 author's netlist review of the `g938–g943`/`g325–g326` no-reset FFs and the
 `oa` mux phases).
 
+## Research handoff (sprite/OAM block)
+
+Status of the OAM/sprite datapath investigation (rounds 1-10), for the
+author or a later session:
+
+**Verified / working (regression suite, 4/4 ALL PASS):** CPU register
+write+read-back (LCDC/SCY/SCX/BGP/LY - PPU1 and PPU2 read paths), 456-tick
+line / 80-tick mode-2 rhythm, BG fetch & pixel stream, SCY/SCX scroll
+adders, WIN layer, OAM SRAM model (`oam_ram.v`), LCD stub (`lcd_stub.v`).
+
+**Not yet reproducible:** the sprite store claim + mode-3 sprite fetch/pixel
+path. With OBJ on, mode-3 length is now normal (fixed by the OAM model), but
+`obj_prio_ck` never pulses, no sprite slot is claimed, `sp_bp_cys` never
+fires. Two coupled root causes (see the open questions / suspected-issue
+lists in wiki/soc/ppu1.md & ppu2.md):
+
+1. dynamic-bus two-phase behaviour of the `oa`/`n_oama`/`n_oamb` muxes is
+   not reproduced statically (the scan group and the port-B-adder group of
+   the `oa` mux overlap in time -> contention `x`; a discharge-only tristate
+   removes the contention but changes the scan addressing polarity);
+2. several FF groups have no async reset (`PPU2 g938-g943` scan-address
+   register, `PPU1 g325/g326` window dividers, plus `PPU1 g652` looks like a
+   duplicate LCDC.D7 latch) - reported to the author, NOT patched here.
+
+To unblock: (a) author fixes/confirms the suspected netlist items, and/or
+(b) schematic-level two-phase bus timing (msinger pages) is made available,
+then the sprite test can be completed from the current bring-up state
+(`tb_ppu_sprites.v` already runs the scan; OAM model and LCD stub are in
+place).
+
 ## Work in progress
 
 - `tb_ppu_sprites.v` (dev): brings up the mode-2 OAM scan with the
