@@ -371,6 +371,13 @@ The joint testbench (`HDL/soc/icarus/ppu`, see [waves.md](../../HDL/soc/icarus/p
   only by `g305`. Looks like a duplicate capture of `LCDC.7` next to `g656`
   (which drives `w81`); probably an intentional layout copy, but it is not
   documented in the register table above.
+- **STAT read-back encoding (frame test, round 15):** during LY==LYC the
+  LYC-coincidence interrupt fires, but reading $FF41 returns bits with
+  `bit7=1` and `bit2=0` (e.g. 0xC2/0xC3) - i.e. bit 7 is not 0 as expected
+  and the coincidence flag reads 0 while the interrupt condition is true.
+  Either the read-back polarity for bits 2/7 is inverse-hold (the d-bit
+  drivers g859/g854 etc. feed `nq` sources) or bit 2 is only asserted
+  briefly; worth an author check (ppu1.v STAT read path, block 2/14).
 - **`g325`/`g326` (ppu1.v:1510-1511)** — the `w530` window dividers of the
   sprite-process ring reset term have **no async reset** (`nr1 = w47 =
   const1`); together with the no-reset FFs reported in ppu2.md they leave
