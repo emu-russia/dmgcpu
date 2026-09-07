@@ -159,13 +159,19 @@ lists in wiki/soc/ppu1.md & ppu2.md):
    register, `PPU1 g325/g326` window dividers, plus `PPU1 g652` looks like a
    duplicate LCDC.D7 latch) - reported to the author, NOT patched here.
 
-Round-12 observation: sampled over lines v=1..10, the ten 8-bit store banks
-(g650/g668/g647/g637/g659/g642/g670/g664/g677/g635) all stay 0x00 - the
-mode-2 capture path never opens because each bank's async reset stays
-asserted while its per-slot in-use dffr (`g611-g628`) q = 0, and those dffr
-never clock (obj_prio_ck never pulses). So the whole claim path is gated on
-the missing obj_prio_ck pulses - confirming the handshake deadlock is on the
-PPU1 side, not in the OAM model.
+Round-12/21 observation: sampled over lines v=1..10, the ten 8-bit store
+banks (g650/g668/g647/g637/g659/g642/g670/g664/g677/g635) all stay 0x00.
+Correction (round 21): the banks are NOT held in reset by the in-use dffr -
+their async reset `nres = ~(w27|flag)` is released during the line
+(w27 = h_restart | !n_ppu_reset); they simply never receive an *enable*,
+because the store window never opens:
+  w852 = oam_rd_ck & w209(mode2) & w816,  w816 = w474&w475&w484&w483&w481&w480
+where w474/w475/w484/w483/w481 are the Y-test adder (g595-g602) results and
+w480 = FF40_D2 | w479. With OAM data undefined (the `oa`/port-x issue) the
+Y-test never satisfies the window, so no bank enable, no stored sprite, no
+mode-3 compare -> obj_prio_ck stays idle. The whole sprite claim path is
+therefore gated on the OAM Y-test data/window, i.e. the same root as the
+`oa` phase issue (reported to the author).
 
 Round-13: obj_prio_ck has ZERO rising edges over 4 full lines
 (edge-detection probe), although h_restart pulses each line and the sprite

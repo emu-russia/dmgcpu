@@ -28,6 +28,11 @@ slow and included.
 2. The `oa` mux groups (scan `w518` vs port-B adder `w475`) overlap in time
    (contention `x`); dynamic two-phase bus timing is not reproducible
    statically.
+3. The mode-2 store window (PPU2 `w852 = oam_rd_ck & w209 & w816` with
+   `w816` = AND of the Y-test adder results incl. FF40_D2) never opens with
+   undefined OAM data, so the banks are never enabled (they are NOT held in
+   reset by the flags - corrected round 21). Everything funnels into the
+   Y-test/OAM data path.
 
 ## Suspected netlist issues - reported to the author, NOT patched here
 
