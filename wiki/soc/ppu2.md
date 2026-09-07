@@ -304,6 +304,28 @@ Note: **the PPU dot clock is the external complement clock `cclk`** — PPU2 doe
 |10|bufif0, bufif0, bufif0, and, and, bufif0, not, notif0, not, latch, latch, latch, latch, latch, latch, latchnq_comp, latchnq_comp, not, not, not, dffrnq_comp, dffr, not, not, latchnq_comp, not, not, latchnq_comp, latchnq_comp, not, notif0, not, notif0, notif0, latchnq_comp, xor, xor, nor4, nor4, nand3, xor, not, xor, xor, xor, nor4, xor, xor, notif0, nand3, nand3, notif0, nor4, xor, latchr_comp, latchr_comp, latchr_comp, latchr_comp, nor4, xor, latchr_comp, latchr_comp, nor4, latchr_comp, latchr_comp, latchr_comp, latchr_comp, nor4, nand3, xor, xor, latchr_comp, latchnq_comp, latchnq_comp, notif0, notif0, latchnq_comp, latchnq_comp, latchnq_comp, latchnq_comp, notif0, latchnq_comp, latchnq_comp|
 |11|not, notif0, notif0, notif0, notif0, not4, not2, bufif0, notif0, bufif0, notif0, notif0, notif0, notif0, notif0, notif0, notif0, latch, latch, latch, not2, latch, not2, dffrnq_comp, notif0, not2, latchnq_comp, latchnq_comp, latchnq_comp, not, notif0, latchnq_comp, latchnq_comp, latchnq_comp, not, not, latchnq_comp, notif0, xor, xor, xor, xor, xor, xor, nor4, xor, xor, notif0, latchnq_comp, latchnq_comp, latchnq_comp, not, latchnq_comp, notif0, not, latchr_comp, latchr_comp, latchr_comp, latchr_comp, xor, xor, xor, xor, not, not, latchr_comp, xor, latchr_comp, xor, xor, xor, nor4, xor, xor, latchr_comp, xor, latchr_comp, notif0, notif0, notif0, notif0, notif0, latchnq_comp, notif0, notif0, notif0, notif0|
 
+## OAM SRAM ground truth (@msinger's cell reference)
+
+From the [DMG-CPU cells reference](https://iceboy.a-singer.de/doc/dmg_cells.html#sram)
+("SRAM", Variant A is used in HRAM and OAM):
+
+- The DMG-CPU B die has **four SRAM instances: HRAM, Wave RAM and 2× OAM** —
+  i.e. OAM is physically two SRAM macros (matching the two PPU2 ports
+  `n_oama`/`n_oamb`).
+- The macro is built from **6T cells with dynamic NMOS read/write**: bit
+  lines are precharged to 1 (`BL_PCH`, active low) before every access; a
+  read drives the data pad to `D = ~bit` (a stored 0 pulls the pad high), so
+  the "inverse-hold" values seen on `n_oama`/`n_oamb` are the real macro
+  behaviour (`~mem` in the testbench model is correct).
+- Rows are selected by **address bits A2 and up**; **A0/A1 select one of four
+  byte columns** inside a row. For OAM (40 entries × 4 bytes = 160 bytes)
+  the natural mapping is: word line = OAM entry (40 rows), columns = the
+  four bytes of the entry. The macro access granularity is therefore one
+  byte (row + 2 column bits), while the testbench uses PPU2's 7-bit
+  `oa[7:1]` word interface (bit 0 unused) with two 8-bit data ports - the
+  exact column/byte<->port encoding inside the 2×OAM macros still needs the
+  schematic pages (the repo OAM module is an empty stub).
+
 ## Open questions
 
 - **OAM bus idle/precharge state.** The behavioural testbench shows that
