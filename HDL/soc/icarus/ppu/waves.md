@@ -387,6 +387,33 @@ fetches switch from the BG map ($9800 / 0x1800) to the window map ($9C00 /
   claim is gated upstream as documented (rounds 13-26), not by the oa
   bus x.
 
+  Round-28 (WHY the Y-test never passed - resolved): the Y-test comparator
+  itself is CORRECT. Decisive probe (temp/oamweak/tb_ytest_all10*): with
+  every OAM byte preloaded to 0x10 (= Y 16, visible on LY 0..7):
+  * the Y-test B operand (latched port-B level through `dmg_latchnq_comp`
+    g204-g250, en `w120`) reads 0x10 (w119 = operand bit 4 = 1);
+  * the AND6 `w816` = 1 and the store window `w852` opens 39x per line on
+    LY 1..7, and correctly fails on LY=8 (8-row bound of an 8x8 sprite) -
+    the comparator's range check works;
+  * `stop_oam_eval` = 1; the in-use flags / `obj_prio_ck` (PPU1) stay at 0.
+  Why real content failed: the mode-2 scan never presented the Y bytes on
+  port B in the sim:
+  * default `ppu2_merged`: `oa` low address bits read x (contested/float
+    between the scan `w518` and port-B `w475` groups, author issue
+    g419/g421) -> the macro cannot resolve the addressed row -> B operand
+    = 0x00 (OAM Y=0 = hidden) -> out of range;
+  * weakbus default: the discharge model resolves the contested low bits to
+    words {7,15,...,79} (odd) -> port B carries the TILE bytes (0x01) ->
+    B operand 0x01 -> out of range (the model layout puts the Y byte of
+    entry k at even word 2k; the scan sequence in the sim never lands on
+    those words).
+  Conclusion: the comparator, the AND6 group polarity (pass = `w816` = 1)
+  and the store window logic all work once port B carries a valid Y byte.
+  The blocker is the oa scan word<->byte<->port mapping / row schedule
+  (which words the scan addresses during mode 2) - to be pinned down
+  against the schematic or the author's review of the scan-address and oa
+  mux phases.
+
   ![tb_ppu_sprites_scan](/HDL/soc/icarus/ppu/waves/tb_ppu_sprites_scan.png)
 
   Wave regenerated (round 27) from the default run, one line window

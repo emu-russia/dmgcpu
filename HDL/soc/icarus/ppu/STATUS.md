@@ -121,6 +121,23 @@ defined, words {7,15,...,79}/mode 2. Regression suite 7/7 ALL PASS
 (incl. `tb_ppu_frame`); sprite wave regenerated. Sprite claim still
 inert (see blockers above).
 
+### Y-test root cause (round 28) - comparator is fine, addressing is not
+
+Decisive probe (temp/oamweak/tb_ytest_all10*): with every OAM byte = 0x10
+the Y-test B operand (latched port-B level, `dmg_latchnq_comp` g204-g250,
+en `w120`) = 0x10, AND6 `w816` = 1 and the store window `w852` opens 39x
+per line on LY 1..7 and correctly fails on LY=8 - the comparator, the
+AND6 polarity (pass = 1) and the store logic work. Real content failed
+only because port B never presented a Y byte during the mode-2 scan:
+default netlist -> `oa` low bits x (g419/g421 enable overlap) -> no read
+(B operand 0x00); weakbus -> contested low bits resolve to odd words
+{7,15,...,79} -> port B carries tile bytes (0x01). The remaining blocker
+is the oa scan word<->byte<->port mapping / row schedule (even words
+2k hold entry-k Y bytes under the model layout), to be pinned against the
+schematic or the author's scan-address/oa-phase review. `obj_prio_ck`
+(PPU1) remains flat even when the store fires - the PPU1 side of the
+handshake is the next item once addressing is fixed.
+
 ## What is needed to finish the sprite test
 
 1. Author review/fix of the suspected items above (or confirmation that the
