@@ -35,6 +35,12 @@ The netlist is a flat gate-level Verilog: **916 cells, 128 `assign` statements, 
 
 ## Signals
 
+> [!TIP] Boundary view
+> This table lists **every** PPU1 port, including the PPU1↔PPU2 handshake nets.
+> The whole-PPU external interface (PPU1+PPU2 vs ClkGen / CPU / MMIO / Arbiter /
+> OAM / pads, internal PPU1↔PPU2 nets excluded) is on the
+> [PPU SoC boundary](ppu.md#ppu-soc-boundary-external-signals) page.
+
 ![ppu1_ports](/imgstore/soc/ppu1_ports.png)
 
 | Signal Name            | Direction | From / Where To             | Description |
