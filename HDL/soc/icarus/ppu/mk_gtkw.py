@@ -42,7 +42,7 @@ def main():
     missing = [s for s in sigs if s not in tree]
     if missing:
         print('WARNING missing:', missing, file=sys.stderr)
-    with open(out, 'w', newline='\r\n') as f:
+    with open(out, 'w', newline='\n') as f:
         f.write('[*]\n[*] GTKWave Analyzer v3.3.128 (w)1999-2026 BSI\n[*]\n')
         f.write('[*] generated for HDL/soc/icarus/ppu (issue #390)\n[*]\n')
         f.write('[dumpfile] "%s"\n' % out.replace('.gtkw','.vcd').replace('\\','\\\\'))
