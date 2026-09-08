@@ -89,6 +89,19 @@ Verified (tb_hram PASS, compiled with -DNO_SER):
   register decode clocks) and mirrors the netlist's window decode
   ffxx & a[7] & (a[6:0] != 0x7F).
 
+## tb_testmode - TEST1/TEST2 decode
+
+Pad decode of the test pins through the real MMIO test-mode logic.
+
+![tb_testmode](waves/tb_testmode.png)
+
+Verified (tb_testmode PASS):
+- TEST1 (T2 pad low, T1 high): `test_1` asserts, `test_2` off;
+  `ext_cs_en` is forced high and `n_ext_addr_en` asserts (external
+  address enable) - the internal CPU A/D bus drivers are disabled.
+- TEST2 (T1 pad low, T2 high): `test_2` asserts, `test_1` off.
+- both pads high (normal) -> both test modes off.
+
 ## Open / upcoming tests
 
 - external /CS pad semantics need a pad + external-memory model (netlist:

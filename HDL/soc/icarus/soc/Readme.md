@@ -56,6 +56,7 @@ Verified so far (tb_mmio all-PASS, WSL-native iverilog):
 | `tb_arb.v` | **Arbiter testbench** (PASS): Sys Decode sweep, BANK $FF50 (boot disable, sticky). |
 | `hram_model.v` | Behavioral HRAM model (the real macro's storage cells are TBD stubs in sram.v - same approach as `oam_ram.v` for OAM). |
 | `tb_hram.v` | **HRAM roundtrip test** (PASS, compiled with `-DNO_SER`): $FF80-$FFFE window, $FFFF excluded, cell independence, rewrite. |
+| `tb_testmode.v` | **TEST1/TEST2 pad decode test** (PASS): T1nT2 / nT1T2 decode, ext_cs_en forced in TEST1, n_ext_addr_en asserted. |
 | `tb_*.gtkw`, `waves_cfg_*.json`, `waves/*.png` | GTKWave saves + wave images. |
 | `waves.md` | Wave documentation (per-test images). |
 | `run_all.sh` | Compile + run the suite. |
