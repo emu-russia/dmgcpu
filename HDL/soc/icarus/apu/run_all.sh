@@ -3,7 +3,7 @@
 # Uses the WSL-native Icarus. Analysers (check_ch1.py etc.) print the
 # RESULT lines for the measurement-based tests.
 cd "$(dirname "$0")"
-SRC="../../dmglib.v ../../clkgen.v ../soc/mmio_weakbus.v ../soc/arb_merged.v ../soc/ser_sharedq.v apu_merged.v wave_ram_model.v apu_env.v"
+SRC="../../dmglib.v ../../clkgen.v ../soc/mmio_weakbus.v ../soc/arb_merged.v ../soc/ser_sharedq.v apu_wc.v wave_ram_model.v apu_env.v"
 FAIL=0
 
 run_test() {
@@ -23,6 +23,6 @@ run_test tb_apu_regs
 run_test tb_apu_ch1 check_ch1.py
 
 # research-only for now (see STATUS.md): channel 2-4 output-stage question
-# run_test tb_apu_ch2 check_ch2.py
+run_test tb_apu_ch2 check_ch2.py
 
 [ $FAIL -eq 0 ] && echo "SUITE OK" || echo "SUITE FAILURES"

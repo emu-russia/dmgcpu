@@ -73,7 +73,12 @@ module apu_env;
 	pullup (d[4]); pullup (d[5]); pullup (d[6]); pullup (d[7]);
 
 	assign a = cpu_a;         // CPU holds the address bus
-	assign d = cpu_d_drv ? cpu_d_out : 8'bz;
+	// The CPU drives the data bus only in the non-precharge phase (clk2=1,
+	// same convention as the rest of the SoC; the bus is precharged high by
+	// the modules while clk2==0).  Driving through the precharge phase
+	// fights the precharge drivers and produces x on the bus, which the
+	// APU's level-sensitive register latches would capture.
+	assign d = (cpu_d_drv & clk2) ? cpu_d_out : 8'bz;
 
 	// ------------------------------------------------------------------
 	// MMIO outputs of interest

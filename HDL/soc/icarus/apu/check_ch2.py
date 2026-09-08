@@ -14,23 +14,28 @@ VCD, LOG = 'tb_apu_ch2.vcd', 'apu_ch1_segs.log'
 
 def load_vcd_sig(path, name):
     txt = open(path).read()
-    m = re.search(r'\$var wire 4 (\S+) ' + re.escape(name) + r' \[3:0\]', txt)
-    if not m:
+    # collect every scope's variable for `name` and keep the one with the
+    # most value changes (the net may be dumped under several scopes)
+    vids = re.findall(r'\$var wire 4 (\S+) ' + re.escape(name) + r' \[3:0\]', txt)
+    if not vids:
         return None
-    vid = m.group(1)
-    out = []
-    t = 0
-    prev = None
-    for ln in txt[txt.index('$enddefinitions'):].splitlines():
-        tm = re.match(r'#(\d+)', ln)
-        if tm:
-            t = int(tm.group(1))
-        for vm in re.finditer(r'b([01xz]+)\s*' + re.escape(vid), ln):
-            v = vm.group(1)
-            if v != prev:
-                out.append((t, int(v, 2)))
-                prev = v
-    return out
+    best = None
+    for vid in vids:
+        out = []
+        t = 0
+        prev = None
+        for ln in txt[txt.index('$enddefinitions'):].splitlines():
+            tm = re.match(r'#(\d+)', ln)
+            if tm:
+                t = int(tm.group(1))
+            for vm in re.finditer(r'b([01xz]+)\s*' + re.escape(vid), ln):
+                v = vm.group(1)
+                if v != prev:
+                    out.append((t, int(v, 2)))
+                    prev = v
+        if best is None or len(out) > len(best):
+            best = out
+    return best
 
 def seg_starts(log):
     segs = {}
@@ -41,7 +46,6 @@ def seg_starts(log):
     return segs
 
 def analyse(sig, t0, t1):
-    """Return (duty_pct, period_ns, vol_max) from transitions in [t0,t1)."""
     ev = [(t, v) for t, v in sig if t0 <= t < t1]
     starts, ends = [], []
     for i in range(len(ev) - 1):
@@ -51,20 +55,22 @@ def analyse(sig, t0, t1):
             ends.append(ev[i + 1][0])
     if not starts or not ends:
         return None, None, 0
-    pairs = []
-    si = 0
-    for e in ends:
-        while si < len(starts) and starts[si] < e:
-            if si > 0:
-                pairs.append((starts[si - 1], starts[si], e))
-            si += 1
-    if not pairs:
+    ratios = []
+    periods = []
+    ei = 0
+    for k in range(len(starts) - 1):
+        while ei < len(ends) and ends[ei] <= starts[k]:
+            ei += 1
+        if ei < len(ends) and starts[k] < ends[ei] < starts[k + 1]:
+            ratios.append((ends[ei] - starts[k]) / (starts[k + 1] - starts[k]))
+            periods.append(starts[k + 1] - starts[k])
+    if not ratios:
         return None, None, 0
-    hs = sum(e - s for s0, s, e in pairs)
-    ps = sum(s - s0 for s0, s, e in pairs)
-    duty = hs / ps * 100.0 if ps else None
+    ratios.sort()
+    duty = ratios[len(ratios) // 2] * 100.0
+    periods.sort()
     vol = max(v for _, v in ev if v != 0) if any(v != 0 for _, v in ev) else 0
-    return duty, ps / len(pairs), vol
+    return duty, periods[len(periods) // 2], vol
 
 def main():
     sig = load_vcd_sig(VCD, 'ch2_out')

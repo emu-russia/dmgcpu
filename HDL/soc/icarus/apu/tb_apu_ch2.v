@@ -2,7 +2,7 @@
 //
 // Runs CH2 through a fixed set of (duty, volume, freq) configurations,
 // dumping ch2_out; the segment boundaries are logged to apu_ch2_segs.log
-// and analysed by check_ch1.py (duty fractions, output period formula,
+// and analysed by check_ch2.py (duty fractions, output period formula,
 // volume plateau, NR52 status bit).
 `timescale 1ns/1ns
 
@@ -51,7 +51,7 @@ module tb_apu_ch2;
 		ch1_run(8'h80, 8'hF0, 11'h700, 7);   // duty 50%, X=0x700 (period x2)
 
 		$fclose(fh);
-		$display("RESULT tb_apu_ch2 DONE (analysed by check_ch1.py)");
+		$display("RESULT tb_apu_ch2 DONE (analysed by check_ch2.py)");
 		$finish;
 	end
 
