@@ -49,6 +49,11 @@ Measured facts (real-netlist checks, all PASS):
 - relative jumps taken/not-taken + RST vector pages;
 - IE/IME/IF interrupt dispatch: HALT wake, PC push, IF ack-clear, vectors
   $40/$48/$50;
+- HALT modes: clean stop with IME=0/IE=0, IF-wake without vector when
+  IME=0, halt-bug setup (no stop, no vector);
+- CB-prefix + rotate law: RLC/RRC/RL/RR/SLA/SRA/SWAP/SRL on A, BIT/RES/SET
+  b,A; the A-only rotates (RLCA/RLA/RRCA/RRA) clear Z on the SM83
+  (netlist-verified), the CB forms set Z from the result;
 - instruction T-states measured via M1-M1 intervals (NOP 4, LD r,n 8,
   JR taken 12 / not 8, JP 16, CALL 24, RET 16, ...).
 
