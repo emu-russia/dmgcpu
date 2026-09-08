@@ -1,6 +1,8 @@
 `timescale 1ns/1ns
-module tb_mix;
+module tb_apu_mix;
 	apu_env e ();
+	initial $dumpfile("tb_apu_mix.vcd");
+	initial $dumpvars(0, tb_apu_mix);
 	integer errors = 0;
 	reg [7:0] rb;
 	task chk(input [127:0] what, input [7:0] got, input [7:0] want);

@@ -1,0 +1,27 @@
+[*]
+[*] GTKWave Analyzer v3.3.128 (w)1999-2026 BSI
+[*]
+[*] generated for HDL/soc/icarus/ppu (issue #390)
+[*]
+[dumpfile] "tb_apu_mix.vcd"
+[timestart] 0
+[size] 1920 1000
+[pos] -1 -1
+*-0.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb_apu_mix
+[sst_width] 250
+[signals_width] 200
+[sst_expanded] 1
+[sst_vpaned_height] 400
+@22
+tb_apu_mix.e.lmixer[3:0]
+@22
+tb_apu_mix.e.rmixer[3:0]
+@22
+tb_apu_mix.e.n_lvolume[2:0]
+@28
+tb_apu_mix.e.n_ch1_amp_en
+@22
+tb_apu_mix.e.d[7:0]
+[pattern_trace] 1
+[pattern_trace] 0

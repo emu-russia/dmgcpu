@@ -1,0 +1,7 @@
+{"signals":[
+ {"name":"Mixer out","signals":["tb_apu_mix.e.lmixer[3:0]","tb_apu_mix.e.rmixer[3:0]"]},
+ {"name":"Volumes","signals":["tb_apu_mix.e.n_lvolume[2:0]","tb_apu_mix.e.n_rvolume[2:0]"]},
+ {"name":"VIN","signals":["tb_apu_mix.e.l_vin_en","tb_apu_mix.e.r_vin_en"]},
+ {"name":"Amp enables","signals":["tb_apu_mix.e.n_ch1_amp_en","tb_apu_mix.e.n_ch2_amp_en","tb_apu_mix.e.n_ch3_amp_en","tb_apu_mix.e.n_ch4_amp_en"]},
+ {"name":"Data","signals":["tb_apu_mix.e.d[7:0]"]}
+]}

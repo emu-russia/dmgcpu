@@ -1,0 +1,13 @@
+{
+  "signals": [
+    {"name": "CPU bus", "signals": [
+      "tb_apu_regs.e.cpu_a[15:0]", "tb_apu_regs.e.d[7:0]",
+      "tb_apu_regs.e.cpu_wr_sync", "tb_apu_regs.e.soc_rd"]},
+    {"name": "APU decode", "signals": [
+      "tb_apu_regs.e.apu.w188", "tb_apu_regs.e.apu.w695",
+      "tb_apu_regs.e.n_wave_wr", "tb_apu_regs.e.n_wave_rd",
+      "tb_apu_regs.e.wave_a[3:0]"]},
+    {"name": "NR52/status", "signals": [
+      "tb_apu_regs.e.d[7:0]"]}
+  ]
+}

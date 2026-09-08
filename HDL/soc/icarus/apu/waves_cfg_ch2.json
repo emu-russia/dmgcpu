@@ -1,0 +1,3 @@
+{"signals":[
+ {"name":"CH2 out","signals":["tb_apu_ch2.e.apu.ch2_out[3:0]"],"bus":"hex"}
+]}
