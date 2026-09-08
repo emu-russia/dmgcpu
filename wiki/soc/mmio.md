@@ -97,6 +97,69 @@ Contains most of the MMIO devices: Divider, Timer, DMA unit and interrupt contro
 
 [^2]: The constant 0 is globally scattered throughout the chip. Each large module with cells has a `const` cell whose output 0 is globally connected between all modules (so the input is marked as Bidir).
 
+## Register decode & bus behaviour (verified, issue #396)
+
+Verified with the real MMIO netlist in `HDL/soc/icarus/soc` (`tb_mmio`,
+all PASS; bus-alias-merged netlist `mmio_merged.v`, see the testbench
+Readme for the conventions).
+
+### Write decode map (FFxx window = `w100`, FF00-03 window = `w146`)
+
+| Decode clock | Address | Register |
+|---|---|---|
+| `w148` (nand4: a1·a0·soc_wr·w100) | $FF07 | TAC |
+| `w223` (nand4: a1·~a0·soc_wr·w100) | $FF06 | TMA |
+| `w99` (FF05 write, a0·~a1) + mux stage | $FF05 | TIMA (load) |
+| any write to $FF04 (w100·~a1·~a0) | $FF04 | DIV (reset) |
+
+The decode clocks are low during the write window (`soc_wr` follows
+ClkGen's `cpu_wr_sync`, i.e. high while the CPU writes) and the register
+dffs capture on the rising edge produced when the window closes
+(`cpu_wr_sync` falls - inside the `clk2=1` non-precharge phase). The CPU
+must hold the data ~6 ns past that edge (modelled in the testbench).
+
+### Read decode map
+
+| Read enable | Address | Driven from |
+|---|---|---|
+| `w127` (w100·a1·a0·soc_rd) | $FF07 | TAC dffs (read value = 0xF8\|TAC) |
+| `w89` (w100·a1·~a0·soc_rd) | $FF06 | TMA dffs |
+| `w33` (w100·~a1·a0·soc_rd) | $FF05 | TIMA value |
+| `w138` (w100·~a1·~a0·soc_rd) | $FF04 | DIV counter |
+| `w145`/`w144` (w146 window) | $FF02/$FF01 | SC / SB read strobes to Ser |
+
+`soc_rd` follows `cpu_rd` in normal mode; reads must be sampled while
+`clk2=1` (during `clk2=0` the internal precharge drivers pull `d` high
+and a sampled read shows `x` on zero bits).
+
+### IF ($FF0F) semantics
+
+- The flags are set asynchronously by their sources: `ppu_int_vbl` ->
+  bit0 (VBL), `ppu_int_stat` -> bit1 (STAT), timer overflow -> bit2,
+  `int_serial` -> bit3, `int_jp` -> bit4; they appear on `cpu_irq_trig`.
+- A $FF0F write **sets** the written bits (it does not clear them).
+- Clearing happens through the CPU interrupt acknowledge
+  (`cpu_irq_ack`, per-bit) - verified in `tb_mmio`.
+
+### Oscillators (DIV clock source)
+
+- `lfo_16384Hz` = clk9 / 64: six divide-by-2 dff stages (`g131/g132/
+  g130/g122/g129/g123`, outputs `w352/w37/w216/w141/w193/w217`);
+  measured 64 lfo edges per 4096 clk9 edges (`tb_mmio`). At the real
+  clk9 (1.048 MHz) this is exactly 16384 Hz.
+- `FF60_D1` (TEST_PAD.1) muxes the DIV/TIMA clock source between clk9
+  (fast mode) and the internal 16384 Hz chain (`g265`).
+- writing $FF04 resets the divider (any data); read-back of DIV shows
+  bus-contention `x` on two bits under the plain bus model (const-1
+  keeper cells `g234/g235` vs the read-back drivers) - needs the
+  weak-bus model variant like the PPU suite.
+
+### Timer IRQ path (pending)
+
+The TIMA count-source taps and the overflow -> IF bit2 / reload-TMA
+path are under analysis (see the testbench STATUS); the register write
+and read paths themselves are verified.
+
 ## Netlist
 
 ![mmio_netlist](/imgstore/soc/mmio_netlist.png)

@@ -80,6 +80,35 @@ The signal table is derived from the netlist.
 
 [^2]: The constant 0 is globally scattered throughout the chip. Each large module with cells has a `const` cell whose output 0 is globally connected between all modules (so the input is marked as Bidir).
 
+## Verified behaviour (issue #396, tb_arb all-PASS)
+
+Real Arbiter netlist in `HDL/soc/icarus/soc` (merged netlist
+`arb_merged.v`). Combines with the real MMIO decode so that CPU accesses
+to $FF50 reach the bank register.
+
+- **Sys Decode outputs (combinational, with MREQ)**:
+  - `boot_sel` = 1 for $0000-$00FF while the BANK register is clear;
+  - `ffxx` = 1 for $FFxx (a[15:8] = 0xFF);
+  - `mmio_sel` = 1 for the $FE00+ (FExx/FFxx) window;
+  - `non_vram_mreq` = MREQ & NOT ($8000-$9FFF VRAM window) - i.e. the
+    "non-VRAM" region excludes only the VRAM window, not cart RAM;
+  - `arb_fexx_ffxx` = 1 for $FE00+ addresses (FExx vs FFxx arbitration).
+- **$FF50 BANK register** (`g166`, dff): a CPU write of 1 disables the
+  internal boot ROM (`boot_sel` goes 0); the write of 0 afterwards does
+  not re-enable it (write-1-only, matches the wiki).
+- **Address/data bus role**: in normal (non-TEST1) mode the Arbiter only
+  *reads* a[14:0] and drives nothing on the internal `a` bus; a[15] is
+  driven (from `n_INPUT_a15` pads) only in TEST1 mode; the d-bus
+  precharge driver (`clk2=0`) and the external-bus direction controls
+  come from MMIO (`n_extdb_to_intdb`/`n_dblatch_to_intdb`/
+  `n_intdb_to_extdb`).
+- **/CS pad decode (netlist analysis; pad-level tb pending)**: the
+  `n_cs` output asserts for addresses with a15 & (a13 | a14), i.e. the
+  $A000-$BFFF and $C000-$FBFF windows (the $0000-$7FFF ROM area is *not*
+  selected by this signal), qualified by `ext_cs_en` and
+  ~(a[15:10] = 111111); $FC00+ (OAM/IO/HRAM) is excluded by the same
+  decoder.
+
 ## Annotated Design
 
 ![arb_annotated](/HDL/soc/design/arb_annotated.png)

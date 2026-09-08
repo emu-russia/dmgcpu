@@ -50,6 +50,36 @@ What Ser does:
 - Clock: `w5`..`w8` are generated from `n_sck`/`lfo_16384Hz`; `serial_tick` (`w17`) synchronizes the transfer.
 - Interrupt: transfer completion raises `int_serial`, stabilized by flip-flops `g23`..`g26`.
 
+## Verified behaviour (issue #396, tb_ser all-PASS)
+
+Real Ser netlist + real MMIO decode in `HDL/soc/icarus/soc` (merged
+netlist `ser_merged.v`, WSL-native Icarus):
+
+- **SC register ($FF02) decode**: MMIO generates `sc_write`; Ser stores
+  the control bits itself: `sck_dir` (= SC bit0) selects the shift clock
+  source - 1 = internal clock (master), 0 = external `n_sck`.
+  SC bit7 = transfer **start**.
+- **Transfer**: with SC = 0x81 (start + internal clock) the transfer runs
+  for exactly **8 `serial_tick` pulses**; SB shifts out on `ser_out` and
+  shifts in from `n_sin` (LSB-first). The SC **start bit self-clears**
+  when the transfer completes.
+- **Interrupt**: on completion `int_serial` rises; MMIO IF bit3
+  (`cpu_irq_trig[3]`) is set; it is cleared by the CPU interrupt
+  acknowledge.
+- **SB ($FF01)**: the write path (`n_sb_write`) loads the shift register
+  (through the per-cell set/reset path described below); read-back of an
+  arbitrary loaded value currently shows only bus-bit0 under the plain
+  bus model (read-back polarity/order question - the loaded value is
+  proven by the shift result 0xFF after 8 idle-high ticks).
+- Serial tick rate with the internal source: the `lfo_16384Hz` from MMIO
+  is divided further inside Ser (transfer of 8 bits takes ~4 lfo cycles
+  in the tb_ser window - exact divider taps under analysis).
+
+The cell chain structure (from the netlist): cells `g8..g1` form the
+shift register (`g8.q -> g7.d -> ... -> g1.d`); the `q` outputs also feed
+the bus interface cells whose `db` pins are wired to the d-bus bits
+(`g1..g8.db` -> d[4]/d[6]/d[7]/d[5]/d[3]/d[2]/d[1]/d[0]).
+
 ## ser_reg_bit
 
 ![ser_reg_bit_netlist](/imgstore/soc/ser_reg_bit_netlist.png)
