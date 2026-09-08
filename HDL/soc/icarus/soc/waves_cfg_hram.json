@@ -1,0 +1,7 @@
+{
+ "signals": [
+  {"name":"Reset / clocks","signals":["tb_hram.env.reset","tb_hram.env.clk9","tb_hram.env.cpu_wr_sync"]},
+  {"name":"CPU bus","signals":["tb_hram.env.cpu_a[15:0]","tb_hram.env.d[7:0]","tb_hram.env.soc_wr","tb_hram.env.soc_rd"]},
+  {"name":"Decode","signals":["tb_hram.env.ffxx","tb_hram.env.non_vram_mreq"]}
+ ]
+}

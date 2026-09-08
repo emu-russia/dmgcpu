@@ -73,12 +73,29 @@ Verified behaviour (tb_arb PASS):
 - writing $FF50 = 1 disables the internal boot ROM (boot_sel goes 0) and
   is sticky (writing $FF50 = 0 does not re-enable it).
 
+## tb_hram - HRAM (behavioral model)
+
+Roundtrips through the real MMIO/Arb decode into the behavioral
+`hram_model.v` (the real macro's storage cells are TBD stubs in sram.v).
+
+![tb_hram](waves/tb_hram.png)
+
+Verified (tb_hram PASS, compiled with -DNO_SER):
+- writes/reads at $FF80/$FFC0/$FFFE round-trip; neighbouring cells stay
+  independent; rewriting a cell to 0 works; $FFFF (IE) is outside the
+  HRAM window (the netlist decode excludes a[6:0] = 0x7F) so a write
+  there does not touch the RAM.
+- the model captures on the `soc_wr` falling edge (same point as the MMIO
+  register decode clocks) and mirrors the netlist's window decode
+  ffxx & a[7] & (a[6:0] != 0x7F).
+
 ## Open / upcoming tests
 
 - external /CS pad semantics need a pad + external-memory model (netlist:
   n_cs asserts for the a15&(a13|a14) & ~(a[15:10]=111111) windows with
   ext_cs_en, i.e. A000-BFFF / C000-FBFF, not the $0000-7FFF ROM region)
-- TEST1 mode bus driving, HRAM and DIV read-back modelling
+- Ser d[6] bus modelling (see STATUS.md), TEST1 mode bus driving,
+  DIV read-back modelling
 
 See [Readme.md](Readme.md) for status and [STATUS.md](STATUS.md) for the
 research log.

@@ -238,6 +238,7 @@ module soc_env;
 		.cpu_vram_oam_rd(cpu_vram_oam_rd)
 	);
 
+`ifndef NO_SER
 	Ser ser (
 		.d(d), .n_sb_write(n_sb_write), .ser_out(ser_out),
 		.serial_tick(serial_tick), .n_sin(n_sin), .int_serial(int_serial),
@@ -245,6 +246,7 @@ module soc_env;
 		.n_reset2(n_reset2), .lfo_16384Hz(lfo_16384Hz),
 		.sc_read(sc_read), .sb_read(sb_read)
 	);
+`endif
 
 	HRAM hram (
 		.clk7(clk7), .soc_rd(soc_rd), .soc_wr(soc_wr),

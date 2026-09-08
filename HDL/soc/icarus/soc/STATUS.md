@@ -49,10 +49,17 @@ the suite currently reports SUITE OK (tb_clkgen, tb_mmio, tb_ser, tb_arb).
 - [ ] TEST1/TEST2 mode bus driving (t1/t2 pads, ext address driving,
   a15 arbitration in Arb, boot ROM disable by test_2).
 - [ ] lfo_512Hz + FF60_D1 "fast DIV" mode measurement.
-- [ ] HRAM ($FF80-$FFFE) test: the real macro netlist is in the suite but
-  its storage cells `sram_array`/`sram_row_decode` are "TBD" stubs in
-  HDL/soc/sram.v (same situation as OAM before `oam_ram.v`) - needs a
-  behavioral array model first.
+- [x] HRAM interface test via `hram_model.v` (behavioral, PASS: $FF80-
+  $FFFE window incl. $FFFF exclusion, cell independence). The real macro
+  netlist remains unusable until `sram_array`/`sram_row_decode` are
+  implemented in sram.v.
+- [ ] **Ser bus modelling (d[6])**: ser cell g3's chain output aliases the
+  d[6] bus node (g2.db = g3.q = d[6] in the extracted netlist), so the
+  static model keeps d[6] permanently driven by that dffsr q. Tests that
+  must write d[6]=1 cleanly compile with `-DNO_SER` (tb_hram); the other
+  tests pass because their registers use d[6]=0. A bus-model variant
+  (PPU-style) or re-checking the alias direction against the schematic is
+  the open item.
 - [ ] Wire waves for tb_soc_probe remnants, polish waves.md.
 
 ## Tooling notes
