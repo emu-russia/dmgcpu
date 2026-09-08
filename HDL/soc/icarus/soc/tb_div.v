@@ -56,6 +56,23 @@ module tb_div;
 		nox(v3, clean);
 		chk("div-read-clean-3", clean);
 
+		// ---- FF60_D1 (TEST_PAD.1) fast mode: DIV clocked by clk9 ----
+		// (DIV counts once per M-cycle instead of once per lfo cycle,
+		// i.e. ~64x faster in this simulation)
+		env.FF60_D1 = 1'b1;
+		env.cpu_write(16'hFF04, 8'h00);
+		repeat (8) @ (posedge env.clk9);
+		env.cpu_read(16'hFF04, v1);
+		nox(v1, clean);
+		chk("div-fast-clean", clean);
+		repeat (4096) @ (posedge env.clk9);
+		env.cpu_read(16'hFF04, v2);
+		$display("RESULT DIV fast after 4096M = %b (clk9-driven; source taps under analysis)", v2);
+		nox(v2, clean);
+		chk("div-fast-clean-2", clean);
+		chk("div-fast-nonzero", v2 !== 8'h00);
+		env.FF60_D1 = 1'b0;
+
 		$display("RESULT tb_div %0d checks, %0d failures", checks, fails);
 		if (fails) $display("RESULT tb_div FAIL");
 		else       $display("RESULT tb_div PASS");

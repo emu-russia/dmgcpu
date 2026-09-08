@@ -141,7 +141,7 @@ module soc_env;
 	reg ppu_int_stat = 1'b0, ppu_int_vbl = 1'b0;
 	reg int_jp = 1'b0;               // joypad interrupt (APU)
 	reg ppu_mode3 = 1'b0;            // PPU idle (no mode-3 VRAM bursts)
-	wire FF60_D1 = 1'b0;             // DIV fast mode off
+	reg FF60_D1 = 1'b0;              // DIV fast mode (TEST_PAD.1 from APU)
 	wire ppu_clk;
 	assign ppu_clk = cclk;           // PPU clock ~ cclk passthrough
 
