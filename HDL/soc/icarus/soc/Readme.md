@@ -31,10 +31,15 @@ Verified so far (tb_mmio all-PASS, WSL-native iverilog):
   the CPU interrupt acknowledge (cpu_irq_ack) - *not* by an $FF0F write
   (a $FF0F write *sets* the flags instead); lfo_16384Hz = clk9 / 64
   (6 divider stages, real-chip 1.048 MHz / 64 = 16384 Hz).
+- Ser (tb_ser PASS): SC bit0 selects the internal clock (`sck_dir`);
+  SC bit7 starts an 8-`serial_tick` transfer; on completion `int_serial`
+  sets IF bit3 (acked by the CPU) and the SC start bit self-clears; SB
+  shifts out on `ser_out`.
 - open questions: DIV read-back has bus-contention x on two bits (const-1
   keeper vs read-back driver - needs a weak-bus model variant like the PPU
   suite); TIMA's count-source taps and the timer IRQ path need the divider
-  analysis (pending); SB/SC (Ser) and HRAM tests next.
+  analysis (pending); SB read-back polarity/order (the loaded value is
+  proven via the shift result); HRAM test next.
 
 ## Files
 
@@ -45,7 +50,8 @@ Verified so far (tb_mmio all-PASS, WSL-native iverilog):
 | `soc_env.v` | Reusable environment: real DUTs + CPU/pad/memory stand-ins, CPU write/read tasks phase-aligned to ClkGen's `cpu_wr_sync`. |
 | `tb_soc_probe.v` | Bring-up probe test (dev). |
 | `tb_mmio.v` | **MMIO register testbench** (PASS): resets, TIMA/TAC roundtrips, IF set/clear (int pulses + CPU irq ack + IF write), lfo_16384Hz = clk9/64, DIV write. |
-| `tb_mmio.gtkw`, `waves_cfg_mmio.json`, `waves/tb_mmio.png` | GTKWave save + wave image for the MMIO test. |
+| `tb_ser.v` | **Serial-link testbench** (PASS): SB load + SC start (internal clock), 8 ticks, int_serial, IF flag, SC auto-clear. |
+| `tb_mmio.gtkw`, `tb_ser.gtkw`, `waves_cfg_*.json`, `waves/*.png` | GTKWave saves + wave images. |
 | `waves.md` | Wave documentation (per-test images). |
 | `run_all.sh` | Compile + run the suite. |
 

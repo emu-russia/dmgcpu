@@ -1,0 +1,9 @@
+{
+ "signals": [
+  {"name":"Reset / clocks","signals":["tb_ser.env.reset","tb_ser.env.n_reset2","tb_ser.env.clk9","tb_ser.env.mmio.lfo_16384Hz"]},
+  {"name":"CPU bus","signals":["tb_ser.env.cpu_a[15:0]","tb_ser.env.d[7:0]","tb_ser.env.soc_wr","tb_ser.env.soc_rd"]},
+  {"name":"MMIO->Ser strobes","signals":["tb_ser.env.n_sb_write","tb_ser.env.sc_write","tb_ser.env.sb_read"]},
+  {"name":"Ser control","signals":["tb_ser.env.sck_dir","tb_ser.env.serial_tick","tb_ser.env.ser_out","tb_ser.env.int_serial"]},
+  {"name":"IRQ to core","signals":["tb_ser.env.cpu_irq_trig[4:0]"]}
+ ]
+}

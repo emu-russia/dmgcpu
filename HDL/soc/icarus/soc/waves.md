@@ -24,9 +24,27 @@ What to look at in the wave:
   and clears after the CPU IRQ acknowledge.
 - `lfo_16384Hz`: 64 toggles per 4096 `clk9` cycles (clk9 / 64).
 
+## tb_ser - Serial link
+
+SB load, SC start with the internal shift clock, 8-tick transfer,
+`int_serial` on completion, SC start-bit auto-clear, IF serial flag.
+
+![tb_ser](waves/tb_ser.png)
+
+Verified behaviour:
+- `sck_dir` = SC bit0 (internal clock master when 1).
+- Writing SC bit7 = 1 starts an 8-tick transfer; `serial_tick` pulses 8
+  times; SB shifts out on `ser_out` and in from `n_sin` (idle high -> all
+  ones after the transfer).
+- On completion `int_serial` rises, the MMIO IF serial flag
+  (`cpu_irq_trig[3]`) is set, and the SC start bit self-clears.
+- IF serial flag is cleared by the CPU IRQ acknowledge.
+- SB read-back of an arbitrary loaded value shows only bus-bit0 (read-back
+  polarity/order open question - the loaded value is proven through the
+  shift result).
+
 ## Open / upcoming tests
 
-- `tb_ser` - serial link: SB/SC write->read, shift timing, int_serial
 - `tb_clkgen` - clock phases, reset sync, ext_cs_en/cpu_wr_sync
 - `tb_arb` - bus arbitration, /CS//MRD//MWR pad drives, test modes
 - HRAM and DIV read-back modelling
