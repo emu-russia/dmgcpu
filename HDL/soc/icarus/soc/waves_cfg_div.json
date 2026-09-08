@@ -1,0 +1,7 @@
+{
+ "signals": [
+  {"name":"Reset / clocks","signals":["tb_div.env.reset","tb_div.env.clk9","tb_div.env.mmio.lfo_16384Hz"]},
+  {"name":"CPU bus","signals":["tb_div.env.cpu_a[15:0]","tb_div.env.d[7:0]","tb_div.env.soc_wr"]},
+  {"name":"DIV control","signals":["tb_div.env.FF60_D1"]}
+ ]
+}

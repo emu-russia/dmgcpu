@@ -89,6 +89,19 @@ Verified (tb_hram PASS, compiled with -DNO_SER):
   register decode clocks) and mirrors the netlist's window decode
   ffxx & a[7] & (a[6:0] != 0x7F).
 
+## tb_div - DIV counter
+
+DIV reset-to-zero on a $FF04 write, clean read-back (mmio_weakbus.v),
+counting at the lfo rate, 8-bit wrap, and the FF60_D1 fast mode probe.
+
+![tb_div](waves/tb_div.png)
+
+Verified (tb_div PASS):
+- after the $FF04 write DIV reads ~0, then counts one per lfo cycle
+  (0x80 after 128 lfo cycles) and wraps at 256.
+- FF60_D1 = 1 (TEST_PAD.1, DIV clocked by clk9): read ~0x0C in the
+  window - clk9-driven, exact source taps under analysis.
+
 ## tb_testmode - TEST1/TEST2 decode
 
 Pad decode of the test pins through the real MMIO test-mode logic.
