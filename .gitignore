@@ -1,3 +1,7 @@
 temp
 *.vcd
 *.run
+# apu suite run artifacts
+HDL/soc/icarus/apu/*_segs.log
+__pycache__/
+__pycache__/

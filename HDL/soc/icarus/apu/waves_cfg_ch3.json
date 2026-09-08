@@ -1,0 +1,5 @@
+{"signals":[
+ {"name":"CH3 out","signals":["tb_apu_ch3.e.apu.ch3_out[3:0]"],"bus":"hex"},
+ {"name":"Wave addr","signals":["tb_apu_ch3.e.apu.wave_a[3:0]"],"bus":"hex"},
+ {"name":"CH3 active","signals":["tb_apu_ch3.e.apu.ch3_active"]}
+]}
