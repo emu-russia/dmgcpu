@@ -102,12 +102,14 @@ to $FF50 reach the bank register.
   precharge driver (`clk2=0`) and the external-bus direction controls
   come from MMIO (`n_extdb_to_intdb`/`n_dblatch_to_intdb`/
   `n_intdb_to_extdb`).
-- **/CS pad decode (netlist analysis; pad-level tb pending)**: the
-  `n_cs` output asserts for addresses with a15 & (a13 | a14), i.e. the
-  $A000-$BFFF and $C000-$FBFF windows (the $0000-$7FFF ROM area is *not*
-  selected by this signal), qualified by `ext_cs_en` and
-  ~(a[15:10] = 111111); $FC00+ (OAM/IO/HRAM) is excluded by the same
-  decoder.
+- **/CS pad drive (measured, tb_arb PASS)**: `/CS` (internal
+  `n_cs_topad`, the inverting OBUF in front of the pad) asserts ~2x per
+  CPU read cycle (M-cycle pulses via `ext_cs_en`) for addresses with
+  a15 & (a13 | a14) - the $A000-$BFFF (cart RAM) and $C000-$FBFF
+  windows; it does **not** assert for the $0000-$7FFF ROM area, the
+  $8000-$9FFF VRAM window, or $FFxx (the ~(a[15:10]=111111) term kills
+  $FC00+). So this signal is the select for the external RAM / bus-
+  window devices, not for the cart ROM.
 
 ## Annotated Design
 

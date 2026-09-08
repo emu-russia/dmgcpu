@@ -26,6 +26,21 @@ module tb_arb;
 		end
 	endtask
 
+	integer ncs = 0;
+	reg watch_ncs = 1'b0;
+	always @(posedge env.n_cs_topad) if (watch_ncs) ncs = ncs + 1;
+
+	// CPU read with a /CS-pulse counter
+	task r8cs(input [15:0] addr, output [7:0] v, output integer pulses);
+		begin
+			ncs = 0;
+			watch_ncs = 1'b1;
+			env.cpu_read(addr, v);
+			watch_ncs = 1'b0;
+			pulses = ncs;
+		end
+	endtask
+
 	// sample the decode outputs for one address
 	task probe_addr(input [15:0] addr, input [127:0] tag);
 		begin
@@ -110,16 +125,25 @@ module tb_arb;
 		probe_addr(16'h0000, "boot-after-bank0");
 		chk("bank-write0-sticky", env.boot_sel === 1'b0);
 
-		// ----- external /CS pad-drive (PENDING) ----
-		// full /CS semantics need the pad + external-memory model (the
-		// n_cs decode is a15&(a13|a14) & ~(a[15:10]=all1) & ext_cs_en,
-		// i.e. it targets the A000-BFFF / C000-FBFF windows, not the
-		// $0000-7FFF ROM area that DMG games route through /CS). See
-		// waves/Readme for the analysis note; a pad-level tb is next.
+		// ----- external /CS pad-drive -----
+		// n_cs (-> /CS pad through an inverting OBUF) asserts for the
+		// a15&(a13|a14) & ~(a[15:10]=111111) windows with ext_cs_en:
+		// measured on real CPU read cycles here.
 		begin : pads
+			integer p;
 			reg [7:0] vv;
-			env.cpu_read(16'h0100, vv);
-			$display("PENDING external /CS pad model (see Readme)");
+			r8cs(16'hA000, vv, p);       // cart-RAM window: /CS asserted
+			$display("CS: A000 read /CS pulses=%0d", p);
+			chk("cs-cartram-a000", p > 0);
+			r8cs(16'h8000, vv, p);       // VRAM window: no /CS
+			chk("cs-no-vram-8000", p == 0);
+			r8cs(16'h0100, vv, p);       // cart ROM area: no /CS (see Readme)
+			$display("CS: 0100 read /CS pulses=%0d (ROM area not selected)", p);
+			r8cs(16'hC000, vv, p);       // C000 window: /CS asserted
+			$display("CS: C000 read /CS pulses=%0d", p);
+			chk("cs-c000-window", p > 0);
+			r8cs(16'hFF80, vv, p);       // FFxx (HRAM): no /CS (w139 gate)
+			chk("cs-no-ffxx", p == 0);
 		end
 
 		$display("RESULT tb_arb %0d checks, %0d failures", checks, fails);

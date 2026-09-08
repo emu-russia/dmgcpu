@@ -36,19 +36,30 @@ the suite currently reports SUITE OK (tb_clkgen, tb_mmio, tb_ser, tb_arb).
 
 ## Open research items (author checklist)
 
-- [ ] DIV read-back bus-contention `x` (2 bits): const-1 keeper cells
-  `g234/g235` vs read-back drivers -> add a weak-bus model variant like
-  the PPU `ppu2_weakbus.v`/`gen_weakbus.py` approach, or model the d-bus
-  keepers as weak pull-ups in the environment.
-- [ ] TIMA count-source taps + overflow -> IF bit2 / TMA reload path
-  (write/read paths verified; the counter clock muxing needs the divider
-  analysis; observed timer does not overflow in the current window).
-- [ ] SB read-back polarity/order (loaded value proven via shift result).
-- [ ] External /CS pad semantics: full pad + external-memory model
-  (n_cs targets $A000-BFFF / $C000-FBFF windows per netlist analysis).
-- [ ] TEST1/TEST2 mode bus driving (t1/t2 pads, ext address driving,
-  a15 arbitration in Arb, boot ROM disable by test_2).
-- [ ] lfo_512Hz + FF60_D1 "fast DIV" mode measurement.
+- [x] DIV read-back bus contention: solved by `mmio_weakbus.v` (drops the
+  const-1 keepers `g234/g235` of the FF04-07 window) - `tb_div` PASS:
+  read-back clean, reset-to-zero on $FF04 write, counts at the lfo rate,
+  8-bit wrap.
+- [x] TIMA count source + overflow -> IF2/TMA reload: measured select
+  rates (sel 00 ~ 1 tick / 256 M-cycles ~ 4096 Hz) and overflow verified
+  (`tb_mmio` PASS: 0xFE+sel00 -> reload from TMA + `cpu_irq_trig[2]`).
+- [x] SB read-back polarity/order: root cause was the one-way
+  `assign db = w2` alias inside `ser_reg_bit` (the cell set/reset logic
+  never saw the CPU data); fixed in `ser_sharedq.v` - SB roundtrip exact
+  (`tb_ser` PASS).
+- [x] Ser d[6] bus modelling: fixed in `ser_sharedq.v` (cell alias + the
+  `g3.q` shift-terminal moved off d[6]); HRAM runs with Ser present, no
+  `-DNO_SER` needed (`tb_hram` PASS).
+- [x] External /CS pad semantics: measured on real CPU read cycles
+  (`tb_arb` PASS) - `/CS` (n_cs_topad, inverting OBUF) asserts per
+  M-cycle for the a15&(a13|a14) & ~(a[15:10]=111111) windows
+  ($A000 read: 2 pulses, $C000: 2; none for $8000 VRAM, $0100 ROM area
+  or $FFxx).
+- [ ] TEST1/TEST2 full bus driving (pad loopback model): the decode side
+  is PASS (`tb_testmode`); actually driving the internal buses from the
+  t1/t2 pads needs the external pad/memory model (see /CS note).
+- [x] lfo_512Hz (clk9/2048) measured; FF60_D1 fast-DIV probed (`tb_div`):
+  DIV read ~0x0C with FF60_D1=1 (clk9-driven source taps under analysis).
 - [x] HRAM interface test via `hram_model.v` (behavioral, PASS: $FF80-
   $FFFE window incl. $FFFF exclusion, cell independence). The real macro
   netlist remains unusable until `sram_array`/`sram_row_decode` are
