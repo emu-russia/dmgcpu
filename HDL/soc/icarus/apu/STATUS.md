@@ -83,16 +83,18 @@ depend on the polynomial, so rate ratios are measured, not assumed).
 - [ ] **noise divider ratio cross-check** (tb_apu_ch4 rates vs the DMG
   shift-clock formula; measure the shift clock directly off the LFSR
   clock net).
-- [ ] **frame-sequencer timing**: with the synthetic lfo (4 us period), the
-  ch1 envelope step cadence measured ~8 lfo pulses (32 us) between
-  amplitude changes and shows glitch dips on the ch1_out bus at the same
-  cadence (the 4-bit output briefly shows the decrementing counter). Exact
-  fs step mapping (length 256 Hz / sweep 128 Hz / env 64 Hz pattern),
-  envelope period register (NR12 bits 2:0) divide behaviour and the DMG
-  frame-sequencer phase offset need a dedicated measurement test with
-  internal-net observation.
-- [ ] length counter / sweep: not yet measured end-to-end (needs the fs
-  cadence resolved first).
+- [x] **frame-sequencer / envelope cadence (measured, tb_env3-style
+  probes)**: with the synthetic lfo the CH1 envelope decays one volume
+  step every `8 * rate` lfo pulses (rate = NR12 bits 2:0; rate 0 = no
+  envelope change), i.e. at real 512 Hz lfo the volume step period is
+  `rate / 64 s` (rate 1 -> 1/64 s = 64 Hz).  The earlier "glitch dips"
+  on ch1_out at the 8-lfo cadence were an x-bus artifact fixed by
+  apu_wc.v.  (Note: the observed law differs from the (rate+1)/64 s in
+  some literature - measured on this netlist it is rate/64 s.)
+- [ ] length counter / sweep cadences: length (expected lfo/2-ish) and
+  ch1 sweep (expected lfo/4-ish) still to be measured with the same
+  method (probes started; see tb_apu_env / tb_env2/3 in the workspace
+  history).
 - [ ] joypad ($FF00) & serial pad pieces in the APU (n_p10..n_p13,
   DRV_LOW_p1x, n_sout_topad etc.): decode map started (w570 = FF00 write
   window capturing d0..d7 into the p10-p15/serial pad latches) - tests
