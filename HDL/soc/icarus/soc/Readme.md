@@ -53,7 +53,8 @@ Verified so far (tb_mmio all-PASS, WSL-native iverilog):
 | `tb_clkgen.v` | **ClkGen testbench** (PASS): reset release, clk_ena/osc_ena gating, cpu_wr_sync rate, ext_cs_en. |
 | `clkgen_phases.py` | Tool: measured M-cycle + posedge phase table of the 9 clocks (feeds wiki/soc/clkgen.md). |
 | `tb_ser.v` | **Serial-link testbench** (PASS): SB load + SC start (internal clock), 8 ticks, int_serial, IF flag, SC auto-clear. |
-| `tb_mmio.gtkw`, `tb_ser.gtkw`, `waves_cfg_*.json`, `waves/*.png` | GTKWave saves + wave images. |
+| `tb_arb.v` | **Arbiter testbench** (PASS): Sys Decode sweep, BANK $FF50 (boot disable, sticky). |
+| `tb_*.gtkw`, `waves_cfg_*.json`, `waves/*.png` | GTKWave saves + wave images. |
 | `waves.md` | Wave documentation (per-test images). |
 | `run_all.sh` | Compile + run the suite. |
 

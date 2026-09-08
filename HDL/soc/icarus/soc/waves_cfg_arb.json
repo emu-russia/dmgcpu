@@ -1,0 +1,7 @@
+{
+ "signals": [
+  {"name":"Bus / CPU","signals":["tb_arb.env.cpu_a[15:0]","tb_arb.env.cpu_mreq","tb_arb.env.soc_wr","tb_arb.env.soc_rd"]},
+  {"name":"Sys decode","signals":["tb_arb.env.mmio_sel","tb_arb.env.boot_sel","tb_arb.env.ffxx","tb_arb.env.non_vram_mreq","tb_arb.env.arb_fexx_ffxx"]},
+  {"name":"External drives","signals":["tb_arb.env.n_cs_topad","tb_arb.env.n_DRV_HIGH_a15","tb_arb.env.DRV_LOW_a15","tb_arb.env.n_DRV_HIGH_d[0]"]}
+ ]
+}

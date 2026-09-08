@@ -58,10 +58,27 @@ Verified behaviour (tb_clkgen PASS + clkgen_phases.py table):
   whole tree; cpu_wr_sync pulses once per M-cycle; ext_cs_en is an
   active-low per-M-cycle pulse while cpu_mreq is high.
 
+## tb_arb - Arbiter Sys Decode + BANK
+
+Address-decode sweep of mmio_sel/boot_sel/ffxx/non_vram_mreq/
+arb_fexx_ffxx, the $FF50 BANK register disabling the internal boot ROM,
+and the VRAM-window definition of non_vram_mreq.
+
+![tb_arb](waves/tb_arb.png)
+
+Verified behaviour (tb_arb PASS):
+- `boot_sel` = 1 for $0000-$00FF (with the BANK register clear), else 0.
+- `ffxx` = 1 for $FFxx; `mmio_sel` = 1 for $FE00+ (FExx/FFxx window).
+- `non_vram_mreq` = MREQ & not the $8000-$9FFF VRAM window.
+- writing $FF50 = 1 disables the internal boot ROM (boot_sel goes 0) and
+  is sticky (writing $FF50 = 0 does not re-enable it).
+
 ## Open / upcoming tests
 
-- `tb_arb` - bus arbitration, /CS//MRD//MWR pad drives, test modes
-- HRAM and DIV read-back modelling
+- external /CS pad semantics need a pad + external-memory model (netlist:
+  n_cs asserts for the a15&(a13|a14) & ~(a[15:10]=111111) windows with
+  ext_cs_en, i.e. A000-BFFF / C000-FBFF, not the $0000-7FFF ROM region)
+- TEST1 mode bus driving, HRAM and DIV read-back modelling
 
 See [Readme.md](Readme.md) for status and [STATUS.md](STATUS.md) for the
 research log.
