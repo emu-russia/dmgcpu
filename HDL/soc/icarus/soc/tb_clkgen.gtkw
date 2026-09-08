@@ -1,0 +1,46 @@
+[*]
+[*] GTKWave Analyzer v3.3.128 (w)1999-2026 BSI
+[*]
+[*] generated for HDL/soc/icarus/soc tb_clkgen (issue #396)
+[*]
+[dumpfile] "tb_clkgen.vcd"
+[timestart] 0
+[size] 1920 1000
+[pos] -1 -1
+*-0.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb_clkgen
+[sst_width] 250
+[signals_width] 200
+[sst_expanded] 1
+[sst_vpaned_height] 400
+@28
+tb_clkgen.env.reset
+@28
+tb_clkgen.env.n_reset2
+@28
+tb_clkgen.env.clk_ena
+@28
+tb_clkgen.env.osc_ena
+@28
+tb_clkgen.env.clk1
+@28
+tb_clkgen.env.clk2
+@28
+tb_clkgen.env.clk3
+@28
+tb_clkgen.env.clk4
+@28
+tb_clkgen.env.clk6
+@28
+tb_clkgen.env.clk7
+@28
+tb_clkgen.env.clk9
+@28
+tb_clkgen.env.cpu_wr_sync
+@28
+tb_clkgen.env.cpu_mreq
+@28
+tb_clkgen.env.ext_cs_en
+
+[pattern_trace] 1
+[pattern_trace] 0

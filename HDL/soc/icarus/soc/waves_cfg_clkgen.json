@@ -1,0 +1,8 @@
+{
+ "signals": [
+  {"name":"Reset / inputs","signals":["tb_clkgen.env.reset","tb_clkgen.env.clk_ena","tb_clkgen.env.osc_ena","tb_clkgen.env.osc_stable","tb_clkgen.env.n_reset2","tb_clkgen.env.sync_reset"]},
+  {"name":"M-cycle anchors","signals":["tb_clkgen.env.n_clk_in","tb_clkgen.env.cclk","tb_clkgen.env.clk9","tb_clkgen.env.clk8"]},
+  {"name":"CPU clocks","signals":["tb_clkgen.env.clk1","tb_clkgen.env.clk2","tb_clkgen.env.clk3","tb_clkgen.env.clk4","tb_clkgen.env.clk5","tb_clkgen.env.clk6","tb_clkgen.env.clk7"]},
+  {"name":"Strobes","signals":["tb_clkgen.env.cpu_wr","tb_clkgen.env.cpu_wr_sync","tb_clkgen.env.cpu_mreq","tb_clkgen.env.ext_cs_en"]}
+ ]
+}

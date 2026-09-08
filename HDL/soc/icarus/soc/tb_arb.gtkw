@@ -1,0 +1,38 @@
+[*]
+[*] GTKWave Analyzer v3.3.128 (w)1999-2026 BSI
+[*]
+[*] generated for HDL/soc/icarus/soc tb_arb (issue #396)
+[*]
+[dumpfile] "tb_arb.vcd"
+[timestart] 0
+[size] 1920 1000
+[pos] -1 -1
+*-0.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb_arb
+[sst_width] 250
+[signals_width] 200
+[sst_expanded] 1
+[sst_vpaned_height] 400
+@28
+tb_arb.env.reset
+@28
+tb_arb.env.clk9
+@22
+tb_arb.env.cpu_a[15:0]
+@28
+tb_arb.env.cpu_mreq
+@28
+tb_arb.env.mmio_sel
+@28
+tb_arb.env.boot_sel
+@28
+tb_arb.env.ffxx
+@28
+tb_arb.env.non_vram_mreq
+@28
+tb_arb.env.arb_fexx_ffxx
+@28
+tb_arb.env.n_cs_topad
+
+[pattern_trace] 1
+[pattern_trace] 0

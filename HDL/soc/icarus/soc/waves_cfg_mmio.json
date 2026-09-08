@@ -1,0 +1,9 @@
+{
+ "signals": [
+  {"name":"Reset / clocks","signals":["tb_mmio.env.reset","tb_mmio.env.n_reset2","tb_mmio.env.clk9","tb_mmio.env.clk2"]},
+  {"name":"CPU bus","signals":["tb_mmio.env.cpu_a[15:0]","tb_mmio.env.d[7:0]","tb_mmio.env.cpu_wr_sync","tb_mmio.env.soc_wr","tb_mmio.env.soc_rd"]},
+  {"name":"MMIO decodes","signals":["tb_mmio.env.mmio.w148","tb_mmio.env.mmio.w223"]},
+  {"name":"IRQs","signals":["tb_mmio.env.cpu_irq_trig[4:0]"]},
+  {"name":"LFOs","signals":["tb_mmio.env.mmio.lfo_16384Hz","tb_mmio.env.mmio.lfo_512Hz"]}
+ ]
+}

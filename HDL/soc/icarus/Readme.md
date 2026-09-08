@@ -11,6 +11,7 @@ WSL at /mnt/c/iverilog/bin).
 | `ppu_standalone.v` | PPU1+PPU2 early bring-up |
 | `apu_standalone.v` | APU bring-up |
 | `ppu/` | **PPU regression testbench** (issue #390): tests, waves.md, STATUS.md |
+| `soc/` | **SoC small-domain suite** (issue #396): ClkGen/Arbiter/MMIO/Ser/HRAM real netlists, CPU model env |
 
 Tooling notes for future work (APU, MMIO, Arb, ...):
 - [gtkwave-skill.md](gtkwave-skill.md) - the adapted Icarus/GTKWave skill
