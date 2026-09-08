@@ -60,7 +60,7 @@ module tb_mmio;
 
 		env.cpu_write(16'hFF07, 8'h03);   // TAC = 0b11 (16384 Hz, running)
 		rd(16'hFF07, rdv);
-		chk("tac-roundtrip-0x03", rdv == 8'hBB);  // 0xF8 | 0x03
+		chk("tac-roundtrip-0x03", rdv == 8'hFB);  // 0xF8 | 0x03
 
 		// ---- interrupt flag: int_jp pulse sets IF bit4 / cpu_irq_trig[4] ----
 		env.int_jp = 1'b1;

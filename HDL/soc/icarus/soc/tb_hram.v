@@ -4,9 +4,9 @@
 // still TBD stubs in sram.v). Exercises the HRAM interface through the
 // real MMIO+Arbiter decode: soc_wr/soc_rd/ffxx + a[7] select the window.
 //
-// Compile with -DNO_SER: Ser's bus hookup aliases a shift-chain node onto
-// d[6] and permanently drives it under the static bus model (see
-// STATUS.md "Ser bus modelling"), which would corrupt every d[6]=1 write.
+// Runs against the ser_sharedq.v + mmio_weakbus.v d-bus variants (the
+// ser_reg_bit cell alias and the d[6] shift-terminal drives are fixed
+// there), so Ser may stay in the compile.
 `timescale 1ns/1ns
 
 module tb_hram;

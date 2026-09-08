@@ -47,11 +47,12 @@ module tb_ser;
 
 		chk("ser-idle-no-irq", env.int_serial === 1'b0);
 
-		// SB load, read back immediately (read-back polarity is under
-		// analysis - the loaded value is checked through the shift below)
+		// SB load, read back immediately (works exactly with the
+		// ser_sharedq.v bus variant - d[6] is no longer force-driven by
+		// the shift-chain terminal)
 		env.cpu_write(16'hFF01, 8'hA5);
 		rd(16'hFF01);
-		chk("sb-load-drives-bus-bit0", rdv[0] === 1'b1);
+		chk("sb-roundtrip-0xA5", rdv == 8'hA5);
 
 		// SC: start + internal clock (bit7 + bit0)
 		env.cpu_write(16'hFF02, 8'h81);
