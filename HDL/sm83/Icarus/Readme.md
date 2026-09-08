@@ -6,10 +6,11 @@ Two testbench layers live here:
 
 - **SM83 regression suite (issue #400)** - `sm83_env.v` + `tb_sm83_*.v`,
   regression tests on the **real SM83 core netlist** (register file, ALU +
-  flags, memory addressing, stack/16-bit, jumps, interrupts, instruction
-  timing).  Run everything with `./run_all.sh` (each test prints a
-  `RESULT ... PASS/FAIL` line).  Wave images + docs: [waves.md](waves.md),
-  research log: [STATUS.md](STATUS.md).
+  flags, memory addressing, stack/16-bit, jumps, interrupts, HALT modes,
+  CB-prefix rotate/shift/bit ops, instruction timing).  Run everything
+  with `./run_all.sh` (each test prints a `RESULT ... PASS/FAIL` line).
+  Wave images + docs: [waves.md](waves.md), research log:
+  [STATUS.md](STATUS.md).
 - **ROM-based harness** (below) - `run.v` + `external_clk.v` + `roms/`,
   runs blargg-style test ROMs through the same netlist with a `Bogus_HW`
   memory model (this was the original per-ROM debug flow).

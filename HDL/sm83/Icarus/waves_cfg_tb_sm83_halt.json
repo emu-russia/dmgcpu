@@ -1,0 +1,40 @@
+{
+ "signals": [
+  {
+   "name": "clocks",
+   "signals": [
+    "tb_sm83_halt.eB.CLK",
+    "tb_sm83_halt.eB.M1",
+    "tb_sm83_halt.eB.MREQ",
+    "tb_sm83_halt.eB.RD"
+   ],
+   "bus": "bits"
+  },
+  {
+   "name": "buses",
+   "signals": [
+    "tb_sm83_halt.eB.A[15:0]",
+    "tb_sm83_halt.eB.D[7:0]"
+   ],
+   "bus": "hex"
+  },
+  {
+   "name": "irq",
+   "signals": [
+    "tb_sm83_halt.eB.IF[7:0]",
+    "tb_sm83_halt.eB.irq_ack[7:0]",
+    "tb_sm83_halt.eB.CPU_IRQ_TRIG[7:0]"
+   ],
+   "bus": "hex"
+  },
+  {
+   "name": "regs",
+   "signals": [
+    "tb_sm83_halt.eB.pc[15:0]",
+    "tb_sm83_halt.eB.sp[15:0]",
+    "tb_sm83_halt.eB.regA[7:0]"
+   ],
+   "bus": "hex"
+  }
+ ]
+}

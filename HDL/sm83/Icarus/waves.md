@@ -93,3 +93,33 @@ JR taken 12 / not-taken 8, CALL 24, RET 16, JP 16.
 Verified: all 32 measured intervals equal the documented values - the SM83
 timing oracle for the netlist (add a candidate opcode between two M1s and
 its measured duration answers "how many cycles does it take").
+
+## tb_sm83_cb - CB-prefix rotate/shift/bit ops
+
+Straight-line program executing the A-only rotates (RLCA/RLA/RRCA/RRA),
+the CB-prefixed RLC/RRC/RL/RR/SLA/SRA/SWAP/SRL on A and BIT/RES/SET b,A
+(128 cases, 256 checks), each case capturing result A and the flags F via
+PUSH AF.  The wave shows the CB byte fetch producing an extra M1 pulse
+before the opcode fetch.
+
+![tb_sm83_cb](waves/tb_sm83_cb.png)
+
+Measured law (netlist): CB ops set Z from the result, BIT b,A sets
+Z = ~A[b] with H=1, RES/SET leave the flags untouched.  The A-only
+rotates (RLCA/RLA/RRCA/RRA) *clear Z* - the documented SM83 A-rotate
+quirk, verified on the real netlist.
+
+## tb_sm83_halt - HALT modes (IME/IF law)
+
+Three HALT scenarios on the real core: a clean stop (IME=0, IE=0 - the PC
+stays at HALT+1), an IF wake while halted with IME=0 (execution resumes
+after the HALT, no interrupt vector is taken), and the classic halt-bug
+setup (IF pending when HALT executes - the core does not stop and still
+never dispatches, because IME=0).  The wave shows scenario B: HALT, the
+IF assertion, wake and the resumed instruction stream.
+
+![tb_sm83_halt](waves/tb_sm83_halt.png)
+
+Verified: no vector runs when IME=0 (the $40 handler marker stays clear)
+in every scenario; with IME=1 the dispatch path is covered by
+`tb_sm83_irq` instead.
