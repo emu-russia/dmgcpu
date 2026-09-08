@@ -1,7 +1,13 @@
 # APU
 
-> [!WARNING]  
-> The research has gained critical mass, the netlist is verified but not annotated. The signal table is filled based on the netlist, but the descriptions require human verification. Further research is required.
+> [!NOTE]
+> The netlist is now exercised by the Icarus regression suite
+> (`HDL/soc/icarus/apu`, issue #398): the register map, the channel 1-4
+> output stages, the frame-sequencer laws and the mixer/DAC-amp block have
+> been **measured on the real netlist** and are documented below. The
+> suite log / open questions live in
+> [HDL/soc/icarus/apu/STATUS.md](/HDL/soc/icarus/apu/STATUS.md); this
+> wiki page keeps the signal-level overview.
 
 ![locator_apu](/imgstore/soc/locator_apu.jpg)
 
@@ -94,9 +100,60 @@ It also contains a piece of arbitration for `a[7:0]`. [^1]
 
 ## Annotated Design
 
-TBD.
-
 ![apu](/HDL/soc/design/apu.png)
+
+## Netlist & functional modules (issue #398)
+
+The extracted netlist (`HDL/soc/apu.v`) is one flat module: ~1330 cells
+(286 not, 124 notif0, 116 nor, 108 dffr, 101 latchr_comp, 89 cnt, 88 and,
+73 nand, ... 1 const), i.e. the DMG-CPU "APU pool" of standard cells.
+Simulation on the merged netlist (`apu_merged.v`, a/d bus aliases) splits
+it into the following functional blocks, with the measured behaviour:
+
+| Block | Evidence / notes |
+|---|---|
+| Register file $FF10-$FF2F | 8-bit read/write map measured per address (see table below). Decode clocks follow `soc_wr` (buffered net `w188`); level-sensitive `latchr_comp` cells capture the d-bus at the FFxx write window close. |
+| Wave-RAM window $FF30-$FF3F | decoded inside the APU: `w695` = FF30-3F window, `n_wave_wr = ~(soc_wr & w695)`, `n_wave_rd` = sample clock (ch3 playing) or `soc_rd & w695` (CPU read); `wave_a` = sample counter while ch3 plays, else `a[3:0]`. |
+| CH1/CH2 square generators | output period = `(2048 - X) * 32` oscillator cycles (X = NR13/NR14 or NR23/NR24) - the DMG 131072/(2048-X) relation: 11-bit divider at clk9 (= osc/4), 8-step duty pattern. Duty table 12.5/25/50/75% and NRx2 volume plateau measured on `chN_out`. |
+| CH3 wave generator | wave-RAM address steps every `(2048 - X) * 2` osc (sample rate 2^21/(2048-X)); amplitude = sample scaled by NR32 (100/50/25%/mute); DAC enable NR30 bit7. |
+| CH4 noise generator | LFSR output at NR42 volume; NR43 divisor scaling measured (exact divider ratio cross-check open). |
+| Frame sequencer (lfo_512Hz) | envelope volume step every `8*rate` lfo pulses (rate/64 s at 512 Hz; rate 0 = off); length counter tick = 2 lfo pulses (256 Hz) and a trigger reloads it with `0x40 - L` (the DMG quirk: sounds (64-L)/256 s); sweep cadence detail open. |
+| Mixer / DAC amp | NR51 low nibble -> right (SO1) mixer bits, high nibble -> left (SO2); NR50 volumes -> active-low n_lvolume/n_rvolume + vin enables (bits 7/3); n_ch*_amp_en follow channel run / NR52 power. |
+
+### Register file (measured read-back semantics)
+
+| Addr | Register | read = |
+|---|---|---|
+| $FF10 | NR10 | `0x80 | (v & 0x7F)` |
+| $FF11 | NR11 | `0x3F | (v & 0xC0)` |
+| $FF12 | NR12 | v (8-bit echo) |
+| $FF13 | NR13 | no read-back (0xFF) - feeds the divider |
+| $FF14 | NR14 | `0xBF | (v & 0x40)` |
+| $FF16-$FF1E | NR21-34 | same pattern (NR22/NR32 8-bit echo where readable; freq-lo no read-back) |
+| $FF24 | NR50 | v |
+| $FF25 | NR51 | v |
+| $FF26 | NR52 | `0x70 | (power<<7) | (ch-active<<0)`; power-off write resets the APU |
+| $FF27-$FF2F | - | unmapped |
+| $FF30-$FF3F | WaveRAM | byte read/write through the APU decode |
+
+### Serial / joypad / a-arbitration pieces
+
+Per the SoC overview, the APU pool also holds the pieces closest to the
+pads: the $FF00 write decode `w570` captures d0..d7 into the p10-p15 /
+serial pad-driver latches (`DRV_LOW_p1x`/`n_DRV_HIGH_p1x`, `n_sout_topad`,
+sck/sin pad drivers) and the a[7:0] arbitration (TEST1: `addr_latch` +
+dma mux `g1066..g1073` select the external/DMA address; `bufif0`
+`g1081..g1099` read the pad inputs onto the internal bus when
+`n_ext_addr_en` is low). Dedicated tests for these paths are open (see
+STATUS.md).
+
+### Simulation notes
+
+The static Icarus model needs the `apu_wc.v` bus-model variant: five
+divider-state drivers enabled by the `w548` decode (g869/g937/g939-941)
+are open during CPU writes and fight the write data (x) which the
+level-sensitive preset latches otherwise capture - see make_wc.py /
+STATUS.md for the full root cause.
 
 ## Map
 

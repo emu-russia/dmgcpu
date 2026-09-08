@@ -29,3 +29,16 @@
 | vin_analog             | Input     | From VIN Pad                | External analog audio input |
 | so1_analog             | Output    | To SO1 Pad                  | Right analog audio output |
 | so2_analog             | Output    | To SO2 Pad                  | Left analog audio output |
+
+## Verified behaviour (issue #398, APU suite)
+
+The digital interface semantics were measured on the real APU netlist:
+
+- `rmixer[3:0]` = NR51 bits 3:0 (routing to SO1/right), `lmixer[3:0]` =
+  NR51 bits 7:4 (SO2/left).
+- `n_rvolume`/`n_lvolume` = active-low NR50 volume fields; `r_vin_en`/
+  `l_vin_en` = NR50 bits 7/3.
+- the per-channel amplifier enables (`n_chN_amp_en`) follow the channel
+  running state / NR52 power; the digital amplitudes `chN_out[3:0]` carry
+  the duty/square level, the NR32-scaled wave sample (ch3) or the noise
+  level (ch4).
