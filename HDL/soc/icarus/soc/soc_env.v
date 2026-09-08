@@ -122,8 +122,8 @@ module soc_env;
 	wire n_mcs = 1'b1;               // /MCS pad idle high
 	wire [7:0] n_md_frompad = 8'b0;  // MD pads idle high
 	wire [7:0] n_db_frompad = 8'b0;  // D pads idle high
-	wire n_t1_frompad = 1'b0;        // t1/t2 pads idle high (not in test mode)
-	wire n_t2_frompad = 1'b0;
+	reg n_t1_frompad = 1'b0;         // ~t1 pad level (pads idle high => 0)
+	reg n_t2_frompad = 1'b0;         // ~t2 pad level
 
 	wire CONST0;
 	assign CONST0 = 1'b0;

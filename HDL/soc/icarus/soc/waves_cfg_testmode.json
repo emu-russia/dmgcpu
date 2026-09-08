@@ -1,0 +1,7 @@
+{
+ "signals": [
+  {"name":"Test pads","signals":["tb_testmode.env.n_t1_frompad","tb_testmode.env.n_t2_frompad"]},
+  {"name":"MMIO decode","signals":["tb_testmode.env.test_1","tb_testmode.env.test_2","tb_testmode.env.n_test_reset"]},
+  {"name":"Consequences","signals":["tb_testmode.env.ext_cs_en","tb_testmode.env.n_ext_addr_en","tb_testmode.env.test_1"]}
+ ]
+}
