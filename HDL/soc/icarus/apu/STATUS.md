@@ -91,13 +91,16 @@ depend on the polynomial, so rate ratios are measured, not assumed).
   on ch1_out at the 8-lfo cadence were an x-bus artifact fixed by
   apu_wc.v.  (Note: the observed law differs from the (rate+1)/64 s in
   some literature - measured on this netlist it is rate/64 s.)
-- [ ] length counter / sweep cadences: initial probes stopped the channel
-  ~210 lfo pulses after trigger for both length 5 and 8, suggesting the
-  stop is tied to the frame-sequencer phase rather than the NR11 value in
-  this harness - needs a dedicated measurement (watch the length-counter
-  bits, align the synthetic lfo phase) - open.
-  Envelope law (measured): step period = 8*rate lfo pulses (rate/64 s at
-  real 512 Hz).
+- [x] **length counter law (measured)**: with length-enable set, the
+  channel stops after `(64 - L)` ticks where L = NR11[5:0] and one tick =
+  2 lfo pulses = 1/256 s at the real lfo (i.e. trigger loads the counter
+  with 0x40-L - the DMG trigger-reload quirk; L=0x3F stops almost
+  immediately, L=0 sounds ~250 ms).  Measured: stop lfo ~= 2*(64-L)
+  (plus detection lag) for L = 1/8/32/63.
+- [ ] sweep (NR10): behavioral checks pass (add-overflow disables the
+  channel immediately; subtract keeps it running with the period
+  changing), but the step cadence and the add/sub amount semantics still
+  need a dedicated measurement (parked - lower priority for the suite).
 - [ ] joypad ($FF00) & serial pad pieces in the APU (n_p10..n_p13,
   DRV_LOW_p1x, n_sout_topad etc.): decode map started (w570 = FF00 write
   window capturing d0..d7 into the p10-p15/serial pad latches) - tests
