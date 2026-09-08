@@ -24,5 +24,6 @@ run_test tb_apu_ch1 check_ch1.py
 run_test tb_apu_ch2 check_ch2.py
 run_test tb_apu_ch3 check_ch3.py
 run_test tb_apu_ch4 check_ch4.py
+run_test tb_apu_mix
 
 [ $FAIL -eq 0 ] && echo "SUITE OK" || echo "SUITE FAILURES"
