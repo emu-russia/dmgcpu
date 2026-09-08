@@ -48,8 +48,11 @@ the suite currently reports SUITE OK (tb_clkgen, tb_mmio, tb_ser, tb_arb).
   (n_cs targets $A000-BFFF / $C000-FBFF windows per netlist analysis).
 - [ ] TEST1/TEST2 mode bus driving (t1/t2 pads, ext address driving,
   a15 arbitration in Arb, boot ROM disable by test_2).
-- [ ] HRAM ($FF80-$FFFE) test (the real netlist is in the suite; needs
-  read/write checks + DMA interplay with the small-domain decode).
+- [ ] lfo_512Hz + FF60_D1 "fast DIV" mode measurement.
+- [ ] HRAM ($FF80-$FFFE) test: the real macro netlist is in the suite but
+  its storage cells `sram_array`/`sram_row_decode` are "TBD" stubs in
+  HDL/soc/sram.v (same situation as OAM before `oam_ram.v`) - needs a
+  behavioral array model first.
 - [ ] Wire waves for tb_soc_probe remnants, polish waves.md.
 
 ## Tooling notes
