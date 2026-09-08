@@ -106,18 +106,26 @@ module tb_mmio;
 		repeat (4) @ (posedge env.clk9);
 		chk("if-ack-clears-again", env.cpu_irq_trig[4] === 1'b0);
 
-		// ---- timer overflow: TIMA 0xFE, TMA 0x3F, TAC=3 (on, 16384 Hz) ----
-		// after two timer ticks TIMA overflows -> reload 0x3F + timer IRQ
+		// ---- timer overflow: TIMA 0xFE, TMA 0x3F, TAC = 0x04 ----
+		// (timer on, clock select 00: ~1 increment per 256 M-cycles,
+		// measured with tb_mmio). From 0xFE two ticks overflow -> reload
+		// 0x3F from TMA + the timer IRQ (IF bit2) is set.
 		env.cpu_write(16'hFF07, 8'h00);   // timer off first (deterministic)
 		env.cpu_write(16'hFF06, 8'h3F);   // TMA
 		env.cpu_write(16'hFF05, 8'hFE);   // TIMA
-		env.cpu_write(16'hFF07, 8'h03);   // TAC: on, 16384 Hz
-		repeat (512) @ (posedge env.clk9);
+		env.cpu_write(16'hFF07, 8'h04);   // TAC: on, clock select 00
+		while (env.cpu_irq_trig[2] !== 1'b1)   // wait for the overflow IRQ
+			@(posedge env.clk9);
+		repeat (8) @ (posedge env.clk9);       // read just after reload
 		rd(16'hFF05, rdv);
-		// PENDING (research): TIMA count-source taps + overflow->IF path
-		// need the divider analysis; here we only report what we see.
-		$display("PENDING timer TIMA-after=%b timer-irq=%b (timer IRQ path under analysis)",
-			rdv, env.cpu_irq_trig[2]);
+		$display("RESULT timer TIMA-after=%b timer-irq=%b", rdv, env.cpu_irq_trig[2]);
+		chk("timer-reloaded-from-tma", rdv == 8'h3F);
+		chk("timer-irq-set", env.cpu_irq_trig[2] === 1'b1);
+		env.cpu_irq_ack = 5'b00100;
+		repeat (2) @ (posedge env.clk9);
+		env.cpu_irq_ack = 5'b00000;
+		repeat (4) @ (posedge env.clk9);
+		chk("timer-irq-ack-clears", env.cpu_irq_trig[2] === 1'b0);
 
 		$display("RESULT tb_mmio %0d checks, %0d failures", checks, fails);
 		if (fails) $display("RESULT tb_mmio FAIL");

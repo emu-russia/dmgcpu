@@ -156,11 +156,23 @@ and a sampled read shows `x` on zero bits).
   keeper cells `g234/g235` vs the read-back drivers) - needs the
   weak-bus model variant like the PPU suite.
 
-### Timer IRQ path (pending)
+### Timer (TIMA/TMA/TAC) verified behaviour (issue #396)
 
-The TIMA count-source taps and the overflow -> IF bit2 / reload-TMA
-path are under analysis (see the testbench STATUS); the register write
-and read paths themselves are verified.
+- TIMA is the loadable 8-bit counter (the `dmg_cnt` chain `g167..g174`
+  with load gated by `clk6`/`w99`); writing $FF05 loads it, reading
+  $FF05 returns it.
+- TAC write decode `w148` ($FF07) stores `{1,sel[1:0]}`-style control;
+  measured tick rates per clock select (tb_mmio, M-cycle = 256 ns in
+  sim):
+  | select | ticks per 16384 M-cycles | inferred source |
+  |---|---|---|
+  | 00 | 64 (~4096 Hz at real speed) | matches the DMG 4096 Hz source |
+  | 01 | 1 | slow internal tap |
+  | 10/11 | < 1 in the window | slow taps (need longer windows) |
+- **Overflow**: when TIMA passes $FF the counter reloads from TMA and
+  the timer IRQ is set - IF bit2 (`cpu_irq_trig[2]`), cleared by the CPU
+  IRQ acknowledge (tb_mmio PASS: TIMA 0xFE + TMA 0x3F + TAC 0x04 ->
+  reloaded 0x3F and IF2 pulses).
 
 ## Netlist
 
