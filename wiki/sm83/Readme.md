@@ -27,6 +27,31 @@ The SM83 research has been completed and the circuits verified in the simulator.
 
 ![DMG01B_Core_Fused_Topo](/imgstore/sm83/DMG01B_Core_Fused_Topo.jpg)
 
+## Regression Testbench (issue #400)
+
+The core is exercised by an Icarus regression suite that drives the **real
+SM83 netlist** (`HDL/sm83/Top.v` SM83Core + module files) with the CPU
+clock generator and a flat memory model:
+
+- [HDL/sm83/Icarus - suite waves](/HDL/sm83/Icarus/waves.md) (register
+  file, ALU+flags, memory addressing, stack, jumps, IRQ, instruction
+  timing)
+- [HDL/sm83/Icarus - STATUS.md](/HDL/sm83/Icarus/STATUS.md) (research log
+  with measured facts)
+- run everything with `./run_all.sh` in `HDL/sm83/Icarus` (each test
+  prints `RESULT ... PASS/FAIL`).
+
+Measured facts (real-netlist checks, all PASS):
+- register file/pair loads, stack + memory addressing match the SM83
+  programming model byte-exactly;
+- ALU flag law verified for ADD/ADC/SUB/SBC/AND/OR/XOR/CP over multiple
+  operand pairs incl. carry-in;
+- relative jumps taken/not-taken + RST vector pages;
+- IE/IME/IF interrupt dispatch: HALT wake, PC push, IF ack-clear, vectors
+  $40/$48/$50;
+- instruction T-states measured via M1-M1 intervals (NOP 4, LD r,n 8,
+  JR taken 12 / not 8, JP 16, CALL 24, RET 16, ...).
+
 ## Why SM83?
 
 There is a manual from Sharp: https://archive.org/details/1996_Sharp_Microcomputer_Data_Book/page/n147/mode/2up

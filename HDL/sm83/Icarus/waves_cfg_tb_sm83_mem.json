@@ -1,0 +1,34 @@
+{
+ "signals": [
+  {
+   "name": "clocks",
+   "signals": [
+    "tb_sm83_mem.e.CLK",
+    "tb_sm83_mem.e.M1",
+    "tb_sm83_mem.e.MREQ",
+    "tb_sm83_mem.e.RD",
+    "tb_sm83_mem.e.WR"
+   ],
+   "bus": "bits"
+  },
+  {
+   "name": "buses",
+   "signals": [
+    "tb_sm83_mem.e.A[15:0]",
+    "tb_sm83_mem.e.D[7:0]"
+   ],
+   "bus": "hex"
+  },
+  {
+   "name": "regs",
+   "signals": [
+    "tb_sm83_mem.e.pc[15:0]",
+    "tb_sm83_mem.e.regA[7:0]",
+    "tb_sm83_mem.e.bc[15:0]",
+    "tb_sm83_mem.e.de[15:0]",
+    "tb_sm83_mem.e.hl[15:0]"
+   ],
+   "bus": "hex"
+  }
+ ]
+}
