@@ -13,10 +13,23 @@ Round 1 (bring-up):
   which never shows the CPU-driven value to the decoder inputs under Icarus.
 - `soc_env.v`: real ClkGen+Arbiter+MMIO+Ser+HRAM with a behavioral CPU bus
   master and pad stand-ins (same bus conventions as the PPU env).
-- `tb_soc_probe.v`: reset + MMIO write/read bring-up. The write path is
-  verified: writing $FF07 (TAC) clocks the internal write-decode clock
-  `w148` and latches the data into the TAC dffs. Read-back and the
-  remaining register blocks are under investigation.
+- `tb_soc_probe.v`: reset + MMIO register roundtrip bring-up.
+
+Verified so far (probe prints, WSL-native iverilog):
+- reset: with `osc_stable=1`, `n_reset2`/`sync_reset` deassert; the clock
+  tree and `cpu_wr_sync` pulse.
+- MMIO register write path: the CPU write window is `cpu_wr_sync` (MMIO's
+  `soc_wr` follows it); the register decode clocks (`w148` = $FF07/TAC,
+  `w223` = $FF06/TMA) are low during the window and the dffs capture on
+  the rising edge when the window closes (`cpu_wr_sync` falls, inside the
+  `clk2=1` non-precharge phase). The CPU model holds data ~6 ns past that
+  edge.
+- register roundtrips: TIMA ($FF05) = exact; TAC ($FF07) read-back =
+  0xF8|TAC (matches the real Game Boy); TMA ($FF06) captures except for a
+  bus-settle x on one bit (write-phase tuning in progress); SB/SC and IF
+  read-backs are still off (read sampling / Ser participation in progress);
+  DIV ($FF04) reads x until its clock source (the 16384 Hz LFO chain) is
+  characterized.
 
 ## Files
 
@@ -45,13 +58,14 @@ Round 1 (bring-up):
 
 ## Bus conventions (worked out so far)
 
-- `soc_wr` (MMIO output) = the internal write strobe; it follows
-  `cpu_wr_sync` (ClkGen's synchronized WR) - active while the CPU writes.
-- MMIO register decode clocks (`w148`/`w223`/...) are low *during* the
-  write window and capture their dffs on the rising edge produced when the
-  write window closes (`cpu_wr_sync` falling). The CPU model therefore
-  holds data ~6 ns after `cpu_wr_sync` falls.
-- TAC ($FF07) is written via the `w148` decode; TMA ($FF06) via `w223`;
-  TIMA/DIV/IF use their own strobes (being worked out).
-- Read-backs need the register-specific read enables (`soc_rd` based) -
-  under investigation.
+- `soc_wr` (MMIO output) follows `cpu_wr_sync` (ClkGen's synchronized WR);
+  MMIO register decode clocks (`w148`/`w223`/...) are low during the write
+  window and capture dffs on the rising edge when the window closes
+  (`cpu_wr_sync` falling, which sits inside the `clk2=1` non-precharge
+  phase). Data must be held ~6 ns past that edge.
+- decode map (so far): `w148` = $FF07 write (TAC), `w223` = $FF06 write
+  (TMA), `w100` = $FF04-$FF07 window, `w146` = $FF00-$FF03 window;
+  read enables: `w138` = $FF04 read (DIV), `w33` = $FF05 read (TIMA),
+  `w89` = $FF06 read (TMA), `w127` = $FF07 read (TAC).
+- d[7:0] is precharged high during `clk2=0` (MMIO precharge drivers);
+  reads are sampled while `clk2=1`.

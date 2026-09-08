@@ -315,6 +315,24 @@ module soc_env;
 		end
 	endtask
 
+	// cpu_read variant with a configurable post-strobe sample delay (ns)
+	task cpu_read_at(input [15:0] addr, input integer sdelay, output [7:0] data);
+		begin
+			while (cpu_wr_sync !== 1'b0 || soc_rd !== 1'b0)
+				@(negedge clk9);
+			cpu_a = addr;
+			cpu_mreq = 1'b1;
+			#6;
+			cpu_rd = 1'b1;
+			#(sdelay);
+			data = d;
+			cpu_rd = 1'b0;
+			#6;
+			cpu_mreq = 1'b0;
+			cpu_a = 16'h0000;
+		end
+	endtask
+
 	// ------------------------------------------------------------------
 	initial begin
 		ck1 = 1'b0;

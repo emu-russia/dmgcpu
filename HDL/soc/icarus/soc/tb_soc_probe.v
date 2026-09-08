@@ -37,6 +37,17 @@ module tb_soc_probe;
 		end
 	endtask
 
+	// read with three different in-window sample offsets
+	task rd3(input [15:0] addr, input [40:0] tag);
+		reg [7:0] v1, v2, v3;
+		begin
+			env.cpu_read_at(addr, 2,  v1);
+			env.cpu_read_at(addr, 40, v2);
+			env.cpu_read_at(addr, 120, v3);
+			$display("READ3 %s (%h): d@2=%b d@40=%b d@120=%b", tag, addr, v1, v2, v3);
+		end
+	endtask
+
 	initial begin
 		$dumpfile("tb_soc_probe.vcd");
 		$dumpvars(0, tb_soc_probe);
@@ -48,31 +59,30 @@ module tb_soc_probe;
 		repeat (16) @ (posedge env.clk9);
 		check_reset();
 
-		rd(16'hFF0F, "IF@boot");
+		rd3(16'hFF0F, "IF@boot");
+		rd3(16'hFF07, "TAC@boot");
+		rd3(16'hFF04, "DIV@boot");
 
-		// --- writes ---
-		$display("--- write $FF07 = 0x03 (TAC) ---");
-		env.cpu_write(16'hFF07, 8'h03);
-		rd(16'hFF07, "TAC");
+		$display("--- writes ---");
+		env.cpu_write(16'hFF05, 8'h37);   // TIMA
+		rd3(16'hFF05, "TIMA");
+		env.cpu_write(16'hFF06, 8'h59);   // TMA
+		rd3(16'hFF06, "TMA");
+		env.cpu_write(16'hFF07, 8'h03);   // TAC
+		rd3(16'hFF07, "TAC");
+		env.cpu_write(16'hFF04, 8'h00);   // DIV reset
+		rd3(16'hFF04, "DIV");
+		env.cpu_write(16'hFF01, 8'hAA);   // SB
+		rd3(16'hFF01, "SB");
+		env.cpu_write(16'hFF02, 8'h81);   // SC (int clk, transfer)
+		rd3(16'hFF02, "SC");
 
-		$display("--- write $FF04 = 0x00 (DIV) ---");
-		env.cpu_write(16'hFF04, 8'h00);
-		rd(16'hFF04, "DIV");
-
-		$display("--- write $FF01 = 0xAA (SB) ---");
-		env.cpu_write(16'hFF01, 8'hAA);
-		rd(16'hFF01, "SB");
-
-		$display("--- write $FF02 = 0x81 (SC: int clk, transfer) ---");
-		env.cpu_write(16'hFF02, 8'h81);
-		rd(16'hFF02, "SC");
-
-		// run some M-cycles so the serial transfer / timer can advance
-		repeat (256) @ (posedge env.clk9);
-		rd(16'hFF01, "SB-after");
-		rd(16'hFF04, "DIV-after");
-		rd(16'hFF0F, "IF-after");
-		rd(16'hFF07, "TAC-after");
+		// let the serial transfer and the divider advance
+		repeat (512) @ (posedge env.clk9);
+		rd3(16'hFF01, "SB-after");
+		rd3(16'hFF04, "DIV-after");
+		rd3(16'hFF0F, "IF-after");
+		rd3(16'hFF02, "SC-after");
 		$finish;
 	end
 
