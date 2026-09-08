@@ -1,0 +1,28 @@
+{
+ "signals": [
+  {
+   "name": "clocks",
+   "signals": [
+    "tb_sm83_cycles.e.CLK",
+    "tb_sm83_cycles.e.M1"
+   ],
+   "bus": "bits"
+  },
+  {
+   "name": "buses",
+   "signals": [
+    "tb_sm83_cycles.e.A[15:0]",
+    "tb_sm83_cycles.e.D[7:0]"
+   ],
+   "bus": "hex"
+  },
+  {
+   "name": "regs",
+   "signals": [
+    "tb_sm83_cycles.e.pc[15:0]",
+    "tb_sm83_cycles.e.regA[7:0]"
+   ],
+   "bus": "hex"
+  }
+ ]
+}

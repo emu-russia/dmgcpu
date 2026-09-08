@@ -13,6 +13,7 @@ WSL at /mnt/c/iverilog/bin).
 | `ppu/` | **PPU regression testbench** (issue #390): tests, waves.md, STATUS.md |
 | `soc/` | **SoC small-domain suite** (issue #396): ClkGen/Arbiter/MMIO/Ser/HRAM real netlists, CPU model env |
 | `apu/` | **APU regression testbench** (issue #398): register file, channels 1-4, mixer - real netlist, waves.md, STATUS.md |
+| `../../sm83/Icarus/` | **SM83 core suite** (issue #400): register file, ALU+flags, memory, stack, jumps, IRQ, HALT modes, CB-prefix rotate/bit ops, instruction timing - real core netlist, waves.md, STATUS.md |
 
 Tooling notes for future work (APU, MMIO, Arb, ...):
 - [gtkwave-skill.md](gtkwave-skill.md) - the adapted Icarus/GTKWave skill

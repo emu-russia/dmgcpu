@@ -20,7 +20,7 @@ Then the reader has 2 options: either to "understand" the decompiled netlist (wh
 - [Cells Library](/wiki/soc/cells.md)
 - [CLK Generator](/wiki/soc/clkgen.md)
 - [Serial Link](/wiki/soc/ser.md)
-- [SM83 Core](/wiki/sm83/Readme.md)
+- [SM83 Core](/wiki/sm83/Readme.md) ([SM83 core testbench](/HDL/sm83/Icarus/waves.md))
 - [Bus Arbiter](/wiki/soc/arb.md)
 - [Memory-mapped I/O](/wiki/soc/mmio.md)
 - [HRAM](/wiki/soc/hram.md)

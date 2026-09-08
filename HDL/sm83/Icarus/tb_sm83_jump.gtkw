@@ -1,0 +1,37 @@
+[*]
+[*] GTKWave Analyzer v3.3.128 (w)1999-2026 BSI
+[*]
+[*] generated for HDL/sm83/Icarus (issue #400)
+[*]
+[dumpfile] "tb_sm83_jump.vcd"
+[timestart] 0
+[size] 1920 1000
+[pos] -1 -1
+*-0.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb_sm83_jump
+[sst_width] 250
+[signals_width] 200
+[sst_expanded] 1
+[sst_vpaned_height] 400
+@28
+tb_sm83_jump.e.CLK
+@28
+tb_sm83_jump.e.M1
+@28
+tb_sm83_jump.e.MREQ
+@28
+tb_sm83_jump.e.RD
+@22
+tb_sm83_jump.e.A[15:0]
+@22
+tb_sm83_jump.e.D[7:0]
+@22
+tb_sm83_jump.e.pc[15:0]
+@22
+tb_sm83_jump.e.regA[7:0]
+@28
+tb_sm83_jump.e.fZ
+@28
+tb_sm83_jump.e.fC
+[pattern_trace] 1
+[pattern_trace] 0
