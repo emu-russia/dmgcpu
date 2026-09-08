@@ -21,8 +21,8 @@ run_test() {
 
 run_test tb_apu_regs
 run_test tb_apu_ch1 check_ch1.py
-
-# research-only for now (see STATUS.md): channel 2-4 output-stage question
 run_test tb_apu_ch2 check_ch2.py
+run_test tb_apu_ch3 check_ch3.py
+run_test tb_apu_ch4 check_ch4.py
 
 [ $FAIL -eq 0 ] && echo "SUITE OK" || echo "SUITE FAILURES"

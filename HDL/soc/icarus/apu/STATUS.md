@@ -43,8 +43,27 @@ Channel 1 verified end-to-end on the real netlist:
 - duty fractions 12.5 / 25 / 50 / 75 % measured exact
 - the high level equals the NR12 volume (4-bit)
 - NR52 status bit0 set while running, cleared by power-off
-- envelope / sweep / length counters need the frame-sequencer (lfo)
-  analysis (see below)
+
+### tb_apu_ch2 + check_ch2.py - PASS
+The same check set for channel 2 (no sweep). Only possible after the
+w548 bus-model fix (see below) - previously the divider preset captured x
+from write-bus contention and the channel never played.
+
+### tb_apu_ch3 + check_ch3.py - PASS
+Channel 3 (wave) with a known wave-RAM image:
+- the wave-RAM address advances one step per `(2048 - X) * 2` oscillator
+  cycles (measured step counts at X=0x7F0 vs X=0x780 = 8x) - i.e. the DMG
+  sample-rate relation 2^21/(2048-X)
+- output amplitude = wave sample scaled by the NR32 volume code
+  (01=100%, 10=50%, 11=25%, 00=mute), steady per sample (no duty)
+- CPU access to the wave-RAM window works (tb_apu_regs)
+
+### tb_apu_ch4 + check_ch4.py - PASS
+Channel 4 (noise): with NR42 vol F the output toggles at level F while
+running; the toggle rate drops as the NR43 divisor r grows (measured:
+15-bit r0/r7 ~ 50x over 500us windows; the exact divider ratio vs the
+pan-docs formula is an open cross-check - the LFSR output-run statistics
+depend on the polynomial, so rate ratios are measured, not assumed).
 
 ## Open research items (author checklist)
 
@@ -61,6 +80,9 @@ Channel 1 verified end-to-end on the real netlist:
   duty/period checks as ch1 (tb_apu_ch2 + check_ch2.py), ch4's LFSR
   output runs, and ch3 plays (wave_a advances, samples appear).
   Remaining: formal ch3/ch4 regression tests.
+- [ ] **noise divider ratio cross-check** (tb_apu_ch4 rates vs the DMG
+  shift-clock formula; measure the shift clock directly off the LFSR
+  clock net).
 - [ ] **frame-sequencer timing**: with the synthetic lfo (4 us period), the
   ch1 envelope step cadence measured ~8 lfo pulses (32 us) between
   amplitude changes and shows glitch dips on the ch1_out bus at the same
