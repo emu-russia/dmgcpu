@@ -91,10 +91,13 @@ depend on the polynomial, so rate ratios are measured, not assumed).
   on ch1_out at the 8-lfo cadence were an x-bus artifact fixed by
   apu_wc.v.  (Note: the observed law differs from the (rate+1)/64 s in
   some literature - measured on this netlist it is rate/64 s.)
-- [ ] length counter / sweep cadences: length (expected lfo/2-ish) and
-  ch1 sweep (expected lfo/4-ish) still to be measured with the same
-  method (probes started; see tb_apu_env / tb_env2/3 in the workspace
-  history).
+- [ ] length counter / sweep cadences: initial probes stopped the channel
+  ~210 lfo pulses after trigger for both length 5 and 8, suggesting the
+  stop is tied to the frame-sequencer phase rather than the NR11 value in
+  this harness - needs a dedicated measurement (watch the length-counter
+  bits, align the synthetic lfo phase) - open.
+  Envelope law (measured): step period = 8*rate lfo pulses (rate/64 s at
+  real 512 Hz).
 - [ ] joypad ($FF00) & serial pad pieces in the APU (n_p10..n_p13,
   DRV_LOW_p1x, n_sout_topad etc.): decode map started (w570 = FF00 write
   window capturing d0..d7 into the p10-p15/serial pad latches) - tests
