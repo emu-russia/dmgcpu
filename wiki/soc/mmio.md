@@ -147,6 +147,8 @@ and a sampled read shows `x` on zero bits).
   g130/g122/g129/g123`, outputs `w352/w37/w216/w141/w193/w217`);
   measured 64 lfo edges per 4096 clk9 edges (`tb_mmio`). At the real
   clk9 (1.048 MHz) this is exactly 16384 Hz.
+- `lfo_512Hz` = clk9 / 2048 (11 divider stages): measured 2 edges per
+  4096 clk9 edges (`tb_mmio`, PASS).
 - `FF60_D1` (TEST_PAD.1) muxes the DIV/TIMA clock source between clk9
   (fast mode) and the internal 16384 Hz chain (`g265`).
 - writing $FF04 resets the divider (any data); read-back of DIV shows

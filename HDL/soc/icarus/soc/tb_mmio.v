@@ -35,9 +35,10 @@ module tb_mmio;
 
 	// count posedge of a signal over a window using a probe reg
 	reg count_en = 1'b0;
-	integer n_clk9, n_lfo;
+	integer n_clk9, n_lfo, n_lfo512;
 	always @(posedge env.clk9) if (count_en) n_clk9 = n_clk9 + 1;
 	always @(posedge env.mmio.lfo_16384Hz) if (count_en) n_lfo = n_lfo + 1;
+	always @(posedge env.mmio.lfo_512Hz) if (count_en) n_lfo512 = n_lfo512 + 1;
 
 	reg [7:0] rdv;
 
@@ -77,14 +78,17 @@ module tb_mmio;
 		chk("if-joypad-clear-ack", env.cpu_irq_trig[4] === 1'b0);
 
 		// ---- lfo_16384Hz divide ratio (clk9 vs lfo edges) ----
-		n_clk9 = 0; n_lfo = 0;
+		n_clk9 = 0; n_lfo = 0; n_lfo512 = 0;
 		count_en = 1'b1;
 		repeat (4096) @ (posedge env.clk9);
 		count_en = 1'b0;
-		$display("RESULT lfo-ratio clk9-edges=%0d lfo-edges=%0d", n_clk9, n_lfo);
+		$display("RESULT lfo-ratio clk9-edges=%0d lfo16k-edges=%0d lfo512-edges=%0d", n_clk9, n_lfo, n_lfo512);
 		// clk9 is divided by 64 (6 divider stages) to make lfo_16384Hz:
 		// 4096 clk9 cycles -> 64 lfo edges expected
 		chk("lfo-ratio-64", n_lfo >= 62 && n_lfo <= 66);
+		// lfo_512Hz = clk9 / 2048 (11 divider stages -> 512 Hz from a
+		// 1.048 MHz clk9); 4096 clk9 cycles -> 2 edges expected
+		chk("lfo512-ratio-2048", n_lfo512 >= 1 && n_lfo512 <= 3);
 
 		// ---- DIV write resets the divider (internal counter check) ----
 		// (read-back of DIV has bus-contention x on some bits - modelled
