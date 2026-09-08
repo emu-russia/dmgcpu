@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SM83 Reference · DMG-CPU Research</title>
+<meta name="description" content="https://gbdev.io/gb-opcodes/optables/">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/sm83/Readme.html">DMG CPU Core</a><span class="sep">/</span><span class="current">SM83 Reference</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#opcode-table">Opcode Table</a></li><li class="toc-l2"><a href="#cpu-core-structure">CPU Core Structure</a></li><li class="toc-l2"><a href="#accumulator-a">Accumulator (A)</a></li><li class="toc-l2"><a href="#general-purpose-registers-b-c-d-e-h-l">General purpose registers (B, C, D, E, H, L)</a></li><li class="toc-l2"><a href="#flag-register-f">Flag register (F)</a></li><li class="toc-l2"><a href="#halt-mode">HALT MODE</a></li><li class="toc-l2"><a href="#stop-mode">STOP MODE</a></li><li class="toc-l2"><a href="#interrupt-master-enable-flag-ime">Interrupt master enable flag IME</a></li><li class="toc-l2"><a href="#interrupt-flag-register-if">Interrupt flag register IF</a></li><li class="toc-l2"><a href="#interrupt-enable-register-ie">Interrupt enable register IE</a></li><li class="toc-l2"><a href="#state-after-hardware-reset">State after Hardware Reset</a></li><li class="toc-l2"><a href="#overlapped-execution">Overlapped Execution</a></li><li class="toc-l2"><a href="#instruction-timing-measured-issue-400">Instruction Timing (measured, issue #400)</a></li></ol></details>
+<article class="content"><h1 id="sm83-reference">SM83 Reference</h1>
+<h2 id="opcode-table">Opcode Table</h2>
+<p>https://gbdev.io/gb-opcodes/optables/</p>
+<h2 id="cpu-core-structure">CPU Core Structure</h2>
+<p>Source: https://archive.org/details/1996_Sharp_Microcomputer_Data_Book/page/n155/mode/2up</p>
+<p>The CPU core incorporates the instruction decoder (INST. DEC), arithmetic logic unit (ALU), accumulator (A), general purpose registers (B, C, D, E, H, L), program counter (PC), stack pointer (SP), flag register (F), interrupt control unit (INT), interrupt master enable flag (IME), interrupt enable register (IE) and interrupt flag register (IF).</p>
+<p><img alt="sm83_core_struct" decoding="async" loading="lazy" src="../../imgstore/sm83/sm83_core_struct.jpg" /></p>
+<h2 id="accumulator-a">Accumulator (A)</h2>
+<p>This is an 8-bit register used to hold arithmetic operation results and data. Sometimes referred to as A register.</p>
+<h2 id="general-purpose-registers-b-c-d-e-h-l">General purpose registers (B, C, D, E, H, L)</h2>
+<p>These are 8-bit registers used as auxiliary registers to accumulator, and also used as register pair (BG, DE, HL) to function as data pointer.</p>
+<h2 id="flag-register-f">Flag register (F)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>bit</th>
+<th>7</th>
+<th>6</th>
+<th>5</th>
+<th>4</th>
+<th>3</th>
+<th>2</th>
+<th>1</th>
+<th>0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>Z</td>
+<td>N</td>
+<td>H</td>
+<td>Cy</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+</div><p>Consists of 4 types of flags, each of which is set or clear as a result of execution of respective instruction.</p>
+<ul>
+<li>Z: Zero flag</li>
+<li>N: Negative flag</li>
+<li>H: Half-carry flag</li>
+<li>Cy: Carry flag</li>
+</ul>
+<h2 id="halt-mode">HALT MODE</h2>
+<p>Execution of the halt instruction puts the SM831x into the halt mode and the system clock is turned off, stopping the current program. Since the main clock oscillator connected across CKi and CK2 pins is active during the halt mode, devices requiring no system clock are kept in-operation. These devices are serial I/Os and timers.</p>
+<p>The halt mode is disabled by one of the following means and the program will start again.</p>
+<h3 id="release-by-reset-input">Release by reset input</h3>
+<p>A Low level on the #RESET pin will cause the SM831x to exit halt mode and start program at address OOOOh, the same way as with normal resetting.</p>
+<h3 id="release-by-interrupt">Release by interrupt</h3>
+<p>When an interrupt event occurs, the SM831x exits the halt mode.</p>
+<p>When a bit in the enable flag IE is set, the SM831x exits the halt mode if the interrupt request corresponding to the bit is generated. The action of the SM831x after exiting the halt mode is determined by the setting of the IME flag.</p>
+<ul>
+<li>IME = 0: The program will start at the location following the halt instruction address. Note that the bit in the interrupt flag register IF that caused the previous interrupt is kept set.</li>
+<li>IME = 1: After returning from the halt mode, the program will start at the vectored address. This is the same as with the normal interrupt handling process.</li>
+</ul>
+<h2 id="stop-mode">STOP MODE</h2>
+<p>Executing the STOP instruction puts the SM831x to the stop mode and turns off the main clock and system clock. All operations stop. Exception are serial l/Os, timers operating on external clock and clock generated across pins OSCin and OSCout. The stop mode is canceled by the following factors and the program starts after the specified time (return time).</p>
+<p>by @msinger (Discussion #13):</p>
+<p>STOP mode on GameBoy disables the external crystal and the device is fully un-clocked. (The only exception can be the serial port, if it was put into slave mode. Then it can get a clock from the master device on the SCK pin.)</p>
+<p>Disabling of the external crystal oscillator is done by CPU pin T14. It is connected directly to the CK1 and CK2 pins.</p>
+<p>Therefore STOP mode can't be exited by timer interrupts. It can also not be exited by serial port, even though it can be externally clocked in slave mode. It can only be exited by joypad interrupt, when someone presses a button.
+If neither of the button matrix output pins P14 or P15 is driven low before entering STOP mode, then the device will never wake up and has to be switched off and on again.</p>
+<p>In the top left corner of page 7 you can see the CPU_WAKEUP signal, which wakes the CPU from STOP mode. It is basically just OR'ing the four button pins P10-P13 together. The latch (AWOB) is always enabled (in transparent/bypass mode), when clocks are disabled. So BOGA_1MHz must be high in STOP mode; you can verify that at the top of page 6, by following BOGA_1MHz back to OSC_ENA. If OSC_ENA (CPU T14) is low, then BOGA is always high. There is nothing else that goes into CPU_WAKEUP, which could possibly wake the system up.</p>
+<h3 id="reset-input">Reset input</h3>
+<p>A Low level on the #RESET pin will cause the SM831x to exit the stop mode and start program at address OOOOh, quite the same as with normal resetting. For detailed description of reset, refer to "Hardware Reset Function"</p>
+<h3 id="interrupt-request">Interrupt request</h3>
+<p>While operating on the external clock or clock generated across pins OSCin and OSCout, an interrupt from a serial I/O, timer, or external input pin Kl or KH causes the program to continue at the address following the STOP instruction.</p>
+<h2 id="interrupt-master-enable-flag-ime">Interrupt master enable flag IME</h2>
+<p>This register is used to enable or disable all the maskable interrupts simultaneously. Executing the El instruction sets the master enable flag IME, enabling the maskable interrupts. Executing Dl instruction resets the IME, disabling the maskable interrupts.</p>
+<h2 id="interrupt-flag-register-if">Interrupt flag register IF</h2>
+<p>⚠️ Program access to the IF in the DMG CPU has been removed.</p>
+<p>by @msinger (Discussion #13):</p>
+<p>About the IF register: it was never there in the first place. I think Sharp has drawn it into the overview diagram of the CPU just for simplicity. In the GameBoy, this register is external to the CPU. You can find it on page 10 of our <a href="http://iceboy.a-singer.de/doc/dmg_cpu_b_sch.pdf" rel="noopener noreferrer" target="_blank">schematic</a>, mapped onto address <code>FF0F</code>.</p>
+<p>(IF, FFFEh, R/W)</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bit</th>
+<th>7</th>
+<th>6</th>
+<th>5</th>
+<th>4</th>
+<th>3</th>
+<th>2</th>
+<th>1</th>
+<th>0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>IF7</td>
+<td>IF6</td>
+<td>IF5</td>
+<td>IF4</td>
+<td>IF3</td>
+<td>IF2</td>
+<td>IF1</td>
+<td>IF0</td>
+</tr>
+</tbody>
+</table>
+</div><p>When interrupt event (IRQ0 to IRQ7) occurs, corresponding bit (IF0 to IF7) in the interrupt flag register IF is set to "1". At the end of the interrupt process, the bit in the interrupt flag register IF is automatically clear. If the interrupt event is left unprocessed, the bit remains "1" until it is forced to clear by a program.</p>
+<h2 id="interrupt-enable-register-ie">Interrupt enable register IE</h2>
+<p>(IE, FFFFh, R/W)</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bit</th>
+<th>7</th>
+<th>6</th>
+<th>5</th>
+<th>4</th>
+<th>3</th>
+<th>2</th>
+<th>1</th>
+<th>0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>IE7</td>
+<td>IE6</td>
+<td>IE5</td>
+<td>IE4</td>
+<td>IE3</td>
+<td>IE2</td>
+<td>IE1</td>
+<td>IE0</td>
+</tr>
+</tbody>
+</table>
+</div><p>This register is used to individually enable or disable 9-maskable interrupt. Setting a bit in this register to "1" enables corresponding interrupt; and "0" disables the interrupt. The setting of the interrupt enable register is made effective when the interrupt master enable flag IME is set. The IE register also sets the halt mode release conditions.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>STATE OF REGISTER IE BIT</th>
+<th>INTERRUPT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Enable (as well as halt mode release enable)</td>
+</tr>
+<tr>
+<td>0</td>
+<td>Disable (as well as halt mode release disable)</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="state-after-hardware-reset">State after Hardware Reset</h2>
+<ul>
+<li>IE: 00h</li>
+<li>IF: 00h</li>
+<li>IME: 0</li>
+<li>PC: 0000h</li>
+</ul>
+<h2 id="overlapped-execution">Overlapped Execution</h2>
+<p>The SM83 uses the overlapped instruction execution technique - some operations are completed at the beginning of the next M-cycle.
+More about this is written by @Gekkio: https://gekkio.fi/files/gb-docs/gbctr.pdf  (Chapter 3.1)</p>
+<p>This mechanism is connected with CLK7, which extends its "tail" to the beginning of the next M-cycle.</p>
+<p>In general, this mechanism is quite unusual for understanding, especially for people writing emulators, so you just have to accept the fact that it exists in SM83.</p>
+<h2 id="instruction-timing-measured-issue-400">Instruction Timing (measured, issue #400)</h2>
+<p>The durations below were <strong>measured on the real SM83 core netlist</strong>
+(HDL/sm83, Icarus suite <code>HDL/sm83/Icarus</code>, test <code>tb_sm83_cycles</code>): each
+executed instruction's oscillator-cycle count = the CLK periods between
+the M1 (opcode-fetch) rising edges that bracket it.  All values match the
+documented SM83 cycle counts, turning the netlist into a timing oracle.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Instruction</th>
+<th>T-states (measured)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NOP, LD r,r', INC/DEC r</td>
+<td>4</td>
+</tr>
+<tr>
+<td>LD r,n, ADD A,n, LD A,(HL)</td>
+<td>8</td>
+</tr>
+<tr>
+<td>LD rr,nn / ADD HL,rr</td>
+<td>12 / 8</td>
+</tr>
+<tr>
+<td>LD (HL),n, INC/DEC (HL)</td>
+<td>12</td>
+</tr>
+<tr>
+<td>JR (taken) / JR (not taken)</td>
+<td>12 / 8</td>
+</tr>
+<tr>
+<td>JP nn</td>
+<td>16</td>
+</tr>
+<tr>
+<td>CALL nn / RET</td>
+<td>24 / 16</td>
+</tr>
+</tbody>
+</table>
+</div><p>Note: CB-prefixed instructions produce an extra M1 pulse - the <code>CB</code> byte
+fetch itself is an opcode fetch (two M1 pulses per CB instruction).</p><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG CPU Core</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/sm83/sm83.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

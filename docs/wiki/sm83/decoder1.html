@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decoder1 · DMG-CPU Research</title>
+<meta name="description" content="Decoder1 makes a preliminary decoding of the operation code, which will then be refined in Decoder2.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/sm83/Readme.html">DMG CPU Core</a><span class="sep">/</span><span class="current">Decoder1</span></nav>
+
+<article class="content"><h1 id="decoder1">Decoder1</h1>
+<p><img alt="locator_decoder1" decoding="async" loading="lazy" src="../../imgstore/sm83/locator_decoder1.png" /></p>
+<p>Decoder1 makes a preliminary decoding of the operation code, which will then be refined in Decoder2.</p>
+<p>Topology features:</p>
+<p><img alt="decoder1" decoding="async" loading="lazy" src="../../imgstore/sm83/decoder1.jpg" /></p>
+<ul>
+<li>Each decoder output is a branched NAND</li>
+<li>The output of a whole NAND tree can be <code>0</code> only when all inputs of <em>at least one</em> "branch" are equal to <code>1</code>.</li>
+<li>During CLK = 0 a Precharge is made</li>
+<li>During CLK = 1 an operation (Eval) is committed</li>
+<li>Value is inverted by regular CMOS inverter</li>
+</ul>
+<p>Dynamic logic is used.</p>
+<h2 id="decoder1-inputs">Decoder1 Inputs</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Input</th>
+<th>From</th>
+<th>Gekkio</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a0</td>
+<td>Inplace</td>
+<td></td>
+<td>~a1</td>
+</tr>
+<tr>
+<td>a1</td>
+<td>Sequencer</td>
+<td>intr_dispatch</td>
+<td>1: IRQ sequence in progress</td>
+</tr>
+<tr>
+<td>a2</td>
+<td>Inplace</td>
+<td></td>
+<td>~a3</td>
+</tr>
+<tr>
+<td>a3</td>
+<td>Sequencer</td>
+<td>cb_mode</td>
+<td>1: CB Opcode prefix</td>
+</tr>
+<tr>
+<td>a4</td>
+<td>Inplace</td>
+<td></td>
+<td>~a5</td>
+</tr>
+<tr>
+<td>a5</td>
+<td>IR</td>
+<td></td>
+<td>IR[7]</td>
+</tr>
+<tr>
+<td>a6</td>
+<td>Inplace</td>
+<td></td>
+<td>~a7</td>
+</tr>
+<tr>
+<td>a7</td>
+<td>IR</td>
+<td></td>
+<td>IR[6]</td>
+</tr>
+<tr>
+<td>a8</td>
+<td>Inplace</td>
+<td></td>
+<td>~a9</td>
+</tr>
+<tr>
+<td>a9</td>
+<td>IR</td>
+<td></td>
+<td>IR[5]</td>
+</tr>
+<tr>
+<td>a10</td>
+<td>Inplace</td>
+<td></td>
+<td>~a11</td>
+</tr>
+<tr>
+<td>a11</td>
+<td>IR</td>
+<td></td>
+<td>IR[4]</td>
+</tr>
+<tr>
+<td>a12</td>
+<td>Inplace</td>
+<td></td>
+<td>~a13</td>
+</tr>
+<tr>
+<td>a13</td>
+<td>IR</td>
+<td></td>
+<td>IR[3]</td>
+</tr>
+<tr>
+<td>a14</td>
+<td>Inplace</td>
+<td></td>
+<td>~a15</td>
+</tr>
+<tr>
+<td>a15</td>
+<td>IR</td>
+<td></td>
+<td>IR[2]</td>
+</tr>
+<tr>
+<td>a16</td>
+<td>Inplace</td>
+<td></td>
+<td>~a17</td>
+</tr>
+<tr>
+<td>a17</td>
+<td>IR</td>
+<td></td>
+<td>IR[1]</td>
+</tr>
+<tr>
+<td>a18</td>
+<td>Inplace</td>
+<td></td>
+<td>~a19</td>
+</tr>
+<tr>
+<td>a19</td>
+<td>IR</td>
+<td></td>
+<td>IR[0]</td>
+</tr>
+<tr>
+<td>a20</td>
+<td>Sequencer</td>
+<td>~state[2] (state3 msb, inverted)</td>
+<td>0: state2 active</td>
+</tr>
+<tr>
+<td>a21</td>
+<td>Inplace</td>
+<td></td>
+<td>~a20</td>
+</tr>
+<tr>
+<td>a22</td>
+<td>Sequencer</td>
+<td>~state[1]</td>
+<td>0: state1 active</td>
+</tr>
+<tr>
+<td>a23</td>
+<td>Inplace</td>
+<td></td>
+<td>~a22</td>
+</tr>
+<tr>
+<td>a24</td>
+<td>Sequencer</td>
+<td>~state[0] (state3 lsb, inverted)</td>
+<td>0: state0 active</td>
+</tr>
+<tr>
+<td>a25</td>
+<td>Inplace</td>
+<td></td>
+<td>~a24</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="decoder1-output-drivers">Decoder1 Output Drivers</h2>
+<p><img alt="decoder1_drv" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/decoder1_drv.jpg" /></p>
+<p>The output drivers act as signal amplifiers and are also used as "domino" logic, to translate dynamic CMOS logic into conventional logic.</p>
+<h2 id="decoder1-output-trees">Decoder1 Output Trees</h2>
+<p>⚠️ Some inputs are twisted, be careful (e.g. a9 for the first three values).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tree</th>
+<th>Gekkio</th>
+<th>Paths</th>
+<th>To</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>d0</td>
+<td>op_ld_nn_a_s010</td>
+<td>{0,2,5,7,9,10,13,14,17,18,20,23,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d1</td>
+<td>op_ld_a_nn_s010</td>
+<td>{0,2,5,7,9,11,13,14,17,18,20,23,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d2</td>
+<td>op_ld_a_nn_s011</td>
+<td>{0,2,5,7,9,11,13,14,17,18,20,23,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d3</td>
+<td>op_alu8</td>
+<td>{0,2,({5,6},{5,7,15,17,18})}</td>
+<td></td>
+<td>All ALU opcodes in range 0x80-0xbf + ALU opcodes 0xc6/0xce, 0xd6/0xde, 0xe6/0xee, 0xf6/0xfe ("bottom yellow")</td>
+</tr>
+<tr>
+<td>d4</td>
+<td>op_jp_cc_sx01</td>
+<td>{0,2,5,7,8,14,17,18,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d5</td>
+<td>op_call_cc_sx01</td>
+<td>{0,2,5,7,8,15,16,18,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d6</td>
+<td>op_ret_cc_sx00</td>
+<td>{0,2,5,7,8,14,16,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d7</td>
+<td>op_jr_cc_sx00</td>
+<td>{0,2,4,6,9,14,16,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d8</td>
+<td>op_ldh_a_x</td>
+<td>{0,2,5,7,9,11,12,14,18}</td>
+<td>Decoder3 (not used in Decoder2)</td>
+<td></td>
+</tr>
+<tr>
+<td>d9</td>
+<td>op_call_any_s000</td>
+<td>{0,2,5,7,8,({10,13,15,16},{15,16,18}),20,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d10</td>
+<td>op_call_any_s001</td>
+<td>{0,2,5,7,8,({10,13,15,16},{15,16,18}),20,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d11</td>
+<td>op_call_any_s010</td>
+<td>{0,2,5,7,8,({10,13,15,16},{15,16,18}),20,23,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d12</td>
+<td>op_call_any_s011</td>
+<td>{0,2,5,7,8,({10,13,15,16},{15,16,18}),20,23,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d13</td>
+<td>op_call_any_s100</td>
+<td>{0,2,5,7,8,({10,13,15,16},{15,16,18}),21,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d14</td>
+<td>op_ld_x_n</td>
+<td>{0,2,4,6,15,17,18}</td>
+<td>Decoder3 (not used in Decoder2)</td>
+<td>LD reg/(HL),d8</td>
+</tr>
+<tr>
+<td>d15</td>
+<td>op_ld_x_n_sx00</td>
+<td>{0,2,4,6,15,17,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d16</td>
+<td>op_ld_r_n_sx01</td>
+<td>{0,2,4,6,({13},{10},{8}),15,17,18,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d17</td>
+<td>op_s110</td>
+<td>{0,2,21,23,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d18</td>
+<td>op_s111</td>
+<td>{2,21,23,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d19</td>
+<td>op_jr_any_sx01</td>
+<td>{0,2,4,6,({9,14,16,18},{8,11,13,14,16,18}),22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d20</td>
+<td>op_jr_any_sx00</td>
+<td>{0,2,4,6,({9,14,16,18},{8,11,13,14,16,18}),22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d21</td>
+<td>op_add_sp_e_s010</td>
+<td>{0,2,5,7,9,10,13,14,16,18,20,23,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d22</td>
+<td>op_ld_hl_sp_sx10</td>
+<td>{0,2,5,7,9,11,13,14,16,18,23,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d23</td>
+<td>cb_res_r_sx00</td>
+<td>{0,3,5,6,({14},{16},{19}),22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d24</td>
+<td>cb_res_hl_sx01</td>
+<td>{0,3,5,6,15,17,18,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d25</td>
+<td>op_rotate_a</td>
+<td>{0,2,4,6,8,15,17,19}</td>
+<td>Decoder3 (not used in Decoder2)</td>
+<td>Rotate instructions (RLCA/RRCA/RLA/RRA)</td>
+</tr>
+<tr>
+<td>d26</td>
+<td>op_ld_a_rr_sx01</td>
+<td>{0,2,4,6,13,14,17,18,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d27</td>
+<td>cb_bit</td>
+<td>{0,3,4,7}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d28</td>
+<td>op_ld_rr_a_sx00</td>
+<td>{0,2,4,6,12,14,17,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d29</td>
+<td>op_ld_a_rr_sx00</td>
+<td>{0,2,4,6,13,14,17,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d30</td>
+<td>op_ldh_c_a_sx00</td>
+<td>{0,2,5,7,9,10,12,14,17,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d31</td>
+<td>op_ldh_n_a_sx00</td>
+<td>{0,2,5,7,9,10,12,14,16,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d32</td>
+<td>op_ldh_n_a_sx01</td>
+<td>{0,2,5,7,9,10,12,14,16,18,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d33</td>
+<td>op_ld_r_hl_sx00</td>
+<td>{0,2,4,({7,8},{7,10},{7,13}),15,17,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d34</td>
+<td>op_alu_misc_s0xx</td>
+<td>{0,2,4,6,15,17,19,20}</td>
+<td>Decoder3 (also)</td>
+<td>All rotate and flag opcodes (x7/xF) in range 0x00-0x3f</td>
+</tr>
+<tr>
+<td>d35</td>
+<td>op_add_hl_sxx0</td>
+<td>{0,2,4,6,13,14,16,19,24}</td>
+<td></td>
+<td>All ADD HL,r16 opcodes (0x09,0x19,0x29,0x39)</td>
+</tr>
+<tr>
+<td>d36</td>
+<td>op_dec_rr_sx00</td>
+<td>{0,2,4,6,13,14,17,19,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d37</td>
+<td>op_inc_rr_sx00</td>
+<td>{0,2,4,6,12,14,17,19,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d38</td>
+<td>op_push_sx01</td>
+<td>{0,2,5,7,12,15,16,19,22,25}</td>
+<td>Decoder3 (also)</td>
+<td>Push opcodes (0xc5,0xd5,0xe5,0xf5)</td>
+</tr>
+<tr>
+<td>d39</td>
+<td>op_push_sx00</td>
+<td>{0,2,5,7,12,15,16,19,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d40</td>
+<td>op_ld_r_r_s0xx</td>
+<td>{0,2,4,7,({8},{10},{13}),({19},{16},{14}),20}</td>
+<td></td>
+<td>All LD opcodes in range 0x40-0x7f, except using (HL) and HALT.</td>
+</tr>
+<tr>
+<td>d41</td>
+<td>op_40_to_7f</td>
+<td>{0,2,4,7}</td>
+<td>Decoder3 (not used in Decoder2)</td>
+<td>All LD reg/(HL), (HL)/reg, including HALT (in range 0x40-0x7f)</td>
+</tr>
+<tr>
+<td>d42</td>
+<td>cb_00_to_3f</td>
+<td>{0,3,4,6}</td>
+<td>Decoder3, ALU, Bottom (not used in Decoder2)</td>
+<td>Pop opcodes (0xc1, 0xd1, 0xe1, 0xf1)</td>
+</tr>
+<tr>
+<td>d43</td>
+<td>op_jp_any_sx00</td>
+<td>{0,2,5,7,8,({10,12,14,17},{14,17,18}),22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d44</td>
+<td>op_jp_any_sx01</td>
+<td>{0,2,5,7,8,({10,12,14,17},{14,17,18}),22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d45</td>
+<td>op_jp_any_sx10</td>
+<td>{0,2,5,7,8,({10,12,14,17},{14,17,18}),23,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d46</td>
+<td>op_add_hl_sx01</td>
+<td>{0,2,4,6,13,14,16,19,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d47</td>
+<td>op_ld_hl_n_sx01</td>
+<td>{0,2,4,6,9,11,12,15,17,18,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d48</td>
+<td><em>ignored</em></td>
+<td>{24,25}</td>
+<td>⚠️ Not used</td>
+<td></td>
+</tr>
+<tr>
+<td>d49</td>
+<td><em>ignored</em></td>
+<td>{24,25}</td>
+<td>⚠️ Not used</td>
+<td></td>
+</tr>
+<tr>
+<td>d50</td>
+<td>op_push_sx10</td>
+<td>{0,2,5,7,12,15,16,19,23,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d51</td>
+<td>op_pop_sx00</td>
+<td>{0,2,5,7,12,14,16,19,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d52</td>
+<td>op_pop_sx01</td>
+<td>{0,2,5,7,12,14,16,19,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d53</td>
+<td>op_add_sp_s001</td>
+<td>{0,2,5,7,9,10,13,14,16,18,20,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d54</td>
+<td>op_ld_hl_sp_sx01</td>
+<td>{0,2,5,7,9,11,13,14,16,18,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d55</td>
+<td>cb_set_r_sx00</td>
+<td>{0,3,5,7,({14},{16},{19}),22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d56</td>
+<td>cb_set_hl_sx01</td>
+<td>{0,3,5,7,15,17,18,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d57</td>
+<td>cb_set_res_hl_sx00</td>
+<td>{0,3,5,15,17,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d58</td>
+<td>op_pop_sx10</td>
+<td>{0,2,5,7,12,14,16,19,23,24}</td>
+<td>ALU (also)</td>
+<td></td>
+</tr>
+<tr>
+<td>d59</td>
+<td>op_ldh_a_n_sx01</td>
+<td>{0,2,5,7,9,11,12,14,16,18,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d60</td>
+<td>op_ld_nn_sp_s010</td>
+<td>{0,2,4,6,8,10,13,14,16,18,20,23,24}</td>
+<td>Bottom (also)</td>
+<td></td>
+</tr>
+<tr>
+<td>d61</td>
+<td>op_ld_nn_sp_s000</td>
+<td>{0,2,4,6,8,10,13,14,16,18,20,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d62</td>
+<td>op_ld_sp_hl_sx00</td>
+<td>{0,2,5,7,9,11,13,14,16,19,22,24}</td>
+<td>Decoder3 (also)</td>
+<td></td>
+</tr>
+<tr>
+<td>d63</td>
+<td>op_add_sp_e_s000</td>
+<td>{0,2,5,7,9,10,13,14,16,18,20,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d64</td>
+<td>op_add_sp_e_s011</td>
+<td>{0,2,5,7,9,10,13,14,16,18,20,23,25}</td>
+<td>Decoder3 (also)</td>
+<td></td>
+</tr>
+<tr>
+<td>d65</td>
+<td>op_ld_hl_sp_sx00</td>
+<td>{0,2,5,7,9,11,13,14,16,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d66</td>
+<td>op_ld_nn_sp_s011</td>
+<td>{0,2,4,6,8,10,13,14,16,18,20,23,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d67</td>
+<td>op_ld_nn_sp_s001</td>
+<td>{0,2,4,6,8,10,13,14,16,18,20,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d68</td>
+<td>op_ld_hl_r_sx00</td>
+<td>{0,2,4,7,9,11,12,({19},{16},{14}),22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d69</td>
+<td>op_incdec8_hl_sx00</td>
+<td>{0,2,4,6,9,11,12,15,16,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d70</td>
+<td>op_incdec8_hl_sx01</td>
+<td>{0,2,4,6,9,11,12,15,16,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d71</td>
+<td>op_ldh_a_c_sx00</td>
+<td>{0,2,5,7,9,11,12,14,17,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d72</td>
+<td>op_ldh_a_n_sx00</td>
+<td>{0,2,5,7,9,11,12,14,16,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d73</td>
+<td>op_rst_sx01</td>
+<td>{0,2,5,7,15,17,19,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d74</td>
+<td>op_rst_sx00</td>
+<td>{0,2,5,7,15,17,19,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d75</td>
+<td>int_s101</td>
+<td>{1,2,21,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d76</td>
+<td>int_s100</td>
+<td>{1,2,21,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d77</td>
+<td>int_s000</td>
+<td>{1,2,20,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d78</td>
+<td>op_80_to_bf_reg_s0xx</td>
+<td>{0,2,5,6,({16},{14},{19}),20}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d79</td>
+<td>op_ret_reti_sx00</td>
+<td>{0,2,5,7,8,13,14,16,19,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d80</td>
+<td>op_ret_cc_sx01</td>
+<td>{0,2,5,7,8,14,16,18,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d81</td>
+<td>op_jp_hl_s0xx</td>
+<td>{0,2,5,7,9,10,13,14,16,19,20}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d82</td>
+<td>op_ret_any_reti_s010</td>
+<td>{0,2,5,7,8,({13,14,16},{14,16,18}),20,23,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d83</td>
+<td>op_ret_any_reti_s011</td>
+<td>{0,2,5,7,8,({13,14,16},{14,16,18}),20,23,25}</td>
+<td>Decoder3 (also)</td>
+<td></td>
+</tr>
+<tr>
+<td>d84</td>
+<td>op_ld_hlinc_sx00</td>
+<td>{0,2,4,6,9,10,14,17,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d85</td>
+<td>op_ld_hldec_sx00</td>
+<td>{0,2,4,6,9,11,14,17,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d86</td>
+<td>op_ld_rr_sx00</td>
+<td>{0,2,4,6,12,14,16,19,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d87</td>
+<td>op_ld_rr_sx01</td>
+<td>{0,2,4,6,12,14,16,19,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d88</td>
+<td>op_ld_rr_sx10</td>
+<td>{0,2,4,6,12,14,16,19,23,24}</td>
+<td>Decoder3 (also). Long wire.</td>
+<td></td>
+</tr>
+<tr>
+<td>d89</td>
+<td>op_incdec8_s0xx</td>
+<td>{0,2,4,6,({13},{10},{8}),15,16,20}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d90</td>
+<td>op_alu_hl_sx00</td>
+<td>{0,2,5,6,15,17,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d91</td>
+<td>op_alu_n_sx00</td>
+<td>{0,2,5,7,15,17,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d92</td>
+<td>op_rst_sx10</td>
+<td>{0,2,5,7,15,17,19,23,24}</td>
+<td>Bottom (also)</td>
+<td></td>
+</tr>
+<tr>
+<td>d93</td>
+<td>int_s110</td>
+<td>{1,2,21,23,24}</td>
+<td>Decoder3, Bottom (also)</td>
+<td></td>
+</tr>
+<tr>
+<td>d94</td>
+<td>cb_r_s0xx</td>
+<td>{0,3,({19},{14},{16}),20}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d95</td>
+<td>cb_hl_sx00</td>
+<td>{0,3,15,17,18,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d96</td>
+<td>cb_bit_hl_sx01</td>
+<td>{0,3,4,7,15,17,18,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d97</td>
+<td>cb_notbit_hl_sx01</td>
+<td>{0,3,6,15,17,18,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d98</td>
+<td>op_incdec8</td>
+<td>{0,2,4,6,15,16}</td>
+<td></td>
+<td>INC/DEC reg/(HL)</td>
+</tr>
+<tr>
+<td>d99</td>
+<td>op_di_ei_s0xx</td>
+<td>{0,2,5,7,9,11,14,17,19,20}</td>
+<td>Sequencer (also)</td>
+<td></td>
+</tr>
+<tr>
+<td>d100</td>
+<td>op_halt_s0xx</td>
+<td>{0,2,4,7,9,11,12,15,17,18,20}</td>
+<td>Sequencer (also)</td>
+<td></td>
+</tr>
+<tr>
+<td>d101</td>
+<td>op_nop_stop_s0xx</td>
+<td>{0,2,4,6,8,12,14,16,18,20}</td>
+<td>Sequencer (also)</td>
+<td>NOP/STOP</td>
+</tr>
+<tr>
+<td>d102</td>
+<td>op_cb_s0xx</td>
+<td>{0,2,5,7,8,10,13,14,17,19,20}</td>
+<td>Sequencer (also)</td>
+<td></td>
+</tr>
+<tr>
+<td>d103</td>
+<td>op_jr_any_sx10</td>
+<td>{0,2,4,6,({8,11,13,14,16,18},{9,14,16,18}),23,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d104</td>
+<td>op_ea_fa_s000</td>
+<td>{0,2,5,7,9,13,14,17,18,20,22,24}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d105</td>
+<td>op_ea_fa_s001</td>
+<td>{0,2,5,7,9,13,14,17,18,20,22,25}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d106</td>
+<td><em>ignored</em></td>
+<td>{24,25}</td>
+<td>⚠️ Not used</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div><p>The numbers in the tree path mark the inputs <code>a[25:0]</code>.</p>
+<p>The result should be as follows (using d3 as an example, the dynamical part of the logic is not shown):</p>
+<p><img alt="demo_d3" decoding="async" loading="lazy" src="../../imgstore/sm83/demo_d3.jpg" /></p>
+<p>The <code>To</code> outputs are marked only for those that go somewhere else besides Decoder2.</p>
+<p>To convert trees into a schematic, you can use a script to generate an HDL.</p><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG CPU Core</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/sm83/decoder1.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

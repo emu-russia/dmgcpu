@@ -1,0 +1,97 @@
+{
+  "site_title": "DMG-CPU Research",
+  "meta_description": "Die-level reverse engineering of the Nintendo DMG-CPU SoC (Game Boy): wiki, die photographs, netlists and die-perfect Verilog with Icarus regression suites.",
+  "hero": {
+    "eyebrow": "Die-level reverse engineering",
+    "title": "DMG-CPU",
+    "title_accent": "Research",
+    "lede": "The DMG-CPU is the system-on-a-chip of the original Nintendo Game Boy. This project rebuilds it from silicon: modules are traced from die photographs with the Deroute utility into netlists and die-perfect Verilog — and the real netlists are exercised by Icarus regression suites for the SM83 core, PPU, APU and the small clock/arbiter/MMIO/serial domain."
+  },
+  "sections": [
+    {
+      "id": "soc",
+      "title": "The SoC",
+      "subtitle": "functional blocks of the LR35902 system-on-a-chip",
+      "tiles": [
+        { "src": "wiki/soc/Readme.md", "title": "SoC overview", "text": "Block diagram, architecture notes and the full internal bus list of the chip." },
+        { "src": "wiki/soc/pads.md", "title": "Bonding pads & I/O terminals", "text": "Pinout and pad circuits of the DMG-CPU." },
+        { "src": "wiki/soc/cells.md", "title": "Cells library", "text": "The standard cells the SoC is built from." },
+        { "src": "wiki/soc/clkgen.md", "title": "Clock generator", "text": "The bushy clock tree that drives the whole chip." },
+        { "src": "wiki/soc/ser.md", "title": "Serial link", "text": "Serial I/O (link port) circuitry." },
+        { "src": "wiki/soc/arb.md", "title": "Bus arbiter", "text": "Arbitration between internal and external buses." },
+        { "src": "wiki/soc/mmio.md", "title": "MMIO & interrupts", "text": "Divider, timer, DMA and the interrupt controller (IF)." },
+        { "src": "wiki/soc/hram.md", "title": "HRAM", "text": "The internal high RAM macro." },
+        { "src": "wiki/soc/bootrom.md", "title": "Boot ROM", "text": "The mask-ROM holding the bootstrap program." },
+        { "src": "wiki/soc/oam.md", "title": "OAM", "text": "The object-attribute memory macro." },
+        { "src": "wiki/soc/ppu.md", "title": "PPU", "text": "Picture processing unit index; PPU1 + PPU2 split and links." },
+        { "src": "wiki/soc/ppu1.md", "title": "PPU1 — BG/WIN", "text": "Background & window pipeline, H/V counters, LCD interface." },
+        { "src": "wiki/soc/ppu2.md", "title": "PPU2 — sprites", "text": "Object / OAM side of the pipeline." },
+        { "src": "wiki/soc/apu.md", "title": "APU — sound", "text": "Four-channel sound generator (chips-era synthesis)." },
+        { "src": "wiki/soc/waveram.md", "title": "Wave RAM", "text": "The channel-3 sample RAM macro." },
+        { "src": "wiki/soc/dac.md", "title": "Sound DAC", "text": "The audio output digital-to-analogue stage." },
+        { "src": "wiki/soc/sch/Readme.md", "title": "Schematics", "text": "Module circuits compared against @msinger's dmg-schematics." },
+        { "src": "wiki/soc/map_msinger.md", "title": "@msinger's map", "text": "Cell-by-cell rows of the Rev B die map." }
+      ]
+    },
+    {
+      "id": "sm83",
+      "title": "SM83 core",
+      "subtitle": "the Game Boy CPU: topology, buses, ALU, decoders, sequencer",
+      "tiles": [
+        { "src": "wiki/sm83/Readme.md", "title": "Core overview", "text": "Component map of the core; where every block sits on the die." },
+        { "src": "wiki/sm83/topo.md", "title": "Topology", "text": "Metal/poly/diffusion layers and how the core is organised." },
+        { "src": "wiki/sm83/buses.md", "title": "Buses", "text": "Internal data movement: rbus, wbus, idu, hl bus." },
+        { "src": "wiki/sm83/rails.md", "title": "Rails & precharge", "text": "Power rails and the old-school bus-precharge trick." },
+        { "src": "wiki/sm83/clk.md", "title": "Clocks", "text": "The clock set the core consumes." },
+        { "src": "wiki/sm83/ports.md", "title": "Ports", "text": "Core I/O against the rest of the SoC." },
+        { "src": "wiki/sm83/regs.md", "title": "Register file", "text": "Registers, SP, PC and the incrementer/decrementer." },
+        { "src": "wiki/sm83/alu.md", "title": "ALU & flags", "text": "The arithmetic/logic unit and the Z/N/H/C flag block." },
+        { "src": "wiki/sm83/datamux.md", "title": "Data mux", "text": "Bus multiplexing and the datalatch." },
+        { "src": "wiki/sm83/idu.md", "title": "IDU", "text": "The instruction decoder units." },
+        { "src": "wiki/sm83/seq.md", "title": "Sequencer", "text": "The M/T-cycle state machine that drives everything." },
+        { "src": "wiki/sm83/decoder1.md", "title": "Decoder 1", "text": "First-level instruction decoder output table." },
+        { "src": "wiki/sm83/decoder2.md", "title": "Decoder 2", "text": "Second-level decoder output table." },
+        { "src": "wiki/sm83/decoder3.md", "title": "Decoder 3", "text": "Third-level decoder: the w/x signal law." },
+        { "src": "wiki/sm83/small_thingy.md", "title": "The Thingy", "text": "The small but important circuit next to the decoder." },
+        { "src": "wiki/sm83/irq.md", "title": "Interrupts", "text": "IRQ control logic of the core." },
+        { "src": "wiki/sm83/investigation.md", "title": "Investigations", "text": "Historical debug notes from bringing up the SM83 HDL." },
+        { "src": "wiki/sm83/sm83.md", "title": "SM83 reference", "text": "Opcode tables and external references." }
+      ]
+    },
+    {
+      "id": "verilog",
+      "title": "Verilog & regression suites",
+      "subtitle": "die-perfect HDL driven by Icarus testbenches",
+      "tiles": [
+        { "src": "HDL/sm83/Readme.md", "title": "SM83 core HDL", "text": "All core modules as Verilog." },
+        { "src": "HDL/soc/icarus/Readme.md", "title": "Icarus suites & tooling", "text": "Regression suites and the GTKWave-based workflow." },
+        { "src": "HDL/sm83/Icarus/Readme.md", "title": "SM83 suite", "text": "Icarus regression on the real SM83 netlist (issue #400)." },
+        { "src": "HDL/sm83/Icarus/waves.md", "title": "SM83 suite — waves", "text": "Waveform documentation of every suite test." },
+        { "src": "HDL/sm83/Icarus/STATUS.md", "title": "SM83 suite — status", "text": "Per-test status and measured timing facts." },
+        { "src": "HDL/soc/icarus/soc/Readme.md", "title": "Small-domain suite", "text": "ClkGen / Arb / MMIO / Ser testbench (issue #396)." },
+        { "src": "HDL/soc/icarus/soc/waves.md", "title": "Small-domain — waves", "text": "Waveform documentation: mmio, ser, hram, arb, clkgen, div." },
+        { "src": "HDL/soc/icarus/ppu/Readme.md", "title": "PPU suite", "text": "PPU1/PPU2 testbench (issue #390)." },
+        { "src": "HDL/soc/icarus/ppu/waves.md", "title": "PPU suite — waves", "text": "Waveform documentation: regs, frame, scroll, window, sprites." },
+        { "src": "HDL/soc/icarus/apu/Readme.md", "title": "APU suite", "text": "APU testbench (issue #398)." },
+        { "src": "HDL/soc/icarus/apu/waves.md", "title": "APU suite — waves", "text": "Waveform documentation: channels 1–4, mix, regs." },
+        { "src": "HDL/soc/icarus/gtkwave-skill.md", "title": "GTKWave skill", "text": "How the waves are rendered (vcd2png + .gtkw)." }
+      ]
+    },
+    {
+      "id": "reference",
+      "title": "References & process",
+      "subtitle": "how the research is done and where the data lives",
+      "tiles": [
+        { "src": "wiki/pcb.md", "title": "Reference PCB", "text": "DMG-CPU-06 board reconstruction used for verification." },
+        { "src": "wiki/methods.md", "title": "Research methods", "text": "ACID-FREE chip opening and imaging workflow." },
+        { "src": "wiki/datasets.md", "title": "Datasets", "text": "Public die photographs per chip revision." },
+        { "src": "netlist/Readme.md", "title": "Netlists", "text": "Recovered netlists and the Deroute workflow." },
+        { "src": "netlist/sm83/Readme.md", "title": "SM83 netlist", "text": "Core netlist sources." },
+        { "src": "netlist/soc/Readme.md", "title": "SoC netlist", "text": "Rest-of-chip netlist sources." },
+        { "src": "logisim/Readme.md", "title": "Logisim models", "text": "Interactive models of the most intricate circuits." },
+        { "src": "imgstore/topo/Readme.md", "title": "Layer imagery", "text": "SM83 core topography pictures: metal, poly, diffusion, vias." },
+        { "src": "wiki/soc/sch/bank.md", "title": "BANK register", "text": "The $FF50 BANK register circuit." }
+      ]
+    }
+  ]
+}

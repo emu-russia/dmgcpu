@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SoC small-domain waves (issue 396) · DMG-CPU Research</title>
+<meta name="description" content="Waveform documentation for the SoC small-domain testbench suite (HDL/soc/icarus/soc): ClkGen, Arbiter, MMIO, Ser (+ HRAM).">
+<link rel="icon" href="../../../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../../../index.html">
+      <img class="brand-mark" src="../../../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../../../wiki/soc/Readme.html">SoC</a><a href="../../../../wiki/sm83/Readme.html">SM83</a><a href="../../../../wiki/pcb.html">PCB</a><a href="../../../../wiki/methods.html">Methods</a><a href="../../../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../../../index.html">Home</a><span class="sep">/</span><a href="../../../../HDL/Readme.html">HDL</a><span class="sep">/</span><span>soc</span><span class="sep">/</span><a href="../../../../HDL/soc/icarus/Readme.html">HDL/soc/icarus - Icarus Verilog testbenches</a><span class="sep">/</span><a href="../../../../HDL/soc/icarus/soc/Readme.html">SoC small-domain Icarus testbench (issue 396)</a><span class="sep">/</span><span class="current">SoC small-domain waves (issue 396)</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#tb_mmio-mmio-register-behaviour">tb_mmio - MMIO register behaviour</a></li><li class="toc-l2"><a href="#tb_ser-serial-link">tb_ser - Serial link</a></li><li class="toc-l2"><a href="#tb_clkgen-clkgen">tb_clkgen - ClkGen</a></li><li class="toc-l2"><a href="#tb_arb-arbiter-sys-decode-bank">tb_arb - Arbiter Sys Decode + BANK</a></li><li class="toc-l2"><a href="#tb_hram-hram-behavioral-model">tb_hram - HRAM (behavioral model)</a></li><li class="toc-l2"><a href="#tb_div-div-counter">tb_div - DIV counter</a></li><li class="toc-l2"><a href="#tb_testmode-test1test2-decode">tb_testmode - TEST1/TEST2 decode</a></li><li class="toc-l2"><a href="#open-upcoming-tests">Open / upcoming tests</a></li></ol></details>
+<article class="content"><h1 id="soc-small-domain-waves-issue-396">SoC small-domain waves (issue #396)</h1>
+<p>Waveform documentation for the SoC small-domain testbench suite
+(<code>HDL/soc/icarus/soc</code>): ClkGen, Arbiter, MMIO, Ser (+ HRAM). Generated
+with the WSL-native Icarus + the <code>vcd2png.py</code> renderer (the GTKWave
+v3.3.128 save files are committed next to each test).</p>
+<h2 id="tb_mmio-mmio-register-behaviour">tb_mmio - MMIO register behaviour</h2>
+<p>Reset, TIMA/TAC/TMA write-&gt;read roundtrips, IF flag set/clear and the
+lfo_16384Hz (= clk9/64) divider.</p>
+<p><img alt="tb_mmio" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/soc/waves/tb_mmio.png" /></p>
+<p>What to look at in the wave:</p>
+<ul>
+<li>
+<p><code>reset</code> deassert -&gt; <code>n_reset2</code>/<code>sync_reset</code> settle after a few clock
+  edges (ClkGen reset synchronizer).</p>
+</li>
+<li>
+<p>CPU cycles: address on <code>cpu_a</code>, <code>d</code> carries the data; <code>cpu_wr_sync</code>
+  pulses = MMIO <code>soc_wr</code> write windows; the decode clocks (<code>w148</code> =
+  $FF07/TAC write, <code>w223</code> = $FF06/TMA write) are low inside the window
+  and capture their dffs on the trailing edge.</p>
+</li>
+<li>
+<p><code>cpu_irq_trig</code> bit4 pulses after the <code>int_jp</code> strobe (IF joypad flag)
+  and clears after the CPU IRQ acknowledge.</p>
+</li>
+<li>
+<p><code>lfo_16384Hz</code>: 64 toggles per 4096 <code>clk9</code> cycles (clk9 / 64).</p>
+</li>
+</ul>
+<h2 id="tb_ser-serial-link">tb_ser - Serial link</h2>
+<p>SB load, SC start with the internal shift clock, 8-tick transfer,
+<code>int_serial</code> on completion, SC start-bit auto-clear, IF serial flag.</p>
+<p><img alt="tb_ser" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/soc/waves/tb_ser.png" /></p>
+<p>Verified behaviour:</p>
+<ul>
+<li><code>sck_dir</code> = SC bit0 (internal clock master when 1).</li>
+<li>
+<p>Writing SC bit7 = 1 starts an 8-tick transfer; <code>serial_tick</code> pulses 8
+  times; SB shifts out on <code>ser_out</code> and in from <code>n_sin</code> (idle high -&gt; all
+  ones after the transfer).</p>
+</li>
+<li>
+<p>On completion <code>int_serial</code> rises, the MMIO IF serial flag
+  (<code>cpu_irq_trig[3]</code>) is set, and the SC start bit self-clears.</p>
+</li>
+<li>
+<p>IF serial flag is cleared by the CPU IRQ acknowledge.</p>
+</li>
+<li>SB read-back of an arbitrary loaded value shows only bus-bit0 (read-back
+  polarity/order open question - the loaded value is proven through the
+  shift result).</li>
+</ul>
+<h2 id="tb_clkgen-clkgen">tb_clkgen - ClkGen</h2>
+<p>Reset synchronizer, clk_ena/osc_ena gating and the phase structure of the
+nine clock outputs.</p>
+<p><img alt="tb_clkgen" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/soc/waves/tb_clkgen.png" /></p>
+<p>Verified behaviour (tb_clkgen PASS + clkgen_phases.py table):</p>
+<ul>
+<li>
+<p>M-cycle = 4 oscillator cycles (256 ns at the test frequency); clk1/clk3/
+  clk5/clk9 rise at T0, clk2/clk8 at +1 osc, clk4 at +2, clk6/clk7 at +3;
+  cclk follows the oscillator.</p>
+</li>
+<li>
+<p>clk_ena stops clk1..clk7 while clk9 keeps running; osc_ena stops the
+  whole tree; cpu_wr_sync pulses once per M-cycle; ext_cs_en is an
+  active-low per-M-cycle pulse while cpu_mreq is high.</p>
+</li>
+</ul>
+<h2 id="tb_arb-arbiter-sys-decode-bank">tb_arb - Arbiter Sys Decode + BANK</h2>
+<p>Address-decode sweep of mmio_sel/boot_sel/ffxx/non_vram_mreq/
+arb_fexx_ffxx, the $FF50 BANK register disabling the internal boot ROM,
+and the VRAM-window definition of non_vram_mreq.</p>
+<p><img alt="tb_arb" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/soc/waves/tb_arb.png" /></p>
+<p>Verified behaviour (tb_arb PASS):</p>
+<ul>
+<li><code>boot_sel</code> = 1 for $0000-$00FF (with the BANK register clear), else 0.</li>
+<li><code>ffxx</code> = 1 for $FFxx; <code>mmio_sel</code> = 1 for $FE00+ (FExx/FFxx window).</li>
+<li><code>non_vram_mreq</code> = MREQ &amp; not the $8000-$9FFF VRAM window.</li>
+<li>writing $FF50 = 1 disables the internal boot ROM (boot_sel goes 0) and
+  is sticky (writing $FF50 = 0 does not re-enable it).</li>
+</ul>
+<h2 id="tb_hram-hram-behavioral-model">tb_hram - HRAM (behavioral model)</h2>
+<p>Roundtrips through the real MMIO/Arb decode into the behavioral
+<code>hram_model.v</code> (the real macro's storage cells are TBD stubs in sram.v).</p>
+<p><img alt="tb_hram" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/soc/waves/tb_hram.png" /></p>
+<p>Verified (tb_hram PASS, compiled with -DNO_SER):</p>
+<ul>
+<li>
+<p>writes/reads at $FF80/$FFC0/$FFFE round-trip; neighbouring cells stay
+  independent; rewriting a cell to 0 works; $FFFF (IE) is outside the
+  HRAM window (the netlist decode excludes a[6:0] = 0x7F) so a write
+  there does not touch the RAM.</p>
+</li>
+<li>
+<p>the model captures on the <code>soc_wr</code> falling edge (same point as the MMIO
+  register decode clocks) and mirrors the netlist's window decode
+  ffxx &amp; a[7] &amp; (a[6:0] != 0x7F).</p>
+</li>
+</ul>
+<h2 id="tb_div-div-counter">tb_div - DIV counter</h2>
+<p>DIV reset-to-zero on a $FF04 write, clean read-back (mmio_weakbus.v),
+counting at the lfo rate, 8-bit wrap, and the FF60_D1 fast mode probe.</p>
+<p><img alt="tb_div" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/soc/waves/tb_div.png" /></p>
+<p>Verified (tb_div PASS):</p>
+<ul>
+<li>
+<p>after the $FF04 write DIV reads ~0, then counts one per lfo cycle
+  (0x80 after 128 lfo cycles) and wraps at 256.</p>
+</li>
+<li>
+<p>FF60_D1 = 1 (TEST_PAD.1, DIV clocked by clk9): read ~0x0C in the
+  window - clk9-driven, exact source taps under analysis.</p>
+</li>
+</ul>
+<h2 id="tb_testmode-test1test2-decode">tb_testmode - TEST1/TEST2 decode</h2>
+<p>Pad decode of the test pins through the real MMIO test-mode logic.</p>
+<p><img alt="tb_testmode" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/soc/waves/tb_testmode.png" /></p>
+<p>Verified (tb_testmode PASS):</p>
+<ul>
+<li>
+<p>TEST1 (T2 pad low, T1 high): <code>test_1</code> asserts, <code>test_2</code> off;
+  <code>ext_cs_en</code> is forced high and <code>n_ext_addr_en</code> asserts (external
+  address enable) - the internal CPU A/D bus drivers are disabled.</p>
+</li>
+<li>
+<p>TEST2 (T1 pad low, T2 high): <code>test_2</code> asserts, <code>test_1</code> off.</p>
+</li>
+<li>both pads high (normal) -&gt; both test modes off.</li>
+</ul>
+<h2 id="open-upcoming-tests">Open / upcoming tests</h2>
+<ul>
+<li>
+<p>external /CS pad semantics need a pad + external-memory model (netlist:
+  n_cs asserts for the a15&amp;(a13|a14) &amp; ~(a[15:10]=111111) windows with
+  ext_cs_en, i.e. A000-BFFF / C000-FBFF, not the $0000-7FFF ROM region)</p>
+</li>
+<li>
+<p>Ser d[6] bus modelling (see STATUS.md), TEST1 mode bus driving,
+  DIV read-back modelling</p>
+</li>
+</ul>
+<p>See <a href="Readme.html">Readme.md</a> for status and <a href="STATUS.html">STATUS.md</a> for the
+research log.</p><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ SoC small-domain Icarus testbench (issue 396)</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/HDL/soc/icarus/soc/waves.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../../../wiki/methods.html">Research methods</a></li><li><a href="../../../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../../../assets/site.js"></script>
+</body>
+</html>

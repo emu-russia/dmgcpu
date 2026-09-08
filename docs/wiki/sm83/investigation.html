@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SM83 Core Investigations · DMG-CPU Research</title>
+<meta name="description" content="This document was compiled by @Rodrigodd in the process of debugging SM83 Core HDL.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/sm83/Readme.html">DMG CPU Core</a><span class="sep">/</span><span class="current">SM83 Core Investigations</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#data-bus-stays-in-high-impedance">Data bus stays in high impedance</a></li><li class="toc-l2"><a href="#hl-is-inverted-in-the-address-bus">HL is inverted in the address bus</a></li><li class="toc-l2"><a href="#path-from-databus-to-register-a">Path from databus to register A</a></li><li class="toc-l2"><a href="#path-from-databus-to-register-hl">Path from databus to register HL</a></li><li class="toc-l2"><a href="#path-from-databus-to-register-sp">Path from databus to register SP</a></li><li class="toc-l2"><a href="#path-from-databus-to-pc">Path from databus to PC</a></li><li class="toc-l2"><a href="#datamux">DataMux</a></li></ol></details>
+<article class="content"><h1 id="sm83-core-investigations">SM83 Core Investigations</h1>
+<p>This document was compiled by @Rodrigodd in the process of debugging SM83 Core HDL.
+The information is of historical interest and can serve as an example of how to search
+for bugs and debug HDL implementation.</p>
+<h1 id="jp-a16-and-ld-sp-a16">JP a16 and LD SP, a16</h1>
+<p>JP 0003 is writing 0xFFFC to PC instead of 0x0003, which is its inverse. The
+flow of 0x0003 to PC is inverted a couple of times, and one of them may be
+wrong.</p>
+<p>The flow is the following:</p>
+<p>pcq (FFFC) &lt;- pc_bnq (0003) &lt;- pcnd (0003) &lt;- wzreg_to_pc ? zbus/wbus (FFFC) : IDU (N/A)</p>
+<p>I guess the flow between the "mux" and "pcq" is shared between the "IDU to PC"
+and this "ZREG to PC". And I guess that ZREG is shared with other instructions.
+So I am not sure where the problem is. I may need to test with other
+instructions first.</p>
+<p>Testing with the instruction "LD SP, 0003", the same problem happens, 0xFFFC is
+load into SP. This make thing that the problem is in zbus, as it is only used in
+PC and SP, as far as I know.</p>
+<p><del>Looking where zbus is first assigned, I found that all other bus are negations
+of zbus or wbus. This make me think that zbus should naturally be inverted, and
+the buses should directly connect to it.</del></p>
+<p>Actually, all registers are inverted, so maybe zbus should be inverted in its
+entired, as from my analysis below.</p>
+<h1 id="ld-hl-a-after-ld-a-bc-ld-hl-ff80">LD (HL), A (after <code>LD A, $BC</code> <code>LD HL, $ff80</code>)</h1>
+<p>This should put A in the data bus, and HL in the address bus. But HL appear
+inverted (since the previous <code>LD HL, $ff80</code>) in the address bus, and the databus
+stays in high impedance.</p>
+<h2 id="data-bus-stays-in-high-impedance">Data bus stays in high impedance</h2>
+<p><code>DataLatch</code> is the only one connected to the external data bus <code>D</code>. Although it
+is called a "latch" it does not hold any data, it just forwards data from other
+data buses; that is <code>Res</code> (the result of the ALU) and <code>DL</code> (the internal
+databus).</p>
+<p>But <code>datalatch.md</code> states that it can only output values to <code>DL</code>, and load from
+either <code>D</code> or <code>Res</code>. But this should not be the case, because we need to output
+to the external bus, and <code>DataLatch</code> is the only one connected to it.</p>
+<p>Also, it specifies <code>DL</code> bus as <code>inout</code>, but never assign <code>z</code> to it. In fact,
+during the write (<code>WR</code> high) <code>DataBridge</code> also writes to <code>DL</code>, making <code>DL</code> go
+to invalid state <code>x</code>. Actually, a lot of things tries to write to <code>DL</code>.</p>
+<p>(Strangely, <code>DataBridge</code> only writes <code>0</code> or <code>z</code> bits to <code>DL</code>. Maybe <code>DL</code> has a
+pull-up somewhere? Oh, maybe that is what <code>BusPrecharge</code> does, not sure if
+verilog will simulate that. Oh, this is handle by the use of <code>BusKeeper</code>.)</p>
+<p>The value of register <code>A</code> is stored in <code>ReqA</code>/<code>r1q</code>, inverted. This value can be
+put in the <code>abus</code> or <code>bbus</code> (and <code>Aout</code>, but just affect ALU logic), but during
+write neither of them are used, <code>\</code>s2_op_alu8<code>(</code>w[3]<code>) and</code>`s3_oe_areg_to_rbus<code>(</code>x[35]`) are both 0.</p>
+<p><img alt="opcode_77_ldhl" decoding="async" loading="lazy" src="../../imgstore/waves/opcode_77_ldhl.png" /></p>
+<p>In screenshot, the execution of the instruction LD (HL), A (77).</p>
+<h2 id="hl-is-inverted-in-the-address-bus">HL is inverted in the address bus</h2>
+<p><code>H</code> and <code>L</code> are stored in <code>ReqH</code>/<code>r3q</code> and <code>ReqL</code>/<code>r2q</code>, respectively, inverted.
+<code>H</code> can go to <code>abus</code>, <code>bbus</code> or <code>dbus</code>, and <code>L</code> can go to <code>abus</code>, <code>bbus</code> or
+<code>cbus</code>. They go to the bus through an inverter, so they have they original
+value.</p>
+<p>In this instruction, <code>H</code> goes to <code>dbus</code> and <code>L</code> goes to <code>cbus</code>. <code>dbus</code> <code>cbus</code> go
+through an <code>BusKeeper</code>, and them inverted again into the <code>AdressBus</code> (or <code>A</code>).</p>
+<p>From the comments in <code>IDU.v</code>, the code expects that the internal register
+actually holds the straight value of the ISA registers, but they are inverted in
+the current form. This was also seen in the <code>JP</code> instruction, and I fix that
+there by inverting the Zbus, but maybe we need to invert something more
+fundamental, like the value read from the memory?</p>
+<ul>
+<li>H: <code>r3q</code> -&gt; <code>dbus</code> -&gt; <code>BusKeeper</code> -&gt; <code>AddressBus</code> (inverted)</li>
+<li>L: <code>r2q</code> -&gt; <code>cbus</code> -&gt; <code>BusKeeper</code> -&gt; <code>AddressBus</code> (inverted)</li>
+</ul>
+<h2 id="path-from-databus-to-register-a">Path from databus to register A</h2>
+<ul>
+<li><code>D</code> -&gt; <code>DataLatch</code> -&gt; <code>DL</code> -&gt; <code>Z_in</code> (inverted) -&gt; <code>zbus</code> -&gt; <code>bbus</code>
+  (straighted) -&gt; <code>bbq</code> -&gt; <code>DV</code> (inverted) -&gt; <code>Res</code> -&gt; <code>fbus</code> -&gt; <code>RegA</code></li>
+</ul>
+<p>So <code>RegA</code>/<code>r1q</code> contains the inverted value of <code>A</code>.</p>
+<p><img alt="Path_Regs" decoding="async" loading="lazy" src="../../imgstore/sm83/Path_Regs.png" /></p>
+<h2 id="path-from-databus-to-register-hl">Path from databus to register HL</h2>
+<ul>
+<li>H: <code>D</code> -&gt; <code>DataLatch</code> -&gt; <code>DL</code> -&gt; <code>W_in</code> (inverted) -&gt; <code>wbus</code> -&gt; <code>fbus</code> -&gt; <code>RegH</code></li>
+<li>L: <code>D</code> -&gt; <code>DataLatch</code> -&gt; <code>DL</code> -&gt; <code>Z_in</code> (inverted) -&gt; <code>zbus</code> -&gt; <code>ebus</code> -&gt; <code>RegL</code></li>
+</ul>
+<p>So <code>HL</code> are also stored inverted in the registers.</p>
+<p><img alt="Path_Regs" decoding="async" loading="lazy" src="../../imgstore/sm83/Path_HL.png" /></p>
+<h2 id="path-from-databus-to-register-sp">Path from databus to register SP</h2>
+<ul>
+<li>SP high: <code>D</code> -&gt; <code>DataLatch</code> -&gt; <code>DL</code> -&gt; <code>W_in</code> (inverted) -&gt; <code>wbus</code> -&gt; <code>sph_nd</code> (inverted) -&gt; <code>SPH</code> (inverted)</li>
+<li>SP low:  <code>D</code> -&gt; <code>DataLatch</code> -&gt; <code>DL</code> -&gt; <code>Z_in</code> (inverted) -&gt; <code>zbus</code> -&gt; <code>spl_nd</code> (inverted) -&gt; <code>SPL</code> (inverted)</li>
+</ul>
+<p>So <code>SP</code> is also stored inverted in the registers.</p>
+<p><img alt="Path_Regs" decoding="async" loading="lazy" src="../../imgstore/sm83/Path_SP.png" /></p>
+<h2 id="path-from-databus-to-pc">Path from databus to PC</h2>
+<ul>
+<li>PC high: <code>D</code> -&gt; <code>DataLatch</code> -&gt; <code>DL</code> -&gt; <code>W_in</code> (inverted) -&gt; <code>wbus</code> -&gt; <code>pch_nd</code> (inverted) -&gt; <code>PCH</code> (inverted)</li>
+<li>PC low:  <code>D</code> -&gt; <code>DataLatch</code> -&gt; <code>DL</code> -&gt; <code>Z_in</code> (inverted) -&gt; <code>zbus</code> -&gt; <code>pcl_nd</code> (inverted) -&gt; <code>PCL</code> (inverted)</li>
+</ul>
+<p>So <code>PC</code> is also stored inverted in the registers.</p>
+<p><img alt="Path_Regs" decoding="async" loading="lazy" src="../../imgstore/sm83/Path_PC.png" /></p>
+<h1 id="ret-z-ret-nz">RET Z, RET NZ</h1>
+<p><del>The conditional checking are inverted. Testing with <code>JP Z</code> and <code>JP NZ</code> the
+condition is correct, so the problem is only in the <code>RET</code> instructions, I
+suppose.</del> Actually, these instruction are correct in the <code>dmgcpu</code> simulation,
+and only appears in the <code>dmg-sim</code>. In fact, both instructions are affected. The
+error is actually due to a timing difference in the <code>dmg-sim</code> simulation.</p>
+<p>Value of the signal <code>a[25:0]</code>, at the first cycle of the instructions <code>JP Z</code>,
+<code>JP NZ</code> <code>RET Z</code> (<code>c8</code>) and <code>RET NZ</code> (<code>c0</code>) are:</p>
+<ul>
+<li><code>ca</code>: 15665A5 (JP Z)</li>
+<li><code>c2</code>: 15655A5 (JP NZ)</li>
+<li>diff: 0001000</li>
+<li><code>c8</code>: 15565A5 (RET Z)</li>
+<li><code>c0</code>: 15555A5 (RET NZ)</li>
+<li>diff: 0001000</li>
+</ul>
+<p><code>a[13]</code> is the only difference between the two groups. The values of <code>d</code>, <code>x</code>
+and <code>w</code> are also the same in the first cycle (but differ afterwards).</p>
+<p><code>a[13]</code> is directly connected to bit 3 of the instruction. These signals only
+affect the value of <code>d</code>, <code>x</code> and some instructions (probably when part of the
+instructions behaviour is directly encoded in the opcode).</p>
+<p>Looking at the value of <code>a</code> in the second cycle:</p>
+<ul>
+<li><code>ca</code>: 25665A5 (JP Z)</li>
+<li><code>c2</code>: 25655A5 (JP NZ)</li>
+<li>diff: 0001000</li>
+<li><code>c8</code>: 2A565A5 (RET Z)</li>
+<li><code>c0</code>: 25555A5 (RET NZ)</li>
+<li>diff: 0F01000</li>
+</ul>
+<p>Beside the difference in <code>a[13]</code>, the value of <code>a[23]</code> to <code>a[20]</code> also change.
+But not in the <code>JP</code> instructions.</p>
+<p>In the decoded there are signals called <code>s2_state0_next</code>, <code>s2_state1_next</code> and
+<code>s2_state2_next</code>, which I presume indicate the next state of the sequencer. The
+sequencer must change state depending on the conditional falgs, so by tracing
+these signals I may find where the conditional flags are used, and probably
+where the problem is.</p>
+<p>These signals are <code>w[20]</code>, <code>w[33]</code> and <code>w[32]</code>, outputs of <code>Decoder2</code>. These
+signals are only affected by <code>d</code>, output of <code>Decoder1</code>. <code>Decoder1</code> is only
+affected by <code>a</code>, output of the <code>Sequencer</code>.</p>
+<p>One of the inputs of the <code>Sequencer</code> is <code>ALU_Out1</code>, which become high at end of
+one cycle of the conditional instructions that did not branch (at least for the
+4 instructiosn listed above).</p>
+<p>ALU_Out1 &lt;- ~azo[11] &lt;- az[11]</p>
+<p>assign az[11] = ~( 
+    `s2_cc_check &amp; (
+        (nIR[3]&amp;IR[4]&amp;bc[1]) |
+        (IR[3]&amp;IR[4]&amp;nbc[1]) |
+        (IR[3]&amp;nIR[4]&amp;nbc[3]) |
+        (nIR[3]&amp;nIR[4]&amp;bc[3]))
+    );</p>
+<p>Here, <code>bc</code> store the conditional flags (Z: bc[3], N: bc[2], H: bc[5], C: bc[1]),
+and <code>IR</code> the instruction opcode:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>IR[4:3]</th>
+<th>Flag</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>00</td>
+<td>Z</td>
+</tr>
+<tr>
+<td>01</td>
+<td>NZ</td>
+</tr>
+<tr>
+<td>10</td>
+<td>C</td>
+</tr>
+<tr>
+<td>11</td>
+<td>NC</td>
+</tr>
+</tbody>
+</table>
+</div><p>Comparing it to some instructions:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Instruction</th>
+<th>IR</th>
+<th>IR[4:3]</th>
+<th>Flags</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JP NZ</td>
+<td>c2</td>
+<td>00</td>
+<td>Z</td>
+</tr>
+<tr>
+<td>JP Z</td>
+<td>ca</td>
+<td>01</td>
+<td>NZ</td>
+</tr>
+<tr>
+<td>JP NC</td>
+<td>d2</td>
+<td>10</td>
+<td>C</td>
+</tr>
+<tr>
+<td>JP C</td>
+<td>da</td>
+<td>11</td>
+<td>NC</td>
+</tr>
+<tr>
+<td>RET NZ</td>
+<td>c0</td>
+<td>00</td>
+<td>Z</td>
+</tr>
+<tr>
+<td>RET Z</td>
+<td>c8</td>
+<td>01</td>
+<td>NZ</td>
+</tr>
+<tr>
+<td>RET NC</td>
+<td>d0</td>
+<td>10</td>
+<td>C</td>
+</tr>
+<tr>
+<td>RET C</td>
+<td>d8</td>
+<td>11</td>
+<td>NC</td>
+</tr>
+</tbody>
+</table>
+</div><p>The conditional flags are inverted, but this is correct, because when ALU_Out1
+is high is when the branch is not taken.</p>
+<p>At this point I noticed that the instructions are actually emulating correctly
+in the <code>dmgcpu</code> simulation, and the error only appear in the <code>dmg-sim</code> simulation.
+Looking more closely at the <code>ALU_Out1</code> signal, its negative edge is happening
+before the change of state in the sequencer. This makes the logic always read
+this signal as low, and always taking the branch.</p>
+<p>The difference in timing is beacuse <code>dmg-sim</code> tries to take in account the small
+delays in the real hardware, while <code>dmgcpu</code> is almost cycle based.</p>
+<p>The state of the sequencer is advanced by posedge of <code>CLK9</code>, while <code>ALU_Out1</code>
+(<code>azo[11]</code>) is gated by <code>CLK6</code> (and <code>CLK7</code>). <code>CLK6</code> ends a little before <code>CLK9</code>
+(22ns to be exact), so the sequencer fails to read <code>ALU_Out1</code>.</p>
+<p>Removing all delays from the <code>dmg-sim</code> simulation, the instructions work
+correctly, with the end of <code>CLK6</code> aligning with the start of <code>CLK9</code>.</p>
+<p>Looking at the length of the paths from the source clock to <code>CLK9</code> and <code>CLK6</code>,
+we can see that the path to <code>CLK6</code> is 11 connections longer than the path to
+<code>CLK9</code>. In <code>dmg-sim</code>, each connection have around 2ns of delay, so the
+difference in timing is expected.</p>
+<pre><code>- CLK9                 &lt;- BOGA &lt;- *BALY*
+- CLK1         &lt;- AWOB &lt;- BOGA &lt;- *BALY*
+- CLK2 &lt;- BEDO &lt;- BYXO &lt;- BUVU &lt;- *BALY* &lt;- BYJU &lt;- BELE &lt;- BUTO &lt;- BAZE &lt;- BELO &lt;- BANE &lt;- BEJA &lt;- BOLO &lt;- BUFA &lt;- BERY &lt;- **BAPY**
+
+- CLK3 &lt;- BEKO &lt;- BUDE &lt;- BIRY &lt;- BELU &lt;- ~ATYP &amp; CLK_EAN
+- CLK4 &lt;- UVYT &lt;- BUDE
+
+- CLK5 &lt;- BOLO &lt;- BUFA
+- CLK6         &lt;- BUFA &lt;- BERU &lt;- **BAPY**
+
+**BAPY** &lt;- ~(ATYP | AROV | ~CLK_ENA) = ~ATYP &amp; ~AROV &amp; CLK_ENA
+ATYP &lt;- AFUR
+AROV &lt;- APUK
+</code></pre>
+<p><del>Adding <code>22ns</code> of delay to <code>CLK3</code>, <code>CLK4</code>, <code>CLK5</code> and <code>CLK6</code> (all these CLK are
+almost in sync) in the <code>dmg-sim</code> fix the problem.</del></p>
+<p>The actual fix was to introduce a transparent latch to <code>ALU_Out1</code>, so it is
+signal is extended to the next cycle. This latch was already present in the
+original circuit.</p>
+<h1 id="jr-d16">JR d16</h1>
+<p>Jump relative is not jumping to the correct address. The jump relative should use
+the ALU to compute the target address, and them set the value of PC to its
+resutl. What appears to be happening is a bug in the <code>DataMux</code>, where it is not
+putting the value of <code>Res</code> into <code>DL</code> (internal databus).</p>
+<p>The <code>DataMux</code> has currently the following logic (assuming <code>CLK</code> is high, and
+<code>Test1</code> is low):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th><code>WR</code></th>
+<th><code>Res_to_DL</code></th>
+<th><code>DataOut</code></th>
+<th>Operation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>x</td>
+<td>D &lt;- DL; DL &lt;- Res</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>D &lt;- DL</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>D &lt;- DL; DL &lt;- DV</td>
+</tr>
+<tr>
+<td>0</td>
+<td>x</td>
+<td>x</td>
+<td>DL &lt;- D</td>
+</tr>
+</tbody>
+</table>
+</div><p>I think the first line is invalid, <code>DL</code> is being written and read at the same
+time, while I expect that another entity must be already driven <code>DL</code>. In no
+other case the content of <code>Res</code> is put into <code>DL</code>.</p>
+<p>During the execution of the instruction <code>JR d16</code>, <code>WR</code> is low and <code>Res_to_DL</code> is
+high.</p>
+<h2 id="datamux">DataMux</h2>
+<p>In <code>datamux.md</code>, the logisim of the <code>DataMux</code> describes the following Verilog:</p>
+<pre><code class="language-verilog">assign Ext_bus = ~Test1 ? (clk ? int_to_ext_q : 1) : 1'bz;
+assign Int_bus = Res_to_DL ? res_q : ( clk ? (~Test1 ? ext_to_int_q : 1'bz) : 1);
+assign Int_bus = (~dv_q) ? (DataOut ? 0 : 1'bz) : 1'bz;
+</code></pre>
+<p>The logic above has a conflict when <code>DataOut=0 &amp;&amp; dv_q=0</code> (driving <code>Int_bus</code> to 0),
+and <code>(Res_to_DL=1 &amp; req_q=1) | (Res_to_DL=0 &amp; clk=0) | (Res_to_DL=0 &amp; clk=1 &amp;
+Test1=0 &amp; ext_to_int_q=1)</code> (driving <code>Int_bus</code> to <code>1</code>).</p>
+<p>Looking at the underlining transistors logic (from ogamespec diagram, I can't
+read the silicon traces), the logic is the following Verilog:</p>
+<pre><code class="language-verilog">assign Ext_bus = (clk || Test1) ? 1'bz : 1;
+assign Ext_bus = int_to_ext_q || Test1 ? 1'bz: 0;
+
+assign Int_bus = clk ? 1'bz : 1;
+assign Int_bus = clk &amp;&amp; ~(Test1 || ext_to_int_q) ? 0 : 1'bz;
+assign Int_bus = (Res_to_DL &amp;&amp; ~Res) ? 0 : 1'bz;
+</code></pre>
+<p>The circuit has even more conflicts. We can represent it in the following tables:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th><code>Test1</code></th>
+<th><code>clk</code></th>
+<th><code>int_to_ext_q</code></th>
+<th><code>=Ext_bus</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1,0 = x</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1,z = 1</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>z,0 = 0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>z,z - z</td>
+</tr>
+<tr>
+<td>1</td>
+<td>-</td>
+<td>-</td>
+<td>1,z = 0</td>
+</tr>
+</tbody>
+</table>
+</div><div class="table-wrap"><table>
+<thead>
+<tr>
+<th><code>Test1</code></th>
+<th><code>clk</code></th>
+<th><code>ext_to_int_q</code></th>
+<th><code>Res_to_DL</code></th>
+<th><code>Res</code></th>
+<th><code>=Int_bus</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>-</td>
+<td>0</td>
+<td>-</td>
+<td>1,z,z = 1</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>-</td>
+<td>1</td>
+<td>0</td>
+<td>1,z,0 = -</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>-</td>
+<td>1</td>
+<td>1</td>
+<td>1,z,z = 1</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>-</td>
+<td>z,0,z = 0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>z,0,0 = 0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>z,0,z = 0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>-</td>
+<td>z,z,z = z</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>z,z,0 = 0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>z,z,z = z</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>-</td>
+<td>0</td>
+<td>-</td>
+<td>1,z,z = 1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>-</td>
+<td>1</td>
+<td>0</td>
+<td>1,z,0 = x</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>-</td>
+<td>1</td>
+<td>1</td>
+<td>1,z,z = 1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>-</td>
+<td>0</td>
+<td>-</td>
+<td>z,z,z = 0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>-</td>
+<td>1</td>
+<td>0</td>
+<td>z,z,0 = 0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>-</td>
+<td>1</td>
+<td>1</td>
+<td>z,z,z = 0</td>
+</tr>
+</tbody>
+</table>
+</div><p>We assume that those conflicts are resolved by the non-digital nature of the
+silicon circuit. First, I assume that <code>clk=0</code> will always drive the buses to <code>1</code>
+as pre-charged. I also assume that <code>Test1</code> will always be low, because it is
+only used when testing the circuit, I believe.</p>
+<p>With these assumptions, the table can be simplified to:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th><code>clk</code></th>
+<th><code>int_to_ext_q</code></th>
+<th><code>=Ext_bus</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>-</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>z</td>
+</tr>
+</tbody>
+</table>
+</div><div class="table-wrap"><table>
+<thead>
+<tr>
+<th><code>clk</code></th>
+<th><code>ext_to_int_q</code></th>
+<th><code>Res_to_DL</code></th>
+<th><code>Res</code></th>
+<th><code>=Int_bus</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>1,-,- = 1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>-</td>
+<td>z,0,z = 0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>z,0,0 = 0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>z,0,z = 0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>-</td>
+<td>z,z,z = z</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>z,z,0 = 0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>z,z,z = z</td>
+</tr>
+</tbody>
+</table>
+</div><p>This solve the conflicts, but there is still <code>z</code>s in the table. Due to the
+pre-charge of the buses, I suppose that the <code>z</code> will be resolved to <code>1</code>.</p>
+<p>I forget to include the <code>DataBridge</code> logic. Here it is:</p>
+<pre><code class="language-verilog">assign Int_bus = (~dv_q) ? (DataOut ? 0 : 1'bz) : 1'bz;
+</code></pre>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th><code>DataOut</code></th>
+<th><code>dv_q</code></th>
+<th><code>=Int_bus</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>z</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>z</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>z</td>
+</tr>
+</tbody>
+</table>
+</div><p>This logic is parallel to the previous one, so it will also create a conflict if
+this outputs 0 and the other outputs 1. But I suppose that <code>DataOut</code> will not be
+1 when clk is 0, so no conflict will arise.</p>
+<p>But a conflict will arise when another component of the system tries to drive
+the external bus or internal bus. For example, when <code>R</code> (read signal) is high,
+the external bus will be driven by the memory, but the internal bus still drives
+it low.</p>
+<p>Here is a table with possible scenarios:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Circuit</th>
+<th>Expected</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RD=0,WR=0</td>
+<td>D &lt;- DL↓, DL &lt;- D↓</td>
+<td>-</td>
+</tr>
+<tr>
+<td>RD=1,WR=0</td>
+<td>D driven, D &lt;- DL↓, DL &lt;- D↓</td>
+<td>DL &lt;- D</td>
+</tr>
+<tr>
+<td>RD=0,WR=1</td>
+<td>DL driven, D &lt;- DL↓, DL &lt;- D↓</td>
+<td>D &lt;- DL</td>
+</tr>
+<tr>
+<td>RD=0,WR=0,Res_to_DL=1</td>
+<td>D &lt;- DL↓, DL &lt;- D↓</td>
+<td>DL &lt;- Res</td>
+</tr>
+<tr>
+<td>RD=0,WR=1,DataOut=1</td>
+<td>DV driven, D &lt;- DL↓, DL &lt;- D↓, DL &lt;- DV↓</td>
+<td>D &lt;- DL, DL &lt;- DV</td>
+</tr>
+</tbody>
+</table>
+</div><ul>
+<li><code>↓</code> means <code>x ? z : 0</code></li>
+</ul>
+<p>For the circuit to work as expected, it should need to know the values of RD and
+WR, but it does not, it always connect both buses together. One way this may be
+working, is that the external driver is always stronger than the internal
+connections. Not sure how this is suppose to work in the actual silicon.</p>
+<p>We can try to simulate this behavior using Verilog's strength levels:</p>
+<pre><code class="language-verilog">assign Ext_bus = (clk || Test1) ? 1'bz : 1;
+assign(pull0, pull1) Ext_bus = clk &amp;&amp; ~(int_to_ext_q || Test1) ? 0 : 1'bz;
+
+assign Int_bus = clk ? 1'bz : 1;
+assign(pull0, pull1) Int_bus = clk &amp;&amp; ~(Test1 || ext_to_int_q) ? 0 : 1'bz;
+assign(pull0, pull1) Int_bus = (Res_to_DL &amp;&amp; ~Res) ? 0 : 1'bz;
+
+// DataBridge logic
+assign(pull0, pull1) Int_bus = (~dv_q) ? (DataOut ? 0 : 1'bz) : 1'bz;
+
+// Drive DL and D buses up with weak strength to simulate the precharge.
+assign (weak0, weak1) Ext_bus = 1;
+assign (weak0, weak1) Int_bus = 1;
+</code></pre>
+<p>And this works!! But this breaks Verilator (it does not support strength levels
+in module ports).</p>
+<p>Another way to simulate this is to add hack <code>RD</code> and <code>WR</code> signals to <code>DataMux</code>,
+and only simulate the high level behavior:</p>
+<pre><code class="language-verilog">assign Ext_bus = ~clk ? 1
+        : RD_hack &amp;&amp; ~WR_hack ? 1'bz
+        : ~RD_hack &amp;&amp; WR_hack ? int_to_ext_q
+        : 1;
+
+assign Int_bus = ~clk ? 1
+        : RD_hack &amp;&amp; ~WR_hack ? ext_to_int_q
+        : ~RD_hack &amp;&amp; WR_hack &amp;&amp; DataOut ? dv_q
+        : ~RD_hack &amp;&amp; WR_hack ? 1'bz
+        : Res_to_DL ? res_q
+        : 1;
+</code></pre>
+<p>This also works, although in this situation the pre-charge is not simulated,
+making <code>Int_bus</code> go to <code>z</code>, temporarily introducing a <code>x</code> into <code>Z_in</code> and
+<code>W_in</code>, but that does not affect the simulation.</p><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG CPU Core</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/sm83/investigation.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

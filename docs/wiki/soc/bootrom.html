@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boot ROM · DMG-CPU Research</title>
+<meta name="description" content="The BootROM is enabled only while the CPU is fetching from the IPL area (address $0000-$00FF), i.e. before the $FF50 register is written.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/soc/Readme.html">DMG-CPU LR35902 SoC</a><span class="sep">/</span><span class="current">Boot ROM</span></nav>
+
+<article class="content"><h1 id="boot-rom">Boot ROM</h1>
+<p><img alt="locator_bootom" decoding="async" loading="lazy" src="../../imgstore/soc/locator_bootrom.jpg" /></p>
+<p><img alt="bootrom" decoding="async" loading="lazy" src="../../imgstore/soc/bootrom.jpg" /></p>
+<h2 id="signals">Signals</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>Dir</th>
+<th>From/Where To</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[15:0] a</td>
+<td>Input</td>
+<td>From Core</td>
+<td>SoC internal address bus (full 16 bits)</td>
+</tr>
+<tr>
+<td>[7:0] d</td>
+<td>Bidir</td>
+<td>Global</td>
+<td>SoC internal data bus</td>
+</tr>
+<tr>
+<td>from_g1_YULA</td>
+<td>Input</td>
+<td>From g1 (Arb)</td>
+<td>Boot ROM read enable: active when the BootROM is selected (<code>boot_sel</code>), the SoC reads (<code>soc_rd</code>) and Test2 (ROMDIS) is not set</td>
+</tr>
+</tbody>
+</table>
+</div><p>The BootROM is enabled only while the CPU is fetching from the IPL area (address <code>$0000-$00FF</code>), i.e. before the <code>$FF50</code> register is written. The <code>from_g1_YULA</code> signal is produced by a small gate (<code>g1</code>) in the top level of the chip, combining <code>boot_sel</code>, <code>soc_rd</code> and <code>!test_2</code>.</p>
+<h2 id="mask-revision-a">Mask (Revision A)</h2>
+<pre><code>11101011 11110010 11001011 00110010 01100011 01111100 00100001 01110010 11100000 00110011 11000100 10010010 11000100 00101111 00011011 00001000
+01111111 01110011 01111111 01100011 00101011 01001111 00000110 10101011 00110011 11110011 00101011 10110000 00111000 00101110 11010110 11101111
+00110111 11011011 01110111 11010111 01100110 10010111 01111111 11011010 01110001 01110010 01011000 01010111 01110001 11110111 01111011 11011000
+01101111 11100011 11101110 11110110 00101110 01010110 10100010 00111000 01111000 00111010 01111100 01110011 00101111 01000011 01001111 11101001
+10110001 00110000 10111001 10110111 00011001 11011001 11100000 11110011 11110110 10110001 11111110 01110110 10111010 00011010 01000011 00010011
+01101110 01110011 01101001 00110111 01110011 01011010 01001111 11110011 00101111 10100011 00111001 10100111 01111010 00011110 01110010 10110010
+01011100 01110111 11111100 01110111 10110000 01011011 00111000 01110001 00110000 11110101 00110000 10111110 00110000 10011001 01110111 11010010
+10110101 11010111 10111010 01011111 00111010 11111010 00010101 11110001 11010111 11000011 11101011 10101011 00001110 01111001 10110111 11000101
+00011111 00010100 00011011 10011110 10111100 11110000 11111011 01110000 01000110 11010000 11010011 10011001 00110011 11010100 01011011 10110110
+11011001 00010110 01111001 00011011 00111001 01010101 00001101 11110111 01100101 10000111 01010110 11011110 10101100 10110010 11011111 10010111
+11111111 11111001 11111011 01010101 00110111 11010000 10100110 10101001 10110100 11111001 10110100 11010101 10101010 01010101 11100101 10100011
+01011110 11111010 00011110 11010110 00100001 11010000 00111011 00101110 01010011 11101110 10011011 00001010 00101011 10000100 00011110 00100001
+11011000 10001011 10111100 10010101 00101100 01110000 10011000 11111000 11110110 11000000 10011100 11010100 10001100 11110110 00101001 10111001
+11111011 00101001 11111010 00111101 00110010 11111001 10110101 01111101 10111101 10000101 00101100 11010001 00110111 00110101 11101101 10001010
+00111111 11110110 00111011 11110010 00101100 11110100 00011111 10111101 00110111 11110111 00110111 01110101 01011111 11111011 01010111 00111111
+10101101 11110111 10001101 11110110 10000101 01111001 11001101 10111010 01001111 11000011 01111010 10100011 01011100 10001111 11001111 10011111
+</code></pre>
+<h2 id="mask-revision-b">Mask (Revision B)</h2>
+<pre><code>11101011 11110010 11001011 00110010 01100011 01111100 00100001 01110010 11100000 00110011 11000100 10010010 11000100 00101111 00011011 00001000
+01111111 01110011 01111111 01100011 00101011 01001111 00000110 10101011 00110011 11110011 00101011 10110000 00111000 00101110 11010110 11101111
+00110111 11011011 01110111 11010111 01100110 10010111 01111111 11011010 01110001 01110010 01011000 01010111 01110001 11110111 01111011 11011000
+01101111 11100011 11101110 11110110 00101110 01010110 10100010 00111000 01111000 00111010 01111100 01110011 00101111 01000011 01001111 11101001
+10110001 00110000 10111001 10110111 00011001 11011001 11100000 11110011 11110110 10110001 11111110 01110110 10111010 00011010 01000011 00010011
+01101110 01110011 01101001 00110111 01110011 01011010 01001111 11110011 00101111 10100011 00111001 10100111 01111010 00011110 01110010 10110010
+01011100 01110111 11111100 01110111 10110000 01011011 00111000 01110001 00110000 11110101 00110000 10111110 00110000 10011001 01110111 11010010
+10110101 11010111 10111010 01011111 00111010 11111010 00010101 11110001 11010111 11000011 11101011 10101011 00001110 01111001 10110111 11000101
+00011111 00010100 00011011 10011110 10111100 11110000 11111011 01110000 01000110 11010000 11010011 10011001 00110011 11010100 01011011 10110110
+11011001 00010110 01111001 00011011 00111001 01010101 00001101 11110111 01100101 10000111 01010110 11011110 10101100 10110010 11011111 10010111
+11111111 11111001 11111011 01010101 00110111 11010000 10100110 10101001 10110100 11111001 10110100 11010101 10101010 01010101 11100101 10100011
+01011110 11111010 00011110 11010110 00100001 11010000 00111011 00101110 01010011 11101110 10011011 00001010 00101011 10000100 00011110 00100001
+11011000 10001011 10111100 10010101 00101100 01110000 10011000 11111000 11110110 11000000 10011100 11010100 10001100 11110110 00101001 10111001
+11111011 00101001 11111010 00111101 00110010 11111001 10110101 01111101 10111101 10000101 00101100 11010001 00110111 00110101 11101101 10001010
+00111111 11110110 00111011 11110010 00101100 11110100 00011111 10111101 00110111 11110111 00110111 01110101 01011111 11111011 01010111 00111111
+10101101 11110111 10001101 11110110 10000101 01111001 11001101 10111010 01001111 11000011 01111010 10100011 01011100 10001111 11001111 10011111
+</code></pre><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG-CPU LR35902 SoC</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/soc/bootrom.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

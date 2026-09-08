@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DMG-CPU LR35902 SoC · DMG-CPU Research</title>
+<meta name="description" content="[^1]: GAMEBOY Programming Manual: https://archive.org/details/GameBoyProgManVer1.1">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><span class="current">DMG-CPU LR35902 SoC</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#block-diagram">Block Diagram</a></li><li class="toc-l2"><a href="#architecture-overview">Architecture Overview</a></li><li class="toc-l2"><a href="#design-overview">Design Overview</a></li><li class="toc-l2"><a href="#buses">Buses</a></li><li class="toc-l2"><a href="#revisions">Revisions</a></li></ol></details>
+<article class="content"><h1 id="dmg-cpu-lr35902-soc">DMG-CPU LR35902 SoC</h1>
+<h2 id="block-diagram">Block Diagram</h2>
+<p><img alt="cpu_block" decoding="async" loading="lazy" src="../../imgstore/soc/cpu_block.png" /> <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>Top-level layout of the entire SoC:</p>
+<p><img alt="dmgcpu_sm" decoding="async" loading="lazy" src="../../imgstore/hdl/soc/design/dmgcpu_sm.png" /></p>
+<h2 id="architecture-overview">Architecture Overview</h2>
+<p>After a long analysis, the impressions about the architectural solutions used in DMG-CPU can be expressed as follows:</p>
+<ul>
+<li>The topology has already been influenced by the <a href="https://en.wikipedia.org/wiki/Mead%E2%80%93Conway_VLSI_chip_design_revolution" rel="noopener noreferrer" target="_blank">Mead-Conway revolution</a> - most of the elements are implemented as standard cells, but you can see that the developers have not forgotten the "manual method". Almost the whole SM83 core and macro-cells (embedded memory) and (naturally) DAC are made by "hand"</li>
+<li>Standard cells are arranged in domains, but they do not have a clear specialization (e.g. the APU contains logic for the serial port). In modern solutions, all standard cells are usually located in the giant "sea of cells". In this case we most likely have several small "pools". It is interesting that the <a href="https://siliconpr0n.org/map/nintendo/dmg-cpu/mcmaster_mz_mit20x/" rel="noopener noreferrer" target="_blank">very first revision of DMG-CPU</a> has a slightly different domain organization</li>
+<li>The SoC has a rather "bushy" clock tree (it has not been fully explored yet). The SM83 core receives a pack of CLKs as input. Besides, CLK wiring uses both single-rail CLK and dual-rail CLK (CLK + its complement), so latch/dff have 2 variants</li>
+<li>As mentioned, both latch and dff are used for sequential logic. That is, the SoC uses asynchronous and synchronous approaches together. This makes the circuits rather "capricious" with respect to CLK frequency</li>
+<li>The internal buses are driven via tristate elements (notif/bufif) using old-school bus precharging technique for a specific CLK half-cycle. Modern solutions use special cells (Bus-keepers)</li>
+<li>The SM83 core is made with one layer of metal, the rest of the SoC uses two layers of metal. The SM83 core uses old-school domino logic on par with conventional CMOS logic</li>
+<li>Macro cells (memory) contain a small number of standard cells :-)</li>
+<li>These and other features make the DMG-CPU a rather curious "exhibit", but nonetheless interesting to study and dive into the history of a "previous, obviously more advanced civilization"</li>
+</ul>
+<h2 id="design-overview">Design Overview</h2>
+<p>The design will be considered from the point of view of module topology ("pools" of standard cells that can be found on the chip). The description is rather superficial, but it is good for "first sight".</p>
+<ul>
+<li>ClkGen: the task of this module is to distribute a bushy CLK tree to everyone. Discretization within the DMG-CPU is provided by T-cycles. 4 T-cycles make up 1 M-cycle. Those familiar with Z80 will quickly draw a parallel here. As @msinger aptly pointed out - events inside DMG-CPU can occur both "in-space" (when it comes to DFF and edges) and "in-time" (when it comes to latches and levels). Yes, unlike modern solutions based entirely on DFF (synchronous logic), old-school latches have to be taken into account here as well</li>
+<li>SM83Core: a typical 8-bit processor core, in many respects "imitates" Z80 (IDU, M/T-cycles, instruction set), but in general it is an original child of SHARP engineers</li>
+<li>Ser: contains the main part of Serial Link logic. The rest of the pieces are in the APU, since they are closer to the pads there</li>
+<li>Arb: typical arbiter for connecting internal and external buses in various combinations</li>
+<li>MMIO: contains most of the MMIO devices such as Divider, Timer, DMA Unit and interrupt controller (IF)</li>
+<li>PPU1: A part of PPU closer to LCD interface, BG and WIN part of the pipeline. Also contains H/V counters which are the driving force for all PPU state machines.</li>
+<li>PPU2: A part of PPU closer to Objects and OAM ("sprites"). Both parts communicate closely with each other with a bunch of signals</li>
+<li>APU: Typical sound generator of the "Chiptunes" era. Also contains pieces of logic for Serial Link, JoyPad and address bus arbitration, for the reason that these circuits are closer to the pads</li>
+</ul>
+<h2 id="buses">Buses</h2>
+<p>This section contains a list of all internal buses. Tables of the other signals can be found in the corresponding sections.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>From</th>
+<th>Where To</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>a</code> <sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td>Core / Arb+MMIO+APU</td>
+<td>HRAM, BootROM, Arb, MMIO, PPU1, PPU2, APU</td>
+<td>Internal address bus. In TEST1 mode, all internal address bus drivers are disabled and the value comes from the outside, together with the Arb+MMIO+APU modules (for reason <sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup>) instead of the SM83 core.</td>
+</tr>
+<tr>
+<td><code>d</code></td>
+<td>Global</td>
+<td>Global</td>
+<td>Internal data bus. In TEST1 mode all internal drivers are not allowed to drive the data bus. During clk2=0 (and if TEST1 Mode is disabled) the data bus is precharged from 4 places at once (3 prechargers in different modules and 1 precharger in SM83 Core)</td>
+</tr>
+<tr>
+<td><code>n_ma</code></td>
+<td>PPU1</td>
+<td>Pads</td>
+<td>External video memory address bus (inverse hold)</td>
+</tr>
+<tr>
+<td><code>nma</code></td>
+<td>PPU1, PPU2</td>
+<td>PPU1, PPU2</td>
+<td>Internal video memory address bus between PPUs (inverse hold)</td>
+</tr>
+<tr>
+<td><code>md</code></td>
+<td>PPU1, PPU2, Arbiter</td>
+<td>PPU1, PPU2, Arbiter</td>
+<td>Internal video memory data bus</td>
+</tr>
+<tr>
+<td><code>oam_din</code></td>
+<td>Arb</td>
+<td>PPU2</td>
+<td>OAM data input bus</td>
+</tr>
+<tr>
+<td><code>wave_a</code></td>
+<td>APU</td>
+<td>WaveRAM</td>
+<td>Wave RAM address bus</td>
+</tr>
+<tr>
+<td><code>wave_rd</code></td>
+<td>WaveRAM</td>
+<td>APU</td>
+<td>Wave RAM data output bus</td>
+</tr>
+<tr>
+<td><code>oa</code></td>
+<td>PPU2</td>
+<td>OAM</td>
+<td>OAM address bus</td>
+</tr>
+<tr>
+<td><code>n_oama</code></td>
+<td>PPU2</td>
+<td>OAM</td>
+<td>OAM A data bus (inverse hold)</td>
+</tr>
+<tr>
+<td><code>n_oamb</code></td>
+<td>PPU2</td>
+<td>OAM</td>
+<td>OAM B data bus (inverse hold)</td>
+</tr>
+<tr>
+<td><code>dma_a</code></td>
+<td>MMIO</td>
+<td>Arb, APU, PPU2</td>
+<td>DMA address bus. Due to the fact that the address bus arbitration is separated between Arb, MMIO and APU - part of the bus bits go to Arb (15) and APU (7:0). This bus is used directly for DMA needs only in PPU2</td>
+</tr>
+</tbody>
+</table>
+</div><p>What does the letter <code>M</code> in the name of the PPU and VRAM buses stand for? I don't know... maybe Mario or Metroid? :smiley:</p>
+<h2 id="revisions">Revisions</h2>
+<p>TBD.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>GAMEBOY Programming Manual: https://archive.org/details/GameBoyProgManVer1.1&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>The chip is topologically arranged so that the address bus arbitration is divided into three parts: in <a href="arb.html">arb</a>, in <a href="mmio.html">mmio</a>, and in <a href="apu.html">apu</a>, to equalize wire lengths.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG-CPU LR35902 SoC</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/soc/Readme.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

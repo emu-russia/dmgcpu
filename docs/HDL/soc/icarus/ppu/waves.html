@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PPU testbench waves (issue 390) · DMG-CPU Research</title>
+<meta name="description" content="Regression testbench for the DMG-CPU PPU netlists HDL/soc/ppu1.v and HDL/soc/ppu2.v, run with Icarus Verilog.">
+<link rel="icon" href="../../../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../../../index.html">
+      <img class="brand-mark" src="../../../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../../../wiki/soc/Readme.html">SoC</a><a href="../../../../wiki/sm83/Readme.html">SM83</a><a href="../../../../wiki/pcb.html">PCB</a><a href="../../../../wiki/methods.html">Methods</a><a href="../../../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../../../index.html">Home</a><span class="sep">/</span><a href="../../../../HDL/Readme.html">HDL</a><span class="sep">/</span><span>soc</span><span class="sep">/</span><a href="../../../../HDL/soc/icarus/Readme.html">HDL/soc/icarus - Icarus Verilog testbenches</a><span class="sep">/</span><a href="../../../../HDL/soc/icarus/ppu/Readme.html">PPU Icarus/GTKWave testbench (issue 390)</a><span class="sep">/</span><span class="current">PPU testbench waves (issue 390)</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#bus-netlist-notes-needed-to-read-the-waves">Bus / netlist notes needed to read the waves</a></li><li class="toc-l2"><a href="#test-1-tb_ppu_regs-register-writeread-reset-countermode-smoke">Test 1 — tb_ppu_regs (register write/read + reset + counter/mode smoke)</a></li><li class="toc-l2"><a href="#test-2-tb_ppu_bg_scanline-bg-rendering-modes-fetch-pixels">Test 2 — tb_ppu_bg_scanline (BG rendering: modes, fetch, pixels)</a></li><li class="toc-l2"><a href="#test-3-tb_ppu_scroll-scyscx-scroll-adders">Test 3 — tb_ppu_scroll (SCY/SCX scroll adders)</a></li><li class="toc-l2"><a href="#test-4-tb_ppu_window-win-layer-wywx-window-tile-map">Test 4 — tb_ppu_window (WIN layer: WY/WX + window tile map)</a></li><li class="toc-l2"><a href="#research-handoff-spriteoam-block">Research handoff (sprite/OAM block)</a></li><li class="toc-l2"><a href="#test-5-tb_ppu_frame-v-counter-vblank-wrap-full-frame">Test 5 — tb_ppu_frame (V counter / VBlank / wrap, full frame)</a></li><li class="toc-l2"><a href="#test-6-tb_ppu_scene-synthetic-scene-lcdbgwinobj-together">Test 6 — tb_ppu_scene (synthetic scene: LCD+BG+WIN+OBJ together)</a></li><li class="toc-l2"><a href="#test-7-tb_ppu_bg_win_matrix-all-bgwin-layer-combinations">Test 7 — tb_ppu_bg_win_matrix (all BG/WIN layer combinations)</a></li><li class="toc-l2"><a href="#test-8-mode-state-machine-and-lxly-waves">Test 8 — Mode state machine and LX/LY waves</a></li><li class="toc-l2"><a href="#test-9-mid-line-bgwin-switch-wave-matrix-config-c10">Test 9 — mid-line BG→WIN switch wave (matrix config C10)</a></li><li class="toc-l2"><a href="#work-in-progress">Work in progress</a></li></ol></details>
+<article class="content"><h1 id="ppu-testbench-waves-issue-390">PPU testbench waves (issue #390)</h1>
+<p>Regression testbench for the DMG-CPU PPU netlists <code>HDL/soc/ppu1.v</code> and
+<code>HDL/soc/ppu2.v</code>, run with Icarus Verilog. Each test compiles the real
+<code>ClkGen</code> + <code>PPU1</code> + <code>PPU2</code> netlists together with behavioral VRAM / OAM
+models (see <a href="Readme.html">Readme</a>) and dumps a VCD. The wave images below are
+rendered from those VCDs; the matching <code>.gtkw</code> files open the same traces in
+GTKWave (v3.3.128 save format).</p>
+<p>Run a test with <code>Icarus</code> on the PATH:</p>
+<pre><code>tb_ppu_regs.bat
+tb_ppu_bg_scanline.bat
+</code></pre>
+<p>or everything with <code>run_all.bat</code>. Each run prints <code>PASS</code>/<code>FAIL</code> checks and
+ends with <code>RESULT: ALL PASS</code> (or a failure count). The VCD files are
+git-ignored; the <code>.gtkw</code> files and the images in <code>waves/</code> are committed.</p>
+<h2 id="bus-netlist-notes-needed-to-read-the-waves">Bus / netlist notes needed to read the waves</h2>
+<ul>
+<li>
+<p>The netlists alias their bidirectional bus bits with one-way Verilog
+  <code>assign</code>s (<code>assign d[7] = w79;</code>). For simulation the aliases are merged
+  into real net names by <code>merge_bus_aliases.py</code>, producing <code>ppu1_merged.v</code> /
+  <code>ppu2_merged.v</code> (otherwise register writes can never reach the latches).</p>
+</li>
+<li>
+<p>The <code>dmg_notif0/1</code> (and <code>bufif0</code>) inverting tristates of <code>dmglib.v</code> were
+  fixed for simulation: <code>x = ~a</code> while enabled and <strong><code>===</code></strong> enable compare
+  (an uninitialized enable must not drive <code>x</code> onto the precharged buses).</p>
+</li>
+<li>
+<p>Buses <code>d</code>, <code>md</code>, <code>nma</code>, <code>n_oama</code>, <code>n_oamb</code> are precharged "inverse-hold"
+  wires: a high (precharged, idle) level often means "no driver".</p>
+</li>
+<li>
+<p>The PPU CPU interface carries <strong>true-value</strong> data on <code>d</code>: register
+  read-back drivers are <code>notif0</code> fed from the latch <code>nq</code>, register latches
+  capture the wire value directly.</p>
+</li>
+</ul>
+<h2 id="test-1-tb_ppu_regs-register-writeread-reset-countermode-smoke">Test 1 — <code>tb_ppu_regs</code> (register write/read + reset + counter/mode smoke)</h2>
+<p>Scenario: power-on reset, then through the CPU model write <code>LCDC=$91</code> (LCD +
+BG on), <code>SCY=$21</code>, <code>SCX=$07</code>, <code>BGP=$E4</code>, <code>WY/WX</code>, and check that PPU2
+produces <code>ppu_wr</code>/<code>ppu_rd</code>, that LCDC stores the value (checked via the
+<code>FF40_D1..3</code> outputs), that <code>LCDC.7=1</code> releases the PPU soft reset, that the
+other register writes do not disturb LCDC, that the read-only <code>LY</code> read-back
+tracks the V counter, and that the H/V counters and the mode2/3 handshake run.</p>
+<p><img alt="tb_ppu_regs" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/ppu/waves/tb_ppu_regs.png" /></p>
+<p>What the wave shows (0–62 µs):</p>
+<ul>
+<li>
+<p><code>reset</code> release at ~0.5 µs (<code>/RES</code> active low), then <code>n_ppu_hard_reset</code>
+  and <code>n_ppu_reset</code> rise only after the <code>LCDC.7</code> write (the CPU-bus activity
+  on <code>cpu_a</code>/<code>d</code> shows the FF40…FF4B writes).</p>
+</li>
+<li>
+<p><code>ppu_wr</code> pulses follow each <code>soc_wr</code> write; <code>FF40_D1/D2/D3</code> stay 0 (the
+  written LCDC <code>$91</code> = <code>1001_0001</code> has bits 1–3 clear) while <code>n_ppu_reset</code>
+  stays 1.</p>
+</li>
+<li>
+<p>After the registers are programmed the H counter starts counting lines,
+  <code>mode2</code> (OAM scan) and <code>mode3</code> (fetch) alternate each 456-tick scanline,
+  and the V counter increments at line end.</p>
+</li>
+</ul>
+<h2 id="test-2-tb_ppu_bg_scanline-bg-rendering-modes-fetch-pixels">Test 2 — <code>tb_ppu_bg_scanline</code> (BG rendering: modes, fetch, pixels)</h2>
+<p>Scenario: VRAM is preloaded (tile map <code>$9800</code> row 0 → tile <code>$01</code> for all 32
+columns; tile 1, row 0 = <code>plane0 $AA</code> / <code>plane1 $55</code>), the PPU is programmed
+(<code>LCDC=$91</code>: LCD on, BG on, map <code>$9800</code>, tiles <code>$8000</code>; <code>SCY=SCX=0</code>;
+<code>BGP=$E4</code>) and two scanlines are observed. Checks: mode2 + mode3 per line,
+456-tick line period, VRAM fetches during mode3, pixel samples on the LCD
+bus.</p>
+<p><img alt="tb_ppu_bg_scanline" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/ppu/waves/tb_ppu_bg_scanline.png" /></p>
+<p>What the wave shows (2–65 µs):</p>
+<ul>
+<li>
+<p><code>mode2</code> is high for ~80 ticks then <code>mode3</code> takes over; <code>h_restart</code> pulses
+  at the end of the line; <code>v</code> increments once per line.</p>
+</li>
+<li>
+<p>During mode3 the <code>nma</code> bus (VRAM address, inverse-hold: active low bits)
+  carries the fetch sequence — tile-map reads (<code>(V+SCY)&gt;&gt;3</code> row × 32 +
+  <code>(H+SCX)&gt;&gt;3</code> column driven by PPU2, cf. wiki/soc/ppu2.md block 2) and the
+  tile-data reads at <code>tile*16 + (LY&amp;7)*2</code>, with the <code>md</code> bus returning the
+  VRAM bytes in between.</p>
+</li>
+<li>
+<p>The LCD interface: <code>n_lcd_cp</code> (pixel clock, active low pulses) runs during
+  mode3 and <code>n_lcd_ld0</code>/<code>n_lcd_ld1</code> carry the serialized pixels — the solid
+  tile row produces a stable <code>10</code>/<code>01</code> per-pixel pattern through the palette
+  mux, ~160 samples per visible line.</p>
+</li>
+</ul>
+<h2 id="test-3-tb_ppu_scroll-scyscx-scroll-adders">Test 3 — <code>tb_ppu_scroll</code> (SCY/SCX scroll adders)</h2>
+<p>Scenario: SCY=1, SCX=8 with a per-column/per-row unique tile map, then two
+checks on the real VRAM addresses fetched by PPU2's scroll adders
+(<code>wiki/soc/ppu2.md</code> block 2): with <code>SCY=1</code> the tile-map row fetched at
+<code>LY=8</code> is <code>(LY+SCY)&gt;&gt;3 = 1</code>, and with <code>SCX=8</code> the first map column fetched
+at the line start is <code>SCX&gt;&gt;3 = 1</code>.</p>
+<p><img alt="tb_ppu_scroll" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/ppu/waves/tb_ppu_scroll.png" /></p>
+<h2 id="test-4-tb_ppu_window-win-layer-wywx-window-tile-map">Test 4 — <code>tb_ppu_window</code> (WIN layer: WY/WX + window tile map)</h2>
+<p>Scenario: LCDC = $F1 (LCD + BG + WIN on, window tile map $9C00 via LCDC.6),
+WY=0, WX=7 so the window covers the whole visible area. The test verifies
+that the PPU tile-map fetches come from the <strong>$9C00 window map</strong> (address
+0x1C00..0x1DFF) with the window tile data, i.e. the PPU1 window logic
+(in_window / WY/WX compare / map select) and the PPU2 <code>!in_window</code> gating of
+the scroll adders behave together.</p>
+<p><img alt="tb_ppu_window" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/ppu/waves/tb_ppu_window.png" /></p>
+<h3 id="why-oa71-shows-red-x-in-the-sprite-waves">Why <code>oa[7:1]</code> shows red (<code>x</code>) in the sprite waves</h3>
+<p>Red in the rendered waves is the <code>x</code> (unknown) state. <code>oa</code> is red during
+most non-mode-2 stretches and in the "precharge" half of every 128 ns OAM
+access inside mode 2. Direct probe of the <code>oa</code> drivers (e.g. at t=30016,
+mode 2) shows the cause:</p>
+<pre><code>X t=30016 m2=1 oa=0000xxx w497=x  en518=0 en475=0 w476=1   &lt;- x (contention)
+X t=30020 m2=1 oa=0000100 w497=1  en518=0 en475=x w476=x   &lt;- clean (scan only)
+</code></pre>
+<ul>
+<li>
+<p><code>oa[i]</code> is buffered by inverters from notif-driven nodes (<code>oa[1]=not(w497)</code>, ...).
+  The scan group (<code>n_ena w518 = !ppu_mode2</code>) drives the counter value; the
+  port-B adder group (<code>n_ena w475 = !w476</code>) drives constants.</p>
+</li>
+<li>
+<p>Whenever the Y-test adder sum bit <code>w476</code> is 1 (port-B data defined), <code>w475</code>
+  goes low <strong>while the scan group is also low</strong>, and the two notif0 cells
+  drive the same node to opposite rails (<code>w69=0</code> -&gt; 1 vs <code>w149=1</code> -&gt; 0) -
+  full-drive contention gives <code>x</code>.</p>
+</li>
+<li>
+<p>When the captured port-B byte is <code>x</code> (<code>w476=x</code>), <code>w475=x</code> and the port-B
+  group is off (the <code>===</code> enable compare treats x as disabled), so the scan
+  runs clean - but then the Y-test/store cannot work either.</p>
+</li>
+</ul>
+<p>So the red <code>oa</code> is a <em>driven</em> <code>x</code> from two oa mux groups overlapping in
+time (scan group + Y-adder group), i.e. the dynamic two-phase (precharge /
+evaluate) separation of the oa bus is not reproduced by the static
+simulation. (Historical; superseded by rounds 22-30: the no-reset FFs are
+NOT the cause - round 22; the discharge-only/keeper bus models remove the
+<code>x</code> - rounds 27-30, <code>gen_weakbus.py</code> -&gt; <code>ppu2_weakbus.v</code>/<code>ppu2_m2only.v</code>;
+the underlying mux-group overlap (g419/g421) remains an author/schematic
+question, see waves.md rounds 28-30.)</p>
+<h2 id="research-handoff-spriteoam-block">Research handoff (sprite/OAM block)</h2>
+<blockquote>
+<p><strong>Historical log (rounds 1-21).</strong> The current state is round 30 — see the
+"Work in progress" section below (rounds 22-30). Short status:</p>
+<ul>
+<li>Regression suite: <strong>7/7 ALL PASS</strong>.</li>
+<li>Y-test comparator: verified correct (round 28 — passes LY 1..7, fails
+  LY=8 once port B carries a valid Y byte).</li>
+<li>Sprite path (round 30, dev): claims, <code>obj_prio_ck</code> (~10-11/line),
+  <code>sp_bp_cys</code>, <code>sprite_x_match</code> and sprite colour pixels on LD0/LD1 run
+  under the <strong>workaround bus model <code>ppu2_m2only.v</code></strong> (gen_weakbus.py,
+  netlists untouched). Root cause of the earlier failure: the static sim
+  cannot separate the overlapping oa mux groups (scan <code>w518</code> vs
+  port-B <code>w475</code>/CPU <code>w403</code>/store <code>w444</code>, g419/g421), which corrupts the
+  mode-2 scan address (x / odd words) so port B never presents the Y
+  bytes.</li>
+</ul>
+</blockquote>
+<p><strong>Historical (rounds 1-21):</strong></p>
+<p><strong>Verified / working (regression suite):</strong> CPU register
+write+read-back (LCDC/SCY/SCX/BGP/LY - PPU1 and PPU2 read paths), 456-tick
+line / 80-tick mode-2 rhythm, BG fetch &amp; pixel stream, SCY/SCX scroll
+adders, WIN layer, OAM SRAM model (<code>oam_ram.v</code>), LCD stub (<code>lcd_stub.v</code>).</p>
+<p><strong>Not yet reproducible:</strong> the sprite store claim + mode-3 sprite fetch/pixel
+path. With OBJ on, mode-3 length is now normal (fixed by the OAM model), but
+<code>obj_prio_ck</code> never pulses, no sprite slot is claimed, <code>sp_bp_cys</code> never
+fires. Two coupled root causes (see the open questions / suspected-issue
+lists in wiki/soc/ppu1.md &amp; ppu2.md):</p>
+<ol>
+<li>
+<p>dynamic-bus two-phase behaviour of the <code>oa</code>/<code>n_oama</code>/<code>n_oamb</code> muxes is
+   not reproduced statically (the scan group and the port-B-adder group of
+   the <code>oa</code> mux overlap in time -&gt; contention <code>x</code>; a discharge-only tristate
+   removes the contention but changes the scan addressing polarity);</p>
+</li>
+<li>
+<p>several FF groups have no async reset (<code>PPU2 g938-g943</code> scan-address
+   register, <code>PPU1 g325/g326</code> window dividers, plus <code>PPU1 g652</code> looks like a
+   duplicate LCDC.D7 latch) - reported to the author, NOT patched here.</p>
+</li>
+</ol>
+<p>Round-12/21 observation: sampled over lines v=1..10, the ten 8-bit store
+banks (g650/g668/g647/g637/g659/g642/g670/g664/g677/g635) all stay 0x00.
+Correction (round 21): the banks are NOT held in reset by the in-use dffr -
+their async reset <code>nres = ~(w27|flag)</code> is released during the line
+(w27 = h_restart | !n_ppu_reset); they simply never receive an <em>enable</em>,
+because the store window never opens:
+  w852 = oam_rd_ck &amp; w209(mode2) &amp; w816,  w816 = w474&amp;w475&amp;w484&amp;w483&amp;w481&amp;w480
+where w474/w475/w484/w483/w481 are the Y-test adder (g595-g602) results and
+w480 = FF40_D2 | w479. With OAM data undefined (the <code>oa</code>/port-x issue) the
+Y-test never satisfies the window, so no bank enable, no stored sprite, no
+mode-3 compare -&gt; obj_prio_ck stays idle. The whole sprite claim path is
+therefore gated on the OAM Y-test data/window, i.e. the same root as the
+<code>oa</code> phase issue (reported to the author).</p>
+<p>Round-13: obj_prio_ck has ZERO rising edges over 4 full lines
+(edge-detection probe), although h_restart pulses each line and the sprite
+ring reset term w816 = ~(w530|w531|h_restart) does dip. obj_prio_ck =
+~(w239|w240); w240 (nand3 over the sprite-process FFs g322/g314/g287) stays
+high because w229/w241 never reach 1 together - the g287-g289 ring never
+leaves its latched state (w226=1,w228=1) after boot, so the claimed
+"restart each line" never produces process-clock pulses. The FSM boot state
+depends on the no-reset FFs reported to the author. Sprite research was
+paused here pending the author's netlist fixes. (Superseded: rounds 22-30
+continued below — no-reset FF boot state was ruled out, the oa mux-group
+overlap was identified as the static-sim blocker, and the m2only bus-model
+workaround runs the sprite path end to end.)</p>
+<p>To unblock: (a) author fixes/confirms the suspected netlist items, and/or
+(b) schematic-level two-phase bus timing (msinger pages) is made available,
+then the sprite test can be completed from the current bring-up state
+(<code>tb_ppu_sprites.v</code> already runs the scan; OAM model and LCD stub are in
+place).</p>
+<h2 id="test-5-tb_ppu_frame-v-counter-vblank-wrap-full-frame">Test 5 — <code>tb_ppu_frame</code> (V counter / VBlank / wrap, full frame)</h2>
+<p>Full-frame simulation (~4.55 ms sim time, slow): with the LCD on, checks
+that VBLANK (<code>vbl</code> from PPU1) asserts at LY&gt;=144, the V counter wraps
+153-&gt;0 at the frame end and <code>ppu_int_vbl</code> pulses (PPU1 blocks 4 and 14).</p>
+<p><img alt="tb_ppu_frame" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/ppu/waves/tb_ppu_frame.png" /></p>
+<h2 id="test-6-tb_ppu_scene-synthetic-scene-lcdbgwinobj-together">Test 6 — <code>tb_ppu_scene</code> (synthetic scene: LCD+BG+WIN+OBJ together)</h2>
+<p>Full synthetic scene with real content: BG map $9800 (tile 1 checker), WIN
+map $9C00 (tile 2, WY=160 so the window is configured but below the
+observed lines), one OBJ (Y=16, X=8, tile 1). Checks the combined mode
+rhythm and the BG pixel stream; the sprite pixel output is not engaged yet
+in this (weakbus-default) run - see the round-30 e2e wave below for the
+sprite path under the <code>ppu2_m2only.v</code> workaround.</p>
+<p><img alt="tb_ppu_scene" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/ppu/waves/tb_ppu_scene.png" /></p>
+<h2 id="test-7-tb_ppu_bg_win_matrix-all-bgwin-layer-combinations">Test 7 — <code>tb_ppu_bg_win_matrix</code> (all BG/WIN layer combinations)</h2>
+<p>Sweeps the LCDC layer combinations (BG enable/bit0, BG map select/bit3,
+WIN enable/bit5, WIN map select/bit6, LCD/bit7) with WY/WX, and verifies
+which tile map ($9800/$9C00) the fetches come from for the active layers:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>LCDC</th>
+<th>Layers / window</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C1/C9</td>
+<td>0x80</td>
+<td>LCD only (no layers)</td>
+<td>frame runs; fetcher still walks map0 (INFO, DMG layer bits gate the pixel mux, not the fetcher)</td>
+</tr>
+<tr>
+<td>C2</td>
+<td>0x91</td>
+<td>BG $9800</td>
+<td>PASS (map0 dominates)</td>
+</tr>
+<tr>
+<td>C3</td>
+<td>0x99</td>
+<td>BG $9C00</td>
+<td>PASS (map1 dominates)</td>
+</tr>
+<tr>
+<td>C4</td>
+<td>0xA0</td>
+<td>WIN $9800, WY=0</td>
+<td>PASS (map0 dominates)</td>
+</tr>
+<tr>
+<td>C5</td>
+<td>0xE0</td>
+<td>WIN $9C00, WY=0</td>
+<td>PASS (map1 dominates)</td>
+</tr>
+<tr>
+<td>C6</td>
+<td>0xE1</td>
+<td>BG $9800 + WIN $9C00, WY=0 (whole-screen window)</td>
+<td>PASS (map1 dominates)</td>
+</tr>
+<tr>
+<td>C7</td>
+<td>0xE1</td>
+<td>same, WY=40 (window below LY&lt;40)</td>
+<td>PASS (BG map0 only)</td>
+</tr>
+<tr>
+<td>C8</td>
+<td>0xB9</td>
+<td>BG $9C00 + WIN $9800, WY=0</td>
+<td>PASS (map0/window dominates)</td>
+</tr>
+<tr>
+<td>C10</td>
+<td>0xE1</td>
+<td>BG $9800 + WIN $9C00, WY=0, WX=50</td>
+<td>PASS (both maps: mid-line BG-&gt;WIN switch, m0=13/m1=30)</td>
+</tr>
+<tr>
+<td>C11</td>
+<td>0xE1</td>
+<td>same, WX=3 (WX&lt;7)</td>
+<td>PASS (window covers the whole line - comparator WX-7 wraps negative)</td>
+</tr>
+</tbody>
+</table>
+</div><p><code>RESULT: ALL PASS</code>.</p>
+<h2 id="test-8-mode-state-machine-and-lxly-waves">Test 8 — Mode state machine and LX/LY waves</h2>
+<p>Waves of the PPU mode handshake (mode 2 / mode 3 / stop_oam_eval /
+h_restart / vclk2, the mode-2 OAM clocks oam_addr_ck/oam_rd_ck/obj_prio_ck),
+the LX (h) and LY (v) counters and the LCD line timing (/CPL, /CP), from the
+<code>tb_ppu_bg_scanline</code> run. Two scanlines (left) and one line zoom (right):</p>
+<p><img alt="mode_fsm" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/ppu/waves/tb_ppu_mode_fsm.png" /></p>
+<p><img alt="mode_fsm_line" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/ppu/waves/tb_ppu_mode_fsm_line.png" /></p>
+<h2 id="test-9-mid-line-bgwin-switch-wave-matrix-config-c10">Test 9 — mid-line BG→WIN switch wave (matrix config C10)</h2>
+<p>Wave of one scanline with the window starting mid-line (WY=0, WX=50 =&gt;
+active from LX = WX-7 = 43): <code>in_window</code> rises inside mode 3, the VRAM
+fetches switch from the BG map ($9800 / 0x1800) to the window map ($9C00 /
+0x1C00) and the LD pixel pattern changes between the two tile contents.</p>
+<p><img alt="win_mid" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/ppu/waves/tb_ppu_win_mid.png" /></p>
+<h2 id="work-in-progress">Work in progress</h2>
+<ul>
+<li><code>tb_ppu_sprites.v</code> (dev): brings up the mode-2 OAM scan with the
+  dedicated OAM SRAM model (<code>oam_ram.v</code>).</li>
+</ul>
+<p>State after the OAM model rework (round 6):</p>
+<ul>
+<li>
+<p>with OBJ enabled the <strong>mode-3 window no longer overruns</strong> (normal
+    ~11 µs / 173 ticks per line — the earlier ~35 µs stall is gone);</p>
+</li>
+<li>
+<p>the mode-2 scan runs on the word bus <code>oa</code> and both OAM ports present
+    defined data (bitline-hold model);</p>
+</li>
+<li>
+<p>the sprite pixel path is still <strong>inert</strong>: <code>obj_prio_ck</code> (PPU1 → PPU2,
+    clocks the ten per-slot in-use dffr <code>g611–g628</code>) never pulses, so no
+    slot is ever claimed, <code>sp_bp_cys</code> never fires and the LD stream stays
+    BG-only. <code>obj_prio_ck = ~(w239|w240)</code> (ppu1 <code>g494</code>/<code>g832</code>); <code>w240</code>
+    (nand3 <code>g751</code> on the sprite-process FFs <code>g322/g287/g314</code>) never dips low
+    (<code>w229</code>/<code>w241</code> never reach 1 together with <code>w228</code>); <code>w239</code> (<code>g286</code> nq)
+    dips low only briefly right after <code>h_restart</code> while the ring runs
+    (round-22 probe).</p>
+</li>
+<li>
+<p>next step: map PPU1's sprite-clock domain (the mode-3 fetch/prio FFs
+    clocked off <code>w596/ppu_clk</code>, <code>w815</code>, ring <code>g282–g285/g316/g317/g319</code>)
+    and its handshake with PPU2's <code>stop_oam_eval</code>/store before the sprite
+    can be claimed and rendered.</p>
+</li>
+</ul>
+<p>Round-6 trace of that domain: the process FFs <code>g287–g289</code> form a
+  self-timed ring (<code>w227=!w228</code>, clocks <code>w815=~(ppu_clk &amp; w226&amp;w228)</code> and
+  <code>w964</code>), whose async reset <code>w816 = ~(w530|w531|w844)</code> is released only
+  when <code>w530 = w184&amp;w185</code> is low (<code>w184/w185</code> = free-running dividers
+  <code>g326/g325</code> on <code>ppu_clk</code>, themselves <strong>without reset</strong>: <code>nr1=w47=const1</code>)
+  and <code>w531 = !n_ppu_reset</code> is low. In the simulation the ring sits in the
+  latched rest state (w226=1, w228=1) and never starts: <code>w239</code>/<code>w240</code>
+  (→ <code>obj_prio_ck = ~(w239|w240)</code>) never pulse, so PPU2 never claims a
+  sprite slot. Whether <code>w530</code>'s dot window / <code>w844</code> and the store handshake
+  are supposed to kick the ring out of this state is the open question
+  (likely needs PPU2's <code>sprite_x_match</code>/store feedback).</p>
+<p>Round-7: <code>w844 = h_restart</code> (ppu1 assign) - so the ring IS reset at the
+  end of every scanline (<code>w816 = ~(w530|w531|h_restart)</code>), yet it re-latches
+  to its terminal state (w226=1/w228=1) within the next few clocks and
+  <code>obj_prio_ck</code> still never pulses in any sampled mode-2 or mode-3 window.
+  Also note PPU2's per-slot in-use dffr <code>g611–g628</code> have d-terms built from
+  the <em>mode-3</em> compare flags (<code>w332 = FF40_D1 &amp; ppu_mode3</code> gated) while the
+  store banks capture during mode 2 - the exact mode-2/mode-3 interleaving
+  of "claim" vs "capture" is not yet reproducible and needs schematic-level
+  sprite scheduling data.</p>
+<p>Round-22 (no-reset FF "init-0" probe, <code>tb_ppu_ring_init0</code>): per the
+  checklist, the no-reset triggers (<code>nr1 = nr2 = const-1</code>) were pinned to
+  <code>0</code> instead of <code>x</code> for the test. Two runs were compared:</p>
+<ul>
+<li>
+<p>Power-on state: the dmglib dffr-family cells (<code>dffr</code>, <code>dffr_comp</code>,
+    <code>dffrnq_comp</code>, <code>dffsr</code>, latches, <code>cnt</code>) all declare <code>initial val = 0</code>,
+    so at boot every such FF reads 0/1 - never x; the PPU1 sprite ring
+    (<code>g286</code>/<code>g287–g289</code>/<code>g325</code>/<code>g326</code>) is fully deterministic and the ring
+    reset term <code>w816</code> dips every line. The FFs that <em>still</em> hold <code>x</code> are
+    exactly those clocked from undefined data while their reset never
+    fires: PPU1 <code>g882–g889</code> (<code>dffr_comp</code> bank) and PPU2 scan-address bits
+    <code>g942</code>/<code>g943</code> (clocked by <code>oam_addr_ck</code>, <code>d</code> from the scan counter)
+    keep <code>x</code> during the whole mode-2 scan.</p>
+</li>
+<li>
+<p>Forced-0 run (test-only cell clones <code>dmg_*_nr0</code> in <code>temp/nr0</code>, an
+    <code>x</code> clocked into a no-reset FF stores 0): <code>g882–g889</code> = 0, the PPU2
+    scan-address register fully defined (<code>010000</code>) every line. Result
+    <strong>unchanged</strong>: <code>obj_prio_ck</code> 0 rising edges per line (5 lines),
+    PPU1 <code>(w228 &amp; w229 &amp; w241)</code> never 1, PPU2 Y-test AND6 (<code>w816</code>) never
+    high, store window <code>w852</code> 0 edges, <code>w530</code> never high.
+  =&gt; the no-reset-FF <code>x</code> state is NOT the reason <code>obj_prio_ck</code> is silent:
+  the ring is reset at every <code>h_restart</code> yet never opens the pulse window,
+  and on the PPU2 side the OAM Y-test never passes with the current <code>oa</code>/
+  port-B phase timing. The no-reset FFs remain a real netlist/silicon issue
+  (undetermined power-up, no recovery from garbage) - still reported to the
+  author - but they are not the testbench blocker.</p>
+</li>
+</ul>
+<p>Round-23 (weak / discharge-only <code>oa</code> experiment): per the checklist, the
+  <code>oa</code> bus was made "weak": the six oa-chain inverse-hold nodes
+  (<code>w497/w146/w500/w554/w641/w49</code>, each driven by four <code>notif0</code> mux groups -
+  scan <code>w518</code>, port-B <code>w475</code>, CPU <code>w403</code>, store <code>w444</code>, idle <code>w48</code>) were
+  re-modelled as precharged nodes: pullup keepers + open-drain drivers
+  (<code>dmg_notif0_od</code>, a strong-0 pull only when enabled AND data=1; polarity
+  preserved). Variant netlists + probes live in <code>temp/weak/</code> (gitignored).
+  Result:</p>
+<ul>
+<li>
+<p>the oa-chain nodes and the scan address become fully deterministic
+    (baseline: the Y-test group is <code>x</code> ~85% of the mode-2 time);</p>
+</li>
+<li>
+<p>scan schedule length is unchanged (39 <code>oam_addr_ck</code> steps per mode 2),
+    but the row sequence shifts (baseline walks 16-bit words {2,4,…,78},
+    weak walks {7,15,…,79}) - the "discharge-only changes scan addressing
+    polarity" effect documented earlier; both schedules start at word &gt; 0,
+    i.e. they never present entry 0 of the model;</p>
+</li>
+<li>
+<p>even with a sprite (Y=16, visible on LY 0..7) in <strong>every</strong> OAM entry,
+    lines LY 1..15: the Y-test AND6 <code>w816</code> (ppu2) never goes high in either
+    variant, the store window <code>w852</code> never opens, port B <code>n_oamb</code> reads zero
+    in every sampled phase, <code>obj_prio_ck</code> stays at 0 edges/line.
+  =&gt; oa bus contention x as such was not the blocker either (later rounds
+  28-30 refined this: the <em>group overlap</em> corrupts the scan address, and
+  that is exactly what keeps port B from delivering the Y bytes to the
+  Y-test). The port-B read data never
+  demonstrably reaches the Y-test adder as a passing compare: either the OAM
+  read happens in a phase the static model never samples, or the Y-test term
+  polarity/bounds are inverted (pass could be the all-zero group, not the
+  AND6 = 1 we probe - see the w852/w817 polarity open question). Needs the
+  schematic-level two-phase timing / macro byte mapping (author or msinger
+  ground truth), as already stated in the open questions.</p>
+</li>
+</ul>
+<p>Round-26 (OAM A/B buses "weak" + inverse-hold model fix): the ports
+  <code>n_oama</code>/<code>n_oamb</code> are inverse-hold buses like <code>oa</code>/<code>nma</code> (idle =
+  precharged HIGH = data 0; data = ~pad level). PPU2's scan-capture stage
+  stores the pad level <em>directly</em> (<code>dmg_latch g733-g748</code>, no inversion), so
+  the macro must present levels, not data. The committed <code>oam_ram.v</code> was
+  reworked (round 26):</p>
+<ul>
+<li>
+<p>old model drove a strong continuous <code>~data</code> tristate and idled the bus
+    at level 0 - wrong for an inverse-hold bus, and it collided (x) with
+    PPU2's own pad drivers: measured <code>x</code> on <code>n_oama</code>/<code>n_oamb</code> in 320/6000
+    samples (~5%) over 6 lines;</p>
+</li>
+<li>
+<p>new model: always-on pullup keepers (precharge = 1) + discharge-only
+    pads (a stored 1 pulls the pad low), hi-Z during writes - measured
+    <code>x</code> on <code>n_oama</code>/<code>n_oamb</code> = 0/6000 samples (red gone from the ports).
+  Test-only variants (temp/oamweak): (a) PPU2 OAM-port write drivers
+  converted to open-drain (<code>dmg_notif0_od</code>, 48 cells), (b) combined with
+  the round-23 weak <code>oa</code>, (c) port A/B byte mapping swapped. In every
+  combination, with a visible sprite (Y=16) in ALL 40 OAM entries and
+  LY 1..15: the Y-test AND6 (<code>w816</code>, ppu2) never passes, the store window
+  <code>w852</code> never opens, <code>obj_prio_ck</code> stays at 0 edges/line. Read-phase
+  dumps show defined pad levels (e.g. 0xFE = data 1 bit) while the scan
+  walks words {5,7,15,...} - under the model's byte layout the Y bytes
+  (even words) are never presented, i.e. the scan word stream / byte&lt;-&gt;word
+  &lt;-&gt;port mapping is the remaining open item (see PPU2 open questions).
+  The 6 fast regression tests AND <code>tb_ppu_frame</code> pass with the new model.</p>
+</li>
+</ul>
+<p>Round-27 (weak <code>oa</code> accepted as the default bus model): the round-23
+  discharge-only experiment became the standard simulation model for the
+  PPU testbench. <code>gen_weakbus.py</code> generates <code>ppu2_weakbus.v</code> from
+  <code>ppu2_merged.v</code> (the 24 oa-chain notif0 mux drivers -&gt; open-drain
+  <code>dmg_notif0_od</code> in <code>bus_weak_cells.v</code>; pullup keepers on
+  <code>w497/w146/w500/w554/w641/w49</code>); all PPU test compiles now use it instead
+  of <code>ppu2_merged.v</code>. <strong>Simulator bus model only - <code>ppu2.v</code> untouched.</strong>
+  Results: <code>oa</code> x gone in mode 2 (0/1280 samples) and idle (0/5168);
+  residual x only in mode 3 (sprite compare/store re-fetch, bus unused for
+  the BG stream); scan addresses now fully defined, walking words
+  {7,15,23,...,79} per mode 2; full regression suite (7/7, incl.
+  <code>tb_ppu_frame</code>) ALL PASS; sprite-scan wave regenerated (red pixels
+  42000 -&gt; ~15900). <code>obj_prio_ck</code>/<code>sp_bp_cys</code> remain flat and the Y-test
+  AND6 still never passes with sprites in all 40 OAM entries - the sprite
+  claim is gated upstream as documented (rounds 13-26), not by the oa
+  bus x.</p>
+<p>Round-28 (WHY the Y-test never passed - resolved): the Y-test comparator
+  itself is CORRECT. Decisive probe (temp/oamweak/tb_ytest_all10*): with
+  every OAM byte preloaded to 0x10 (= Y 16, visible on LY 0..7):</p>
+<ul>
+<li>
+<p>the Y-test B operand (latched port-B level through <code>dmg_latchnq_comp</code>
+    g204-g250, en <code>w120</code>) reads 0x10 (w119 = operand bit 4 = 1);</p>
+</li>
+<li>
+<p>the AND6 <code>w816</code> = 1 and the store window <code>w852</code> opens 39x per line on
+    LY 1..7, and correctly fails on LY=8 (8-row bound of an 8x8 sprite) -
+    the comparator's range check works;</p>
+</li>
+<li>
+<p><code>stop_oam_eval</code> = 1; the in-use flags / <code>obj_prio_ck</code> (PPU1) stay at 0.
+  Why real content failed: the mode-2 scan never presented the Y bytes on
+  port B in the sim:</p>
+</li>
+<li>
+<p>default <code>ppu2_merged</code>: <code>oa</code> low address bits read x (contested/float
+    between the scan <code>w518</code> and port-B <code>w475</code> groups, author issue
+    g419/g421) -&gt; the macro cannot resolve the addressed row -&gt; B operand
+    = 0x00 (OAM Y=0 = hidden) -&gt; out of range;</p>
+</li>
+<li>
+<p>weakbus default: the discharge model resolves the contested low bits to
+    words {7,15,...,79} (odd) -&gt; port B carries the TILE bytes (0x01) -&gt;
+    B operand 0x01 -&gt; out of range (the model layout puts the Y byte of
+    entry k at even word 2k; the scan sequence in the sim never lands on
+    those words).
+  Conclusion: the comparator, the AND6 group polarity (pass = <code>w816</code> = 1)
+  and the store window logic all work once port B carries a valid Y byte.
+  The blocker is the oa scan word&lt;-&gt;byte&lt;-&gt;port mapping / row schedule
+  (which words the scan addresses during mode 2) - to be pinned down
+  against the schematic or the author's review of the scan-address and oa
+  mux phases.</p>
+</li>
+</ul>
+<p>Round-29 (scan-only oa bus - sprite claims fire): variant <code>ppu2_scanonly.v</code>
+  (temp/oamweak; ppu2_weakbus with the 18 non-scan oa-chain drivers
+  disabled - only the mode-2 scan group <code>w518</code> drives) makes the scan
+  address stable and EVEN: words {2,4,...,78} per mode 2. With realistic
+  content (Y=16 in OAM entries 1..39, tiles elsewhere):</p>
+<ul>
+<li>Y-test <code>w816</code> = 1 on LY 1..7, correctly 0 on LY=8;</li>
+<li>
+<p>the store window <code>w852</code> opens ~38x per line on the visible lines
+    (slots are claimed; entry 0 sits at words 0/1 and is not visited by
+    this scan sequence - the sequence covers entries 1..39 under the model
+    layout);</p>
+</li>
+<li>
+<p><code>obj_prio_ck</code>/<code>sp_bp_cys</code> (PPU1) still 0 edges - the PPU1 side of the
+    claim/compare handshake is the remaining item (unchanged).
+  =&gt; the mode-2 oa addressing corruption was caused by the <em>overlapping</em>
+  oa-chain mux groups in the static sim (scan <code>w518</code> vs port-B <code>w475</code>/
+  CPU <code>w403</code>/store <code>w444</code>, author issue g419/g421): they flip the address
+  to x or odd words depending on the bus model. Two ways forward:
+  (a) author makes the groups phase-exclusive in <code>ppu2.v</code>, or
+  (b) the sprite testbench uses the scan-only bus model (like
+  <code>ppu2_scanonly.v</code>) and continues with the PPU1 handshake.</p>
+</li>
+</ul>
+<p>Round-30 (path b - sprite pixels reach LD0/LD1): <code>gen_weakbus.py</code> now also
+  emits <code>ppu2_m2only.v</code>: the 18 non-scan oa-chain drivers are disabled while
+  <code>ppu_mode2</code> is high (n_ena = orig | ppu_mode2) so the mode-2 scan address
+  is stable/even, while in mode 3 the store re-read (w444) and the other
+  groups work again. Dev test <code>tb_ppu_sprite_e2e</code> (sprite in OAM entry 1:
+  Y=16, X=16, tile 1 filled in VRAM, BG zero) on <code>ppu2_m2only.v</code>:</p>
+<ul>
+<li>
+<p><code>obj_prio_ck</code> pulses ~10-11x per line, <code>sp_bp_cys</code> and
+    <code>sprite_x_match</code> pulse, one in-use flag is set - the PPU1/PPU2 sprite
+    process runs (mode-2 claims -&gt; mode-3 compare/fetch);</p>
+</li>
+<li>
+<p>the LD stream carries sprite colour-01 pixels at LX ~7..14 on the
+    visible rows (off-by-one vs the expected X-8=8 start - sampler/X
+    alignment), nothing on the other rows;</p>
+</li>
+<li>
+<p>netlist untouched; still dev (entry 0 words 0/1 not visited by the
+    scan sequence; the author's g419/g421 phase review remains the real
+    fix).
+  <img alt="tb_ppu_sprite_e2e" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/ppu/waves/tb_ppu_sprite_e2e.png" /></p>
+</li>
+</ul>
+<p>Wave (t = 30 000..117 000 ns, two visible rows) on the <code>ppu2_m2only.v</code>
+  bus model: modes 2/3, <code>obj_prio_ck</code>/<code>sp_bp_cys</code>/<code>sprite_x_match</code>
+  pulsing, <code>oa</code> stepping the scan words, and the LD0/LD1 lines carrying
+  the sprite colour pixels during the pixel phase.</p>
+<p><img alt="tb_ppu_sprites_scan" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/ppu/waves/tb_ppu_sprites_scan.png" /></p>
+<p>Wave regenerated (round 27) from the default run, one line window
+  (t = 29 000..58 000 ns): mode 2 shows the OAM scan - <code>oa</code> steps 39 word
+  addresses (defined; weak-bus default) while <code>n_oam_rd</code>/<code>oam_bl_pch</code>
+  pulse; residual <code>oa</code> x only in mode 3 (compare phase); <code>obj_prio_ck</code> and
+  <code>sp_bp_cys</code> stay flat - no slot claimed.</p>
+<p>Not promoted to a regression test yet.</p><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ PPU Icarus/GTKWave testbench (issue 390)</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/HDL/soc/icarus/ppu/waves.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../../../wiki/methods.html">Research methods</a></li><li><a href="../../../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../../../assets/site.js"></script>
+</body>
+</html>

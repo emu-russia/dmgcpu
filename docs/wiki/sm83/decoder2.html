@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decoder2 · DMG-CPU Research</title>
+<meta name="description" content="Refines the decoded operation code and reduces the total number of outputs for Decoder3. Implemented as densely packed NOR trees.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/sm83/Readme.html">DMG CPU Core</a><span class="sep">/</span><span class="current">Decoder2</span></nav>
+
+<article class="content"><h1 id="decoder2">Decoder2</h1>
+<p><img alt="locator_decoder2" decoding="async" loading="lazy" src="../../imgstore/sm83/locator_decoder2.png" /></p>
+<p>Refines the decoded operation code and reduces the total number of outputs for Decoder3. Implemented as densely packed NOR trees.</p>
+<p><img alt="decoder2" decoding="async" loading="lazy" src="../../imgstore/sm83/decoder2.jpg" /></p>
+<h2 id="decoder2-inputs">Decoder2 Inputs</h2>
+<p>The outputs <code>d[106:0]</code> from <a href="decoder1.html">Decoder1</a> are input.</p>
+<h2 id="decoder2-output-drivers">Decoder2 Output Drivers</h2>
+<p>Some drivers are inverters and some are buffers.</p>
+<p><img alt="decoder2_drv" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/decoder2_drv.jpg" /></p>
+<p>The output drivers act as signal amplifiers and are also used as "domino" logic, to translate dynamic CMOS logic into conventional logic.</p>
+<h2 id="decoder2-outputs">Decoder2 Outputs</h2>
+<p>The inputs from Decoder1 have three paths:</p>
+<ul>
+<li>Stay inside Decoder2 and form one of Decoder2's outputs with the rest of the signals</li>
+<li>Go outside</li>
+<li>Stay inside AND go outside</li>
+</ul>
+<p>All Decoder2 outputs are clocked by the <code>CLK2</code> signal.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Output</th>
+<th>Name</th>
+<th>To</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>w0</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>w1</td>
+<td></td>
+<td>Bottom</td>
+<td>TempLow/TempHigh to cbus/dbus</td>
+</tr>
+<tr>
+<td>w2</td>
+<td></td>
+<td>Bottom</td>
+<td>TempLow/TempHigh to cbus/dbus</td>
+</tr>
+<tr>
+<td>w3</td>
+<td></td>
+<td>ALU, Bottom</td>
+<td>A to abus</td>
+</tr>
+<tr>
+<td>w4</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>w5</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>w6</td>
+<td>WR</td>
+<td>External, Thingy</td>
+<td>To external WR port</td>
+</tr>
+<tr>
+<td>w7</td>
+<td>nIR7</td>
+<td>Not connected</td>
+<td>Not used</td>
+</tr>
+<tr>
+<td>w8</td>
+<td></td>
+<td>Bottom, Thingy</td>
+<td>PCL/PCH to abus/dbus</td>
+</tr>
+<tr>
+<td>w9</td>
+<td></td>
+<td>ALU, Bottom</td>
+<td>SPH to abus; Also bc/bq Logic</td>
+</tr>
+<tr>
+<td>w10</td>
+<td></td>
+<td>ALU</td>
+<td></td>
+</tr>
+<tr>
+<td>w11</td>
+<td></td>
+<td>Sequencer (only)</td>
+<td></td>
+</tr>
+<tr>
+<td>w12</td>
+<td></td>
+<td>ALU</td>
+<td></td>
+</tr>
+<tr>
+<td>w13</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>w14</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>w15</td>
+<td></td>
+<td>ALU, Bottom</td>
+<td>SPL to bbus (only if IR4=IR5=1); Set abus to 0</td>
+</tr>
+<tr>
+<td>w16</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>w17</td>
+<td></td>
+<td>Bottom</td>
+<td>TempLow/0 to cbus/dbus</td>
+</tr>
+<tr>
+<td>w18</td>
+<td></td>
+<td>Sequencer</td>
+<td></td>
+</tr>
+<tr>
+<td>w19</td>
+<td></td>
+<td>ALU, Bottom</td>
+<td>SPH to bbus (only if IR4=IR5=1); H to abus</td>
+</tr>
+<tr>
+<td>w20</td>
+<td></td>
+<td>Sequencer (only)</td>
+<td></td>
+</tr>
+<tr>
+<td>w21</td>
+<td></td>
+<td>Bottom</td>
+<td>bc/bq Logic</td>
+</tr>
+<tr>
+<td>w22</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>w23</td>
+<td></td>
+<td>Bottom</td>
+<td>SPL to abus</td>
+</tr>
+<tr>
+<td>w24</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>w25</td>
+<td></td>
+<td>Bottom</td>
+<td>PCL/PCH to cbus/dbus</td>
+</tr>
+<tr>
+<td>w26</td>
+<td>LoadIR</td>
+<td>Bottom, Sequencer, External</td>
+<td>DL to IR</td>
+</tr>
+<tr>
+<td>w27</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>w28</td>
+<td></td>
+<td>Bottom</td>
+<td>PCH to DL</td>
+</tr>
+<tr>
+<td>w29</td>
+<td></td>
+<td>Bottom</td>
+<td>Set dbus to 0</td>
+</tr>
+<tr>
+<td>w30</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>w31</td>
+<td></td>
+<td>Thingy (only)</td>
+<td></td>
+</tr>
+<tr>
+<td>w32</td>
+<td></td>
+<td>Sequencer (only)</td>
+<td></td>
+</tr>
+<tr>
+<td>w33</td>
+<td></td>
+<td>Sequencer (only)</td>
+<td></td>
+</tr>
+<tr>
+<td>w34</td>
+<td></td>
+<td>Bottom (only)</td>
+<td>PCL to DL</td>
+</tr>
+<tr>
+<td>w35</td>
+<td></td>
+<td>Thingy (only)</td>
+<td></td>
+</tr>
+<tr>
+<td>w36</td>
+<td></td>
+<td>Bottom</td>
+<td>zbus/wbus to PCL/PCH</td>
+</tr>
+<tr>
+<td>w37</td>
+<td></td>
+<td>ALU</td>
+<td></td>
+</tr>
+<tr>
+<td>w38</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>w39</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>w40</td>
+<td></td>
+<td>Sequencer</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div><p>(If <code>wx</code> signal goes to Decoder3 it is not indicated in the table).</p>
+<h2 id="nor-trees">Nor Trees</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tree</th>
+<th>Gekkio</th>
+<th>Paths</th>
+<th>Output Driver</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>w0</td>
+<td>cc_check</td>
+<td>{4,5,6,7}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w1</td>
+<td>oe_wzreg_to_idu</td>
+<td>{0,1,w27}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w2</td>
+<td>op_jr_any_sx10</td>
+<td>Does not use NOR tree</td>
+<td><code>d[103]</code></td>
+</tr>
+<tr>
+<td>w3</td>
+<td>op_alu8</td>
+<td>Does not use NOR tree</td>
+<td><code>d[3]</code></td>
+</tr>
+<tr>
+<td>w4</td>
+<td>op_ld_abs_a_data_cycle</td>
+<td>{0,28}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w5</td>
+<td>op_ld_a_abs_data_cycle</td>
+<td>{2,26}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w6</td>
+<td>wr</td>
+<td>{0,12,13,24,28,30,32,38,47,50,56,60,66,68,70,73,75,92,93,97}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w7</td>
+<td><em>ignored</em></td>
+<td>Does not use NOR tree</td>
+<td><code>~IR[7]</code>. :warning: Not used (not connected).</td>
+</tr>
+<tr>
+<td>w8</td>
+<td>op_jr_any_sx01</td>
+<td>Does not use NOR tree</td>
+<td><code>d[19]</code></td>
+</tr>
+<tr>
+<td>w9</td>
+<td>op_sp_e_sx10</td>
+<td>{21,22}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w10</td>
+<td>alu_res</td>
+<td>{23,24}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w11</td>
+<td>addr_valid</td>
+<td>{32,59,0,1,2,9,10,12,13,15,16,17,18,20,22,23,24,26,28,29,30,31,33,34,38,40,43,44,46,47,50,51,52,55,56,57,58,60,61,63,64,65,66,67,68,69,70,71,72,73,75,78,79,80,81,82,86,87,88,89,90,91,92,93,94,95,96,97,99,100,101,102,103,104,105}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w12</td>
+<td>cb_bit</td>
+<td>Does not use NOR tree</td>
+<td><code>d[27]</code></td>
+</tr>
+<tr>
+<td>w13</td>
+<td>op_ld_abs_rr_sx00</td>
+<td>{28,29}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w14</td>
+<td>op_ldh_any_a_data_cycle</td>
+<td>{30,32}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w15</td>
+<td>op_add_hl_sxx0</td>
+<td>Does not use NOR tree</td>
+<td><code>d[35]</code></td>
+</tr>
+<tr>
+<td>w16</td>
+<td>op_incdec_rr</td>
+<td>{36,37}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w17</td>
+<td>op_ldh_imm_sx01</td>
+<td>{32,59}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w18</td>
+<td>data_fetch_cycle</td>
+<td>{1,9,10,15,20,29,31,33,43,44,51,52,57,59,61,63,65,67,69,71,72,79,80,82,86,87,90,91,95,104,105}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w19</td>
+<td>op_add_hl_sx01</td>
+<td>Does not use NOR tree</td>
+<td><code>d[46]</code></td>
+</tr>
+<tr>
+<td>w20</td>
+<td>state0_next</td>
+<td>{0,1,6,9,11,13,15,20,21,24,28,29,30,31,32,35,36,37,39,43,45,47,50,51,56,57,60,61,62,63,65,66,68,69,70,72,74,76,82,83,86,92,93,95,97,104}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w21</td>
+<td>op_push_sx10</td>
+<td>Does not use NOR tree</td>
+<td><code>d[50]</code></td>
+</tr>
+<tr>
+<td>w22</td>
+<td>addr_hl</td>
+<td>{24,33,47,56,57,62,68,69,70,81,90,95,97}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w23</td>
+<td>op_sp_e_s001</td>
+<td>{53,54}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w24</td>
+<td>alu_set</td>
+<td>{55,56}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w25</td>
+<td>addr_pc</td>
+<td>{2,9,10,15,16,17,18,20,22,23,26,31,34,40,43,44,46,55,58,61,63,64,65,67,72,77,78,86,87,88,89,91,94,96,99,100,101,102,104,105}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w26</td>
+<td>m1</td>
+<td>{2,16,17,18,22,23,26,34,40,46,55,58,64,78,81,88,89,94,96,99,100,101,102,103}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w27</td>
+<td>op_ld_nn_sp_s01x</td>
+<td>{60,66}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w28</td>
+<td>oe_pchreg_to_pbus</td>
+<td>{12,73,75}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w29</td>
+<td>op_ldh_c_sx00</td>
+<td>{30,71}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w30</td>
+<td>stackop</td>
+<td>{11,12,13,38,39,50,51,52,73,74,75,76,79,80,82,92,93}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w31</td>
+<td>idu_inc</td>
+<td>{2,9,10,15,16,17,18,20,22,23,26,31,34,37,40,43,44,46,51,52,55,58,60,61,63,64,65,67,72,78,79,80,81,82,84,86,87,88,89,91,94,96,99,101,102,103,104,105}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w32</td>
+<td>state2_next</td>
+<td>{0,12,13,24,28,30,32,33,36,37,45,47,50,56,59,62,66,68,70,71,75,76,77,83,90,91,92,93,97}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w33</td>
+<td>state1_next</td>
+<td>{0,1,10,11,13,19,21,24,28,30,32,33,36,37,38,44,45,47,50,52,53,54,56,59,60,62,66,67,68,70,71,73,75,79,80,82,83,87,90,91,92,93,97,105}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w34</td>
+<td>oe_pclreg_to_pbus</td>
+<td>{13,92,93}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w35</td>
+<td>idu_dec</td>
+<td>{11,12,36,38,39,73,74,75,76,77,85}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w36</td>
+<td>oe_wzreg_to_pcreg</td>
+<td>{13,45,83}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w37</td>
+<td>op_incdec8</td>
+<td>Does not use NOR tree</td>
+<td><code>d[98]</code></td>
+</tr>
+<tr>
+<td>w38</td>
+<td>allow_r8_write</td>
+<td>{2,13,16,17,22,23,26,28,29,34,35,36,37,38,40,45,46,50,53,54,55,58,62,68,70,78,81,88,89,92,93,94,96,97,99,100,101}</td>
+<td>not</td>
+</tr>
+<tr>
+<td>w39</td>
+<td><em>out of scope</em></td>
+<td>Does not use NOR tree</td>
+<td><code>~SeqOut_2</code></td>
+</tr>
+<tr>
+<td>w40</td>
+<td><em>out of scope</em></td>
+<td>Does not use NOR tree</td>
+<td><code>w[18] &amp; w[39]</code></td>
+</tr>
+</tbody>
+</table>
+</div><p>The numbers in the path refer to Decoder1 outputs <code>d[106:0]</code>. Sometimes there are other inputs in the tree, and they are marked that way.</p>
+<p>The result is a multi-input NOR (the dynamic part is not shown in the picture):</p>
+<p><img alt="demo_w1" decoding="async" loading="lazy" src="../../imgstore/sm83/demo_w1.jpg" /></p>
+<p>To convert trees into a schematic, you can use a script to generate an HDL.</p><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG CPU Core</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/sm83/decoder2.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

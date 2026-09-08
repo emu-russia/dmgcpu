@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DMG CPU Core · DMG-CPU Research</title>
+<meta name="description" content="DMG-01 SM83 core research. The B revision of the DMG SoC is being studied.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><span class="current">DMG CPU Core</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#basic-circuit-designs">Basic Circuit Designs</a></li><li class="toc-l2"><a href="#latest-progress">Latest Progress</a></li><li class="toc-l2"><a href="#regression-testbench-issue-400">Regression Testbench (issue #400)</a></li><li class="toc-l2"><a href="#why-sm83">Why SM83?</a></li><li class="toc-l2"><a href="#gekkio-research">Gekkio Research</a></li><li class="toc-l2"><a href="#michael-singer-research">Michael Singer Research</a></li></ol></details>
+<article class="content"><h1 id="dmg-cpu-core">DMG CPU Core</h1>
+<div class="callout callout-tip"><p class="callout-title">This section is well developed and the schematics have been verified by simulation. The research for this section is complete. But sometimes clarifications are still added :-)</p></div><p>DMG-01 SM83 core research. The <code>B</code> revision of the DMG SoC is being studied.</p>
+<p>The core can be found here:</p>
+<p><img alt="locator_core" decoding="async" loading="lazy" src="../../imgstore/soc/locator_core.jpg" /></p>
+<h2 id="basic-circuit-designs">Basic Circuit Designs</h2>
+<p>The core consists of the following main components:</p>
+<ul>
+<li>The ALU (upper left corner), random logic (looking like "spaghetti") and the flags register</li>
+<li>A decoder of three levels. Each level outputs a bunch of signals (<code>d</code>, <code>w</code>, <code>x</code>) with a smaller number at each successive level. The main driving force for all the other parts is the set of <code>x</code> signals. Decoders are made as NAND/NOR trees + domino logic.</li>
+<li>The sequencer occupies the right side and is built on "sort of" standard cells. Actually they are not cells in the usual sense, but "handmade" using standard modules and tweaking them a little bit in some places as required.</li>
+<li>At the bottom is part of DAA logic, the registers block, the SP, the PC and Incrementer/Decrementer. Also obviously there is a small circuit for interrupt control and a small but important circuit called the "Thingy".</li>
+</ul>
+<p><img alt="sm83" decoding="async" loading="lazy" src="../../imgstore/hdl/sm83/Design/sm83.png" /></p>
+<h2 id="latest-progress">Latest Progress</h2>
+<p>At the moment, the entire topology have been obtained. The basic circuit principles are understood and the transistor circuits of most of the modules are obtained. The main emphasis was made on the sequencer circuit, as the most demanded one.</p>
+<p>The SM83 research has been completed and the circuits verified in the simulator.</p>
+<p><img alt="DMG01B_Core_Fused_Topo" decoding="async" loading="lazy" src="../../imgstore/sm83/DMG01B_Core_Fused_Topo.jpg" /></p>
+<h2 id="regression-testbench-issue-400">Regression Testbench (issue #400)</h2>
+<p>The core is exercised by an Icarus regression suite that drives the <strong>real
+SM83 netlist</strong> (<code>HDL/sm83/Top.v</code> SM83Core + module files) with the CPU
+clock generator and a flat memory model:</p>
+<ul>
+<li>
+<p><a href="../../HDL/sm83/Icarus/waves.html">HDL/sm83/Icarus - suite waves</a> (register
+  file, ALU+flags, memory addressing, stack, jumps, IRQ, instruction
+  timing)</p>
+</li>
+<li>
+<p><a href="../../HDL/sm83/Icarus/STATUS.html">HDL/sm83/Icarus - STATUS.md</a> (research log
+  with measured facts)</p>
+</li>
+<li>
+<p>run everything with <code>./run_all.sh</code> in <code>HDL/sm83/Icarus</code> (each test
+  prints <code>RESULT ... PASS/FAIL</code>).</p>
+</li>
+</ul>
+<p>Measured facts (real-netlist checks, all PASS):</p>
+<ul>
+<li>
+<p>register file/pair loads, stack + memory addressing match the SM83
+  programming model byte-exactly;</p>
+</li>
+<li>
+<p>ALU flag law verified for ADD/ADC/SUB/SBC/AND/OR/XOR/CP over multiple
+  operand pairs incl. carry-in;</p>
+</li>
+<li>
+<p>relative jumps taken/not-taken + RST vector pages;</p>
+</li>
+<li>
+<p>IE/IME/IF interrupt dispatch: HALT wake, PC push, IF ack-clear, vectors
+  $40/$48/$50;</p>
+</li>
+<li>
+<p>HALT modes: clean stop with IME=0/IE=0, IF-wake without vector when
+  IME=0, halt-bug setup (no stop, no vector);</p>
+</li>
+<li>
+<p>CB-prefix + rotate law: RLC/RRC/RL/RR/SLA/SRA/SWAP/SRL on A, BIT/RES/SET
+  b,A; the A-only rotates (RLCA/RLA/RRCA/RRA) clear Z on the SM83
+  (netlist-verified), the CB forms set Z from the result;</p>
+</li>
+<li>
+<p>instruction T-states measured via M1-M1 intervals (NOP 4, LD r,n 8,
+  JR taken 12 / not 8, JP 16, CALL 24, RET 16, ...).</p>
+</li>
+</ul>
+<h2 id="why-sm83">Why SM83?</h2>
+<p>There is a manual from Sharp: https://archive.org/details/1996_Sharp_Microcomputer_Data_Book/page/n147/mode/2up</p>
+<p>On page 148 of this PDF (or page 140 if you look at the original page numbers of the scan), it describes four microcomputers (SM8311, SM8313, SM8314 and SM8315). They all contain a CPU core that is labeled "SM83CPU" in the diagram on the next few pages, which has exactly the same instruction set and the same timings that the Game Boy CPU has. That is why we call the Game Boy CPU "SM83". It seems to be the official name from Sharp for this core. I think @Gekkio found this originally, but I'm not sure. Before we knew about this document, most people called the CPU "LR35902", because this was the label that was printed on the first batch of the rev. 0 chips. It seems to be that LR35902 is the name of the SoC as a whole, and SM83 is the name of the CPU core that was used inside. But I think we can't be 100% sure that they really called this CPU SM83 back in 1989, or if they retroactively labeled it that when they reused it for those microcomputers in this 1996 data book.</p>
+<p>by @msinger (Discussion #13)</p>
+<h2 id="gekkio-research">Gekkio Research</h2>
+<p>There is also an SM83 research by @Gekkio: https://github.com/Gekkio/gb-research/tree/main/sm83-cpu-core</p>
+<p>All places where there is any parallel with his research (signal names) are marked as <code>Gekkio</code>.</p>
+<h2 id="michael-singer-research">Michael Singer Research</h2>
+<p>Michael Singer (@msinger) also conducted the SM83 research, results can be found here:</p>
+<ul>
+<li><a href="https://iceboy.a-singer.de/doc/sm83_sch.pdf" rel="noopener noreferrer" target="_blank">SM83 Schematics</a></li>
+<li><a href="https://iceboy.a-singer.de/visual6502/expert-sm83.html" rel="noopener noreferrer" target="_blank">Visual SM83</a></li>
+</ul><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG CPU Core</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/sm83/Readme.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

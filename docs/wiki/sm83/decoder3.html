@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decoder3 · DMG-CPU Research</title>
+<meta name="description" content="The final stage of the decoder, which generates the x[68:0] control signals for the lower part and the ALU.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/sm83/Readme.html">DMG CPU Core</a><span class="sep">/</span><span class="current">Decoder3</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#decoder3-inputs">Decoder3 Inputs</a></li><li class="toc-l2"><a href="#ir-nots">IR Nots</a></li><li class="toc-l2"><a href="#output-drivers">Output Drivers</a></li><li class="toc-l2"><a href="#decoder3-outputs">Decoder3 Outputs</a></li><li class="toc-l2"><a href="#nand-trees">Nand Trees</a></li></ol></details>
+<article class="content"><h1 id="decoder3">Decoder3</h1>
+<p><img alt="locator_decoder3" decoding="async" loading="lazy" src="../../imgstore/sm83/locator_decoder3.png" /></p>
+<p>The final stage of the decoder, which generates the <code>x[68:0]</code> control signals for the lower part and the ALU.</p>
+<p><img alt="decoder3" decoding="async" loading="lazy" src="../../imgstore/sm83/decoder3.jpg" /></p>
+<h2 id="decoder3-inputs">Decoder3 Inputs</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>From</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CLK2</td>
+<td>External</td>
+</tr>
+<tr>
+<td>CLK4</td>
+<td>External</td>
+</tr>
+<tr>
+<td>CLK5</td>
+<td>External. Affects x55</td>
+</tr>
+<tr>
+<td>nCLK4</td>
+<td>CLK4 Not. Affects x57</td>
+</tr>
+<tr>
+<td>a3</td>
+<td>Decoder1 a[3] input</td>
+</tr>
+<tr>
+<td>d</td>
+<td>Decoder1 outputs</td>
+</tr>
+<tr>
+<td>w</td>
+<td>Decoder2 outputs</td>
+</tr>
+<tr>
+<td>IR</td>
+<td>Bottom</td>
+</tr>
+<tr>
+<td>nIR</td>
+<td>IR Nots</td>
+</tr>
+<tr>
+<td>SeqOut_2</td>
+<td>Sequencer</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="ir-nots">IR Nots</h2>
+<p><img alt="ir_nots" decoding="async" loading="lazy" src="../../imgstore/sm83/ir_nots.jpg" /></p>
+<h2 id="output-drivers">Output Drivers</h2>
+<p><img alt="decoder3_drv" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/decoder3_drv.jpg" /></p>
+<p>The output drivers act as signal amplifiers and are also used as "domino" logic, to translate dynamic CMOS logic into conventional logic.</p>
+<h2 id="decoder3-outputs">Decoder3 Outputs</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Output</th>
+<th>Name</th>
+<th>CLK</th>
+<th>To</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>x0</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU Bot</td>
+<td></td>
+</tr>
+<tr>
+<td>x1</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU Bot</td>
+<td></td>
+</tr>
+<tr>
+<td>x2</td>
+<td></td>
+<td>CLK2</td>
+<td>internal</td>
+<td></td>
+</tr>
+<tr>
+<td>x3</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU Top</td>
+<td></td>
+</tr>
+<tr>
+<td>x4</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU module2</td>
+<td></td>
+</tr>
+<tr>
+<td>x5</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU AND combs</td>
+<td></td>
+</tr>
+<tr>
+<td>x6</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU AND combs</td>
+<td></td>
+</tr>
+<tr>
+<td>x7</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU AND combs</td>
+<td></td>
+</tr>
+<tr>
+<td>x8</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU AND combs</td>
+<td></td>
+</tr>
+<tr>
+<td>x9</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU AND combs</td>
+<td></td>
+</tr>
+<tr>
+<td>x10</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU Bot</td>
+<td></td>
+</tr>
+<tr>
+<td>x11</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU Bot</td>
+<td></td>
+</tr>
+<tr>
+<td>x12</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU Bot</td>
+<td></td>
+</tr>
+<tr>
+<td>x13</td>
+<td></td>
+<td>CLK2</td>
+<td>internal</td>
+<td></td>
+</tr>
+<tr>
+<td>x14</td>
+<td></td>
+<td>CLK2</td>
+<td>internal</td>
+<td></td>
+</tr>
+<tr>
+<td>x15</td>
+<td>DataOut</td>
+<td>⚠️ CLK4</td>
+<td>Data Bridge</td>
+<td>DV to DL</td>
+</tr>
+<tr>
+<td>x16</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU AND combs</td>
+<td></td>
+</tr>
+<tr>
+<td>x17</td>
+<td></td>
+<td>CLK2</td>
+<td>internal</td>
+<td></td>
+</tr>
+<tr>
+<td>x18</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU Top</td>
+<td></td>
+</tr>
+<tr>
+<td>x19</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU Bot, ALU module2</td>
+<td></td>
+</tr>
+<tr>
+<td>x20</td>
+<td></td>
+<td>CLK2</td>
+<td>internal</td>
+<td></td>
+</tr>
+<tr>
+<td>x21</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU Bot</td>
+<td></td>
+</tr>
+<tr>
+<td>x22</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU Bot</td>
+<td></td>
+</tr>
+<tr>
+<td>x23</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU Bot</td>
+<td></td>
+</tr>
+<tr>
+<td>x24</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU Bot</td>
+<td></td>
+</tr>
+<tr>
+<td>x25</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU module2</td>
+<td></td>
+</tr>
+<tr>
+<td>x26</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU Bot</td>
+<td></td>
+</tr>
+<tr>
+<td>x27</td>
+<td></td>
+<td>CLK2</td>
+<td>ALU Bot</td>
+<td></td>
+</tr>
+<tr>
+<td>x28</td>
+<td></td>
+<td>⚠️ CLK4</td>
+<td>ALU Bot Res</td>
+<td></td>
+</tr>
+<tr>
+<td>x29</td>
+<td></td>
+<td>⚠️ CLK4</td>
+<td>ALU Bot Res</td>
+<td></td>
+</tr>
+<tr>
+<td>x30</td>
+<td></td>
+<td>CLK2</td>
+<td>internal</td>
+<td></td>
+</tr>
+<tr>
+<td>x31</td>
+<td></td>
+<td>CLK2</td>
+<td>internal</td>
+<td></td>
+</tr>
+<tr>
+<td>x32</td>
+<td></td>
+<td>CLK2</td>
+<td>internal</td>
+<td></td>
+</tr>
+<tr>
+<td>x33</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>Set abus to 0</td>
+</tr>
+<tr>
+<td>x34</td>
+<td></td>
+<td>CLK2</td>
+<td>internal</td>
+<td></td>
+</tr>
+<tr>
+<td>x35</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>Save A to bbus</td>
+</tr>
+<tr>
+<td>x36</td>
+<td></td>
+<td>CLK2</td>
+<td>internal</td>
+<td></td>
+</tr>
+<tr>
+<td>x37</td>
+<td>DL_Control2, ALU_to_DL</td>
+<td>⚠️ CLK4</td>
+<td>Data Latch</td>
+<td>1: Save ALU result to DataLatch</td>
+</tr>
+<tr>
+<td>x38</td>
+<td></td>
+<td>⚠️ CLK4</td>
+<td>Bottom</td>
+<td>Load A from fbus</td>
+</tr>
+<tr>
+<td>x39</td>
+<td></td>
+<td>⚠️ CLK4</td>
+<td>Bottom</td>
+<td>Load H from fbus</td>
+</tr>
+<tr>
+<td>x40</td>
+<td></td>
+<td>⚠️ CLK4</td>
+<td>Bottom</td>
+<td>Load L from ebus</td>
+</tr>
+<tr>
+<td>x41</td>
+<td></td>
+<td>CLK2</td>
+<td>Sequencer</td>
+<td></td>
+</tr>
+<tr>
+<td>x42</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>H/L to dbus/cbus</td>
+</tr>
+<tr>
+<td>x43</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>Save H to bbus</td>
+</tr>
+<tr>
+<td>x44</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>Save L to bbus</td>
+</tr>
+<tr>
+<td>x45</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>D/E to dbus/cbus</td>
+</tr>
+<tr>
+<td>x46</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>Save D to bbus</td>
+</tr>
+<tr>
+<td>x47</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>Save E to bbus</td>
+</tr>
+<tr>
+<td>x48</td>
+<td></td>
+<td>⚠️ CLK4</td>
+<td>Bottom</td>
+<td>Load D from fbus</td>
+</tr>
+<tr>
+<td>x49</td>
+<td></td>
+<td>⚠️ CLK4</td>
+<td>Bottom</td>
+<td>Load B from fbus</td>
+</tr>
+<tr>
+<td>x50</td>
+<td></td>
+<td>⚠️ CLK4</td>
+<td>Bottom</td>
+<td>Load E from ebus</td>
+</tr>
+<tr>
+<td>x51</td>
+<td></td>
+<td>⚠️ CLK4</td>
+<td>Bottom</td>
+<td>Load C from ebus</td>
+</tr>
+<tr>
+<td>x52</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>B/C to dbus/cbus</td>
+</tr>
+<tr>
+<td>x53</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>Save B to bbus</td>
+</tr>
+<tr>
+<td>x54</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>Save C to bbus</td>
+</tr>
+<tr>
+<td>x55</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>⚠️ Affected by CLK5 (output is <code>nor(res,CLK5)</code> instead <code>not(res)</code>. adl/adh -&gt; ebus/fbus</td>
+</tr>
+<tr>
+<td>x56</td>
+<td></td>
+<td>⚠️ CLK4</td>
+<td>Bottom</td>
+<td>TempLow(G)/TempHigh(K) to ebus/fbus</td>
+</tr>
+<tr>
+<td>x57</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>⚠️ Affected by nCLK4 (output is <code>nor(res,nCLK4)</code> instead <code>not(res)</code>. ALU Res to ebus/fbus</td>
+</tr>
+<tr>
+<td>x58</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>Save TempLow(G) to bbus</td>
+</tr>
+<tr>
+<td>x59</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>Load TempHigh(K)</td>
+</tr>
+<tr>
+<td>x60</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>Load TempLow(G)</td>
+</tr>
+<tr>
+<td>x61</td>
+<td>LoadSP</td>
+<td>CLK2</td>
+<td>Bottom (twice)</td>
+<td>Load SP Register. The signals x62 and x63 indicate exactly what to load.</td>
+</tr>
+<tr>
+<td>x62</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>adl/adh to SPL/SPH</td>
+</tr>
+<tr>
+<td>x63</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>zbus/wbus to SPL/SPH</td>
+</tr>
+<tr>
+<td>x64</td>
+<td></td>
+<td>CLK2</td>
+<td>internal</td>
+<td></td>
+</tr>
+<tr>
+<td>x65</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>SPL/SPH to cbus/dbus</td>
+</tr>
+<tr>
+<td>x66</td>
+<td></td>
+<td>CLK2</td>
+<td>internal</td>
+<td></td>
+</tr>
+<tr>
+<td>x67</td>
+<td></td>
+<td>CLK2</td>
+<td>Bottom</td>
+<td>adl/adh to PCL/PCH</td>
+</tr>
+<tr>
+<td>x68</td>
+<td>LoadPC</td>
+<td>CLK2</td>
+<td>Bottom (twice)</td>
+<td>Load PC Register. The signals w36 (⚠️ w36!) and x67 indicate exactly what to load.</td>
+</tr>
+</tbody>
+</table>
+</div><p>(Outputs not marked as <code>internal</code> can still be used internally, I just did not mark it unnecessarily).</p>
+<h2 id="nand-trees">Nand Trees</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tree</th>
+<th>Gekkio</th>
+<th>Paths</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>x0</td>
+<td>alu_rotate_shift_left</td>
+<td>{nIR3,x20}<br/>{nIR3,nIR4,x17}</td>
+</tr>
+<tr>
+<td>x1</td>
+<td>alu_rotate_shift_right</td>
+<td>{IR3,x20}<br/>{IR3,x17}</td>
+</tr>
+<tr>
+<td>x2</td>
+<td>alu_set_or</td>
+<td>{w24}<br/>{IR5,IR4,nIR3,w3}</td>
+</tr>
+<tr>
+<td>x3</td>
+<td>alu_sum</td>
+<td>{x10}<br/>{w37}<br/>{x11}<br/>{w8}<br/>{w9}<br/>{x22}<br/>{w23}</td>
+</tr>
+<tr>
+<td>x4</td>
+<td>alu_logic_or</td>
+<td>{w5}<br/>{d8}<br/>{d41}<br/>{x2}<br/>{d14}<br/>{x26}</td>
+</tr>
+<tr>
+<td>x5</td>
+<td>alu_rlc</td>
+<td>{x20,nIR3,nIR4}</td>
+</tr>
+<tr>
+<td>x6</td>
+<td>alu_rl</td>
+<td>{x20,nIR3,IR4}</td>
+</tr>
+<tr>
+<td>x7</td>
+<td>alu_rrc</td>
+<td>{x20,IR3,nIR4}</td>
+</tr>
+<tr>
+<td>x8</td>
+<td>alu_rr</td>
+<td>{x20,IR3,IR4}</td>
+</tr>
+<tr>
+<td>x9</td>
+<td>alu_sra</td>
+<td>{x17,IR3,nIR4}</td>
+</tr>
+<tr>
+<td>x10</td>
+<td>alu_sum_pos_hf_cf</td>
+<td>{w23}<br/>{w15}<br/>{w19}<br/>{x23}</td>
+</tr>
+<tr>
+<td>x11</td>
+<td>alu_sum_neg_cf</td>
+<td>{x27}<br/>{x24}</td>
+</tr>
+<tr>
+<td>x12</td>
+<td>alu_sum_neg_hf_nf</td>
+<td>{x24}<br/>{x27}<br/>{IR0,w37}</td>
+</tr>
+<tr>
+<td>x13</td>
+<td>regpair_wren</td>
+<td>{d58}<br/>{d88}<br/>{w16}</td>
+</tr>
+<tr>
+<td>x14</td>
+<td>alu_to_reg</td>
+<td>{d41}<br/>{d14}<br/>{w37}</td>
+</tr>
+<tr>
+<td>x15</td>
+<td>oe_rbus_to_pbus</td>
+<td>{w6,d41}<br/>{w6,w4}<br/>{w6,d14}<br/>{w6,d38}<br/>{w6,w14}<br/>{w6,w21}</td>
+</tr>
+<tr>
+<td>x16</td>
+<td>alu_swap</td>
+<td>{x17,nIR3,IR4}</td>
+</tr>
+<tr>
+<td>x17</td>
+<td>cb_20_to_3f</td>
+<td>{d42,IR5}</td>
+</tr>
+<tr>
+<td>x18</td>
+<td>alu_xor</td>
+<td>{w3,IR3,nIR4,IR5}</td>
+</tr>
+<tr>
+<td>x19</td>
+<td>alu_logic_and</td>
+<td>{w10}<br/>{nIR3,nIR4,IR5,w3}</td>
+</tr>
+<tr>
+<td>x20</td>
+<td>rotate</td>
+<td>{d25}<br/>{d42,nIR5}</td>
+</tr>
+<tr>
+<td>x21</td>
+<td>alu_ccf_scf</td>
+<td>{d34,IR4,IR5}</td>
+</tr>
+<tr>
+<td>x22</td>
+<td>alu_daa</td>
+<td>{d34,nIR3,nIR4,IR5}</td>
+</tr>
+<tr>
+<td>x23</td>
+<td>alu_add_adc</td>
+<td>{w3,nIR4,nIR5}</td>
+</tr>
+<tr>
+<td>x24</td>
+<td>alu_sub_sbc</td>
+<td>{w3,IR4,nIR5}</td>
+</tr>
+<tr>
+<td>x25</td>
+<td>alu_b_complement</td>
+<td>{w12}<br/>{x24}<br/>{x26}<br/>{x27}</td>
+</tr>
+<tr>
+<td>x26</td>
+<td>alu_cpl</td>
+<td>{d34,IR3,nIR4,IR5}</td>
+</tr>
+<tr>
+<td>x27</td>
+<td>alu_cp</td>
+<td>{w3,IR3,IR4,IR5}</td>
+</tr>
+<tr>
+<td>x28</td>
+<td>wren_cf</td>
+<td>{d34,w38}<br/>{d42,w38}<br/>{w3,w38}<br/>{IR4,IR5,d58,w38}<br/>{x10,w38}</td>
+</tr>
+<tr>
+<td>x29</td>
+<td>wren_hf_nf_zf</td>
+<td>{w12,w38}<br/>{x28,w38}<br/>{w37,w38}</td>
+</tr>
+<tr>
+<td>x30</td>
+<td>op_add_sp_e_sx10</td>
+<td>{w9,nIR4}</td>
+</tr>
+<tr>
+<td>x31</td>
+<td>op_add_sp_e_s001</td>
+<td>{w23,nIR4}</td>
+</tr>
+<tr>
+<td>x32</td>
+<td>op_alu_misc_a</td>
+<td>{d34,nIR4}<br/>{d34,nIR5}</td>
+</tr>
+<tr>
+<td>x33</td>
+<td>op_dec8</td>
+<td>{IR0,w37}</td>
+</tr>
+<tr>
+<td>x34</td>
+<td>alu_reg_to_rbus</td>
+<td>{w3}<br/>{d41}<br/>{a3}</td>
+</tr>
+<tr>
+<td>x35</td>
+<td>oe_areg_to_rbus</td>
+<td>{x34,IR0,IR1,IR2}<br/>{w14}<br/>{w4}<br/>{w37,IR3,IR4,IR5}<br/>{d38,IR4,IR5}<br/>{x32}</td>
+</tr>
+<tr>
+<td>x36</td>
+<td>cb_wren_r</td>
+<td>{d42}<br/>{w10}<br/>{w24}</td>
+</tr>
+<tr>
+<td>x37</td>
+<td>oe_alu_to_pbus</td>
+<td>{w8}<br/>{w6,d42}<br/>{w6,w10}<br/>{w6,w37}<br/>{w6,w24}<br/>{x30}<br/>{x31}</td>
+</tr>
+<tr>
+<td>x38</td>
+<td>wren_a</td>
+<td>{x32,w38}<br/>{x36,IR0,IR1,IR2,w38}<br/>{w38,d8}<br/>{w38,w5}<br/>{w38,x14,IR3,IR4,IR5}<br/>{w38,d58,IR4,IR5}<br/>{w38,w3,nIR5}<br/>{w38,w3,nIR4}<br/>{w38,w3,nIR3}</td>
+</tr>
+<tr>
+<td>x39</td>
+<td>wren_h</td>
+<td>{IR5,w13,w38}<br/>{x36,nIR0,nIR1,IR2,w38}<br/>{w38,x64}<br/>{w38,w19}<br/>{w38,x14,nIR3,nIR4,IR5}<br/>{w38,x13,nIR4,IR5}</td>
+</tr>
+<tr>
+<td>x40</td>
+<td>wren_l</td>
+<td>{IR5,w13,w38}<br/>{x36,IR0,nIR1,IR2,w38}<br/>{w38,x66}<br/>{w38,w15}<br/>{w38,x14,IR3,nIR4,IR5}<br/>{w38,x13,nIR4,IR5}</td>
+</tr>
+<tr>
+<td>x41</td>
+<td>op_reti_s011</td>
+<td>{d83,IR0,IR4}</td>
+</tr>
+<tr>
+<td>x42</td>
+<td>oe_hlreg_to_idu</td>
+<td>{w13,IR5}<br/>{w16,nIR4,IR5}<br/>{w22}</td>
+</tr>
+<tr>
+<td>x43</td>
+<td>oe_hreg_to_rbus</td>
+<td>{x34,nIR0,nIR1,IR2}<br/>{IR5,nIR4,d38}<br/>{IR5,nIR4,w19}<br/>{IR5,nIR4,nIR3,w37}</td>
+</tr>
+<tr>
+<td>x44</td>
+<td>oe_lreg_to_rbus</td>
+<td>{x34,IR0,nIR1,IR2}<br/>{IR5,nIR4,w21}<br/>{IR5,nIR4,w15}<br/>{IR5,nIR4,IR3,w37}</td>
+</tr>
+<tr>
+<td>x45</td>
+<td>oe_dereg_to_idu</td>
+<td>{IR4,nIR5,w16}<br/>{IR4,nIR5,w13}</td>
+</tr>
+<tr>
+<td>x46</td>
+<td>oe_dreg_to_rbus</td>
+<td>{x34,nIR0,IR1,nIR2}<br/>{nIR5,IR4,d38}<br/>{nIR5,IR4,w19}<br/>{nIR5,IR4,nIR3,w37}</td>
+</tr>
+<tr>
+<td>x47</td>
+<td>oe_ereg_to_rbus</td>
+<td>{x34,IR0,IR1,nIR2}<br/>{nIR5,IR4,w21}<br/>{nIR5,IR4,w15}<br/>{nIR5,IR4,IR3,w37}</td>
+</tr>
+<tr>
+<td>x48</td>
+<td>wren_d</td>
+<td>{x36,nIR0,IR1,nIR2,w38}<br/>{IR4,nIR5,x13,w38}<br/>{IR4,nIR5,x14,nIR3,w38}</td>
+</tr>
+<tr>
+<td>x49</td>
+<td>wren_b</td>
+<td>{x36,nIR0,nIR1,nIR2,w38}<br/>{nIR4,nIR5,x13,w38}<br/>{nIR4,nIR5,x14,nIR3,w38}</td>
+</tr>
+<tr>
+<td>x50</td>
+<td>wren_e</td>
+<td>{x36,IR0,IR1,nIR2,w38}<br/>{IR4,nIR5,x13,w38}<br/>{IR4,nIR5,x14,IR3,w38}</td>
+</tr>
+<tr>
+<td>x51</td>
+<td>wren_c</td>
+<td>{x36,IR0,nIR1,nIR2,w38}<br/>{nIR4,nIR5,x13,w38}<br/>{nIR4,nIR5,x14,IR3,w38}</td>
+</tr>
+<tr>
+<td>x52</td>
+<td>oe_bcreg_to_idu</td>
+<td>{w29}<br/>{nIR4,nIR5,w13}<br/>{nIR4,nIR5,w16}</td>
+</tr>
+<tr>
+<td>x53</td>
+<td>oe_breg_to_rbus</td>
+<td>{x34,nIR0,nIR1,nIR2}<br/>{nIR4,nIR5,d38}<br/>{nIR4,nIR5,w19}<br/>{nIR4,nIR5,nIR3,w37}</td>
+</tr>
+<tr>
+<td>x54</td>
+<td>oe_creg_to_rbus</td>
+<td>{x34,IR0,nIR1,nIR2}<br/>{nIR4,nIR5,w21}<br/>{nIR4,nIR5,w15}<br/>{nIR4,nIR5,IR3,w37}</td>
+</tr>
+<tr>
+<td>x55</td>
+<td>oe_idu_to_uhlbus</td>
+<td>{w13}<br/>{w16}</td>
+</tr>
+<tr>
+<td>x56</td>
+<td>oe_wzreg_to_uhlbus</td>
+<td>{d58}<br/>{d88}</td>
+</tr>
+<tr>
+<td>x57</td>
+<td>oe_ubus_to_uhlbus</td>
+<td>{d42}<br/>{x64}<br/>{x66}<br/>{w5}<br/>{d8}<br/>{w15}<br/>{w19}<br/>{x14}<br/>{w10}<br/>{w24}<br/>{x32}<br/>{w3}</td>
+</tr>
+<tr>
+<td>x58</td>
+<td>oe_zreg_to_rbus</td>
+<td>{w8}<br/>{nIR3,IR4,IR5,w37}<br/>{w23}<br/>{d8}<br/>{w5}<br/>{d14}<br/>{x34,nIR0,IR1,IR2}</td>
+</tr>
+<tr>
+<td>x59</td>
+<td>wren_w</td>
+<td>{x30}<br/>{d60}<br/>{w18,SeqOut_2}<br/>{w8}</td>
+</tr>
+<tr>
+<td>x60</td>
+<td>wren_z</td>
+<td>{w8}<br/>{w17}<br/>{w39,w18}<br/>{d60}<br/>{x31}</td>
+</tr>
+<tr>
+<td>x61</td>
+<td>wren_sp</td>
+<td>{x62}<br/>{x63}</td>
+</tr>
+<tr>
+<td>x62</td>
+<td>oe_idu_to_spreg</td>
+<td>{w16,IR4,IR5}<br/>{w30}<br/>{d62}</td>
+</tr>
+<tr>
+<td>x63</td>
+<td>oe_wzreg_to_spreg</td>
+<td>{d88,IR4,IR5}<br/>{d64}</td>
+</tr>
+<tr>
+<td>x64</td>
+<td>op_ld_hl_sp_e_s010</td>
+<td>{w9,IR4}</td>
+</tr>
+<tr>
+<td>x65</td>
+<td>oe_spreg_to_idu</td>
+<td>{w30}<br/>{w16,IR4,IR5}</td>
+</tr>
+<tr>
+<td>x66</td>
+<td>op_ld_hl_sp_e_s001</td>
+<td>{w23,IR4}</td>
+</tr>
+<tr>
+<td>x67</td>
+<td>oe_idu_to_pcreg</td>
+<td>{d81}<br/>{w25}<br/>{w2}</td>
+</tr>
+<tr>
+<td>x68</td>
+<td>wren_pc</td>
+<td>{d93}<br/>{d92}<br/>{w36}<br/>{x67}</td>
+</tr>
+</tbody>
+</table>
+</div><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG CPU Core</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/sm83/decoder3.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

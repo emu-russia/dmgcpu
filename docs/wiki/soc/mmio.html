@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Memory Mapped I/O · DMG-CPU Research</title>
+<meta name="description" content="Contains most of the MMIO devices: Divider, Timer, DMA unit and interrupt controller (IF).">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/soc/Readme.html">DMG-CPU LR35902 SoC</a><span class="sep">/</span><span class="current">Memory Mapped I/O</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#module-description">Module Description</a></li><li class="toc-l2"><a href="#signals">Signals</a></li><li class="toc-l2"><a href="#register-decode-bus-behaviour-verified-issue-396">Register decode &amp;amp; bus behaviour (verified, issue #396)</a></li><li class="toc-l2"><a href="#netlist">Netlist</a></li><li class="toc-l2"><a href="#annotated-design">Annotated Design</a></li><li class="toc-l2"><a href="#schematics">Schematics</a></li><li class="toc-l2"><a href="#map">Map</a></li></ol></details>
+<article class="content"><h1 id="memory-mapped-io">Memory Mapped I/O</h1>
+<div class="callout callout-warning"><p><br />
+The section is under development and requires refinement, the schematics have not been verified in the simulator, but the study has gained "critical mass"</p>
+</div><p><img alt="locator_mmio" decoding="async" loading="lazy" src="../../imgstore/soc/locator_mmio.jpg" /></p>
+<p><img alt="mmio" decoding="async" loading="lazy" src="../../imgstore/soc/mmio.jpg" /></p>
+<h2 id="module-description">Module Description</h2>
+<p>Contains most of the MMIO devices: Divider, Timer, DMA unit and interrupt controller (IF).</p>
+<ul>
+<li>Address/data bus: controls the bidirectional <code>a[14:8]</code> <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> and <code>d[7:0]</code> buses, the bus drivers (<code>DRV_HIGH</code>/<code>DRV_LOW</code>) and the address latch (<code>addr_latch</code>)</li>
+<li>Interrupts: collects the interrupt sources (PPU, serial, joypad) and generates the CPU interrupts (<code>cpu_irq_trig</code>/<code>cpu_irq_ack</code>)</li>
+<li>DMA: DMA control signals (<code>dma_a</code>, <code>dma_run</code>, <code>dma_addr_ext</code>), including OAM DMA (<code>oam_dma_wr</code>, <code>vram_to_oam</code>)</li>
+<li>Clocks: generates the low-frequency oscillators (<code>lfo_512Hz</code>, <code>lfo_16384Hz</code>); uses <code>clk2</code>, <code>clk4</code>, <code>clk6</code>, <code>clk9</code></li>
+<li>Peripherals: PPU interface (<code>ppu_rd</code>, <code>ppu_wr</code>, <code>ppu_int_*</code>), serial register controls (<code>sc_*</code>, <code>sb_*</code>), global SoC read/write mode (<code>soc_wr</code>, <code>soc_rd</code>)</li>
+<li>System control: resets (<code>reset</code>, <code>n_reset2</code>), test modes (<code>test_1</code>, <code>test_2</code>, <code>n_test_reset</code>), data bus isolation (<code>n_*db_*</code>)</li>
+</ul>
+<h2 id="signals">Signals</h2>
+<p><img alt="mmio_ports" decoding="async" loading="lazy" src="../../imgstore/soc/mmio_ports.png" /></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal Name</th>
+<th>Direction</th>
+<th>From / Where To</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FF60_D1</td>
+<td>Input</td>
+<td>From APU</td>
+<td>Value of debug register TEST_PAD.1. DIV operating mode: 0 - DIV is clocked with a 16384 Hz clock (Default); 1 - DIV is clocked with a 1 MHz clock (via <code>clk9</code>)</td>
+</tr>
+<tr>
+<td>clk_ena</td>
+<td>Input</td>
+<td>From Core</td>
+<td>Clock enable</td>
+</tr>
+<tr>
+<td>clk2</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td></td>
+</tr>
+<tr>
+<td>clk4</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td></td>
+</tr>
+<tr>
+<td>clk6</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td></td>
+</tr>
+<tr>
+<td>clk6_delay</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>Delayed <code>clk6</code> clock signal</td>
+</tr>
+<tr>
+<td>clk9</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Used for DIV and TIMA</td>
+</tr>
+<tr>
+<td>[4:0] cpu_irq_ack</td>
+<td>Input</td>
+<td>From Core</td>
+<td>SM83 Core interrupt acknowledgments</td>
+</tr>
+<tr>
+<td>cpu_m1</td>
+<td>Input</td>
+<td>From Core</td>
+<td>SM83 Core M1 cycle indicator</td>
+</tr>
+<tr>
+<td>cpu_rd</td>
+<td>Input</td>
+<td>From Core</td>
+<td>SM83 Core read signal</td>
+</tr>
+<tr>
+<td>cpu_wr</td>
+<td>Input</td>
+<td>From Core</td>
+<td>SM83 Core write signal</td>
+</tr>
+<tr>
+<td>cpu_wr_sync</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Synchronized SM83 Core write</td>
+</tr>
+<tr>
+<td>ffxx</td>
+<td>Input</td>
+<td>From Arb</td>
+<td>FFxx register area indicator</td>
+</tr>
+<tr>
+<td>ff46</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>DMA control register ($FF46) operation</td>
+</tr>
+<tr>
+<td>int_jp</td>
+<td>Input</td>
+<td>From APU</td>
+<td>Joypad interrupt</td>
+</tr>
+<tr>
+<td>int_serial</td>
+<td>Input</td>
+<td>From Ser</td>
+<td>Serial interrupt</td>
+</tr>
+<tr>
+<td>[14:8] n_INPUT_a</td>
+<td>Input</td>
+<td>From Pads</td>
+<td>External Address bus input (inverted value)</td>
+</tr>
+<tr>
+<td>n_INPUT_nrd</td>
+<td>Input</td>
+<td>From Pad</td>
+<td>/RD pad input (inverted value)</td>
+</tr>
+<tr>
+<td>n_INPUT_nwr</td>
+<td>Input</td>
+<td>From Pad</td>
+<td>/WR pad input (inverted value)</td>
+</tr>
+<tr>
+<td>n_ppu_hard_reset</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>PPU hard reset</td>
+</tr>
+<tr>
+<td>n_reset2</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Global reset signal (SoC internal)</td>
+</tr>
+<tr>
+<td>n_t1_frompad</td>
+<td>Input</td>
+<td>From Pad</td>
+<td>Test1 Pad input signal (inverted value)</td>
+</tr>
+<tr>
+<td>n_t2_frompad</td>
+<td>Input</td>
+<td>From Pad</td>
+<td>Test2 Pad input signal (inverted value)</td>
+</tr>
+<tr>
+<td>non_vram_mreq</td>
+<td>Input</td>
+<td>From Arb</td>
+<td>Non-VRAM memory request</td>
+</tr>
+<tr>
+<td>osc_ena</td>
+<td>Input</td>
+<td>From Core</td>
+<td>Crystal oscillator enable. When CPU drives this low, the crystal oscillator gets disabled to save power. This happens during STOP mode.</td>
+</tr>
+<tr>
+<td>ppu_clk</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>PPU clock</td>
+</tr>
+<tr>
+<td>ppu_int_stat</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>PPU status interrupt</td>
+</tr>
+<tr>
+<td>ppu_int_vbl</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>PPU VBLANK interrupt</td>
+</tr>
+<tr>
+<td>ppu_rd</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>PPU read signal</td>
+</tr>
+<tr>
+<td>ppu_wr</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>PPU write signal</td>
+</tr>
+<tr>
+<td>reset</td>
+<td>Input</td>
+<td>From Pad</td>
+<td>System reset signal (external)</td>
+</tr>
+<tr>
+<td>CONST0</td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Constant 0 signal <sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td>[14:8] DRV_LOW_a</td>
+<td>Output</td>
+<td>To Pads</td>
+<td>Drive low control for external address bus</td>
+</tr>
+<tr>
+<td>DRV_LOW_nrd</td>
+<td>Output</td>
+<td>To Pad</td>
+<td>/RD pad drive low control</td>
+</tr>
+<tr>
+<td>DRV_LOW_nwr</td>
+<td>Output</td>
+<td>To Pad</td>
+<td>/WR pad drive low control</td>
+</tr>
+<tr>
+<td>[14:0] a</td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Internal Address bus. For bits 14...8 the arbitration is applied <sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>. Bits 7...0 are read only</td>
+</tr>
+<tr>
+<td>addr_latch</td>
+<td>Output</td>
+<td>To APU</td>
+<td>Address latch signal</td>
+</tr>
+<tr>
+<td>[4:0] cpu_irq_trig</td>
+<td>Output</td>
+<td>To Core</td>
+<td>SM83 Core interrupt triggers</td>
+</tr>
+<tr>
+<td>cpu_vram_oam_rd</td>
+<td>Output</td>
+<td>To Arb, PPU2</td>
+<td>CPU VRAM/OAM read strobe</td>
+</tr>
+<tr>
+<td>[7:0] d</td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Internal Data bus</td>
+</tr>
+<tr>
+<td>[12:0] dma_a</td>
+<td>Output</td>
+<td>To PPU2, APU</td>
+<td>DMA address bus (bits 12:0; APU receives 7:0)</td>
+</tr>
+<tr>
+<td>dma_a_15</td>
+<td>Output</td>
+<td>To Arb</td>
+<td>DMA address bit 15</td>
+</tr>
+<tr>
+<td>dma_addr_ext</td>
+<td>Output</td>
+<td>To Arb, APU, PPU2</td>
+<td>DMA address for external memory</td>
+</tr>
+<tr>
+<td>dma_run</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>DMA run control</td>
+</tr>
+<tr>
+<td>lfo_512Hz</td>
+<td>Output</td>
+<td>To APU</td>
+<td>512Hz low-frequency oscillator</td>
+</tr>
+<tr>
+<td>lfo_16384Hz</td>
+<td>Output</td>
+<td>To Ser</td>
+<td>16384Hz oscillator</td>
+</tr>
+<tr>
+<td>[14:8] n_DRV_HIGH_a</td>
+<td>Output</td>
+<td>To Pads</td>
+<td>Drive high control for external address bus</td>
+</tr>
+<tr>
+<td>n_DRV_HIGH_nrd</td>
+<td>Output</td>
+<td>To Pad</td>
+<td>/RD pad drive high control</td>
+</tr>
+<tr>
+<td>n_DRV_HIGH_nwr</td>
+<td>Output</td>
+<td>To Pad</td>
+<td>/WR pad drive high control</td>
+</tr>
+<tr>
+<td>n_cpu_m1</td>
+<td>Output</td>
+<td>To Pad</td>
+<td>Inverted CPU M1 signal</td>
+</tr>
+<tr>
+<td>n_dblatch_to_intdb</td>
+<td>Output</td>
+<td>To Arb</td>
+<td>DB latch to internal DB control</td>
+</tr>
+<tr>
+<td>n_dma_phi</td>
+<td>Output</td>
+<td>To PPU1, PPU2</td>
+<td>DMA clock</td>
+</tr>
+<tr>
+<td>n_ena_pu_db</td>
+<td>Output</td>
+<td>To Pads, Arb</td>
+<td>0: External Data bus pull-up enable</td>
+</tr>
+<tr>
+<td>n_ext_addr_en</td>
+<td>Output</td>
+<td>To APU</td>
+<td>External address enable (active low, TEST1 mode)</td>
+</tr>
+<tr>
+<td>n_extdb_to_intdb</td>
+<td>Output</td>
+<td>To Arb</td>
+<td>External to internal DB control</td>
+</tr>
+<tr>
+<td>n_intdb_to_extdb</td>
+<td>Output</td>
+<td>To Arb</td>
+<td>Internal to external DB control</td>
+</tr>
+<tr>
+<td>n_sb_write</td>
+<td>Output</td>
+<td>To Ser</td>
+<td>0: SB register write</td>
+</tr>
+<tr>
+<td>n_test_reset</td>
+<td>Output</td>
+<td>To ClkGen</td>
+<td>Test reset signal</td>
+</tr>
+<tr>
+<td>oam_dma_wr</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>OAM DMA write control</td>
+</tr>
+<tr>
+<td>osc_stable</td>
+<td>Output</td>
+<td>To ClkGen</td>
+<td>Oscillator stable signal</td>
+</tr>
+<tr>
+<td>sb_read</td>
+<td>Output</td>
+<td>To Ser</td>
+<td>SB register read</td>
+</tr>
+<tr>
+<td>sc_read</td>
+<td>Output</td>
+<td>To Ser</td>
+<td>SC register read</td>
+</tr>
+<tr>
+<td>sc_write</td>
+<td>Output</td>
+<td>To Ser</td>
+<td>SC register write</td>
+</tr>
+<tr>
+<td>soc_rd</td>
+<td>Output</td>
+<td>Global</td>
+<td>SoC read memory operation (@msinger: <code>CPU_RD</code>)</td>
+</tr>
+<tr>
+<td>soc_wr</td>
+<td>Output</td>
+<td>Global</td>
+<td>SoC write memory operation (@msinger: <code>CPU_WR</code>)</td>
+</tr>
+<tr>
+<td>test_1</td>
+<td>Output</td>
+<td>Global</td>
+<td>Test1 mode - disable all internal CPU A/D bus drivers (@msinger: <code>T1_nT2</code>)</td>
+</tr>
+<tr>
+<td>test_2</td>
+<td>Output</td>
+<td>Global</td>
+<td>Test2 mode - disable the internal Boot ROM (@msinger: <code>nT1_T2</code>)</td>
+</tr>
+<tr>
+<td>vram_to_oam</td>
+<td>Output</td>
+<td>To Arb, PPU1, PPU2</td>
+<td>VRAM to OAM transfer control</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="register-decode-bus-behaviour-verified-issue-396">Register decode &amp; bus behaviour (verified, issue #396)</h2>
+<p>Verified with the real MMIO netlist in <code>HDL/soc/icarus/soc</code> (<code>tb_mmio</code>,
+all PASS; bus-alias-merged netlist <code>mmio_merged.v</code>, see the testbench
+Readme for the conventions).</p>
+<h3 id="write-decode-map-ffxx-window-w100-ff00-03-window-w146">Write decode map (FFxx window = <code>w100</code>, FF00-03 window = <code>w146</code>)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Decode clock</th>
+<th>Address</th>
+<th>Register</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>w148</code> (nand4: a1·a0·soc_wr·w100)</td>
+<td>$FF07</td>
+<td>TAC</td>
+</tr>
+<tr>
+<td><code>w223</code> (nand4: a1·~a0·soc_wr·w100)</td>
+<td>$FF06</td>
+<td>TMA</td>
+</tr>
+<tr>
+<td><code>w99</code> (FF05 write, a0·~a1) + mux stage</td>
+<td>$FF05</td>
+<td>TIMA (load)</td>
+</tr>
+<tr>
+<td>any write to $FF04 (w100·~a1·~a0)</td>
+<td>$FF04</td>
+<td>DIV (reset)</td>
+</tr>
+</tbody>
+</table>
+</div><p>The decode clocks are low during the write window (<code>soc_wr</code> follows
+ClkGen's <code>cpu_wr_sync</code>, i.e. high while the CPU writes) and the register
+dffs capture on the rising edge produced when the window closes
+(<code>cpu_wr_sync</code> falls - inside the <code>clk2=1</code> non-precharge phase). The CPU
+must hold the data ~6 ns past that edge (modelled in the testbench).</p>
+<h3 id="read-decode-map">Read decode map</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Read enable</th>
+<th>Address</th>
+<th>Driven from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>w127</code> (w100·a1·a0·soc_rd)</td>
+<td>$FF07</td>
+<td>TAC dffs (read value = 0xF8|TAC)</td>
+</tr>
+<tr>
+<td><code>w89</code> (w100·a1·~a0·soc_rd)</td>
+<td>$FF06</td>
+<td>TMA dffs</td>
+</tr>
+<tr>
+<td><code>w33</code> (w100·~a1·a0·soc_rd)</td>
+<td>$FF05</td>
+<td>TIMA value</td>
+</tr>
+<tr>
+<td><code>w138</code> (w100·~a1·~a0·soc_rd)</td>
+<td>$FF04</td>
+<td>DIV counter</td>
+</tr>
+<tr>
+<td><code>w145</code>/<code>w144</code> (w146 window)</td>
+<td>$FF02/$FF01</td>
+<td>SC / SB read strobes to Ser</td>
+</tr>
+</tbody>
+</table>
+</div><p><code>soc_rd</code> follows <code>cpu_rd</code> in normal mode; reads must be sampled while
+<code>clk2=1</code> (during <code>clk2=0</code> the internal precharge drivers pull <code>d</code> high
+and a sampled read shows <code>x</code> on zero bits).</p>
+<h3 id="if-ff0f-semantics">IF ($FF0F) semantics</h3>
+<ul>
+<li>
+<p>The flags are set asynchronously by their sources: <code>ppu_int_vbl</code> -&gt;
+  bit0 (VBL), <code>ppu_int_stat</code> -&gt; bit1 (STAT), timer overflow -&gt; bit2,
+  <code>int_serial</code> -&gt; bit3, <code>int_jp</code> -&gt; bit4; they appear on <code>cpu_irq_trig</code>.</p>
+</li>
+<li>
+<p>A $FF0F write <strong>sets</strong> the written bits (it does not clear them).</p>
+</li>
+<li>Clearing happens through the CPU interrupt acknowledge
+  (<code>cpu_irq_ack</code>, per-bit) - verified in <code>tb_mmio</code>.</li>
+</ul>
+<h3 id="oscillators-div-clock-source">Oscillators (DIV clock source)</h3>
+<ul>
+<li>
+<p><code>lfo_16384Hz</code> = clk9 / 64: six divide-by-2 dff stages (<code>g131/g132/
+  g130/g122/g129/g123</code>, outputs <code>w352/w37/w216/w141/w193/w217</code>);
+  measured 64 lfo edges per 4096 clk9 edges (<code>tb_mmio</code>). At the real
+  clk9 (1.048 MHz) this is exactly 16384 Hz.</p>
+</li>
+<li>
+<p><code>lfo_512Hz</code> = clk9 / 2048 (11 divider stages): measured 2 edges per
+  4096 clk9 edges (<code>tb_mmio</code>, PASS).</p>
+</li>
+<li>
+<p><code>FF60_D1</code> (TEST_PAD.1) muxes the DIV/TIMA clock source between clk9
+  (fast mode) and the internal 16384 Hz chain (<code>g265</code>).</p>
+</li>
+<li>
+<p>writing $FF04 resets the divider (any data); read-back of DIV shows
+  bus-contention <code>x</code> on two bits under the plain bus model (const-1
+  keeper cells <code>g234/g235</code> vs the read-back drivers) - needs the
+  weak-bus model variant like the PPU suite.</p>
+</li>
+</ul>
+<h3 id="timer-timatmatac-verified-behaviour-issue-396">Timer (TIMA/TMA/TAC) verified behaviour (issue #396)</h3>
+<ul>
+<li>
+<p>TIMA is the loadable 8-bit counter (the <code>dmg_cnt</code> chain <code>g167..g174</code>
+  with load gated by <code>clk6</code>/<code>w99</code>); writing $FF05 loads it, reading
+  $FF05 returns it.</p>
+</li>
+<li>
+<p>TAC write decode <code>w148</code> ($FF07) stores <code>{1,sel[1:0]}</code>-style control;
+  measured tick rates per clock select (tb_mmio, M-cycle = 256 ns in
+  sim):
+  | select | ticks per 16384 M-cycles | inferred source |
+  |---|---|---|
+  | 00 | 64 (~4096 Hz at real speed) | matches the DMG 4096 Hz source |
+  | 01 | 1 | slow internal tap |
+  | 10/11 | &lt; 1 in the window | slow taps (need longer windows) |</p>
+</li>
+<li><strong>Overflow</strong>: when TIMA passes $FF the counter reloads from TMA and
+  the timer IRQ is set - IF bit2 (<code>cpu_irq_trig[2]</code>), cleared by the CPU
+  IRQ acknowledge (tb_mmio PASS: TIMA 0xFE + TMA 0x3F + TAC 0x04 -&gt;
+  reloaded 0x3F and IF2 pulses).</li>
+</ul>
+<h2 id="netlist">Netlist</h2>
+<p><img alt="mmio_netlist" decoding="async" loading="lazy" src="../../imgstore/soc/mmio_netlist.png" /></p>
+<h2 id="annotated-design">Annotated Design</h2>
+<p><img alt="mmio_annotated" decoding="async" loading="lazy" src="../../imgstore/hdl/soc/design/mmio_annotated.png" /></p>
+<h2 id="schematics">Schematics</h2>
+<ul>
+<li>DMA LowAddr</li>
+<li>DMA HiAddr</li>
+<li>Ext Addr -&gt; Int Addr</li>
+<li>Int Addr -&gt; Ext Addr</li>
+<li>FF0F IF</li>
+<li>Int DB Precharge (2)</li>
+<li>DMA Unit</li>
+<li>SysDecode (parts)</li>
+<li>M1</li>
+<li>DIV</li>
+<li>FF06 TMA</li>
+<li>FF07 TAC</li>
+<li>FF05 TIMA</li>
+<li>OSC Stable</li>
+<li>Test Mode</li>
+<li>R/W Mode</li>
+<li>DB Control</li>
+<li>Address Latch Enable</li>
+</ul>
+<h2 id="map">Map</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Row</th>
+<th>Cells</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>not, not, nor, nand, nor, nand, nor, nand, bufif0, bufif0, bufif0, bufif0, latch, latch, latch, latch, latch, not, aon, not, aon, not, nand3, and3, not, not, not, nand, dffsr, not, not, not, not, dffsr, not, not2, nand3, nand, dffr, nand, not, not, nor, not, dffr, not, nor, nor_latch, not, and</td>
+</tr>
+<tr>
+<td>2</td>
+<td>nor, nand, not, not, nand, nor, not, bufif0, not, nor, dffr, not, nand3, or, mux, mux, dffr, mux, mux, not, mux, nor, not, not, or, latch, or, latch, nand3, nor3, latchnq_comp, nand3, and3, nand, dffr, dffr, dffr, dffr, nand, and, not2, nand, dffr, and</td>
+</tr>
+<tr>
+<td>3</td>
+<td>not, bufif0, nor, dffr, nor, cnt, latch, muxi, notif1, dffsr, or, dffr, notif1, latch, notif1, latch, notif1, latchnq_comp, or, latchnq_comp, dffr, dffr, not, dffr, nand6, dffr, latchnq_comp, nor, not</td>
+</tr>
+<tr>
+<td>4</td>
+<td>not, nand, nor, cnt, cnt, cnt, mux, nor, nor, nor, notif1, nand3, and3, muxi, or, notif1, dffr, notif1, notif1, not, latch, latchnq_comp, notif1, notif1, latchnq_comp, const, latchnq_comp, latch, mux, dffr, dffr, latchnq_comp, not, notif1, not, and</td>
+</tr>
+<tr>
+<td>5</td>
+<td>nor, nor, cnt, cnt, nor, cnt, notif1, muxi, cnt, or, notif1, muxi, muxi, notif1, notif1, not, bufif0, notif1, not, nor, nand, mux, not, notif1, not, notif1, notif1, notif1, notif1, notif1, notif1, notif1, notif1, notif1, notif1, notif1, notif1, notif1, and3, nand4, nand4</td>
+</tr>
+<tr>
+<td>6</td>
+<td>not, muxi, notif1, muxi, notif1, notif1, dffr, muxi, notif1, notif1, notif1, or, notif1, notif1, dffr, notif1, dffr, notif1, dffr, dffr, or, nor, notif1, dffr, dffr, nand4, dffr, notif1, and4, not, not, and3, and4, nor4, nor5</td>
+</tr>
+<tr>
+<td>7</td>
+<td>or3, nor_latch, not, dffr, dffr, dffr, and3, nand3, dffr, notif1, dffr, not3, nand4, not3, and4, nand4, and4, nor, and4, not, and4, not, and3, nand3, muxi, dffr, muxi, dffr, notif1, dffr, dffr, notif1, notif1, notif1</td>
+</tr>
+<tr>
+<td>8</td>
+<td>and, dffr, dffr, dffr, dffsr, nor, not, not, and, nand3, not, and, dffr, not, muxi, muxi, or, not, nor3, nand, nand, nor, nand4, and4, nand4, and4, not, muxi, dffsr, mux, dffr, not, not, dffr, dffr, not2, not, not, not, notif1</td>
+</tr>
+</tbody>
+</table>
+</div><div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>The chip is topologically arranged so that the address bus arbitration is divided into three parts: in <a href="arb.html">arb</a>, in <a href="mmio.html">mmio</a>, and in <a href="apu.html">apu</a>, to equalize wire lengths.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>The constant 0 is globally scattered throughout the chip. Each large module with cells has a <code>const</code> cell whose output 0 is globally connected between all modules (so the input is marked as Bidir).&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG-CPU LR35902 SoC</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/soc/mmio.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

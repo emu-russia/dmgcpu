@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DMG-CPU Research</title>
+<meta name="description" content="Die-level reverse engineering of the Nintendo DMG-CPU SoC (Game Boy): wiki, die photographs, netlists and die-perfect Verilog with Icarus regression suites.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body class="landing">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html">
+      <img class="brand-mark" src="assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="wiki/soc/Readme.html">SoC</a><a href="wiki/sm83/Readme.html">SM83</a><a href="wiki/pcb.html">PCB</a><a href="wiki/methods.html">Methods</a><a href="HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main">
+<section class="wrap hero">
+  <div class="hero-text">
+    <p class="hero-eyebrow">Die-level reverse engineering</p>
+    <h1>DMG-CPU <span class="accent">Research</span></h1>
+    <p class="hero-lede">The DMG-CPU is the system-on-a-chip of the original Nintendo Game Boy. This project rebuilds it from silicon: modules are traced from die photographs with the Deroute utility into netlists and die-perfect Verilog — and the real netlists are exercised by Icarus regression suites for the SM83 core, PPU, APU and the small clock/arbiter/MMIO/serial domain.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#soc">Explore the SoC</a>
+      <a class="btn btn-ghost" href="wiki/soc/Readme.html">SoC overview</a>
+      <a class="btn btn-ghost" href="HDL/soc/icarus/Readme.html">Testbenches</a>
+    </div>
+    <ul class="hero-facts">
+      <li><span class="k">die-perfect</span>&nbsp;Verilog netlist</li>
+      <li><span class="k">Icarus</span>&nbsp;regression suites on the real netlist</li>
+      <li><span class="k">open</span>&nbsp;research, sources in the repo</li>
+    </ul>
+  </div>
+  <figure class="hero-media">
+    <img src="imgstore/Nintendo_DMG_CPU_1.jpg"
+         alt="Photograph of the Nintendo DMG-CPU die"
+         width="1600" height="1200" loading="eager">
+    <figcaption>DMG-CPU A — photo by Christian Bassow
+      (<a href="https://commons.wikimedia.org/wiki/File:Nintendo_DMG_CPU_1.jpg"
+      target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>)</figcaption>
+  </figure>
+</section>
+<section class="wrap landing-sections">
+<section class="tile-group" id="soc">
+  <div class="gh"><h2><span class="g">§1</span> The SoC</h2>
+  <span class="g-sub">functional blocks of the LR35902 system-on-a-chip</span></div>
+  <div class="tile-grid"><a class="tile" href="wiki/soc/Readme.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.01</span><h3>SoC overview</h3></span>
+  <p class="t-sub">Block diagram, architecture notes and the full internal bus list of the chip.</p>
+</a><a class="tile" href="wiki/soc/pads.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.02</span><h3>Bonding pads &amp; I/O terminals</h3></span>
+  <p class="t-sub">Pinout and pad circuits of the DMG-CPU.</p>
+</a><a class="tile" href="wiki/soc/cells.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.03</span><h3>Cells library</h3></span>
+  <p class="t-sub">The standard cells the SoC is built from.</p>
+</a><a class="tile" href="wiki/soc/clkgen.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.04</span><h3>Clock generator</h3></span>
+  <p class="t-sub">The bushy clock tree that drives the whole chip.</p>
+</a><a class="tile" href="wiki/soc/ser.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.05</span><h3>Serial link</h3></span>
+  <p class="t-sub">Serial I/O (link port) circuitry.</p>
+</a><a class="tile" href="wiki/soc/arb.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.06</span><h3>Bus arbiter</h3></span>
+  <p class="t-sub">Arbitration between internal and external buses.</p>
+</a><a class="tile" href="wiki/soc/mmio.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.07</span><h3>MMIO &amp; interrupts</h3></span>
+  <p class="t-sub">Divider, timer, DMA and the interrupt controller (IF).</p>
+</a><a class="tile" href="wiki/soc/hram.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.08</span><h3>HRAM</h3></span>
+  <p class="t-sub">The internal high RAM macro.</p>
+</a><a class="tile" href="wiki/soc/bootrom.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.09</span><h3>Boot ROM</h3></span>
+  <p class="t-sub">The mask-ROM holding the bootstrap program.</p>
+</a><a class="tile" href="wiki/soc/oam.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.10</span><h3>OAM</h3></span>
+  <p class="t-sub">The object-attribute memory macro.</p>
+</a><a class="tile" href="wiki/soc/ppu.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.11</span><h3>PPU</h3></span>
+  <p class="t-sub">Picture processing unit index; PPU1 + PPU2 split and links.</p>
+</a><a class="tile" href="wiki/soc/ppu1.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.12</span><h3>PPU1 — BG/WIN</h3></span>
+  <p class="t-sub">Background &amp; window pipeline, H/V counters, LCD interface.</p>
+</a><a class="tile" href="wiki/soc/ppu2.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.13</span><h3>PPU2 — sprites</h3></span>
+  <p class="t-sub">Object / OAM side of the pipeline.</p>
+</a><a class="tile" href="wiki/soc/apu.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.14</span><h3>APU — sound</h3></span>
+  <p class="t-sub">Four-channel sound generator (chips-era synthesis).</p>
+</a><a class="tile" href="wiki/soc/waveram.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.15</span><h3>Wave RAM</h3></span>
+  <p class="t-sub">The channel-3 sample RAM macro.</p>
+</a><a class="tile" href="wiki/soc/dac.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.16</span><h3>Sound DAC</h3></span>
+  <p class="t-sub">The audio output digital-to-analogue stage.</p>
+</a><a class="tile" href="wiki/soc/sch/Readme.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.17</span><h3>Schematics</h3></span>
+  <p class="t-sub">Module circuits compared against @msinger&#x27;s dmg-schematics.</p>
+</a><a class="tile" href="wiki/soc/map_msinger.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">1.18</span><h3>@msinger&#x27;s map</h3></span>
+  <p class="t-sub">Cell-by-cell rows of the Rev B die map.</p>
+</a></div>
+</section><section class="tile-group" id="sm83">
+  <div class="gh"><h2><span class="g">§2</span> SM83 core</h2>
+  <span class="g-sub">the Game Boy CPU: topology, buses, ALU, decoders, sequencer</span></div>
+  <div class="tile-grid"><a class="tile" href="wiki/sm83/Readme.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.01</span><h3>Core overview</h3></span>
+  <p class="t-sub">Component map of the core; where every block sits on the die.</p>
+</a><a class="tile" href="wiki/sm83/topo.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.02</span><h3>Topology</h3></span>
+  <p class="t-sub">Metal/poly/diffusion layers and how the core is organised.</p>
+</a><a class="tile" href="wiki/sm83/buses.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.03</span><h3>Buses</h3></span>
+  <p class="t-sub">Internal data movement: rbus, wbus, idu, hl bus.</p>
+</a><a class="tile" href="wiki/sm83/rails.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.04</span><h3>Rails &amp; precharge</h3></span>
+  <p class="t-sub">Power rails and the old-school bus-precharge trick.</p>
+</a><a class="tile" href="wiki/sm83/clk.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.05</span><h3>Clocks</h3></span>
+  <p class="t-sub">The clock set the core consumes.</p>
+</a><a class="tile" href="wiki/sm83/ports.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.06</span><h3>Ports</h3></span>
+  <p class="t-sub">Core I/O against the rest of the SoC.</p>
+</a><a class="tile" href="wiki/sm83/regs.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.07</span><h3>Register file</h3></span>
+  <p class="t-sub">Registers, SP, PC and the incrementer/decrementer.</p>
+</a><a class="tile" href="wiki/sm83/alu.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.08</span><h3>ALU &amp; flags</h3></span>
+  <p class="t-sub">The arithmetic/logic unit and the Z/N/H/C flag block.</p>
+</a><a class="tile" href="wiki/sm83/datamux.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.09</span><h3>Data mux</h3></span>
+  <p class="t-sub">Bus multiplexing and the datalatch.</p>
+</a><a class="tile" href="wiki/sm83/idu.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.10</span><h3>IDU</h3></span>
+  <p class="t-sub">The instruction decoder units.</p>
+</a><a class="tile" href="wiki/sm83/seq.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.11</span><h3>Sequencer</h3></span>
+  <p class="t-sub">The M/T-cycle state machine that drives everything.</p>
+</a><a class="tile" href="wiki/sm83/decoder1.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.12</span><h3>Decoder 1</h3></span>
+  <p class="t-sub">First-level instruction decoder output table.</p>
+</a><a class="tile" href="wiki/sm83/decoder2.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.13</span><h3>Decoder 2</h3></span>
+  <p class="t-sub">Second-level decoder output table.</p>
+</a><a class="tile" href="wiki/sm83/decoder3.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.14</span><h3>Decoder 3</h3></span>
+  <p class="t-sub">Third-level decoder: the w/x signal law.</p>
+</a><a class="tile" href="wiki/sm83/small_thingy.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.15</span><h3>The Thingy</h3></span>
+  <p class="t-sub">The small but important circuit next to the decoder.</p>
+</a><a class="tile" href="wiki/sm83/irq.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.16</span><h3>Interrupts</h3></span>
+  <p class="t-sub">IRQ control logic of the core.</p>
+</a><a class="tile" href="wiki/sm83/investigation.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.17</span><h3>Investigations</h3></span>
+  <p class="t-sub">Historical debug notes from bringing up the SM83 HDL.</p>
+</a><a class="tile" href="wiki/sm83/sm83.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">2.18</span><h3>SM83 reference</h3></span>
+  <p class="t-sub">Opcode tables and external references.</p>
+</a></div>
+</section><section class="tile-group" id="verilog">
+  <div class="gh"><h2><span class="g">§3</span> Verilog &amp; regression suites</h2>
+  <span class="g-sub">die-perfect HDL driven by Icarus testbenches</span></div>
+  <div class="tile-grid"><a class="tile" href="HDL/sm83/Readme.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">3.01</span><h3>SM83 core HDL</h3></span>
+  <p class="t-sub">All core modules as Verilog.</p>
+</a><a class="tile" href="HDL/soc/icarus/Readme.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">3.02</span><h3>Icarus suites &amp; tooling</h3></span>
+  <p class="t-sub">Regression suites and the GTKWave-based workflow.</p>
+</a><a class="tile" href="HDL/sm83/Icarus/Readme.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">3.03</span><h3>SM83 suite</h3></span>
+  <p class="t-sub">Icarus regression on the real SM83 netlist (issue #400).</p>
+</a><a class="tile" href="HDL/sm83/Icarus/waves.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">3.04</span><h3>SM83 suite — waves</h3></span>
+  <p class="t-sub">Waveform documentation of every suite test.</p>
+</a><a class="tile" href="HDL/sm83/Icarus/STATUS.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">3.05</span><h3>SM83 suite — status</h3></span>
+  <p class="t-sub">Per-test status and measured timing facts.</p>
+</a><a class="tile" href="HDL/soc/icarus/soc/Readme.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">3.06</span><h3>Small-domain suite</h3></span>
+  <p class="t-sub">ClkGen / Arb / MMIO / Ser testbench (issue #396).</p>
+</a><a class="tile" href="HDL/soc/icarus/soc/waves.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">3.07</span><h3>Small-domain — waves</h3></span>
+  <p class="t-sub">Waveform documentation: mmio, ser, hram, arb, clkgen, div.</p>
+</a><a class="tile" href="HDL/soc/icarus/ppu/Readme.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">3.08</span><h3>PPU suite</h3></span>
+  <p class="t-sub">PPU1/PPU2 testbench (issue #390).</p>
+</a><a class="tile" href="HDL/soc/icarus/ppu/waves.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">3.09</span><h3>PPU suite — waves</h3></span>
+  <p class="t-sub">Waveform documentation: regs, frame, scroll, window, sprites.</p>
+</a><a class="tile" href="HDL/soc/icarus/apu/Readme.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">3.10</span><h3>APU suite</h3></span>
+  <p class="t-sub">APU testbench (issue #398).</p>
+</a><a class="tile" href="HDL/soc/icarus/apu/waves.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">3.11</span><h3>APU suite — waves</h3></span>
+  <p class="t-sub">Waveform documentation: channels 1–4, mix, regs.</p>
+</a><a class="tile" href="HDL/soc/icarus/gtkwave-skill.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">3.12</span><h3>GTKWave skill</h3></span>
+  <p class="t-sub">How the waves are rendered (vcd2png + .gtkw).</p>
+</a></div>
+</section><section class="tile-group" id="reference">
+  <div class="gh"><h2><span class="g">§4</span> References &amp; process</h2>
+  <span class="g-sub">how the research is done and where the data lives</span></div>
+  <div class="tile-grid"><a class="tile" href="wiki/pcb.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">4.01</span><h3>Reference PCB</h3></span>
+  <p class="t-sub">DMG-CPU-06 board reconstruction used for verification.</p>
+</a><a class="tile" href="wiki/methods.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">4.02</span><h3>Research methods</h3></span>
+  <p class="t-sub">ACID-FREE chip opening and imaging workflow.</p>
+</a><a class="tile" href="wiki/datasets.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">4.03</span><h3>Datasets</h3></span>
+  <p class="t-sub">Public die photographs per chip revision.</p>
+</a><a class="tile" href="netlist/Readme.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">4.04</span><h3>Netlists</h3></span>
+  <p class="t-sub">Recovered netlists and the Deroute workflow.</p>
+</a><a class="tile" href="netlist/sm83/Readme.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">4.05</span><h3>SM83 netlist</h3></span>
+  <p class="t-sub">Core netlist sources.</p>
+</a><a class="tile" href="netlist/soc/Readme.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">4.06</span><h3>SoC netlist</h3></span>
+  <p class="t-sub">Rest-of-chip netlist sources.</p>
+</a><a class="tile" href="logisim/Readme.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">4.07</span><h3>Logisim models</h3></span>
+  <p class="t-sub">Interactive models of the most intricate circuits.</p>
+</a><a class="tile" href="imgstore/topo/Readme.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">4.08</span><h3>Layer imagery</h3></span>
+  <p class="t-sub">SM83 core topography pictures: metal, poly, diffusion, vias.</p>
+</a><a class="tile" href="wiki/soc/sch/bank.html">
+  <span class="t-go" aria-hidden="true">→</span>
+  <span class="t-head"><span class="t-idx">4.09</span><h3>BANK register</h3></span>
+  <p class="t-sub">The $FF50 BANK register circuit.</p>
+</a></div>
+</section>
+</section>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="wiki/soc/Readme.html">SoC overview</a></li><li><a href="wiki/sm83/Readme.html">SM83 core</a></li><li><a href="wiki/pcb.html">Reference PCB</a></li><li><a href="wiki/methods.html">Research methods</a></li><li><a href="wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="assets/site.js"></script>
+</body>
+</html>

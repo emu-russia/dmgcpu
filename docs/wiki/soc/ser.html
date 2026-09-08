@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Serial Link · DMG-CPU Research</title>
+<meta name="description" content="Serial Link is split between Ser and APU: a large chunk is located in the APU, because it is closer to the pads (the APU also houses the debug register TESTPAD, $FF60).">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/soc/Readme.html">DMG-CPU LR35902 SoC</a><span class="sep">/</span><span class="current">Serial Link</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#signals">Signals</a></li><li class="toc-l2"><a href="#key-functionality">Key Functionality</a></li><li class="toc-l2"><a href="#signal-flow">Signal Flow</a></li><li class="toc-l2"><a href="#verified-behaviour-issue-396-tb_ser-all-pass">Verified behaviour (issue #396, tb_ser all-PASS)</a></li><li class="toc-l2"><a href="#ser_reg_bit">ser_reg_bit</a></li><li class="toc-l2"><a href="#map">Map</a></li></ol></details>
+<article class="content"><h1 id="serial-link">Serial Link</h1>
+<div class="callout callout-note"><p class="callout-title">We need to verify this module somehow. After verification, there will be more confidence that everything is good here. But in general the section looks ok.</p></div><p>Serial Link is split between Ser and APU: a large chunk is located in the APU, because it is closer to the pads (the APU also houses the debug register TEST_PAD, $FF60). Ser contains the core logic of the interface itself.</p>
+<p>What Ser does:</p>
+<ul>
+<li>Transfers serial data in both directions via the 8-bit shift register formed by <code>ser_reg_bit</code> cells</li>
+<li>Synchronizes the transfer with the external clock (<code>n_sck</code>) or the internal low-frequency oscillator (<code>lfo_16384Hz</code>)</li>
+<li>Generates the <code>int_serial</code> interrupt on transfer completion</li>
+</ul>
+<p><img alt="locator_ser" decoding="async" loading="lazy" src="../../imgstore/soc/locator_ser.jpg" /></p>
+<p><img alt="ser" decoding="async" loading="lazy" src="../../imgstore/soc/ser.jpg" /></p>
+<p><img alt="ser_netlist" decoding="async" loading="lazy" src="../../imgstore/soc/ser_netlist.png" /></p>
+<h2 id="signals">Signals</h2>
+<p><img alt="ser_ports" decoding="async" loading="lazy" src="../../imgstore/soc/ser_ports.png" /></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>Dir</th>
+<th>From/Where To</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sc_write</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>Signal to enable serial control write operations</td>
+</tr>
+<tr>
+<td>n_reset2</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Active-low Global reset signal</td>
+</tr>
+<tr>
+<td>lfo_16384Hz</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>Low-frequency oscillator clock signal (16384 Hz); Can be switched to fast mode (1 MHz) by debugging register TEST_PAD</td>
+</tr>
+<tr>
+<td>sc_read</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>Signal to enable serial control read operations</td>
+</tr>
+<tr>
+<td>sb_read</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>Signal to enable serial buffer read operations</td>
+</tr>
+<tr>
+<td>n_sb_write</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>Active-low signal to enable writing to the serial buffer</td>
+</tr>
+<tr>
+<td>[7:0] d</td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Bidirectional internal data bus</td>
+</tr>
+<tr>
+<td>n_sck</td>
+<td>Input</td>
+<td>From Pad</td>
+<td>Serial clock input for synchronization</td>
+</tr>
+<tr>
+<td>sck_dir</td>
+<td>Output</td>
+<td>To APU</td>
+<td>Signal indicating the direction of the serial clock</td>
+</tr>
+<tr>
+<td>int_serial</td>
+<td>Output</td>
+<td>To MMIO</td>
+<td>Interrupt signal for serial communication events</td>
+</tr>
+<tr>
+<td>n_sin</td>
+<td>Input</td>
+<td>From Pad</td>
+<td>Serial input data line</td>
+</tr>
+<tr>
+<td>ser_out</td>
+<td>Output</td>
+<td>To APU</td>
+<td>Serial output data line</td>
+</tr>
+<tr>
+<td>serial_tick</td>
+<td>Output</td>
+<td>To APU</td>
+<td>Signal indicating a serial clock tick</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="key-functionality">Key Functionality</h2>
+<ul>
+<li>Shift register: eight <code>ser_reg_bit</code> instances (<code>g1</code>..<code>g8</code>) form the 8-bit shift register. Data is shifted in/out on <code>w6</code>/<code>w8</code>; the shift register connects to the data bus <code>d[7:0]</code> for reading/writing.</li>
+<li>Clock: <code>w5</code>..<code>w8</code> are derived from <code>n_sck</code> and <code>lfo_16384Hz</code>; <code>serial_tick</code> marks the clock ticks of the transfer.</li>
+<li>Interrupt: <code>int_serial</code> is generated through flip-flops <code>g23</code>..<code>g26</code>.</li>
+<li>Direction: <code>sck_dir</code> controls the direction of the serial clock; a mux (<code>g29</code>) selects between the internal oscillator and the external clock.</li>
+</ul>
+<h2 id="signal-flow">Signal Flow</h2>
+<ul>
+<li>Input: <code>n_sin</code> -&gt; shift register (<code>g1</code>..<code>g8</code>); the value appears on <code>d[7:0]</code> when <code>sb_read</code> is active.</li>
+<li>Output: on <code>n_sb_write</code> the shift register is loaded from <code>d[7:0]</code> and shifts the data out on <code>ser_out</code>.</li>
+<li>Clock: <code>w5</code>..<code>w8</code> are generated from <code>n_sck</code>/<code>lfo_16384Hz</code>; <code>serial_tick</code> (<code>w17</code>) synchronizes the transfer.</li>
+<li>Interrupt: transfer completion raises <code>int_serial</code>, stabilized by flip-flops <code>g23</code>..<code>g26</code>.</li>
+</ul>
+<h2 id="verified-behaviour-issue-396-tb_ser-all-pass">Verified behaviour (issue #396, tb_ser all-PASS)</h2>
+<p>Real Ser netlist + real MMIO decode in <code>HDL/soc/icarus/soc</code> (merged
+netlist <code>ser_merged.v</code>, WSL-native Icarus):</p>
+<ul>
+<li>
+<p><strong>SC register ($FF02) decode</strong>: MMIO generates <code>sc_write</code>; Ser stores
+  the control bits itself: <code>sck_dir</code> (= SC bit0) selects the shift clock
+  source - 1 = internal clock (master), 0 = external <code>n_sck</code>.
+  SC bit7 = transfer <strong>start</strong>.</p>
+</li>
+<li>
+<p><strong>Transfer</strong>: with SC = 0x81 (start + internal clock) the transfer runs
+  for exactly <strong>8 <code>serial_tick</code> pulses</strong>; SB shifts out on <code>ser_out</code> and
+  shifts in from <code>n_sin</code> (LSB-first). The SC <strong>start bit self-clears</strong>
+  when the transfer completes.</p>
+</li>
+<li>
+<p><strong>Interrupt</strong>: on completion <code>int_serial</code> rises; MMIO IF bit3
+  (<code>cpu_irq_trig[3]</code>) is set; it is cleared by the CPU interrupt
+  acknowledge.</p>
+</li>
+<li>
+<p><strong>SB ($FF01)</strong>: the write path (<code>n_sb_write</code>) loads the shift register
+  (through the per-cell set/reset path described below); read-back of an
+  arbitrary loaded value currently shows only bus-bit0 under the plain
+  bus model (read-back polarity/order question - the loaded value is
+  proven by the shift result 0xFF after 8 idle-high ticks).</p>
+</li>
+<li>
+<p>Serial tick rate with the internal source: the <code>lfo_16384Hz</code> from MMIO
+  is divided further inside Ser (transfer of 8 bits takes ~4 lfo cycles
+  in the tb_ser window - exact divider taps under analysis).</p>
+</li>
+</ul>
+<p>The cell chain structure (from the netlist): cells <code>g8..g1</code> form the
+shift register (<code>g8.q -&gt; g7.d -&gt; ... -&gt; g1.d</code>); the <code>q</code> outputs also feed
+the bus interface cells whose <code>db</code> pins are wired to the d-bus bits
+(<code>g1..g8.db</code> -&gt; d[4]/d[6]/d[7]/d[5]/d[3]/d[2]/d[1]/d[0]).</p>
+<h2 id="ser_reg_bit">ser_reg_bit</h2>
+<p><img alt="ser_reg_bit_netlist" decoding="async" loading="lazy" src="../../imgstore/soc/ser_reg_bit_netlist.png" /></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Port</th>
+<th>Dir</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>d</td>
+<td>input</td>
+<td>Used to load the previous value to form a shift register</td>
+</tr>
+<tr>
+<td>q</td>
+<td>output</td>
+<td>Used to output the current value to form a shift register. The nq output inside the circuit is used to output the value to the databus</td>
+</tr>
+<tr>
+<td>clk</td>
+<td>input</td>
+<td>Clock</td>
+</tr>
+<tr>
+<td>oe</td>
+<td>input</td>
+<td>Output Enable</td>
+</tr>
+<tr>
+<td>db</td>
+<td>bidir</td>
+<td>databus</td>
+</tr>
+<tr>
+<td>ie + n_ie</td>
+<td>input</td>
+<td>Complementary Input Enable</td>
+</tr>
+<tr>
+<td>nres</td>
+<td>input</td>
+<td>Global reset signal (n_reset2 is used)</td>
+</tr>
+</tbody>
+</table>
+</div><p>Implements a single-bit serial register with buffering and control logic. The circuit contains 8-bit shift register based on these elements.</p>
+<p>Loading the value from the bus is done in the following way: we cannot use direct feeding, because the <code>d</code> input is used to form a chain from the previous bit. Therefore, using the complementary Input Enable and <code>/set</code> and <code>/res</code> inputs of DFFSR - the register is set to the desired value.</p>
+<h2 id="map">Map</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Row</th>
+<th>Cells</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>and, dffr, dffr, dffr, dffr, dffr, muxi, dffr, notif1, {dffsr, notif1, oan, nand}(ser_reg_bit), not, not, and</td>
+</tr>
+<tr>
+<td>2</td>
+<td>not, {dffsr, notif1, oan, nand}(ser_reg_bit), not, not2, {dffsr, notif1, oan, nand}(ser_reg_bit), {dffsr, notif1, oan, nand}(ser_reg_bit), {dffsr, notif1, oan, nand}(ser_reg_bit), or</td>
+</tr>
+<tr>
+<td>3</td>
+<td>{dffsr, notif1, oan, nand}(ser_reg_bit), {dffsr, notif1, oan, nand}(ser_reg_bit), {dffsr, notif1, oan, nand}(ser_reg_bit), not2, dffr, not, dffr, notif1</td>
+</tr>
+</tbody>
+</table>
+</div><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG-CPU LR35902 SoC</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/soc/ser.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

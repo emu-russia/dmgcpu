@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bottom Right (IRQ) Logic · DMG-CPU Research</title>
+<meta name="description" content="The IRQ logic consists of the following parts:">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/sm83/Readme.html">DMG CPU Core</a><span class="sep">/</span><span class="current">Bottom Right (IRQ) Logic</span></nav>
+
+<article class="content"><h1 id="bottom-right-irq-logic">Bottom Right (IRQ) Logic</h1>
+<p><img alt="locator_irq" decoding="async" loading="lazy" src="../../imgstore/sm83/locator_irq.png" /></p>
+<p>The IRQ logic consists of the following parts:</p>
+<ul>
+<li>IE</li>
+<li>IF</li>
+<li>Priority encoder</li>
+<li>"Breadcrumps"</li>
+</ul>
+<h2 id="ie">IE</h2>
+<p><img alt="module7" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/module7.jpg" /></p>
+<p><img alt="module7_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/module7_tran.jpg" /></p>
+<p>Latch (no CLK edge detection, yes ld edge detection) with reset.</p>
+<h2 id="if">IF</h2>
+<p>Program access ($FFFE) to the IF in the DMG CPU has been removed.</p>
+<p><img alt="module8" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/module8.jpg" /></p>
+<p><img alt="module8_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/module8_tran.jpg" /></p>
+<p>It is a regular (transparent) latch (no edge detection), to store the interrupt flag.</p>
+<h2 id="breadcrumps">Breadcrumps</h2>
+<p>I never tire of repeating: dear chip designers - please do not spread the logic this way, because it is difficult to cut it into pieces and post pictures on the wiki. Therefore, I will not give pictures of the topology here - see the general big picture of the bottom part. Pieces of "Breadcrumped" circuits are marked with different colors.</p>
+<ul>
+<li>breadcrumped nor-9 (cyan): sc1 (Any interrupt)</li>
+<li>breadcrumped aoi (green): sc2 (Priority encoder)</li>
+<li>breadcrumped nand-9 (white): A0-A7 + AddrHi -&gt; bot_to_Thingy (Addr = 0xffff)</li>
+<li>breadcrumped nand-8 (red): A8-A15 (AddrHi)</li>
+<li>breadcrumped nor-4 (<strong>x3</strong>): bro3, bro4, bro5 (Interrupt address)</li>
+</ul>
+<p>Logic:</p>
+<p><img alt="irq_logic_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/irq_logic_tran.jpg" /></p>
+<p>Priority encoder:</p>
+<p><img alt="irq_prio_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/irq_prio_tran.jpg" /></p>
+<p>Interrupt address:</p>
+<p><img alt="irq_address_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/irq_address_tran.jpg" /></p><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG CPU Core</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/sm83/irq.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

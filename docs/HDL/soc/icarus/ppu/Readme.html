@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PPU Icarus/GTKWave testbench (issue 390) · DMG-CPU Research</title>
+<meta name="description" content="Regression testbench for the DMG-CPU PPU gate netlists (HDL/soc/ppu1.v, HDL/soc/ppu2.v) run with Icarus Verilog + GTKWave.">
+<link rel="icon" href="../../../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../../../index.html">
+      <img class="brand-mark" src="../../../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../../../wiki/soc/Readme.html">SoC</a><a href="../../../../wiki/sm83/Readme.html">SM83</a><a href="../../../../wiki/pcb.html">PCB</a><a href="../../../../wiki/methods.html">Methods</a><a href="../../../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../../../index.html">Home</a><span class="sep">/</span><a href="../../../../HDL/Readme.html">HDL</a><span class="sep">/</span><span>soc</span><span class="sep">/</span><a href="../../../../HDL/soc/icarus/Readme.html">HDL/soc/icarus - Icarus Verilog testbenches</a><span class="sep">/</span><span class="current">PPU Icarus/GTKWave testbench (issue 390)</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#files">Files</a></li><li class="toc-l2"><a href="#coverage">Coverage</a></li><li class="toc-l2"><a href="#reproducing-the-waves">Reproducing the waves</a></li><li class="toc-l2"><a href="#related-tooling">Related tooling</a></li><li class="toc-l2"><a href="#bus-modelling-testbench">Bus modelling (testbench)</a></li><li class="toc-l2"><a href="#notes">Notes</a></li></ol></details>
+<article class="content"><h1 id="ppu-icarusgtkwave-testbench-issue-390">PPU Icarus/GTKWave testbench (issue #390)</h1>
+<p>Regression testbench for the DMG-CPU PPU gate netlists (<code>HDL/soc/ppu1.v</code>,
+<code>HDL/soc/ppu2.v</code>) run with Icarus Verilog + GTKWave.</p>
+<h2 id="files">Files</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ppu_env.v</code></td>
+<td>Reusable PPU test environment: real <code>ClkGen</code> + <code>PPU1</code> + <code>PPU2</code> netlists, behavioral VRAM + OAM models and a small "CPU+MMIO+Arb" stand-in with register read/write tasks. The pads between the CPU die and the VRAM die are modeled (MA inversion, /MCS//MRD//MWR, MD bus).</td>
+</tr>
+<tr>
+<td><code>oam_ram.v</code></td>
+<td>Behavioral OAM SRAM model (interface of the empty <code>HDL/soc/oam.v</code> stub): two 8-bit ports over 80 16-bit words (= 40 OAM entries). Inverse-hold pads (data = ~pad level), precharge pullup keepers + discharge-only read pads, hi-Z during writes (round 26).</td>
+</tr>
+<tr>
+<td><code>lcd_stub.v</code></td>
+<td>Consumer stub for the (output-only) LCD driver interface: samples LD0/LD1 on /CP into a 160-px line buffer, counts pixels/lines/frames.</td>
+</tr>
+<tr>
+<td><code>bus_weak_cells.v</code></td>
+<td>Bus-model cell <code>dmg_notif0_od</code> (open-drain discharge-only inverting tristate) used by the weak <code>oa</code> variants (bus modelling only - <code>ppu2.v</code> untouched).</td>
+</tr>
+<tr>
+<td><code>gen_weakbus.py</code></td>
+<td>Tool: generates <code>ppu2_weakbus.v</code> (round 27: all oa-chain groups open-drain + keepers) and <code>ppu2_m2only.v</code> (round 30: additionally the 18 non-scan oa-chain drivers are disabled while <code>ppu_mode2</code> is high).</td>
+</tr>
+<tr>
+<td><code>ppu2_weakbus.v</code>, <code>ppu2_m2only.v</code></td>
+<td>Generated bus-model variants of the PPU2 netlist (see <code>gen_weakbus.py</code>; used in the test compiles instead of <code>ppu2_merged.v</code> - regression suite uses <code>ppu2_weakbus.v</code>, the sprite e2e uses <code>ppu2_m2only.v</code>).</td>
+</tr>
+<tr>
+<td><code>ppu1_merged.v</code>, <code>ppu2_merged.v</code></td>
+<td>The PPU netlists with the bidirectional-bus alias <code>assign</code>s merged into real net aliases (see <code>merge_bus_aliases.py</code>). Without this Icarus cannot simulate register writes: the internal bus wires never see the CPU data. Regenerate with <code>python3 merge_bus_aliases.py ../../ppu1.v ppu1_merged.v</code> and <code>python3 merge_bus_aliases.py ../../ppu2.v ppu2_merged.v</code> from this directory.</td>
+</tr>
+<tr>
+<td><code>merge_bus_aliases.py</code></td>
+<td>Tool: rewrites <code>assign d[7] = w79;</code> style aliases (inout bus bits) into true net aliases by renaming <code>w79</code> → <code>d[7]</code> and deleting the alias + orphaned wire declarations. Only touches <code>d/md/nma/n_oama/n_oamb</code>.</td>
+</tr>
+<tr>
+<td><code>tb_ppu_regs.v</code></td>
+<td>Register write/read + reset + counter/mode smoke test.</td>
+</tr>
+<tr>
+<td><code>tb_ppu_bg_scanline.v</code></td>
+<td>BG rendering test: mode2/3 per-line rhythm, VRAM BG fetch, pixel serialization on LD0/LD1.</td>
+</tr>
+<tr>
+<td><code>tb_ppu_scroll.v</code></td>
+<td>SCY/SCX scroll test: PPU2 V+SCY / H+SCX adders change the fetched tile-map row/column.</td>
+</tr>
+<tr>
+<td><code>tb_ppu_window.v</code></td>
+<td>Window (WIN) test: with LCDC.6 the tile-map fetches switch to the $9C00 window map.</td>
+</tr>
+<tr>
+<td><code>tb_ppu_frame.v</code></td>
+<td>Full-frame test (slow, ~5 min): VBlank at LY=144, V wrap 153-&gt;0, <code>ppu_int_vbl</code> pulse.</td>
+</tr>
+<tr>
+<td><code>tb_ppu_scene.v</code></td>
+<td>Synthetic scene (LCD+BG+WIN+OBJ with content): combined mode rhythm + BG pixel stream.</td>
+</tr>
+<tr>
+<td><code>tb_ppu_bg_win_matrix.v</code></td>
+<td>BG/WIN layer combination matrix (map select bit3/bit6 x enable bit0/bit5 x WY/WX).</td>
+</tr>
+<tr>
+<td><code>tb_ppu_mode_fsm.gtkw</code></td>
+<td>GTKWave save for the mode state machine + LX/LY waves.</td>
+</tr>
+<tr>
+<td><code>tb_ppu_sprites.v</code></td>
+<td>(dev) mode-2 OAM scan / sprite store bring-up - see STATUS.md / waves.md.</td>
+</tr>
+<tr>
+<td><code>tb_ppu_sprite_e2e.v</code></td>
+<td>(dev, round 30) end-to-end sprite pixels on the <code>ppu2_m2only.v</code> bus model: claims, <code>obj_prio_ck</code>/<code>sp_bp_cys</code>/<code>sprite_x_match</code> and sprite colour pixels on LD0/LD1.</td>
+</tr>
+<tr>
+<td><code>tb_ppu_ring_init0.v</code></td>
+<td>(dev, round 22) no-reset FF boot probe (power-on state is 0, not x - not the sprite blocker).</td>
+</tr>
+<tr>
+<td><code>tb_ppu_oam_cpu.v</code></td>
+<td>(dev) CPU-&gt;OAM write path bring-up - see STATUS.md.</td>
+</tr>
+<tr>
+<td><code>tb_ppu_oam_read.v</code></td>
+<td>(dev) CPU-&gt;OAM read path bring-up - see STATUS.md.</td>
+</tr>
+<tr>
+<td><code>tb_ppu_dma.v</code></td>
+<td>(dev) VRAM-&gt;OAM DMA bring-up - see STATUS.md.</td>
+</tr>
+<tr>
+<td><code>STATUS.md</code></td>
+<td>Status snapshot, blockers and the author checklist.</td>
+</tr>
+<tr>
+<td><code>*.bat</code></td>
+<td>Windows compile &amp; run wrappers. <code>run_all.bat</code> runs every test.</td>
+</tr>
+<tr>
+<td><code>waves/</code></td>
+<td>Waveform images, one per test.</td>
+</tr>
+<tr>
+<td><code>waves.md</code></td>
+<td>Documentation of the tests with embedded wave images.</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="coverage">Coverage</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Functional area</th>
+<th>Test / status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PPU CPU interface (register write/read, LCDC reset release, LY read-back)</td>
+<td><code>tb_ppu_regs</code> — ALL PASS</td>
+</tr>
+<tr>
+<td>Line rhythm (456 ticks), mode 2 (80 ticks), mode 3 start</td>
+<td><code>tb_ppu_regs</code>, <code>tb_ppu_bg_scanline</code> — ALL PASS</td>
+</tr>
+<tr>
+<td>BG rendering pipeline (fetch → serializer → LD0/LD1)</td>
+<td><code>tb_ppu_bg_scanline</code> — ALL PASS</td>
+</tr>
+<tr>
+<td>SCY / SCX scroll adders (PPU2 V+SCY, H+SCX on nma)</td>
+<td><code>tb_ppu_scroll</code> — ALL PASS</td>
+</tr>
+<tr>
+<td>WIN layer (WY/WX, LCDC.6 window map $9C00)</td>
+<td><code>tb_ppu_window</code> — ALL PASS</td>
+</tr>
+<tr>
+<td>OAM macro (interface of the empty <code>oam.v</code> stub)</td>
+<td><code>oam_ram.v</code> — behavioral model (2 ports/80 16-bit words; inverse-hold pads, precharge keepers + discharge-only pads, hi-Z during writes; round 26)</td>
+</tr>
+<tr>
+<td>LCD driver interface (output-only)</td>
+<td><code>lcd_stub.v</code> — consumer stub (samples LD0/LD1 on /CP into a 160-px line buffer)</td>
+</tr>
+<tr>
+<td>Y-test comparator (round 28)</td>
+<td>✅ verified by probes: with a valid Y byte on port B the AND6 <code>w816</code> asserts on LY 1..7 and fails on LY=8; store window opens (dev probes, temp/oamweak)</td>
+</tr>
+<tr>
+<td>Mode-2 scan addressing</td>
+<td>🟡 blocked under the plain/weakbus models (<code>oa</code> x or odd words); the <code>ppu2_m2only.v</code> bus model gives stable even words {2,4,...,78} and unblocks the sprite path (rounds 29-30)</td>
+</tr>
+<tr>
+<td>Sprite claim + store (round 30)</td>
+<td>🟡 dev on <code>ppu2_m2only.v</code>: Y-test passes, <code>w852</code> opens ~38x/line, in-use flag set</td>
+</tr>
+<tr>
+<td>Sprite pixels to LD (round 30)</td>
+<td>🟡 <code>tb_ppu_sprite_e2e</code> on <code>ppu2_m2only.v</code>: <code>obj_prio_ck</code> ~10-11 pulses/line, <code>sp_bp_cys</code>/<code>sprite_x_match</code> pulse, sprite colour-01 pixels at LX ~7..14</td>
+</tr>
+<tr>
+<td>CPU OAM write &amp; VRAM→OAM DMA data paths</td>
+<td><code>tb_ppu_oam_cpu</code>, <code>tb_ppu_dma</code> — dev (need SoC arbiter/MMIO timing)</td>
+</tr>
+<tr>
+<td>No-reset FF "init-0" probe (round 22)</td>
+<td><code>tb_ppu_ring_init0</code> — dev (proves no-reset FFs boot at 0; forcing them to 0 leaves <code>obj_prio_ck</code> inert -&gt; not a power-on-<code>x</code> issue; see waves.md)</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="functional-block-coverage-per-wikisocppu1md-and-wikisocppu2md">Functional-block coverage (per wiki/soc/ppu1.md and wiki/soc/ppu2.md)</h3>
+<p>Legend: ✅ verified by a passing test · 🟡 partially verified / dev · ⬜ open (blocked, see waves.md "Research handoff").</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>PPU1 block (ppu1.md)</th>
+<th>Status</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 Register decode</td>
+<td>✅</td>
+<td>regs: writes to $FF40-4B decoded; no cross-writes</td>
+</tr>
+<tr>
+<td>2 PPU registers</td>
+<td>✅</td>
+<td>regs: read-back SCY/SCX/BGP/LCDC/LY</td>
+</tr>
+<tr>
+<td>3 H counter (LX)</td>
+<td>✅</td>
+<td>regs/bg: h counts, 456-tick line</td>
+</tr>
+<tr>
+<td>4 V counter (LY)</td>
+<td>✅</td>
+<td>regs + <code>tb_ppu_frame</code>: LY read-back, VBlank at LY=144, wrap 153-&gt;0</td>
+</tr>
+<tr>
+<td>5 Window logic</td>
+<td>✅</td>
+<td>window: $9C00 fetches with WY/WX; bg_win_matrix C4-C8 (map select x WY)</td>
+</tr>
+<tr>
+<td>6 BG/WIN fetch sequencer</td>
+<td>✅</td>
+<td>bg/scroll/window/scene/bg_win_matrix: mode2/3 rhythm + layer map selects</td>
+</tr>
+<tr>
+<td>7 VRAM address generation</td>
+<td>✅</td>
+<td>bg/scroll: map/data fetch addresses; SCY/SCX adders</td>
+</tr>
+<tr>
+<td>8 BG pixel shifter</td>
+<td>✅</td>
+<td>bg: LD stream matches tile data through BGP</td>
+</tr>
+<tr>
+<td>9 Sprite pixel path</td>
+<td>🟡</td>
+<td>sprite colour pixels reach LD0/LD1 under the <code>ppu2_m2only.v</code> bus model (<code>tb_ppu_sprite_e2e</code>, dev); blocked under plain/weakbus models - see Bus modelling</td>
+</tr>
+<tr>
+<td>10 Sprite selection ring / LAST_SPRITE</td>
+<td>🟡</td>
+<td>ring runs and <code>obj_prio_ck</code> pulses ~10-11x/line under <code>ppu2_m2only.v</code>; completion condition open</td>
+</tr>
+<tr>
+<td>11 Palettes + pixel mux</td>
+<td>✅</td>
+<td>bg: color pattern through BGP on LD0/LD1</td>
+</tr>
+<tr>
+<td>12 LCD driver timing</td>
+<td>✅</td>
+<td>lcd_stub: /CP pulses, /ST//CPL per line</td>
+</tr>
+<tr>
+<td>13 OAM parse clocks (mode 2)</td>
+<td>🟡</td>
+<td>oam_addr_ck/oam_rd_ck run (default models); <code>obj_prio_ck</code> pulses only under the <code>ppu2_m2only.v</code> workaround</td>
+</tr>
+<tr>
+<td>14 Interrupt outputs (STAT/VBL)</td>
+<td>✅</td>
+<td><code>tb_ppu_frame</code>: vbl at LY&gt;=144, ppu_int_vbl pulses; regs: STAT mode bits read 2/3 in mode2/3, LYC int at LY==LYC</td>
+</tr>
+<tr>
+<td>15 Reset/clock generation</td>
+<td>✅</td>
+<td>regs: n_ppu_reset/hard-reset behaviour</td>
+</tr>
+<tr>
+<td>16 DMA interface</td>
+<td>🟡</td>
+<td>dev tb_ppu_dma (needs SoC arbiter timing)</td>
+</tr>
+</tbody>
+</table>
+</div><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>PPU2 block (ppu2.md)</th>
+<th>Status</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 SCY/SCX registers</td>
+<td>✅</td>
+<td>regs read-back; scroll test effects</td>
+</tr>
+<tr>
+<td>2 Scroll adders + nma drive</td>
+<td>✅</td>
+<td>scroll test: (V+SCY)&gt;&gt;3, (H+SCX)&gt;&gt;3</td>
+</tr>
+<tr>
+<td>3 Port-B adder (Y test)</td>
+<td>🟡</td>
+<td>comparator verified correct (round 28: passes LY 1..7, fails LY=8 once port B carries a Y byte); data path gated by the scan addressing</td>
+</tr>
+<tr>
+<td>4 Mode-2 scan engine</td>
+<td>🟡</td>
+<td>mode2 80-tick; stop_oam_eval pulses; scan words stable and even {2,4,...,78} under <code>ppu2_m2only.v</code></td>
+</tr>
+<tr>
+<td>5 OAM port/address muxes</td>
+<td>🟡</td>
+<td>overlapping oa-chain groups (<code>w518</code>/<code>w475</code>/<code>w403</code>/<code>w444</code>, g419/g421) corrupt the static-sim scan address; workaround <code>ppu2_m2only.v</code>; author phase review open</td>
+</tr>
+<tr>
+<td>6 Sprite-store capture stage</td>
+<td>🟡</td>
+<td>store window <code>w852</code> opens ~38x/line under <code>ppu2_m2only.v</code> (dev probes)</td>
+</tr>
+<tr>
+<td>7 10-slot sprite store</td>
+<td>🟡</td>
+<td>claims fire and an in-use flag is set under <code>ppu2_m2only.v</code> (dev); <code>obj_prio_ck</code> gates the flags</td>
+</tr>
+<tr>
+<td>8 Sprite compare (mode 3)</td>
+<td>🟡</td>
+<td><code>sprite_x_match</code> pulses under <code>ppu2_m2only.v</code> (dev)</td>
+</tr>
+<tr>
+<td>9 Clock/reset generation</td>
+<td>✅</td>
+<td>ppu_clk=cclk, n_ppu_hard_reset, ppu_rd/wr passthrough</td>
+</tr>
+<tr>
+<td>10 DMA/CPU-OAM write</td>
+<td>🟡</td>
+<td>dev tb_ppu_oam_cpu / tb_ppu_dma</td>
+</tr>
+</tbody>
+</table>
+</div><p>Details, wave images (incl. <code>waves/tb_ppu_sprite_e2e.png</code>, round 30) and the
+research handoff are in <a href="waves.html">waves.md</a>; the status snapshot and
+author checklist are in <a href="STATUS.html">STATUS.md</a>.</p>
+<div class="callout callout-note"><p class="callout-title">Sprite-path status</p><p>The 🟡 sprite rows (PPU1 9/10/13, PPU2 3-8) are verified only under the
+<strong>workaround bus model</strong> <code>ppu2_m2only.v</code> (see "Bus modelling"): the
+static simulation cannot reproduce the two-phase oa bus, so the
+overlapping oa mux groups (<code>w518</code> vs <code>w475</code>/<code>w403</code>/<code>w444</code>, g419/g421)
+corrupt the scan address. <code>ppu2_m2only.v</code> gates the non-scan groups off
+during mode 2 - sprites then run end to end in <code>tb_ppu_sprite_e2e</code> (dev).
+The netlists <code>ppu1.v</code>/<code>ppu2.v</code> are NOT modified; a phase-exclusive
+enable (author/schematic confirmation, see waves.md round 30) would let
+us drop the workaround and promote the test.</p>
+</div><h2 id="reproducing-the-waves">Reproducing the waves</h2>
+<p>The VCD files and <code>.run</code> binaries are git-ignored - they are produced by the
+tests. To regenerate everything from a clean clone:</p>
+<pre><code># 0) (optional) regenerate the bus-model variants from the merged netlist
+python3 gen_weakbus.py                 # ppu2_weakbus.v + ppu2_m2only.v
+# 1) run the tests (each dumps &lt;test&gt;.vcd; the suite uses ppu2_weakbus.v)
+./run_all.sh                           # fast suite; add tb_ppu_frame for the slow full-frame test
+# 1b) sprite e2e (dev, uses ppu2_m2only.v): see the compile line in tb_ppu_sprite_e2e.v header
+# 2) open the traces in GTKWave (v3.3.128 save files)
+gtkwave tb_ppu_regs.gtkw               # etc. (files are committed, VCDs must exist)
+# 3) re-render the wave PNGs (needs the vcd2png.py renderer)
+python3 vcd2png.py tb_ppu_regs.vcd waves/tb_ppu_regs.png --cfg waves_cfg_regs.json ...
+</code></pre>
+<p>The <code>.gtkw</code> save files and the PNGs in <code>waves/</code> are committed, so a fresh
+clone shows the documentation immediately; re-running the tests refreshes
+the VCDs behind them.</p>
+<h2 id="related-tooling">Related tooling</h2>
+<p>The adapted Icarus/GTKWave skill for future DMG-CPU testbenches (APU, MMIO,
+...) lives in <a href="../gtkwave-skill.html"><code>HDL/soc/icarus/gtkwave-skill.md</code></a>.</p>
+<h2 id="bus-modelling-testbench">Bus modelling (testbench)</h2>
+<p>The precharged inverse-hold buses of the PPU are simulated with dynamic-bus
+semantics (issue #390, round 27):</p>
+<ul>
+<li>
+<p>The six PPU2 oa-chain nodes (<code>w497/w146/w500/w554/w641/w49</code>) are modelled
+  as <strong>discharge-only + keepers</strong>: the notif0 mux groups become open-drain
+  (<code>dmg_notif0_od</code> in <code>bus_weak_cells.v</code>) and a <code>pullup</code> holds the precharge
+  level, so overlapping enables no longer drive the node to x. Applied by
+  <code>gen_weakbus.py</code> → generated <code>ppu2_weakbus.v</code> (used in all PPU test
+  compiles instead of <code>ppu2_merged.v</code>). <strong>This is a simulator bus model only -
+  <code>HDL/soc/ppu2.v</code> is NOT modified.</strong></p>
+</li>
+<li>
+<p><code>gen_weakbus.py</code> also generates <strong><code>ppu2_m2only.v</code></strong> (round 30): the 18
+  non-scan oa-chain drivers are disabled while <code>ppu_mode2</code> is high, so the
+  mode-2 scan address is stable/even and the sprite path runs end to end
+  (<code>tb_ppu_sprite_e2e</code>, dev). Used by that test; the regression suite uses
+  <code>ppu2_weakbus.v</code>.</p>
+</li>
+<li>
+<p>The OAM macro pads (<code>n_oama</code>/<code>n_oamb</code>) are inverse-hold: precharge
+  keepers + discharge-only pads in <code>oam_ram.v</code> (round 26).</p>
+</li>
+</ul>
+<p>Residual x: <code>oa</code> is clean in mode 2 and idle on the <code>ppu2_m2only.v</code> model;
+on plain <code>ppu2_weakbus.v</code> it can still read <code>x</code> in mode 3 (sprite compare /
+store re-fetch phase, bus unused for the BG pixel stream).</p>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>
+<p><code>HDL/soc/dmglib.v</code> needed one bug fix for simulation: <code>dmg_notif0/1</code>
+  (inverting tristates on the precharged "inverse-hold" buses) were written as
+  <code>x = ~x</code> (a self-referential combinational loop that never drives the bus);
+  the correct inverting-tristate body is <code>x = ~a</code> while enabled.</p>
+</li>
+<li>
+<p>The PPU CPU interface uses <strong>true-value</strong> data on the <code>d</code> bus: read-back
+  drivers are <code>notif0</code> fed from the register latches' <code>nq</code>, so the wire gets
+  the register value; register latches capture the wire value directly.</p>
+</li>
+<li>
+<p>Write strobes: PPU2 decodes the CPU access (soc_wr + address + ffxx) and
+  produces <code>ppu_rd</code>/<code>ppu_wr</code>, which gate PPU1's register latches. The CPU
+  model keeps data valid ~8 ns after the strobe falls (real bus hold time),
+  otherwise the level-sensitive register latches race the bus precharge.</p>
+</li>
+</ul><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ PPU Icarus/GTKWave testbench (issue 390)</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/HDL/soc/icarus/ppu/Readme.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../../../wiki/methods.html">Research methods</a></li><li><a href="../../../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../../../assets/site.js"></script>
+</body>
+</html>

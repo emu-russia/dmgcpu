@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APU suite - status (issue 398) · DMG-CPU Research</title>
+<meta name="description" content="Snapshot of HDL/soc/icarus/apu. The suite drives the real APU netlist (apumerged.v, HDL/soc/apu.v with the a/d bus aliases merged) inside the SoC context:">
+<link rel="icon" href="../../../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../../../index.html">
+      <img class="brand-mark" src="../../../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../../../wiki/soc/Readme.html">SoC</a><a href="../../../../wiki/sm83/Readme.html">SM83</a><a href="../../../../wiki/pcb.html">PCB</a><a href="../../../../wiki/methods.html">Methods</a><a href="../../../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../../../index.html">Home</a><span class="sep">/</span><a href="../../../../HDL/Readme.html">HDL</a><span class="sep">/</span><span>soc</span><span class="sep">/</span><a href="../../../../HDL/soc/icarus/Readme.html">HDL/soc/icarus - Icarus Verilog testbenches</a><span class="sep">/</span><a href="../../../../HDL/soc/icarus/apu/Readme.html">APU Icarus testbench (issue 398)</a><span class="sep">/</span><span class="current">APU suite - status (issue 398)</span></nav>
+
+<article class="content"><h1 id="apu-suite-status-issue-398">APU suite - status (issue #398)</h1>
+<p>Snapshot of <code>HDL/soc/icarus/apu</code>. The suite drives the <em>real</em> APU netlist
+(<code>apu_merged.v</code>, HDL/soc/apu.v with the a/d bus aliases merged) inside the
+SoC context: real ClkGen + MMIO (mmio_weakbus) + Arbiter + Ser + behavioral
+WaveRAM, with a CPU bus master (same conventions as <code>../soc</code>, issue #396).</p>
+<h2 id="status-per-test">Status per test</h2>
+<h3 id="tb_apu_regs-pass-35-checks">tb_apu_regs - PASS (35 checks)</h3>
+<p>Register file map of the real APU (measured; wiki/soc/apu.md):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Addr</th>
+<th>Register</th>
+<th>read-back semantics (measured)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$FF10</td>
+<td>NR10</td>
+<td><code>0x80 \| (v &amp; 0x7F)</code> (sweep period echo, bit7 hard-1)</td>
+</tr>
+<tr>
+<td>$FF11</td>
+<td>NR11</td>
+<td><code>0x3F \| (v &amp; 0xC0)</code> (duty echo, length bits hard-1)</td>
+</tr>
+<tr>
+<td>$FF12</td>
+<td>NR12</td>
+<td><code>v</code> (8-bit envelope echo)</td>
+</tr>
+<tr>
+<td>$FF13</td>
+<td>NR13</td>
+<td>no read-back (0xFF) - write-only (feeds the divider)</td>
+</tr>
+<tr>
+<td>$FF14</td>
+<td>NR14</td>
+<td><code>0xBF \| (v &amp; 0x40)</code> (bit6 length-enable echo)</td>
+</tr>
+<tr>
+<td>$FF16-$FF19</td>
+<td>NR21-NR24</td>
+<td>same pattern as NR11-NR14 (ch2)</td>
+</tr>
+<tr>
+<td>$FF1A</td>
+<td>NR30</td>
+<td><code>0x7F \| (v &amp; 0x80)</code> (DAC-enable echo, rest hard-1)</td>
+</tr>
+<tr>
+<td>$FF1C</td>
+<td>NR32</td>
+<td><code>0x9F \| (v &amp; 0x60)</code> (volume echo, rest hard-1)</td>
+</tr>
+<tr>
+<td>$FF1E</td>
+<td>NR34</td>
+<td><code>0xBF \| (v &amp; 0x40)</code></td>
+</tr>
+<tr>
+<td>$FF20-$FF23</td>
+<td>NR41-NR44</td>
+<td>NR41 no read-back; NR42/NR43 echo; NR44 <code>0xBF\|(v&amp;0x40)</code></td>
+</tr>
+<tr>
+<td>$FF24</td>
+<td>NR50</td>
+<td><code>v</code> (8-bit echo)</td>
+</tr>
+<tr>
+<td>$FF25</td>
+<td>NR51</td>
+<td><code>v</code> (8-bit echo)</td>
+</tr>
+<tr>
+<td>$FF26</td>
+<td>NR52</td>
+<td><code>0x70 \| (power&lt;&lt;7) \| (ch-active bits 3:0)</code>; 0xF0 after</td>
+</tr>
+<tr>
+<td>power-on, 0x70 powered off. Power-off write resets the channel registers.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>$FF27-$FF2F</td>
+<td>-</td>
+<td>unmapped (0xFF, no read driver)</td>
+</tr>
+<tr>
+<td>$FF30-$FF3F</td>
+<td>WaveRAM</td>
+<td>CPU write/read window decoded by the APU itself</td>
+</tr>
+<tr>
+<td>(<code>n_wave_wr</code>/<code>n_wave_rd</code> + <code>wave_a = a[3:0]</code> while not playing; data on d</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>re-driven from <code>wave_rd</code> by the notif1 stage g1255..g1262)</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div><p>Write decode map (verified): w695 = $FF30-$FF3F window; n_wave_wr =
+~(soc_wr &amp; w695); n_wave_rd = ~(ch3_active ? <sample clock> : (soc_rd &amp;
+w695)).</p>
+<h3 id="tb_apu_ch1-check_ch1py-pass">tb_apu_ch1 + check_ch1.py - PASS</h3>
+<p>Channel 1 verified end-to-end on the real netlist:</p>
+<ul>
+<li>
+<p>output period = <code>(2048 - X) * 32</code> oscillator cycles (measured exact at
+  X=0x780 and X=0x700) - the DMG <code>131072/(2048-X)</code> relation (freq timer
+  ticks at clk9 = osc/4, 8 duty steps per output period)</p>
+</li>
+<li>
+<p>duty fractions 12.5 / 25 / 50 / 75 % measured exact</p>
+</li>
+<li>the high level equals the NR12 volume (4-bit)</li>
+<li>NR52 status bit0 set while running, cleared by power-off</li>
+</ul>
+<h3 id="tb_apu_ch2-check_ch2py-pass">tb_apu_ch2 + check_ch2.py - PASS</h3>
+<p>The same check set for channel 2 (no sweep). Only possible after the
+w548 bus-model fix (see below) - previously the divider preset captured x
+from write-bus contention and the channel never played.</p>
+<h3 id="tb_apu_ch3-check_ch3py-pass">tb_apu_ch3 + check_ch3.py - PASS</h3>
+<p>Channel 3 (wave) with a known wave-RAM image:</p>
+<ul>
+<li>
+<p>the wave-RAM address advances one step per <code>(2048 - X) * 2</code> oscillator
+  cycles (measured step counts at X=0x7F0 vs X=0x780 = 8x) - i.e. the DMG
+  sample-rate relation 2^21/(2048-X)</p>
+</li>
+<li>
+<p>output amplitude = wave sample scaled by the NR32 volume code
+  (01=100%, 10=50%, 11=25%, 00=mute), steady per sample (no duty)</p>
+</li>
+<li>
+<p>CPU access to the wave-RAM window works (tb_apu_regs)</p>
+</li>
+</ul>
+<h3 id="tb_apu_ch4-check_ch4py-pass">tb_apu_ch4 + check_ch4.py - PASS</h3>
+<p>Channel 4 (noise): with NR42 vol F the output toggles at level F while
+running; the toggle rate drops as the NR43 divisor r grows (measured:
+15-bit r0/r7 ~ 50x over 500us windows; the exact divider ratio vs the
+pan-docs formula is an open cross-check - the LFSR output-run statistics
+depend on the polynomial, so rate ratios are measured, not assumed).</p>
+<h2 id="open-research-items-author-checklist">Open research items (author checklist)</h2>
+<ul>
+<li class=" task-list">
+<p><input checked="checked" disabled="disabled" type="checkbox" /><strong>ch2/ch3/ch4 output stage - SOLVED (bus-model issue)</strong>. Root cause:
+  the w548 decode (freq-hi/trigger access window of ch2) also enables five
+  notif0 <em>divider-state</em> drivers (g869/g937/g939-941) which put the ch2
+  divider bits onto d.  In the static gate-level model these drivers are
+  open during CPU <em>writes</em> (soc_wr) and fight the write data with x; the
+  level-sensitive divider preset latches then capture x and the whole ch2
+  divider goes x (divider never ticks -&gt; ch2_out stuck 0).  ch1 was not
+  affected (its freq-lo read-back group w310 is soc_rd-gated).  Fix:
+  <code>apu_wc.v</code> (generated by <code>make_wc.py</code>) gates those five drivers
+  read-only (<code>w548_r = w548 | soc_wr</code>).  With it, ch2 PASSes the same
+  duty/period checks as ch1 (tb_apu_ch2 + check_ch2.py), ch4's LFSR
+  output runs, and ch3 plays (wave_a advances, samples appear).
+  Remaining: formal ch3/ch4 regression tests.</p>
+</li>
+<li class=" task-list">
+<p><input disabled="disabled" type="checkbox" /><strong>noise divider ratio cross-check</strong> (tb_apu_ch4 rates vs the DMG
+  shift-clock formula; measure the shift clock directly off the LFSR
+  clock net).</p>
+</li>
+<li class=" task-list">
+<p><input checked="checked" disabled="disabled" type="checkbox" /><strong>frame-sequencer / envelope cadence (measured, tb_env3-style
+  probes)</strong>: with the synthetic lfo the CH1 envelope decays one volume
+  step every <code>8 * rate</code> lfo pulses (rate = NR12 bits 2:0; rate 0 = no
+  envelope change), i.e. at real 512 Hz lfo the volume step period is
+  <code>rate / 64 s</code> (rate 1 -&gt; 1/64 s = 64 Hz).  The earlier "glitch dips"
+  on ch1_out at the 8-lfo cadence were an x-bus artifact fixed by
+  apu_wc.v.  (Note: the observed law differs from the (rate+1)/64 s in
+  some literature - measured on this netlist it is rate/64 s.)</p>
+</li>
+<li class=" task-list">
+<p><input checked="checked" disabled="disabled" type="checkbox" /><strong>length counter law (measured)</strong>: with length-enable set, the
+  channel stops after <code>(64 - L)</code> ticks where L = NR11[5:0] and one tick =
+  2 lfo pulses = 1/256 s at the real lfo (i.e. trigger loads the counter
+  with 0x40-L - the DMG trigger-reload quirk; L=0x3F stops almost
+  immediately, L=0 sounds ~250 ms).  Measured: stop lfo ~= 2*(64-L)
+  (plus detection lag) for L = 1/8/32/63.</p>
+</li>
+<li class=" task-list">
+<p>sweep (NR10): behavioral checks pass (add-overflow disables the
+  channel immediately; subtract keeps it running with the period
+  changing), but the step cadence and the add/sub amount semantics still
+  need a dedicated measurement (parked - lower priority for the suite).<input disabled="disabled" type="checkbox" /></p>
+</li>
+<li class=" task-list">
+<p>joypad ($FF00) &amp; serial pad pieces in the APU (n_p10..n_p13,
+  DRV_LOW_p1x, n_sout_topad etc.): decode map started (w570 = FF00 write
+  window capturing d0..d7 into the p10-p15/serial pad latches) - tests
+  pending.<input disabled="disabled" type="checkbox" /></p>
+</li>
+<li class=" task-list">
+<p>TEST1-mode a[7:0] arbitration piece of the APU (n_INPUT_a -&gt; a via
+  bufif0 g1081..g1099, addr_latch + dma mux g1066..g1073, DRV_LOW/n_DRV_
+  HIGH_a[7:0] pad drivers) - tests pending.<input disabled="disabled" type="checkbox" /></p>
+</li>
+<li class=" task-list">
+<p>wave RAM CPU read: works; exact capture edge (posedge n_wave_wr)
+  confirmed; per-byte 4-bit sample ordering for playback to measure in the
+  ch3 test.<input disabled="disabled" type="checkbox" /></p>
+</li>
+</ul>
+<h2 id="tooling-notes">Tooling notes</h2>
+<ul>
+<li>
+<p>compile (WSL-native iverilog):
+  <code>iverilog -D ICARUS -o &lt;t&gt;.run ../../dmglib.v ../../clkgen.v
+  ../soc/mmio_weakbus.v ../soc/arb_merged.v ../soc/ser_sharedq.v
+  apu_merged.v wave_ram_model.v apu_env.v &lt;t&gt;.v</code></p>
+</li>
+<li>
+<p><code>apu_merged.v</code> regenerated with <code>python3 ../soc/merge_bus_aliases.py
+  ../../apu.v apu_merged.v --buses a d</code></p>
+</li>
+<li>
+<p>synthetic LFO: <code>apu_env</code> has <code>lfo_override</code>/<code>lfo_ext</code> - the frame
+  sequencer can be clocked fast so envelope/length/sweep measurements do
+  not take half a second of sim time at the real 512 Hz.</p>
+</li>
+<li>
+<p>netlist decode/cone questions: <code>python3 apu_trace.py apu_merged.v &lt;net&gt;</code>
+  or <code>--readmap</code> (lists every d-bus read driver group and its decode).</p>
+</li>
+<li>
+<p>check_ch1.py / check_ch2.py analyse the segment VCDs (waveform metrics:
+  period formula, duty %, volume plateau).</p>
+</li>
+</ul><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ APU Icarus testbench (issue 398)</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/HDL/soc/icarus/apu/STATUS.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../../../wiki/methods.html">Research methods</a></li><li><a href="../../../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../../../assets/site.js"></script>
+</body>
+</html>

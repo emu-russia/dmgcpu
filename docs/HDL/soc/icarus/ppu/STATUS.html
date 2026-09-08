@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PPU testbench status (issue 390) · DMG-CPU Research</title>
+<meta name="description" content="Status snapshot; details in waves.md, Readme.md and the wiki pages wiki/soc/ppu1.md / wiki/soc/ppu2.md.">
+<link rel="icon" href="../../../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../../../index.html">
+      <img class="brand-mark" src="../../../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../../../wiki/soc/Readme.html">SoC</a><a href="../../../../wiki/sm83/Readme.html">SM83</a><a href="../../../../wiki/pcb.html">PCB</a><a href="../../../../wiki/methods.html">Methods</a><a href="../../../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../../../index.html">Home</a><span class="sep">/</span><a href="../../../../HDL/Readme.html">HDL</a><span class="sep">/</span><span>soc</span><span class="sep">/</span><a href="../../../../HDL/soc/icarus/Readme.html">HDL/soc/icarus - Icarus Verilog testbenches</a><span class="sep">/</span><a href="../../../../HDL/soc/icarus/ppu/Readme.html">PPU Icarus/GTKWave testbench (issue 390)</a><span class="sep">/</span><span class="current">PPU testbench status (issue 390)</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#tests">Tests</a></li><li class="toc-l2"><a href="#blockers-all-documented-in-wikisocppu1md-ppu2md">Blockers (all documented in wiki/soc/ppu1.md &amp;amp; ppu2.md)</a></li><li class="toc-l2"><a href="#suspected-netlist-issues-reported-to-the-author-not-patched-here">Suspected netlist issues - reported to the author, NOT patched here</a></li><li class="toc-l2"><a href="#no-reset-ff-init-0-probe-round-22-not-the-blocker">No-reset FF &quot;init-0&quot; probe (round 22) - not the blocker</a></li><li class="toc-l2"><a href="#what-is-needed-to-finish-the-sprite-test">What is needed to finish the sprite test</a></li></ol></details>
+<article class="content"><h1 id="ppu-testbench-status-issue-390">PPU testbench status (issue #390)</h1>
+<p>Status snapshot; details in <a href="waves.html">waves.md</a>, <a href="Readme.html">Readme.md</a>
+and the wiki pages <code>wiki/soc/ppu1.md</code> / <code>wiki/soc/ppu2.md</code>.</p>
+<h2 id="tests">Tests</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Status</th>
+<th>Covers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tb_ppu_regs</code></td>
+<td>✅ ALL PASS</td>
+<td>register write + CPU read-back (LCDC/SCY/SCX/BGP/LY), reset release, counters, mode rhythm</td>
+</tr>
+<tr>
+<td><code>tb_ppu_bg_scanline</code></td>
+<td>✅ ALL PASS</td>
+<td>BG fetch pipeline, pixel stream on LD0/LD1, 456-tick line</td>
+</tr>
+<tr>
+<td><code>tb_ppu_scroll</code></td>
+<td>✅ ALL PASS</td>
+<td>PPU2 V+SCY / H+SCX scroll adders on the VRAM bus</td>
+</tr>
+<tr>
+<td><code>tb_ppu_window</code></td>
+<td>✅ ALL PASS</td>
+<td>WIN layer, LCDC.6 window tile map $9C00</td>
+</tr>
+<tr>
+<td><code>tb_ppu_bg_win_matrix</code></td>
+<td>✅ ALL PASS</td>
+<td>BG/WIN combination matrix (C1..C11): map selects bit3/bit6 x enables x WY/WX incl. mid-line switch</td>
+</tr>
+<tr>
+<td><code>tb_ppu_scene</code></td>
+<td>✅ ALL PASS</td>
+<td>synthetic LCD+BG+WIN+OBJ scene (mode rhythm + BG pixel stream)</td>
+</tr>
+<tr>
+<td><code>tb_ppu_frame</code></td>
+<td>✅ ALL PASS (slow, ~5 min)</td>
+<td>VBlank at LY&gt;=144, V wrap 153-&gt;0, ppu_int_vbl, LYC==LY interrupt</td>
+</tr>
+<tr>
+<td><code>tb_ppu_win_mid</code></td>
+<td>✅ (aux run for waves)</td>
+<td>mid-line BG-&gt;WIN switch wave source</td>
+</tr>
+<tr>
+<td><code>tb_ppu_sprites</code></td>
+<td>🟡 dev</td>
+<td>mode-2 OAM scan runs; sprite store/compare not claimed (see blockers)</td>
+</tr>
+<tr>
+<td><code>tb_ppu_oam_cpu</code></td>
+<td>🟡 dev</td>
+<td>CPU OAM write lands word-addressed; strobe timing needs SoC model</td>
+</tr>
+<tr>
+<td><code>tb_ppu_oam_read</code></td>
+<td>🟡 dev</td>
+<td>CPU OAM read return path needs SoC cycle timing</td>
+</tr>
+<tr>
+<td><code>tb_ppu_dma</code></td>
+<td>🟡 dev</td>
+<td>VRAM-&gt;OAM DMA needs the MMIO DMA controller/arbiter model</td>
+</tr>
+<tr>
+<td><code>tb_ppu_ring_init0</code></td>
+<td>🟡 dev (round 22)</td>
+<td>no-reset FF init-0 probe: boot-state report + per-line <code>obj_prio_ck</code> / OAM-clock / Y-test counters</td>
+</tr>
+</tbody>
+</table>
+</div><p>Run everything: <code>run_all.sh</code> (or <code>run_all.bat</code> on Windows); <code>tb_ppu_frame</code> is
+slow and included.</p>
+<h2 id="blockers-all-documented-in-wikisocppu1md-ppu2md">Blockers (all documented in wiki/soc/ppu1.md &amp; ppu2.md)</h2>
+<ol>
+<li>
+<p><strong>Sprite store/compare/pixel path</strong> - the per-slot in-use dffr
+   (<code>PPU2 g611-g628</code>) never clock (<code>obj_prio_ck</code> from PPU1 never pulses), so
+   no slot is claimed, <code>sp_bp_cys</code> never fires, LD stays BG-only.</p>
+</li>
+<li>
+<p>The <code>oa</code> mux groups (scan <code>w518</code> vs port-B adder <code>w475</code>) overlap in time
+   (contention <code>x</code>); dynamic two-phase bus timing is not reproducible
+   statically.</p>
+</li>
+<li>
+<p>The mode-2 store window (PPU2 <code>w852 = oam_rd_ck &amp; w209 &amp; w816</code> with
+   <code>w816</code> = AND of the Y-test adder results incl. FF40_D2) never opens with
+   undefined OAM data, so the banks are never enabled (they are NOT held in
+   reset by the flags - corrected round 21). Everything funnels into the
+   Y-test/OAM data path.</p>
+</li>
+</ol>
+<h2 id="suspected-netlist-issues-reported-to-the-author-not-patched-here">Suspected netlist issues - reported to the author, NOT patched here</h2>
+<ul>
+<li>
+<p><code>PPU2 g938-g943</code> (ppu2.v:2089-2094): scan-address register, no async reset
+  (<code>nr1 = w149 = const1</code>).</p>
+</li>
+<li>
+<p><code>PPU1 g325/g326</code> (ppu1.v:1510-1511): <code>w530</code> window dividers, no async
+  reset (<code>nr1 = w47 = const1</code>).</p>
+</li>
+<li>
+<p><code>PPU1 g652</code> (ppu1.v:1837): duplicate-looking LCDC.D7 latch (q <code>w149</code> read
+  only by <code>g305</code>).</p>
+</li>
+<li>
+<p><code>PPU2 g419/g421</code> (ppu2.v:1570/1572): <code>oa</code> mux groups can be enabled at the
+  same time (scan vs port-B adder) - possible phase/enable issue.</p>
+</li>
+<li>
+<p>STAT read-back (round 15/16): at LY==LYC the LYC interrupt fires but
+  <code>$FF41</code> reads <code>0xC2/0xC3</code> (bit2=0, bit7=1); netlist chain <code>g859/g906/
+  g280/w546/w736</code> documented in wiki/soc/ppu1.md.</p>
+</li>
+</ul>
+<h2 id="no-reset-ff-init-0-probe-round-22-not-the-blocker">No-reset FF "init-0" probe (round 22) - not the blocker</h2>
+<p>Per the checklist, the no-reset triggers were pinned to <code>0</code> instead of <code>x</code>
+in the test (<code>tb_ppu_ring_init0</code>, dev). Result:</p>
+<ul>
+<li>
+<p>Power-on: dmglib dffr-family cells declare <code>initial val = 1'b0</code>, so at
+  boot all no-reset FFs read 0/1 (never <code>x</code>); the PPU1 sprite ring
+  <code>g286/g287-g289/g325/g326</code> is deterministic and resets (<code>w816</code> dips) at
+  every <code>h_restart</code>. Only FFs clocked from undefined data keep <code>x</code>: PPU1
+  <code>g882-g889</code> and PPU2 scan-address bits <code>g942/g943</code> (mode-2 scan).</p>
+</li>
+<li>
+<p>Forced-0 run (clones <code>dmg_*_nr0</code> in <code>temp/nr0</code>: <code>x</code> clocked into a
+  no-reset FF stores 0): scan register fully defined (<code>010000</code>) each line,
+  <code>g882-g889</code> = 0. Result unchanged - <code>obj_prio_ck</code> still 0 edges/line,
+  PPU1 <code>(w228&amp;w229&amp;w241)</code> never 1, PPU2 Y-test AND6 (<code>w816</code>) never high,
+  store window <code>w852</code> 0 edges.</p>
+</li>
+</ul>
+<p>Conclusion: the no-reset-FF <code>x</code> is NOT the cause of the silent
+<code>obj_prio_ck</code> (the ring is reset each line but never opens its pulse
+window; the PPU2 Y-test never passes with the current <code>oa</code>/port-B phase
+timing). The no-reset FFs remain a real silicon concern (undetermined
+power-up, no garbage recovery) and stay reported to the author.</p>
+<h3 id="weak-discharge-only-oa-bus-round-23-also-not-the-blocker">Weak / discharge-only <code>oa</code> bus (round 23) - also not the blocker</h3>
+<p>Per the checklist the <code>oa</code> bus was made "weak": the six oa-chain
+inverse-hold nodes (<code>w497/w146/w500/w554/w641/w49</code>, each driven by four
+<code>notif0</code> mux groups) were re-modelled as precharged nodes - pullup keepers +
+open-drain drivers (<code>dmg_notif0_od</code>; variant netlists + probes in
+<code>temp/weak/</code>, gitignored). Result: the bus and the scan address become fully
+deterministic (baseline Y-test group is <code>x</code> ~85% of mode 2); the scan
+schedule length is unchanged (39 steps) but the row sequence shifts
+(baseline words {2,4,...,78}, weak {7,15,...,79}) - both start above word 0.
+Even with a visible sprite in <strong>every</strong> OAM entry, lines LY 1..15: Y-test
+AND6 <code>w816</code> never high, port B reads zero in all sampled phases, store
+window <code>w852</code> never opens, <code>obj_prio_ck</code> 0 edges/line - in both variants.</p>
+<p>Conclusion: oa contention is not the blocker either; the port-B read data
+never reaches the Y-test as a passing compare (read phase not sampled
+statically, or Y-test term polarity/bounds inverted - see the <code>w852/w817</code>
+polarity open question in wiki/soc/ppu2.md). Needs schematic-level two-phase
+timing / OAM macro byte mapping (author or msinger ground truth).</p>
+<h3 id="oam-ab-inverse-hold-model-fix-weak-buses-round-26">OAM A/B inverse-hold model fix + weak buses (round 26)</h3>
+<p><code>n_oama</code>/<code>n_oamb</code> are inverse-hold buses (idle = precharge HIGH = data 0);
+PPU2's scan capture stores the pad level directly (<code>dmg_latch g733-g748</code>).
+Committed <code>oam_ram.v</code> reworked to precharge keepers + discharge-only pads
+(pad low for stored 1, hi-Z during writes): <code>x</code> on the ports drops from
+320/6000 samples (old strong-<code>~data</code> drive) to 0/6000. All 6 fast tests and
+<code>tb_ppu_frame</code> still ALL PASS. Test-only variants in <code>temp/oamweak/</code> (PPU2
+OAM-port drivers open-drain, + weak oa, + swapped port mapping) - in every
+combination with a visible sprite in all 40 OAM entries, lines LY 1..15:
+Y-test AND6 never high, store window <code>w852</code> never opens, <code>obj_prio_ck</code>
+0 edges/line. Read dumps show defined pad levels while the scan walks words
+{5,7,15,...} - the Y bytes (even words under the model layout) are never
+presented; the scan word stream / byte&lt;-&gt;word&lt;-&gt;port mapping remains the
+open item.</p>
+<h3 id="weak-oa-accepted-as-the-default-bus-model-round-27">Weak <code>oa</code> accepted as the default bus model (round 27)</h3>
+<p>Per the round-23 experiment the oa-chain nodes are now simulated as
+discharge-only + keepers by default: <code>gen_weakbus.py</code> produces
+<code>ppu2_weakbus.v</code> (24 oa-chain notif0 -&gt; <code>dmg_notif0_od</code> in
+<code>bus_weak_cells.v</code>, pullups on <code>w497/w146/w500/w554/w641/w49</code>); every PPU
+test compile uses it (bus model only - <code>ppu2.v</code> untouched). <code>oa</code> x:
+mode 2 0/1280, idle 0/5168 (residual only in mode 3); scan addresses
+defined, words {7,15,...,79}/mode 2. Regression suite 7/7 ALL PASS
+(incl. <code>tb_ppu_frame</code>); sprite wave regenerated. Sprite claim still
+inert (see blockers above).</p>
+<h3 id="y-test-root-cause-round-28-comparator-is-fine-addressing-is-not">Y-test root cause (round 28) - comparator is fine, addressing is not</h3>
+<p>Decisive probe (temp/oamweak/tb_ytest_all10*): with every OAM byte = 0x10
+the Y-test B operand (latched port-B level, <code>dmg_latchnq_comp</code> g204-g250,
+en <code>w120</code>) = 0x10, AND6 <code>w816</code> = 1 and the store window <code>w852</code> opens 39x
+per line on LY 1..7 and correctly fails on LY=8 - the comparator, the
+AND6 polarity (pass = 1) and the store logic work. Real content failed
+only because port B never presented a Y byte during the mode-2 scan:
+default netlist -&gt; <code>oa</code> low bits x (g419/g421 enable overlap) -&gt; no read
+(B operand 0x00); weakbus -&gt; contested low bits resolve to odd words
+{7,15,...,79} -&gt; port B carries tile bytes (0x01). The remaining blocker
+is the oa scan word&lt;-&gt;byte&lt;-&gt;port mapping / row schedule (even words
+2k hold entry-k Y bytes under the model layout), to be pinned against the
+schematic or the author's scan-address/oa-phase review. <code>obj_prio_ck</code>
+(PPU1) remains flat even when the store fires - the PPU1 side of the
+handshake is the next item once addressing is fixed.</p>
+<h3 id="scan-only-oa-bus-claims-fire-round-29">Scan-only oa bus - claims fire (round 29)</h3>
+<p>Variant <code>ppu2_scanonly.v</code> (temp/oamweak; weakbus + the 18 non-scan
+oa-chain drivers disabled, only the mode-2 scan group <code>w518</code> drives):
+scan address stable and EVEN (words {2,4,...,78}); with realistic content
+(Y=16 in entries 1..39) the Y-test <code>w816</code> = 1 on LY 1..7 (0 on LY=8) and
+the store window <code>w852</code> opens ~38x per line - slots are claimed. Entry 0
+(words 0/1) is not visited by this sequence. <code>obj_prio_ck</code> (PPU1) still
+flat. Conclusion: the oa addressing corruption in the static sim comes
+from the overlapping oa-chain mux groups (scan <code>w518</code> vs port-B <code>w475</code>/
+CPU <code>w403</code>/store <code>w444</code>, g419/g421); way forward: author makes the groups
+phase-exclusive, or the sprite test continues on the scan-only bus model
+toward the PPU1 handshake.</p>
+<h3 id="path-b-taken-sprite-pixels-reach-ld0ld1-round-30">Path b taken - sprite pixels reach LD0/LD1 (round 30)</h3>
+<p><code>gen_weakbus.py</code> now also generates <code>ppu2_m2only.v</code> (non-scan oa-chain
+drivers gated off while <code>ppu_mode2</code>=1; mode-3 store re-read groups intact).
+Dev test <code>tb_ppu_sprite_e2e</code> (sprite entry 1: Y=16, X=16, tile 1, BG zero):
+<code>obj_prio_ck</code> ~10-11 pulses/line, <code>sp_bp_cys</code> + <code>sprite_x_match</code> pulse,
+one in-use flag set; LD shows sprite colour-01 pixels at LX ~7..14 on the
+visible rows. Netlist untouched; still dev - remaining: entry-0 words not
+visited by the scan sequence, LX off-by-one, author g419/g421 phase review.</p>
+<h2 id="what-is-needed-to-finish-the-sprite-test">What is needed to finish the sprite test</h2>
+<ol>
+<li>
+<p>Author review/fix of the suspected items above (or confirmation that the
+   no-reset FFs / oa phases are intentional - then the sim must be adjusted
+   instead).</p>
+</li>
+<li>
+<p>After that: re-run <code>tb_ppu_sprites</code> - expected flow: mode-2 Y-test -&gt;
+   store claim (10 slots) -&gt; mode-3 <code>sprite_x_match</code> -&gt; <code>obj_prio_ck</code>
+   pulses -&gt; sprite VRAM fetch (<code>sp_bp_cys</code>) -&gt; OBJ pixels on LD0/LD1.</p>
+</li>
+<li>
+<p>Promote <code>tb_ppu_sprites</code> to a regression test with asserts, add its wave
+   images to <code>waves.md</code> and update the coverage matrix in <code>Readme.md</code>.</p>
+</li>
+</ol><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ PPU Icarus/GTKWave testbench (issue 390)</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/HDL/soc/icarus/ppu/STATUS.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../../../wiki/methods.html">Research methods</a></li><li><a href="../../../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../../../assets/site.js"></script>
+</body>
+</html>

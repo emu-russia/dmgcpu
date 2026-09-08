@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OAM · DMG-CPU Research</title>
+<meta name="description" content="OAM is a dual-port SRAM. Port A and port B are both controlled by PPU2; it is assumed that port A serves the CPU/DMA side (write access via oamdin/oamdmawr) and port B serves the PPU renderer itself, …">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/soc/Readme.html">DMG-CPU LR35902 SoC</a><span class="sep">/</span><span class="current">OAM</span></nav>
+
+<article class="content"><h1 id="oam">OAM</h1>
+<p><img alt="locator_oam" decoding="async" loading="lazy" src="../../imgstore/soc/locator_oam.jpg" /></p>
+<p><img alt="oam" decoding="async" loading="lazy" src="../../imgstore/soc/oam.jpg" /></p>
+<h2 id="signals">Signals</h2>
+<p><img alt="oam_ports" decoding="async" loading="lazy" src="../../imgstore/soc/oam_ports.png" /></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal Name</th>
+<th>Direction</th>
+<th>From / Where To</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>n_oam_rd</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>OAM read enable (active low)</td>
+</tr>
+<tr>
+<td>n_oama_wr</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>OAM port A write enable (active low)</td>
+</tr>
+<tr>
+<td>n_oamb_wr</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>OAM port B write enable (active low)</td>
+</tr>
+<tr>
+<td>[7:1] oa</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>OAM address bus (bit 0 is not used, lsb=1)</td>
+</tr>
+<tr>
+<td>oam_bl_pch</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>OAM bitline precharge</td>
+</tr>
+<tr>
+<td>[7:0] n_oama</td>
+<td>Bidir</td>
+<td>To/From PPU2</td>
+<td>OAM port A data bus (inverse hold)</td>
+</tr>
+<tr>
+<td>[7:0] n_oamb</td>
+<td>Bidir</td>
+<td>To/From PPU2</td>
+<td>OAM port B data bus (inverse hold)</td>
+</tr>
+</tbody>
+</table>
+</div><p>OAM is a dual-port SRAM. Port A and port B are both controlled by PPU2; it is assumed that port A serves the CPU/DMA side (write access via <code>oam_din</code>/<code>oam_dma_wr</code>) and port B serves the PPU renderer itself, but this needs verification. See also the <a href="Readme.html">Buses table</a>.</p><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG-CPU LR35902 SoC</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/soc/oam.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

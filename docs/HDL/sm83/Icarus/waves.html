@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SM83 waves (issue 400) · DMG-CPU Research</title>
+<meta name="description" content="Waveform documentation for the SM83-core regression suite (HDL/sm83/Icarus), rendered from the test VCDs with vcd2png.py (Pillow; .gtkw v3.3.128 save files sit next to each test).">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../../index.html">
+      <img class="brand-mark" src="../../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../../wiki/soc/Readme.html">SoC</a><a href="../../../wiki/sm83/Readme.html">SM83</a><a href="../../../wiki/pcb.html">PCB</a><a href="../../../wiki/methods.html">Methods</a><a href="../../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../../index.html">Home</a><span class="sep">/</span><a href="../../../HDL/Readme.html">HDL</a><span class="sep">/</span><a href="../../../HDL/sm83/Readme.html">SM83 Core HDL</a><span class="sep">/</span><a href="../../../HDL/sm83/Icarus/Readme.html">SM83 Core Icarus TestBench</a><span class="sep">/</span><span class="current">SM83 waves (issue 400)</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#tb_sm83_regs-register-file-immediate-loads">tb_sm83_regs - register file / immediate loads</a></li><li class="toc-l2"><a href="#tb_sm83_alu-8-bit-alu-flags">tb_sm83_alu - 8-bit ALU + flags</a></li><li class="toc-l2"><a href="#tb_sm83_mem-memory-addressing-modes">tb_sm83_mem - memory addressing modes</a></li><li class="toc-l2"><a href="#tb_sm83_stack-16-bit-moves-stack-control-flow">tb_sm83_stack - 16-bit moves / stack / control flow</a></li><li class="toc-l2"><a href="#tb_sm83_jump-conditional-relative-jumps-rst">tb_sm83_jump - conditional relative jumps + RST</a></li><li class="toc-l2"><a href="#tb_sm83_irq-interrupt-dispatch-ieimeif-halt-wake">tb_sm83_irq - interrupt dispatch (IE/IME/IF, HALT wake)</a></li><li class="toc-l2"><a href="#tb_sm83_cycles-instruction-t-state-timing">tb_sm83_cycles - instruction T-state timing</a></li><li class="toc-l2"><a href="#tb_sm83_cb-cb-prefix-rotateshiftbit-ops">tb_sm83_cb - CB-prefix rotate/shift/bit ops</a></li><li class="toc-l2"><a href="#tb_sm83_halt-halt-modes-imeif-law">tb_sm83_halt - HALT modes (IME/IF law)</a></li></ol></details>
+<article class="content"><h1 id="sm83-waves-issue-400">SM83 waves (issue #400)</h1>
+<p>Waveform documentation for the SM83-core regression suite
+(<code>HDL/sm83/Icarus</code>), rendered from the test VCDs with <code>vcd2png.py</code>
+(Pillow; <code>.gtkw</code> v3.3.128 save files sit next to each test).  All checks
+below run on the <strong>real SM83 core netlist</strong> (<code>HDL/sm83/Top.v</code> SM83Core +
+the module files), clocked by <code>external_clk.v</code> with a flat-memory model
+(<code>sm83_env.v</code>).</p>
+<p>Signal legend (env probes, all under <code>tb_sm83_*.e.</code>):</p>
+<ul>
+<li>
+<p><code>CLK</code> - the ~4.19 MHz oscillator; <code>M1</code> - opcode-fetch pulse of the
+  sequencer; <code>MREQ</code>/<code>RD</code>/<code>WR</code> - external bus strobes</p>
+</li>
+<li>
+<p><code>A[15:0]</code>/<code>D[7:0]</code> - address/data buses</p>
+</li>
+<li><code>pc</code>, <code>sp</code>, <code>ir</code> - program counter / stack pointer / opcode register</li>
+<li><code>regA..regL</code>, <code>bc</code>/<code>de</code>/<code>hl</code> - the register file (hierarchical probes
+  into <code>dmgcore.bot.regs</code>), <code>fZ/fN/fH/fC</code> - flags (zbus bits 7:4)</li>
+</ul>
+<h2 id="tb_sm83_regs-register-file-immediate-loads">tb_sm83_regs - register file / immediate loads</h2>
+<p>Program: 8-bit immediates, register moves, BC/DE/HL pair loads, SP load and
+a <code>LD (nn),A</code> store, then HALT.  Wave shows PC stepping through the code
+while A/B/C/D/E/H/L/BC/DE/HL/SP settle to their loaded values; the final
+<code>LD (2000),A</code> store is visible as a WR bus cycle on <code>A=2000, D=7F</code>.</p>
+<p><img alt="tb_sm83_regs" decoding="async" loading="lazy" src="../../../imgstore/hdl/sm83/Icarus/waves/tb_sm83_regs.png" /></p>
+<p>Verified (13 checks): every register/pair value + the memory store + PC at
+HALT.  This is the register-file/load-group regression.</p>
+<h2 id="tb_sm83_alu-8-bit-alu-flags">tb_sm83_alu - 8-bit ALU + flags</h2>
+<p>Straight-line program executing ADD/ADC/SUB/SBC/AND/OR/XOR/CP (immediate
+forms) over 8 operand pairs (80 cases, 160 checks).  Each case stores the
+result A and the flags F (via PUSH AF) to its own stack cells.  The wave
+shows the bus cycles (PC, opcode fetch on M1, operand bytes) and the
+<code>regA</code>/flag trajectory across the cases.</p>
+<p><img alt="tb_sm83_alu" decoding="async" loading="lazy" src="../../../imgstore/hdl/sm83/Icarus/waves/tb_sm83_alu.png" /></p>
+<p>Verified: A result + Z/N/H/C flag law for all 80 cases - the ALU + flag
+register regression (the "what flags does op X set" oracle).</p>
+<h2 id="tb_sm83_mem-memory-addressing-modes">tb_sm83_mem - memory addressing modes</h2>
+<p>LD (BC)/(DE)/(HL),A / LD A,(BC)/(DE)/(HL), LD (HL),n, LD A,(nn), LD (nn),A,
+LDH (n8),A/LDH A,(n8), HLI/HLD auto-increment/decrement (both load and
+store directions).  Each op writes its observable result to a dedicated
+cell; 18 checks.</p>
+<p><img alt="tb_sm83_mem" decoding="async" loading="lazy" src="../../../imgstore/hdl/sm83/Icarus/waves/tb_sm83_mem.png" /></p>
+<h2 id="tb_sm83_stack-16-bit-moves-stack-control-flow">tb_sm83_stack - 16-bit moves / stack / control flow</h2>
+<p>LD rr,nn, PUSH/POP rr (incl. AF), 16-bit INC/DEC, ADD HL,rr, ADD SP,e,
+LD HL,SP+e, LD (nn),SP, CALL/RET, JP cc.  Subroutines at fixed addresses
+($0080/$0150) are reached only through absolute CALL/JP targets; markers
+stamp each taken/not-taken path (15 checks).  The wave shows SP sliding
+down on pushes and the stack roundtrip.</p>
+<p><img alt="tb_sm83_stack" decoding="async" loading="lazy" src="../../../imgstore/hdl/sm83/Icarus/waves/tb_sm83_stack.png" /></p>
+<h2 id="tb_sm83_jump-conditional-relative-jumps-rst">tb_sm83_jump - conditional relative jumps + RST</h2>
+<p>JR NZ/Z/NC/C taken and not-taken paths + RST 08/18 with the vector-page
+handlers and the return-address push/pop (11 checks).  Boot JR skips the
+RST pages at $0008/$0018.</p>
+<p><img alt="tb_sm83_jump" decoding="async" loading="lazy" src="../../../imgstore/hdl/sm83/Icarus/waves/tb_sm83_jump.png" /></p>
+<h2 id="tb_sm83_irq-interrupt-dispatch-ieimeif-halt-wake">tb_sm83_irq - interrupt dispatch (IE/IME/IF, HALT wake)</h2>
+<p>Three phases on one boot: IE = VBlank/EI/HALT, then the test asserts IF
+bit0 -&gt; the core wakes, pushes PC, clears IF via CPU_IRQ_ACK and vectors
+to $40; handler stores 0x5A and RETIs.  Phases 2/3 do the same for
+LCDSTAT ($48) and Timer ($50).  IE lives inside the core ($FFFF write);
+IF is the env model (source set, ack-cleared) like the SoC MMIO.</p>
+<p><img alt="tb_sm83_irq" decoding="async" loading="lazy" src="../../../imgstore/hdl/sm83/Icarus/waves/tb_sm83_irq.png" /></p>
+<p>Verified (8 checks): all three handlers ran, IF cleared after each ACK, SP
+returned to $3F00 after RETI, final PC at the end HALT.</p>
+<h2 id="tb_sm83_cycles-instruction-t-state-timing">tb_sm83_cycles - instruction T-state timing</h2>
+<p>Measures each executed instruction's duration as the CLK periods between
+successive M1 rising edges and compares to the documented SM83 cycle
+counts (32 checks): NOP 4, LD r,n 8, LD r,r 4, INC/DEC 4, ADD A,n 8,
+LD rr,nn 12, ADD HL,rr 8, LD (HL),n 12, LD A,(HL) 8, INC/DEC (HL) 12,
+JR taken 12 / not-taken 8, CALL 24, RET 16, JP 16.</p>
+<p><img alt="tb_sm83_cycles" decoding="async" loading="lazy" src="../../../imgstore/hdl/sm83/Icarus/waves/tb_sm83_cycles.png" /></p>
+<p>Verified: all 32 measured intervals equal the documented values - the SM83
+timing oracle for the netlist (add a candidate opcode between two M1s and
+its measured duration answers "how many cycles does it take").</p>
+<h2 id="tb_sm83_cb-cb-prefix-rotateshiftbit-ops">tb_sm83_cb - CB-prefix rotate/shift/bit ops</h2>
+<p>Straight-line program executing the A-only rotates (RLCA/RLA/RRCA/RRA),
+the CB-prefixed RLC/RRC/RL/RR/SLA/SRA/SWAP/SRL on A and BIT/RES/SET b,A
+(128 cases, 256 checks), each case capturing result A and the flags F via
+PUSH AF.  The wave shows the CB byte fetch producing an extra M1 pulse
+before the opcode fetch.</p>
+<p><img alt="tb_sm83_cb" decoding="async" loading="lazy" src="../../../imgstore/hdl/sm83/Icarus/waves/tb_sm83_cb.png" /></p>
+<p>Measured law (netlist): CB ops set Z from the result, BIT b,A sets
+Z = ~A[b] with H=1, RES/SET leave the flags untouched.  The A-only
+rotates (RLCA/RLA/RRCA/RRA) <em>clear Z</em> - the documented SM83 A-rotate
+quirk, verified on the real netlist.</p>
+<h2 id="tb_sm83_halt-halt-modes-imeif-law">tb_sm83_halt - HALT modes (IME/IF law)</h2>
+<p>Three HALT scenarios on the real core: a clean stop (IME=0, IE=0 - the PC
+stays at HALT+1), an IF wake while halted with IME=0 (execution resumes
+after the HALT, no interrupt vector is taken), and the classic halt-bug
+setup (IF pending when HALT executes - the core does not stop and still
+never dispatches, because IME=0).  The wave shows scenario B: HALT, the
+IF assertion, wake and the resumed instruction stream.</p>
+<p><img alt="tb_sm83_halt" decoding="async" loading="lazy" src="../../../imgstore/hdl/sm83/Icarus/waves/tb_sm83_halt.png" /></p>
+<p>Verified: no vector runs when IME=0 (the $40 handler marker stays clear)
+in every scenario; with IME=1 the dispatch path is covered by
+<code>tb_sm83_irq</code> instead.</p><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ SM83 Core Icarus TestBench</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/HDL/sm83/Icarus/waves.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../../wiki/methods.html">Research methods</a></li><li><a href="../../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>
