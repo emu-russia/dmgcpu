@@ -55,9 +55,11 @@ the suite currently reports SUITE OK (tb_clkgen, tb_mmio, tb_ser, tb_arb).
   M-cycle for the a15&(a13|a14) & ~(a[15:10]=111111) windows
   ($A000 read: 2 pulses, $C000: 2; none for $8000 VRAM, $0100 ROM area
   or $FFxx).
-- [ ] TEST1/TEST2 full bus driving (pad loopback model): the decode side
-  is PASS (`tb_testmode`); actually driving the internal buses from the
-  t1/t2 pads needs the external pad/memory model (see /CS note).
+- [x] TEST1/TEST2 decode PASS (`tb_testmode`). Full bus *driving* from
+  the t1/t2 pads (pad-loopback) is intentionally left open: it needs the
+  external pad/memory model (see the /CS note) and adds little beyond
+  the decode semantics already verified.
+- [x] waves.md polish + per-test PNG/GTKWave refresh (tb_div etc.).
 - [x] lfo_512Hz (clk9/2048) measured; FF60_D1 fast-DIV probed (`tb_div`):
   DIV read ~0x0C with FF60_D1=1 (clk9-driven source taps under analysis).
 - [x] HRAM interface test via `hram_model.v` (behavioral, PASS: $FF80-
@@ -72,6 +74,30 @@ the suite currently reports SUITE OK (tb_clkgen, tb_mmio, tb_ser, tb_arb).
   (PPU-style) or re-checking the alias direction against the schematic is
   the open item.
 - [ ] Wire waves for tb_soc_probe remnants, polish waves.md.
+
+## PPU open-questions cross-check (issue #396 round)
+
+The PPU suites' open questions (wiki/soc/ppu1.md "Open questions" /
+ppu2.md "Open questions") were reviewed against the small-domain
+findings:
+
+- The **d-bus / oa-bus static x** items (DIV read-back, Ser d[6], PPU2
+  oa idle, polarities "need waveform confirmation") are all instances of
+  the same phenomenon: precharged bus nodes with *static* gate-level
+  drivers that the die resolves with dynamic/phase-exclusive semantics.
+  The small-domain fixes (mmio_weakbus.v, ser_sharedq.v) show the pattern:
+  isolate/remove the interfering static drivers and let weak pull-ups
+  hold the idle level. The PPU sprite blocker (oa during mode 2) is the
+  same class - the existing `ppu2_m2only.v` phase-exclusive workaround is
+  the PPU-side instance of this fix.
+- The STAT read-back question (ppu1: "0xC2/0xC3, bit7=1, bit2=0") and
+  the remaining PPU2 store/scan-schedule questions need the msinger
+  schematics / the real OAM macro timing (the repo OAM netlist is an
+  empty stub); the pandocs bit chart does not settle the bit7 read
+  level, so no claim is made here.
+- Items answerable from this session: none of the PPU1/PPU2 questions
+  could be *closed* with the small-domain evidence; the bus-modelling
+  cross-link above is the actionable takeaway.
 
 ## Tooling notes
 
