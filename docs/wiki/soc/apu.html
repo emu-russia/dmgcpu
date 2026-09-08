@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APU · DMG-CPU Research</title>
+<meta name="description" content="It also contains a piece of arbitration for a[7:0]. [^1]">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/soc/Readme.html">DMG-CPU LR35902 SoC</a><span class="sep">/</span><span class="current">APU</span></nav>
+
+<article class="content"><h1 id="apu">APU</h1>
+<div class="callout callout-note"><p class="callout-title">The netlist is now exercised by the Icarus regression suite</p><p>(<code>HDL/soc/icarus/apu</code>, issue #398): the register map, the channel 1-4
+output stages, the frame-sequencer laws and the mixer/DAC-amp block have
+been <strong>measured on the real netlist</strong> and are documented below. The
+suite log / open questions live in
+<a href="../../HDL/soc/icarus/apu/STATUS.html">HDL/soc/icarus/apu/STATUS.md</a>; this
+wiki page keeps the signal-level overview.</p>
+</div><p><img alt="locator_apu" decoding="async" loading="lazy" src="../../imgstore/soc/locator_apu.jpg" /></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th><img alt="apu" decoding="async" loading="lazy" src="../../imgstore/soc/apu.jpg" /></th>
+<th><img alt="apu_netlist" decoding="async" loading="lazy" src="../../imgstore/soc/apu_netlist.png" /></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div><p>It also contains a piece of arbitration for <code>a[7:0]</code>. <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> </p>
+<h2 id="signals">Signals</h2>
+<p><img alt="apu_ports" decoding="async" loading="lazy" src="../../imgstore/soc/apu_ports.png" /></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal Name</th>
+<th>Direction</th>
+<th>From / Where To</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONST0</td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Constant 0 signal <sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td>[7:0] a</td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Internal address bus (bits 7:0). Contains a piece of the address bus arbitration <sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
+<td>addr_latch</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>Address latch signal (used to latch the external address in TEST1 mode)</td>
+</tr>
+<tr>
+<td>cclk</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Input clk complement (same as n_clk_in) (Aka AZOF)</td>
+</tr>
+<tr>
+<td>clk2</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Clock 2 (Aka DATA_VALID, ADR_CLK_P)</td>
+</tr>
+<tr>
+<td>clk4</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Clock 4 (Aka #CPU_PHI, DATA_CLK_N)</td>
+</tr>
+<tr>
+<td>clk6</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Clock 6 (Aka INC_CLK_P)</td>
+</tr>
+<tr>
+<td>clk7</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Clock 7 (Aka BUKE, LATCH_CLK)</td>
+</tr>
+<tr>
+<td>clk9</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Clock 9 (Aka BOGA_1MHZ, MAIN_CLK_P)</td>
+</tr>
+<tr>
+<td>[7:0] d</td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Internal data bus</td>
+</tr>
+<tr>
+<td>[7:0] dma_a</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>DMA address bus (bits 7:0)</td>
+</tr>
+<tr>
+<td>dma_addr_ext</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>DMA address (external memory)</td>
+</tr>
+<tr>
+<td>ffxx</td>
+<td>Input</td>
+<td>From Arb</td>
+<td>FFxx register area indicator (APU registers are at FF10-FF3F)</td>
+</tr>
+<tr>
+<td>lfo_512Hz</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>512 Hz low-frequency oscillator (envelope/frame sequencer clock)</td>
+</tr>
+<tr>
+<td>[7:0] n_INPUT_a</td>
+<td>Input</td>
+<td>From Pads</td>
+<td>Address bus input value (inverted) from pads a7..a0</td>
+</tr>
+<tr>
+<td>n_ext_addr_en</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>External address enable (active low, TEST1 mode)</td>
+</tr>
+<tr>
+<td>n_p10</td>
+<td>Input</td>
+<td>From P10 Pad</td>
+<td>Joypad matrix input (inverted)</td>
+</tr>
+<tr>
+<td>n_p11</td>
+<td>Input</td>
+<td>From P11 Pad</td>
+<td>Joypad matrix input (inverted)</td>
+</tr>
+<tr>
+<td>n_p12</td>
+<td>Input</td>
+<td>From P12 Pad</td>
+<td>Joypad matrix input (inverted)</td>
+</tr>
+<tr>
+<td>n_p13</td>
+<td>Input</td>
+<td>From P13 Pad</td>
+<td>Joypad matrix input (inverted)</td>
+</tr>
+<tr>
+<td>n_reset2</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Global reset (active low)</td>
+</tr>
+<tr>
+<td>sck_dir</td>
+<td>Input</td>
+<td>From Ser</td>
+<td>Serial clock direction (internal oscillator vs external clock)</td>
+</tr>
+<tr>
+<td>ser_out</td>
+<td>Input</td>
+<td>From Ser</td>
+<td>Serial output data</td>
+</tr>
+<tr>
+<td>serial_tick</td>
+<td>Input</td>
+<td>From Ser</td>
+<td>Serial clock tick</td>
+</tr>
+<tr>
+<td>soc_rd</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>SoC read strobe</td>
+</tr>
+<tr>
+<td>soc_wr</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>SoC write strobe</td>
+</tr>
+<tr>
+<td>test_1</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>Test1 mode - disable all internal CPU A/D bus drivers</td>
+</tr>
+<tr>
+<td>test_2</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>Test2 mode - disable the internal Boot ROM</td>
+</tr>
+<tr>
+<td>[7:0] wave_rd</td>
+<td>Input</td>
+<td>From WaveRAM</td>
+<td>Wave RAM data output</td>
+</tr>
+<tr>
+<td>[7:0] DRV_LOW_a</td>
+<td>Output</td>
+<td>To Pads</td>
+<td>Drive-low control for address bus (bits 7:0) pads</td>
+</tr>
+<tr>
+<td>DRV_LOW_p10</td>
+<td>Output</td>
+<td>To P10 Pad</td>
+<td>Drive-low control for P10 pad</td>
+</tr>
+<tr>
+<td>DRV_LOW_p11</td>
+<td>Output</td>
+<td>To P11 Pad</td>
+<td>Drive-low control for P11 pad</td>
+</tr>
+<tr>
+<td>DRV_LOW_p12</td>
+<td>Output</td>
+<td>To P12 Pad</td>
+<td>Drive-low control for P12 pad</td>
+</tr>
+<tr>
+<td>DRV_LOW_p13</td>
+<td>Output</td>
+<td>To P13 Pad</td>
+<td>Drive-low control for P13 pad</td>
+</tr>
+<tr>
+<td>DRV_LOW_p14</td>
+<td>Output</td>
+<td>To P14 Pad</td>
+<td>Drive-low control for P14 pad</td>
+</tr>
+<tr>
+<td>DRV_LOW_p15</td>
+<td>Output</td>
+<td>To P15 Pad</td>
+<td>Drive-low control for P15 pad</td>
+</tr>
+<tr>
+<td>DRV_LOW_sck</td>
+<td>Output</td>
+<td>To SCK Pad</td>
+<td>Drive-low control for SCK pad</td>
+</tr>
+<tr>
+<td>DRV_LOW_sin</td>
+<td>Output</td>
+<td>To SIN Pad</td>
+<td>Drive-low control for SIN pad</td>
+</tr>
+<tr>
+<td>FF60_D1</td>
+<td>Output</td>
+<td>To MMIO</td>
+<td>TEST_PAD register ($FF60) bit 1: DIV clock mode select (0: 16384 Hz, 1: 1 MHz via clk9)</td>
+</tr>
+<tr>
+<td>[3:0] ch1_out</td>
+<td>Output</td>
+<td>To DAC</td>
+<td>Channel 1 digital amplitude</td>
+</tr>
+<tr>
+<td>[3:0] ch2_out</td>
+<td>Output</td>
+<td>To DAC</td>
+<td>Channel 2 digital amplitude</td>
+</tr>
+<tr>
+<td>ch3_active</td>
+<td>Output</td>
+<td>To WaveRAM</td>
+<td>Wave channel (CH3) active enable</td>
+</tr>
+<tr>
+<td>[3:0] ch3_out</td>
+<td>Output</td>
+<td>To DAC</td>
+<td>Channel 3 digital amplitude</td>
+</tr>
+<tr>
+<td>[3:0] ch4_out</td>
+<td>Output</td>
+<td>To DAC</td>
+<td>Channel 4 digital amplitude</td>
+</tr>
+<tr>
+<td>cpu_wakeup</td>
+<td>Output</td>
+<td>To Core</td>
+<td>CPU wake-up from STOP mode</td>
+</tr>
+<tr>
+<td>int_jp</td>
+<td>Output</td>
+<td>To MMIO</td>
+<td>Joypad interrupt request</td>
+</tr>
+<tr>
+<td>l_vin_en</td>
+<td>Output</td>
+<td>To DAC</td>
+<td>Left channel VIN (external audio) enable</td>
+</tr>
+<tr>
+<td>[3:0] lmixer</td>
+<td>Output</td>
+<td>To DAC</td>
+<td>Left mixer: channel routing to the left output (NR51)</td>
+</tr>
+<tr>
+<td>[7:0] n_DRV_HIGH_a</td>
+<td>Output</td>
+<td>To Pads</td>
+<td>Drive-high control (inverted) for address bus (bits 7:0) pads</td>
+</tr>
+<tr>
+<td>n_DRV_HIGH_p10</td>
+<td>Output</td>
+<td>To P10 Pad</td>
+<td>Drive-high control (inverted) for P10 pad</td>
+</tr>
+<tr>
+<td>n_DRV_HIGH_p11</td>
+<td>Output</td>
+<td>To P11 Pad</td>
+<td>Drive-high control (inverted) for P11 pad</td>
+</tr>
+<tr>
+<td>n_DRV_HIGH_p12</td>
+<td>Output</td>
+<td>To P12 Pad</td>
+<td>Drive-high control (inverted) for P12 pad</td>
+</tr>
+<tr>
+<td>n_DRV_HIGH_p13</td>
+<td>Output</td>
+<td>To P13 Pad</td>
+<td>Drive-high control (inverted) for P13 pad</td>
+</tr>
+<tr>
+<td>n_DRV_HIGH_p14</td>
+<td>Output</td>
+<td>To P14 Pad</td>
+<td>Drive-high control (inverted) for P14 pad</td>
+</tr>
+<tr>
+<td>n_DRV_HIGH_p15</td>
+<td>Output</td>
+<td>To P15 Pad</td>
+<td>Drive-high control (inverted) for P15 pad</td>
+</tr>
+<tr>
+<td>n_DRV_HIGH_sck</td>
+<td>Output</td>
+<td>To SCK Pad</td>
+<td>Drive-high control (inverted) for SCK pad</td>
+</tr>
+<tr>
+<td>n_DRV_HIGH_sin</td>
+<td>Output</td>
+<td>To SIN Pad</td>
+<td>Drive-high control (inverted) for SIN pad</td>
+</tr>
+<tr>
+<td>n_ENA_PU_sin</td>
+<td>Output</td>
+<td>To SIN Pad</td>
+<td>SIN pad pull-up enable (active low)</td>
+</tr>
+<tr>
+<td>n_ch1_amp_en</td>
+<td>Output</td>
+<td>To DAC</td>
+<td>Channel 1 amplifier enable (active low)</td>
+</tr>
+<tr>
+<td>n_ch2_amp_en</td>
+<td>Output</td>
+<td>To DAC</td>
+<td>Channel 2 amplifier enable (active low)</td>
+</tr>
+<tr>
+<td>n_ch3_amp_en</td>
+<td>Output</td>
+<td>To DAC</td>
+<td>Channel 3 amplifier enable (active low)</td>
+</tr>
+<tr>
+<td>n_ch4_amp_en</td>
+<td>Output</td>
+<td>To DAC</td>
+<td>Channel 4 amplifier enable (active low)</td>
+</tr>
+<tr>
+<td>[2:0] n_lvolume</td>
+<td>Output</td>
+<td>To DAC</td>
+<td>Left volume (active low, NR50)</td>
+</tr>
+<tr>
+<td>[2:0] n_rvolume</td>
+<td>Output</td>
+<td>To DAC</td>
+<td>Right volume (active low, NR50)</td>
+</tr>
+<tr>
+<td>n_sout_topad</td>
+<td>Output</td>
+<td>To SOUT Pad</td>
+<td>Serial output to pad (inverted)</td>
+</tr>
+<tr>
+<td>n_wave_rd</td>
+<td>Output</td>
+<td>To WaveRAM</td>
+<td>Wave RAM read (active low)</td>
+</tr>
+<tr>
+<td>n_wave_wr</td>
+<td>Output</td>
+<td>To WaveRAM</td>
+<td>Wave RAM write (active low)</td>
+</tr>
+<tr>
+<td>r_vin_en</td>
+<td>Output</td>
+<td>To DAC</td>
+<td>Right channel VIN (external audio) enable</td>
+</tr>
+<tr>
+<td>[3:0] rmixer</td>
+<td>Output</td>
+<td>To DAC</td>
+<td>Right mixer: channel routing to the right output (NR51)</td>
+</tr>
+<tr>
+<td>[3:0] wave_a</td>
+<td>Output</td>
+<td>To WaveRAM</td>
+<td>Wave RAM address bus (16 bytes)</td>
+</tr>
+<tr>
+<td>wave_bl_pch</td>
+<td>Output</td>
+<td>To WaveRAM</td>
+<td>Wave RAM bitline precharge</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="annotated-design">Annotated Design</h2>
+<p><img alt="apu" decoding="async" loading="lazy" src="../../imgstore/hdl/soc/design/apu.png" /></p>
+<h2 id="netlist-functional-modules-issue-398">Netlist &amp; functional modules (issue #398)</h2>
+<p>The extracted netlist (<code>HDL/soc/apu.v</code>) is one flat module: ~1330 cells
+(286 not, 124 notif0, 116 nor, 108 dffr, 101 latchr_comp, 89 cnt, 88 and,
+73 nand, ... 1 const), i.e. the DMG-CPU "APU pool" of standard cells.
+Simulation on the merged netlist (<code>apu_merged.v</code>, a/d bus aliases) splits
+it into the following functional blocks, with the measured behaviour:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Block</th>
+<th>Evidence / notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Register file $FF10-$FF2F</td>
+<td>8-bit read/write map measured per address (see table below). Decode clocks follow <code>soc_wr</code> (buffered net <code>w188</code>); level-sensitive <code>latchr_comp</code> cells capture the d-bus at the FFxx write window close.</td>
+</tr>
+<tr>
+<td>Wave-RAM window $FF30-$FF3F</td>
+<td>decoded inside the APU: <code>w695</code> = FF30-3F window, <code>n_wave_wr = ~(soc_wr &amp; w695)</code>, <code>n_wave_rd</code> = sample clock (ch3 playing) or <code>soc_rd &amp; w695</code> (CPU read); <code>wave_a</code> = sample counter while ch3 plays, else <code>a[3:0]</code>.</td>
+</tr>
+<tr>
+<td>CH1/CH2 square generators</td>
+<td>output period = <code>(2048 - X) * 32</code> oscillator cycles (X = NR13/NR14 or NR23/NR24) - the DMG 131072/(2048-X) relation: 11-bit divider at clk9 (= osc/4), 8-step duty pattern. Duty table 12.5/25/50/75% and NRx2 volume plateau measured on <code>chN_out</code>.</td>
+</tr>
+<tr>
+<td>CH3 wave generator</td>
+<td>wave-RAM address steps every <code>(2048 - X) * 2</code> osc (sample rate 2^21/(2048-X)); amplitude = sample scaled by NR32 (100/50/25%/mute); DAC enable NR30 bit7.</td>
+</tr>
+<tr>
+<td>CH4 noise generator</td>
+<td>LFSR output at NR42 volume; NR43 divisor scaling measured (exact divider ratio cross-check open).</td>
+</tr>
+<tr>
+<td>Frame sequencer (lfo_512Hz)</td>
+<td>envelope volume step every <code>8*rate</code> lfo pulses (rate/64 s at 512 Hz; rate 0 = off); length counter tick = 2 lfo pulses (256 Hz) and a trigger reloads it with <code>0x40 - L</code> (the DMG quirk: sounds (64-L)/256 s); sweep cadence detail open.</td>
+</tr>
+<tr>
+<td>Mixer / DAC amp</td>
+<td>NR51 low nibble -&gt; right (SO1) mixer bits, high nibble -&gt; left (SO2); NR50 volumes -&gt; active-low n_lvolume/n_rvolume + vin enables (bits 7/3); n_ch*_amp_en follow channel run / NR52 power.</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="register-file-measured-read-back-semantics">Register file (measured read-back semantics)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Addr</th>
+<th>Register</th>
+<th>read =</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$FF10</td>
+<td>NR10</td>
+<td><code>0x80 | (v &amp; 0x7F)</code></td>
+</tr>
+<tr>
+<td>$FF11</td>
+<td>NR11</td>
+<td><code>0x3F | (v &amp; 0xC0)</code></td>
+</tr>
+<tr>
+<td>$FF12</td>
+<td>NR12</td>
+<td>v (8-bit echo)</td>
+</tr>
+<tr>
+<td>$FF13</td>
+<td>NR13</td>
+<td>no read-back (0xFF) - feeds the divider</td>
+</tr>
+<tr>
+<td>$FF14</td>
+<td>NR14</td>
+<td><code>0xBF | (v &amp; 0x40)</code></td>
+</tr>
+<tr>
+<td>$FF16-$FF1E</td>
+<td>NR21-34</td>
+<td>same pattern (NR22/NR32 8-bit echo where readable; freq-lo no read-back)</td>
+</tr>
+<tr>
+<td>$FF24</td>
+<td>NR50</td>
+<td>v</td>
+</tr>
+<tr>
+<td>$FF25</td>
+<td>NR51</td>
+<td>v</td>
+</tr>
+<tr>
+<td>$FF26</td>
+<td>NR52</td>
+<td><code>0x70 | (power&lt;&lt;7) | (ch-active&lt;&lt;0)</code>; power-off write resets the APU</td>
+</tr>
+<tr>
+<td>$FF27-$FF2F</td>
+<td>-</td>
+<td>unmapped</td>
+</tr>
+<tr>
+<td>$FF30-$FF3F</td>
+<td>WaveRAM</td>
+<td>byte read/write through the APU decode</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="serial-joypad-a-arbitration-pieces">Serial / joypad / a-arbitration pieces</h3>
+<p>Per the SoC overview, the APU pool also holds the pieces closest to the
+pads: the $FF00 write decode <code>w570</code> captures d0..d7 into the p10-p15 /
+serial pad-driver latches (<code>DRV_LOW_p1x</code>/<code>n_DRV_HIGH_p1x</code>, <code>n_sout_topad</code>,
+sck/sin pad drivers) and the a[7:0] arbitration (TEST1: <code>addr_latch</code> +
+dma mux <code>g1066..g1073</code> select the external/DMA address; <code>bufif0</code>
+<code>g1081..g1099</code> read the pad inputs onto the internal bus when
+<code>n_ext_addr_en</code> is low). Dedicated tests for these paths are open (see
+STATUS.md).</p>
+<h3 id="simulation-notes">Simulation notes</h3>
+<p>The static Icarus model needs the <code>apu_wc.v</code> bus-model variant: five
+divider-state drivers enabled by the <code>w548</code> decode (g869/g937/g939-941)
+are open during CPU writes and fight the write data (x) which the
+level-sensitive preset latches otherwise capture - see make_wc.py /
+STATUS.md for the full root cause.</p>
+<h2 id="map">Map</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Row</th>
+<th>Cells</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>not, dffr, not, not, dffr, dffr, mux, mux, bufif0, nor, mux, not, bufif0, bufif0, not, bufif0, cnt, not, not, mux, not, not3, not, not, not, dffr, not2, not2, not, not2, nor, not3, not, latch, mux, nand, not6, mux, mux, not3, latch, latch, mux, latch, not, not, mux, latch, latch, latch, latch, mux, mux, or4, or, not, dffr, not, or4, not, nand4, not, not, dffr, and, dffr, dffr, dffr, nand5, not, mux, nor6, and, latch, not, and, nand4, and4, not6, not2, nor, and, and, and, and, and, and, nand, and, and, and, and, nor, dffsr, notif0, notif0, notif0, notif0, not2, notif0, notif0, and, nor, and, nor, and, or, not, nor, dffsr, not3, latchr_comp, not3, latchr_comp, latchr_comp, nor, not, not4, not2, latchr_comp, notif0, notif0, notif0, not, notif0, notif0, notif0, notif0, not2, nor, not, notif0, dffr, dffr, not2, not2, notif0, notif0, not2, notif0, notif0, latchr_comp, latchr_comp, notif0, latchr_comp, not2, latchr_comp, notif0, latchr_comp, notif0, and, and</td>
+</tr>
+<tr>
+<td>2</td>
+<td>not, not, not, mux, not, not, not, not2, nor, dffr, not, dffr, not, nand_latch, bufif0, not2, nand, not, not, latchr_comp, latchr_comp, and, not, notif1, cnt, latchr_comp, latchr_comp, notif1, not, notif1, and, mux, and, nor3, and, not6, dffr, not, not, notif1, not, notif1, nand, nor, or3, not, and, bufif0, not, latchr_comp, latchr_comp, nand, dffr, bufif0, nand, nor, and, nand, nor, nand, not6, not, not, nand, not, notif0, not, not, nand, not2, or, nor, not2, nor, not, not, cnt, cnt, not, not3, not, dffr, dffr, not, not6, nand, not, not, latchr_comp, not, or, not, not, or, nand, nand, notif0, nor, not, not, or4, nand, nor, and, not, not, not, nor, nand, not, nand, or, not, const, not3, not, not, notif0, not2, notif0, mux, and, nor, not, not2, nand, mux, dffsr, not3, nand, and, nor, and3, and, nand, nor, dffr, and3, latchr_comp, latchr_comp, latchr_comp, dffr, nand3, dffr, not2, dffr, cnt, nand, not, nand, not, not, not, latchr_comp, latchr_comp, latchr_comp, latchr_comp, latchr_comp, latchr_comp, notif0, notif0, latchr_comp, latchr_comp, latchr_comp, not2, not2, not2, latchr_comp, notif0, and, and</td>
+</tr>
+<tr>
+<td>3</td>
+<td>not, dffr, not, dffr, not, not, not, dffr, nor, not, nand, nor, not2, not, latchr_comp, latchr_comp, muxi, latchr_comp, latchr_comp, muxi, not, not, cnt, not, not, not, nor, nand, not, not, cnt, dffr, nor, cnt, cnt, nor, nand, not3, nor, notif0, not, notif0, dffr, dffrnq_comp, mux, not, nor, nor, not, cnt, not, and, notif0, nor, nor, nor, nor, latchr_comp, nor, not, not, nor, cnt, cnt, not, and, nor3, dffr, not, not, not, nor3, notif0, cnt, not, and, not, notif0, cnt, dffr, cnt, and, nor_latch, dffr, not, and, not, not, not, nand, cnt, not, fa, not, not, not, xor, xor, cnt, and3, cnt, not, cnt, not, not3, not, not, not, dffr, dffr, and3, not, cnt, cnt, not, notif0, not, dffr, notif0, notif0, not, notif0, notif0, notif0, notif0, not, and, and, notif0, notif0, not, not, latchr_comp, latchr_comp, not, and, or, nand5</td>
+</tr>
+<tr>
+<td>4</td>
+<td>nor_latch, not4, nor, not, dffr, nor, dffr, not, cnt, dffr, muxi, cnt, muxi, aon22, and, notif1, not, notif1, and, notif1, not, not2, not2, not2, nand4, and4, nand4, nand4, nand4, nand4, nand4, nand4, nand4, nand4, nand4, not2, nor, nand4, nand4, not2, nand, nor, nor, nand, nor, nor, not, not, nor, nor, not, nor, nor, not, and, and, not, dffrnq_comp, dffr, nor, nand, nor, nor, not, dffrnq_comp, aon2222, not, latchr_comp, nor, not, nor, not, not, nor3, and, not, dffr, not, nor_latch, nand, not2, not, not, nor, not, nor, and, not, nand, nand, latchr_comp, notif0, cnt, nand, or, not, not, notif0, notif0, nand, notif0, and, not2, not, dffsr, cnt, cnt, not, dffr_comp, nand, dffr_comp, dffr_comp, dffr_comp, fa, xor, dffr_comp, dffr_comp, xor, fa, nor, not, not, and, nor3, nor, nor, dffr, not, dffr, dffr, dffr, nor3, nor3, aon2222, dffr, nand, dffr, dffr, dffr, not2, dffr, and, or, not, nor5</td>
+</tr>
+<tr>
+<td>5</td>
+<td>dffr, nor, dffr, dffr, dffr, dffr, dffr, aon222, aon222, cnt, not2, nand, not, latchr_comp, not, not, not, not, cnt, nand4, and4, and, and, and, nand4, nand4, nand4, nand4, nand4, nor, nor, not6, not2, and, nand, aon22, and, aon2222, and, and, nor, nand5, nor5, nand, cnt, and, and, dffrnq_comp, not, dffr, nand, and, nor, nor, and, nand, latchr_comp, or3, dffr, notif0, latchr_comp, latchr_comp, latchr_comp, and, nor, and3, not2, cnt, nor, cnt, not, cnt, nor, not, dffsr, dffsr, nand, not, dffr_comp, fa, dffsr, dffsr, dffr_comp, dffr_comp, nor, and, not3, dffr_comp, nor, nor, nor, nor, not, cnt, not3, dffr, dffr, not2, aon222222, nor3, nor3, nor3, nor3, nor, or, nor_latch, dffr, nor3, nor3, aon2222, and, aon22, or, dffr, aon22, aon22, mux, or</td>
+</tr>
+<tr>
+<td>6</td>
+<td>not, and, dffr, not, nor, notif0, and, notif0, notif0, notif0, notif0, dffr, nor, not, notif0, notif0, notif0, notif0, latchr_comp, latchr_comp, latchr_comp, latchr_comp, latchr_comp, cnt, nor, notif0, or, nor, not, not2, not, not, nand, latchr_comp, cnt, not, aon22, cnt, nor5, latchr_comp, cnt, not, aon22, cnt, not, nand, nor_latch, or3, cnt, nand, cnt, not, cnt, dffr, cnt, not, not, nor3, nor_latch, dffr, notif0, cnt, and, dffr, not, notif0, dffr, and, and, nor, cnt, nor, dffsr, dffr_comp, fa, dffsr, dffsr, not, xor, dffsr, not, dffr, nand_latch, cnt, not3, nor, nand, not, nand, not, not, dffr, mux, latchr_comp, latchr_comp, nor3, or3, not, not2, dffr, aon22, cnt, or3, cnt, cnt, cnt</td>
+</tr>
+<tr>
+<td>7</td>
+<td>nand_latch, nor3, not, nor3, dffr, not, dffr, dffr, not, not, nor_latch, not, latchr_comp, not, nor3, not, dffr, nor, nor, nor, not, not, notif0, cnt, cnt, not, not, cnt, latchr_comp, latchr_comp, latchr_comp, nor, nand4, nor, nor, not, latchr_comp, latchr_comp, not, latchr_comp, latchr_comp, notif0, notif0, notif0, or, and, aon22, notif0, not, or, not, or, not, not, nand, notif0, not, not, not, nor3, not, and, not, and, notif0, cnt, and, nor3, not, cnt, cnt, cnt, not, not, not, latchr_comp, notif0, notif0, not, dffr, nand, nor, notif0, cnt, nand, nor, nor, not, nand, and, nand, not, nand_latch, not, not, not, dffr_comp, dffr_comp, fa, dffr_comp, xor, fa, nand, mux, xor, xor, xor, not, dffsr, nor4, dffr, not, not, not, nor, dffr, not, dffr, nor3, or, and, latchr_comp, not2, latchr_comp, notif0, notif0, notif0, latchr_comp, latchr_comp, latchr_comp, notif0, latchr_comp, nor5, latchr_comp, not2, not, notif0, nor_latch, not, nor, nor, and, dffr</td>
+</tr>
+<tr>
+<td>8</td>
+<td>nor, or, nor, not, and, nor, not, dffr, notif0, dffr, not, or3, nor4, nor, nor, cnt, cnt, notif0, cnt, and, not, notif0, notif0, latchr_comp, latchr_comp, and, nand, not2, notif0, notif0, notif0, latchr_comp, latchr_comp, not, latchr_comp, and3, notif0, notif0, or, notif0, notif0, not, nand, dffr, not, not, not, or, and, dffsr, notif0, notif0, notif0, or, nand, latchr_comp, not2, notif0, dffsr, notif0, nor5, notif0, aon22, cnt, cnt, aon22, cnt, cnt, aon22, cnt, cnt, dffsr, nand5, nor5, fa, not, dffsr, not, dffsr, fa, dffr_comp, nand, xor, nand, nand, dffr_comp, not, dffr_comp, nor, not3, not, nor_latch, nor, not, not, nor, latchr_comp, dffr, not4, dffr, not, nor, notif0, dffr, not2, and, notif0, notif0, or, nand, nor, not, dffr, notif0, or, dffr, xnor, not, and3, dffr</td>
+</tr>
+<tr>
+<td>9</td>
+<td>not, not, cnt, notif0, notif0, nor_latch, latchr_comp, latchr_comp, latchr_comp, notif0, dffr, not, notif0, notif0, notif0, notif0, notif0, latchr_comp, latchr_comp, latchr_comp, cnt, cnt, cnt, nor3, and, not, not, latchr_comp, latchr_comp, not, and, latchr_comp, latchr_comp, not, latchr_comp, dffr, latchr_comp, not, latchr_comp, latchr_comp, notif0, notif0, notif0, nand, not, cnt, latchr_comp, latchr_comp, latchr_comp, latchr_comp, latchr_comp, notif0, or, aon22, not, not, not, dffr, dffr, notif0, cnt, dffsr, cnt, fa, fa, dffr_comp, not, nor, dffr_comp, dffr_comp, or, dffr_comp, dffsr, not, dffsr, dffsr, dffr, dffr, and, and, dffr, dffr, dffr, nand_latch, latchr_comp, latchr_comp, latchr_comp, not, dffr, latchr_comp, nand, cnt, cnt, not, cnt</td>
+</tr>
+<tr>
+<td>10</td>
+<td>cnt, cnt, not, not, not, not, cnt, notif0, cnt, not, cnt, cnt, notif0, not, not, cnt, and3, cnt, notif0, notif0, cnt, cnt, latchr_comp, and, not, not2, not, latchr_comp, not, latchr_comp, not, not, bufif0, not, not, and, not, not, dffr, nor3, not, cnt, not, and3, cnt, not2, muxi, dffr, dffr, dffr, nand, nor, and, nor, nand, dffr, nand, nor, nand, nor, or, notif0, notif0, latch, not, not, notif0, notif0, cnt, dffr, nor, nand, nor, not, nand, nand, nor, nor, dffr, nand, nor, and, dffr_comp, not, or4, nor4, or3, nand, nor, not, nand, nor, xor, not, nor_latch, dffr, nand, nor, nor, not, not, and, not, and, nor, nor, or, latch, notif0, not2, or, not3, latch, notif0, not, not6, latch, notif0, not, dffr, or, not, dffr, not, dffr, dffr, not, aon22, not, notif0, dffr, notif0, not, or, not, nand, notif0, notif0, not, not, notif0</td>
+</tr>
+</tbody>
+</table>
+</div><div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>The chip is topologically arranged so that the address bus arbitration is divided into three parts: in <a href="arb.html">arb</a>, in <a href="mmio.html">mmio</a>, and in <a href="apu.html">apu</a>, to equalize wire lengths.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>The constant 0 is globally scattered throughout the chip. Each large module with cells has a <code>const</code> cell whose output 0 is globally connected between all modules (so the input is marked as Bidir).&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG-CPU LR35902 SoC</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/soc/apu.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

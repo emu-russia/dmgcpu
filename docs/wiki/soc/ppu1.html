@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PPU1 · DMG-CPU Research</title>
+<meta name="description" content="PPU1 is the &quot;video / LCD&quot; half of the PPU. The two PPU blocks are split as follows:">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/soc/Readme.html">DMG-CPU LR35902 SoC</a><span class="sep">/</span><span class="current">PPU1</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#role-in-the-soc">Role in the SoC</a></li><li class="toc-l2"><a href="#signals">Signals</a></li><li class="toc-l2"><a href="#netlist">Netlist</a></li><li class="toc-l2"><a href="#annotated-design">Annotated Design</a></li><li class="toc-l2"><a href="#functional-blocks">Functional blocks</a></li><li class="toc-l2"><a href="#clock-domains">Clock domains</a></li><li class="toc-l2"><a href="#map">Map</a></li><li class="toc-l2"><a href="#verified-by-the-ppu-testbench-issue-390">Verified by the PPU testbench (issue #390)</a></li><li class="toc-l2"><a href="#open-questions">Open questions</a></li><li class="toc-l2"><a href="#suspected-netlist-issues-reported-to-the-author-not-fixed-here">Suspected netlist issues (reported to the author, NOT fixed here)</a></li><li class="toc-l2"><a href="#references">References</a></li></ol></details>
+<article class="content"><h1 id="ppu1">PPU1</h1>
+<div class="callout callout-note"><p class="callout-title">The netlist (</p><p><code>HDL/soc/ppu1.v</code>) has been annotated: the design is split into functional blocks and each block is described below. The signal table is filled based on the netlist. Block descriptions were cross-checked against @msinger's DMG-CPU B schematics (<a href="https://github.com/msinger/dmg-schematics/" rel="noopener noreferrer" target="_blank">dmg-schematics</a>) and the <a href="https://gbdev.io/pandocs/" rel="noopener noreferrer" target="_blank">Pan Docs</a>.</p>
+</div><p><img alt="ppu1" decoding="async" loading="lazy" src="../../imgstore/soc/ppu1.jpg" /></p>
+<h2 id="role-in-the-soc">Role in the SoC</h2>
+<p>PPU1 is the "video / LCD" half of the PPU. The two PPU blocks are split as follows:</p>
+<ul>
+<li><strong>PPU1 (this page):</strong> the BG/WIN (background/window) part of the pipeline, the pixel serializers, the palettes and the pixel mux, the LCD driver interface, the H/V counters, the register decode and most of the PPU registers.</li>
+<li><strong>PPU2:</strong> the part closer to Objects and OAM ("sprites"): OAM scan, sprite X arithmetic, mode generation. PPU2 outputs the object attributes to PPU1 (<code>obj_color</code>, <code>obj_prio</code>, <code>sprite_x_flip</code>, <code>sprite_x_match</code>, <code>ppu_mode2</code>) and receives the render timing from PPU1 (<code>oam_addr_ck</code>, <code>oam_rd_ck</code>, <code>oam_xattr_latch_cck</code>, <code>obj_prio_ck</code>, <code>ppu_mode3</code>, the H/V counter values).</li>
+</ul>
+<p>Both parts communicate closely with a bunch of signals: PPU1 generates the VRAM addresses (<code>nma</code>/<code>n_ma</code>), the CPU-visible register access indicators (<code>ff42</code>, <code>ff43</code>, <code>ff46</code>, <code>fexx</code>, <code>FF40_D1..3</code>), and the LCD driver outputs.</p>
+<p>The netlist is a flat gate-level Verilog: <strong>916 cells, 128 <code>assign</code> statements, 64 ports</strong> (the only hierarchical cell is the <code>const</code> cell <code>g867</code>). The cell inventory:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cell type</th>
+<th style="text-align: right;">Count</th>
+<th>Cell type</th>
+<th style="text-align: right;">Count</th>
+<th>Cell type</th>
+<th style="text-align: right;">Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>not</td>
+<td style="text-align: right;">211</td>
+<td>dffsr</td>
+<td style="text-align: right;">48</td>
+<td>notif1</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr>
+<td>nand</td>
+<td style="text-align: right;">109</td>
+<td>latchr_comp</td>
+<td style="text-align: right;">37</td>
+<td>or3</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr>
+<td>notif0</td>
+<td style="text-align: right;">98</td>
+<td>latch_comp</td>
+<td style="text-align: right;">24</td>
+<td>nor</td>
+<td style="text-align: right;">17</td>
+</tr>
+<tr>
+<td>dffr</td>
+<td style="text-align: right;">81</td>
+<td>latchnq_comp</td>
+<td style="text-align: right;">24</td>
+<td>nand5</td>
+<td style="text-align: right;">17</td>
+</tr>
+<tr>
+<td>not2</td>
+<td style="text-align: right;">51</td>
+<td>xnor</td>
+<td style="text-align: right;">19</td>
+<td>xor</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr>
+<td>and</td>
+<td style="text-align: right;">49</td>
+<td>and3</td>
+<td style="text-align: right;">13</td>
+<td>nor3</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr>
+<td>or</td>
+<td style="text-align: right;">8</td>
+<td>nor_latch</td>
+<td style="text-align: right;">8</td>
+<td>dffr_comp</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr>
+<td>mux</td>
+<td style="text-align: right;">8</td>
+<td>aon2222</td>
+<td style="text-align: right;">7</td>
+<td>not3</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr>
+<td>nand3</td>
+<td style="text-align: right;">6</td>
+<td>nand7</td>
+<td style="text-align: right;">4</td>
+<td>nand4</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr>
+<td>and4</td>
+<td style="text-align: right;">3</td>
+<td>not4</td>
+<td style="text-align: right;">2</td>
+<td>nand_latch</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td>nor4</td>
+<td style="text-align: right;">2</td>
+<td>nor8</td>
+<td style="text-align: right;">1</td>
+<td>const</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div><div class="callout callout-note"><p class="callout-title">Bus conventions</p><p>The internal buses (<code>d</code>, <code>md</code>, <code>nma</code>, <code>n_ma</code>) use the old-school <strong>precharged, inverse-hold</strong> technique: drivers are inverting tristates (<code>notif0</code>/<code>notif1</code>) that pull the wire to the inverse of the data while enabled; otherwise the wire holds its precharged value. Hence e.g. <code>n_ma</code> (the external VRAM address) is the inverse-hold form of the internal address.</p>
+</div><h2 id="signals">Signals</h2>
+<div class="callout callout-tip"><p class="callout-title">Boundary view</p><p>This table lists <strong>every</strong> PPU1 port, including the PPU1↔PPU2 handshake nets.
+The whole-PPU external interface (PPU1+PPU2 vs ClkGen / CPU / MMIO / Arbiter /
+OAM / pads, internal PPU1↔PPU2 nets excluded) is on the
+<a href="ppu.html#ppu-soc-boundary-external-signals">PPU SoC boundary</a> page.</p>
+</div><p><img alt="ppu1_ports" decoding="async" loading="lazy" src="../../imgstore/soc/ppu1_ports.png" /></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal Name</th>
+<th>Direction</th>
+<th>From / Where To</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONST0</td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Constant 0 signal <sup id="fnref:2"><a class="footnote-ref" href="#fn:2">1</a></sup></td>
+</tr>
+<tr>
+<td>FF43_D0</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>SCX register ($FF43) bit 0 (background X scroll, fine bits)</td>
+</tr>
+<tr>
+<td>FF43_D1</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>SCX register ($FF43) bit 1</td>
+</tr>
+<tr>
+<td>FF43_D2</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>SCX register ($FF43) bit 2</td>
+</tr>
+<tr>
+<td>[12:0] a</td>
+<td>Input</td>
+<td>From Core</td>
+<td>Internal address bus (VRAM access, 13 bits)</td>
+</tr>
+<tr>
+<td>arb_fexx_ffxx</td>
+<td>Input</td>
+<td>From Arb</td>
+<td>Arbitration of FExx (VRAM/OAM) vs FFxx (registers) accesses</td>
+</tr>
+<tr>
+<td>[7:0] d</td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Internal data bus</td>
+</tr>
+<tr>
+<td>ffxx</td>
+<td>Input</td>
+<td>From Arb</td>
+<td>FFxx register area indicator</td>
+</tr>
+<tr>
+<td>h_restart</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>H counter restart</td>
+</tr>
+<tr>
+<td>[7:0] md</td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Internal video memory data bus (VRAM)</td>
+</tr>
+<tr>
+<td>n_dma_phi</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>DMA clock (inverted)</td>
+</tr>
+<tr>
+<td>n_ppu_clk</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>PPU clock (inverted)</td>
+</tr>
+<tr>
+<td>n_ppu_hard_reset</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>PPU hard reset (active low)</td>
+</tr>
+<tr>
+<td>[12:0] nma</td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Internal video memory address bus between PPUs (inverse hold)</td>
+</tr>
+<tr>
+<td>obj_color</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>Object color</td>
+</tr>
+<tr>
+<td>obj_prio</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>Object priority</td>
+</tr>
+<tr>
+<td>ppu_clk</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>PPU clock</td>
+</tr>
+<tr>
+<td>ppu_mode2</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>PPU Mode 2 (OAM scan) indicator</td>
+</tr>
+<tr>
+<td>ppu_rd</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>PPU read strobe</td>
+</tr>
+<tr>
+<td>ppu_wr</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>PPU write strobe</td>
+</tr>
+<tr>
+<td>sprite_x_flip</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>Sprite X flip</td>
+</tr>
+<tr>
+<td>sprite_x_match</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>Sprite X match</td>
+</tr>
+<tr>
+<td>stop_oam_eval</td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>Stop OAM evaluation</td>
+</tr>
+<tr>
+<td>vram_to_oam</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>VRAM to OAM transfer enable (DMA)</td>
+</tr>
+<tr>
+<td>FF40_D1</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>LCDC register ($FF40) bit 1 (OBJ enable)</td>
+</tr>
+<tr>
+<td>FF40_D2</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>LCDC register ($FF40) bit 2 (OBJ size)</td>
+</tr>
+<tr>
+<td>FF40_D3</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>LCDC register ($FF40) bit 3 (BG tile map select)</td>
+</tr>
+<tr>
+<td>bp_cy</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>Buffer page cycle</td>
+</tr>
+<tr>
+<td>bp_sel</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>Buffer page select</td>
+</tr>
+<tr>
+<td>fexx</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>FExx register area indicator (VRAM/OAM)</td>
+</tr>
+<tr>
+<td>ff42</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>SCY register ($FF42) access indicator <sup id="fnref:3"><a class="footnote-ref" href="#fn:3">2</a></sup></td>
+</tr>
+<tr>
+<td>ff43</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>SCX register ($FF43) access indicator <sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">2</a></sup></td>
+</tr>
+<tr>
+<td>ff46</td>
+<td>Output</td>
+<td>To MMIO</td>
+<td>DMA register ($FF46) access indicator</td>
+</tr>
+<tr>
+<td>[7:0] h</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>H counter (LX) value</td>
+</tr>
+<tr>
+<td>in_window</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>In-window indicator</td>
+</tr>
+<tr>
+<td>n_dma_phi2_latched</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>Latched inverted DMA clock 2</td>
+</tr>
+<tr>
+<td>n_lcd_cp</td>
+<td>Output</td>
+<td>To CP Pad</td>
+<td>LCD driver signal CP (inverted)</td>
+</tr>
+<tr>
+<td>n_lcd_cpg</td>
+<td>Output</td>
+<td>To CPG Pad</td>
+<td>LCD driver signal CPG (inverted)</td>
+</tr>
+<tr>
+<td>n_lcd_cpl</td>
+<td>Output</td>
+<td>To CPL Pad</td>
+<td>LCD driver signal CPL (inverted)</td>
+</tr>
+<tr>
+<td>n_lcd_fr</td>
+<td>Output</td>
+<td>To FR Pad</td>
+<td>LCD driver signal FR (inverted)</td>
+</tr>
+<tr>
+<td>n_lcd_ld0</td>
+<td>Output</td>
+<td>To LD0 Pad</td>
+<td>LCD driver data LD0 (inverted)</td>
+</tr>
+<tr>
+<td>n_lcd_ld1</td>
+<td>Output</td>
+<td>To LD1 Pad</td>
+<td>LCD driver data LD1 (inverted)</td>
+</tr>
+<tr>
+<td>n_lcd_s</td>
+<td>Output</td>
+<td>To S Pad</td>
+<td>LCD driver signal S (inverted)</td>
+</tr>
+<tr>
+<td>n_lcd_st</td>
+<td>Output</td>
+<td>To ST Pad</td>
+<td>LCD driver signal ST (inverted)</td>
+</tr>
+<tr>
+<td>[12:0] n_ma</td>
+<td>Output</td>
+<td>To Pads</td>
+<td>External video memory address bus (inverse hold)</td>
+</tr>
+<tr>
+<td>n_ppu_reset</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>PPU reset (active low)</td>
+</tr>
+<tr>
+<td>n_sp_bp_mrd</td>
+<td>Output</td>
+<td>To Arb</td>
+<td>Sprite buffer page memory read (active low)</td>
+</tr>
+<tr>
+<td>n_tm_bp_cys</td>
+<td>Output</td>
+<td>To Arb</td>
+<td>Tile map buffer page cycle (active low)</td>
+</tr>
+<tr>
+<td>oam_addr_ck</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>OAM address clock</td>
+</tr>
+<tr>
+<td>oam_mode3_bl_pch</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>OAM bitline precharge during MODE3</td>
+</tr>
+<tr>
+<td>oam_mode3_nrd</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>OAM read during MODE3 (active low)</td>
+</tr>
+<tr>
+<td>oam_rd_ck</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>OAM read clock</td>
+</tr>
+<tr>
+<td>oam_xattr_latch_cck</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>OAM X attribute latch clock</td>
+</tr>
+<tr>
+<td>obj_prio_ck</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>Object priority clock</td>
+</tr>
+<tr>
+<td>ppu_int_stat</td>
+<td>Output</td>
+<td>To MMIO</td>
+<td>PPU STAT interrupt request</td>
+</tr>
+<tr>
+<td>ppu_int_vbl</td>
+<td>Output</td>
+<td>To MMIO</td>
+<td>PPU VBLANK interrupt request</td>
+</tr>
+<tr>
+<td>ppu_mode3</td>
+<td>Output</td>
+<td>To PPU2, Arb</td>
+<td>PPU Mode 3 (pixel transfer) indicator</td>
+</tr>
+<tr>
+<td>ppu1_ma0</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>VRAM address bit 0 (MA0)</td>
+</tr>
+<tr>
+<td>sp_bp_cys</td>
+<td>Output</td>
+<td>To PPU2, Arb</td>
+<td>Sprite buffer page cycle</td>
+</tr>
+<tr>
+<td>tm_bp_cys</td>
+<td>Output</td>
+<td>To Arb</td>
+<td>Tile map buffer page cycle</td>
+</tr>
+<tr>
+<td>tm_cy</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>Tile map cycle</td>
+</tr>
+<tr>
+<td>[7:0] v</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>V counter (LY) value</td>
+</tr>
+<tr>
+<td>vbl</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>VBLANK indicator</td>
+</tr>
+<tr>
+<td>vclk2</td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>VRAM clock 2</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="netlist">Netlist</h2>
+<p><img alt="ppu1_netlist" decoding="async" loading="lazy" src="../../imgstore/soc/ppu1_netlist.png" /></p>
+<h2 id="annotated-design">Annotated Design</h2>
+<p>TBD.</p>
+<p><img alt="ppu1" decoding="async" loading="lazy" src="../../imgstore/hdl/soc/design/ppu1.png" /></p>
+<h2 id="functional-blocks">Functional blocks</h2>
+<p>The netlist is organized into the following functional blocks (instance numbers refer to <code>HDL/soc/ppu1.v</code>):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Block</th>
+<th>Key instances</th>
+<th>Schematic page (by @msinger)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Register decode (address decoder)</td>
+<td>g788–g800, g753, g909</td>
+<td>ppu_decode</td>
+</tr>
+<tr>
+<td>2</td>
+<td>PPU registers (LCDC, STAT, SCY/SCX, LY, LYC, DMA, BGP, OBP0/1, WY, WX)</td>
+<td>g619–g679, g634–g670, g644–g647, ...</td>
+<td>ppu_decode, ff41_stat, palettes</td>
+</tr>
+<tr>
+<td>3</td>
+<td>H counter (LX / LCD X)</td>
+<td>g306–g309, g321, g290–g292, g323</td>
+<td>lcd</td>
+</tr>
+<tr>
+<td>4</td>
+<td>V counter (LY)</td>
+<td>g261–g265, g335–g337</td>
+<td>lcd</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Window logic (in_window)</td>
+<td>g872, g754, g537–g538</td>
+<td>bg_win_cycles</td>
+</tr>
+<tr>
+<td>6</td>
+<td>BG/WIN fetch cycles (mode 3 sequencer)</td>
+<td>g876, g683, g687, g874, g898</td>
+<td>bg_win_cycles</td>
+</tr>
+<tr>
+<td>7</td>
+<td>VRAM address generation (TM/TD counters, address register)</td>
+<td>g294–g302, g309–g312, g882–g889</td>
+<td>background</td>
+</tr>
+<tr>
+<td>8</td>
+<td>BG pixel shifter</td>
+<td>g445–g449, g466–g468, dffsr chains</td>
+<td>bg_px_shifter</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Sprite pixel path (X-flip, sprite shifter, priority)</td>
+<td>g890–g897, g450–g465, dffsr chains</td>
+<td>sp_px_shifter, sprite_x_prio</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Sprite selection (ring counter, LAST_SPRITE)</td>
+<td>g282–g285, g316–g319, g784–g787</td>
+<td>sprite_control, sprite_store</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Palettes + pixel mux (LD0/LD1 serializer)</td>
+<td>g804–g810, g814–g815, aon2222</td>
+<td>palettes, pixel_mux</td>
+</tr>
+<tr>
+<td>12</td>
+<td>LCD driver timing (FR, CP, CPG, CPL, ST, S)</td>
+<td>g266–g268, g852, g823–g825, g821–g822</td>
+<td>lcd</td>
+</tr>
+<tr>
+<td>13</td>
+<td>OAM parse clocks (mode 2)</td>
+<td>g303–g305, g130, g494, g499</td>
+<td>lcd</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Interrupt outputs (STAT, VBLANK)</td>
+<td>g810, g827, g826, g332</td>
+<td>ff41_stat</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Reset and clock generation</td>
+<td>g497, g412, g831, g881, g868</td>
+<td>clocks_and_reset</td>
+</tr>
+<tr>
+<td>16</td>
+<td>DMA interface (fexx, n_dma_phi2_latched, vram_to_oam)</td>
+<td>g371, g514, g873, g723</td>
+<td>ff46_dma</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="1-register-decode-address-decoder">1. Register decode (address decoder)</h3>
+<p>The decoder is a row of 13 five-input NANDs <code>g788..g800</code> that turn the low address bits into per-register access strobes. The qualifier <code>w267</code> (from <code>g753</code>/<code>g909</code>) is high only for the $FF4x register window:</p>
+<pre><code>w267 = ffxx &amp; a[6] &amp; !a[7] &amp; !a[5] &amp; !a[4]
+</code></pre>
+<p>i.e. "FFxx area, bits 7:4 = 0100" (the $FF40–$FF4B block). Each NAND then decodes bits a[3:0] (inverted/true forms <code>w266/w265</code>, <code>w563/w264</code>, <code>w793/w263</code>, <code>w235/w162</code> produced by <code>g97..g100</code> and <code>g147..g150</code>):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Decoder</th>
+<th>a[3:0]</th>
+<th>Register</th>
+<th>Output net</th>
+<th>Consumed by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>g788</td>
+<td>0110</td>
+<td>$FF46 DMA</td>
+<td>w567 → <code>ff46</code> (g508)</td>
+<td>MMIO</td>
+</tr>
+<tr>
+<td>g789</td>
+<td>0010</td>
+<td>$FF42 SCY</td>
+<td>w268 → <code>ff42</code> (g505)</td>
+<td>PPU2</td>
+</tr>
+<tr>
+<td>g790</td>
+<td>1000</td>
+<td>$FF48 OBP0</td>
+<td>w841 → w840</td>
+<td>write <code>g727</code>, read <code>g726</code></td>
+</tr>
+<tr>
+<td>g791</td>
+<td>0100</td>
+<td>$FF44 LY</td>
+<td>w262 → w261</td>
+<td>read path <code>g711</code></td>
+</tr>
+<tr>
+<td>g792</td>
+<td>1011</td>
+<td>$FF4B WX</td>
+<td>w792 → w533</td>
+<td>write <code>g710</code>, read <code>g706</code></td>
+</tr>
+<tr>
+<td>g793</td>
+<td>1010</td>
+<td>$FF4A WY</td>
+<td>w161 → w160</td>
+<td>write <code>g713</code>, read <code>g714</code></td>
+</tr>
+<tr>
+<td>g794</td>
+<td>0000</td>
+<td>$FF40 LCDC</td>
+<td>w919 → w292</td>
+<td>write <code>g717</code>, read <code>g712</code></td>
+</tr>
+<tr>
+<td>g795</td>
+<td>0001</td>
+<td>$FF41 STAT</td>
+<td>w234 → w233</td>
+<td>write <code>g696</code>, read <code>g692</code></td>
+</tr>
+<tr>
+<td>g796</td>
+<td>0011</td>
+<td>$FF43 SCX</td>
+<td>w842 → <code>ff43</code> (g503)</td>
+<td>PPU2</td>
+</tr>
+<tr>
+<td>g797</td>
+<td>0101</td>
+<td>$FF45 LYC</td>
+<td>w913 → w73</td>
+<td>write <code>g724</code>, read <code>g718</code></td>
+</tr>
+<tr>
+<td>g798</td>
+<td>0111</td>
+<td>$FF47 BGP</td>
+<td>w645 → w646</td>
+<td>write <code>g715</code>, read <code>g716</code></td>
+</tr>
+<tr>
+<td>g800</td>
+<td>1001</td>
+<td>$FF49 OBP1</td>
+<td>w163 → w870</td>
+<td>write <code>g686</code>, read <code>g685</code></td>
+</tr>
+</tbody>
+</table>
+</div><p>The decoded strobes are AND-ed with <code>ppu_rd</code> (<code>w59</code>) / <code>ppu_wr</code> (<code>w152</code>) by <code>g685..g727</code>, producing the per-register read/write enables (<code>w232</code>, <code>w597</code>, <code>w58</code>, <code>w84</code>, <code>w260</code>, <code>w920</code>, <code>w72</code>, <code>w914</code>, <code>w955</code>, <code>w647</code>, <code>w855</code>, ...). These enables select, via the tristate drivers (<code>notif0</code>/<code>notif1</code>), which value is driven onto the data bus <code>d</code> on a CPU read, and which latch bank captures <code>d</code> on a CPU write.</p>
+<h3 id="2-ppu-registers">2. PPU registers</h3>
+<p>All PPU registers are level latches (<code>latchr_comp</code> / <code>latchnq_comp</code>) capturing the data bus <code>d</code>, cleared by the hard-reset tree (<code>w138</code>/<code>w246</code>/<code>w249</code> = <code>n_ppu_hard_reset</code>). Read-back is done by <code>notif0</code> tristates enabled by the corresponding read strobe (the read value is the inverted hold on <code>d</code>).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Register</th>
+<th>Write enable</th>
+<th>Latches</th>
+<th>Bits / notes</th>
+<th>Read path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LCDC</strong> $FF40</td>
+<td><code>w535</code> (= <code>ppu_wr &amp; w292</code>)</td>
+<td>g649–g657 (8× latchr_comp)</td>
+<td>bit0 <code>w139</code>, bit1 <code>w822</code>→<code>FF40_D1</code> (OBJ enable), bit2 <code>w55</code>→<code>FF40_D2</code> (OBJ size), bit3 <code>w54</code>→<code>FF40_D3</code> (BG tile map select), bit4 <code>w207</code> (BG tile data select), bit5 <code>w538</code> (window enable), bit6 <code>w641</code> (window tile map select), bit7 <code>w81</code> (LCD enable)</td>
+<td><code>g553–g555, g569–g570, g592–g594</code> (<code>n_ena=w57</code>)</td>
+</tr>
+<tr>
+<td><strong>STAT</strong> $FF41</td>
+<td><code>w597</code> (= <code>ppu_wr &amp; w233</code>)</td>
+<td>g644–g647 (4× latchr_comp)</td>
+<td>interrupt enable bits 3–6 (mode0/mode1/mode2/LYC), read value OR-ed into <code>ppu_int_stat</code>; mode bits 0–1 and the LYC flag are generated on the fly (see below)</td>
+<td><code>g600–g601, g607–g609</code> + <code>g854/g865/g859</code> (notif1)</td>
+</tr>
+<tr>
+<td><strong>SCY</strong> $FF42</td>
+<td>— (register in PPU2)</td>
+<td>—</td>
+<td>access indicator <code>ff42</code> sent to PPU2</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>SCX</strong> $FF43</td>
+<td>— (register in PPU2)</td>
+<td>—</td>
+<td>low 3 bits come back from PPU2 as <code>FF43_D0..2</code>, compared by the SCX fine-scroll counter (block 6)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>LY</strong> $FF44</td>
+<td>read-only</td>
+<td>—</td>
+<td>returns the V counter value: <code>g531, g556–g560</code> (<code>n_ena=w259</code>) drive <code>d</code> from <code>!v1..!v7</code></td>
+<td>read strobe <code>w260</code></td>
+</tr>
+<tr>
+<td><strong>LYC</strong> $FF45</td>
+<td><code>w247</code> (= <code>ppu_wr &amp; w73</code>)</td>
+<td>g648, g658–g664 (8× latchr_comp)</td>
+<td>compared with the V counter → LY==LYC flag (block 4)</td>
+<td><code>g543–g546, g595, g598–g599, g602</code></td>
+</tr>
+<tr>
+<td><strong>DMA</strong> $FF46</td>
+<td>— (register in MMIO)</td>
+<td>—</td>
+<td>access indicator <code>ff46</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>BGP</strong> $FF47</td>
+<td><code>w728</code> (= <code>ppu_wr &amp; w646</code>)</td>
+<td>g625, g673–g679 (8× latchnq_comp)</td>
+<td>background palette, used by the pixel mux (block 11)</td>
+<td><code>g533–g537, g547–g548, g610</code></td>
+</tr>
+<tr>
+<td><strong>OBP0</strong> $FF48</td>
+<td><code>w70</code> (= <code>ppu_wr &amp; w840</code>)</td>
+<td>g626–g633 (8× latchnq_comp)</td>
+<td>object palette 0</td>
+<td><code>g529–g530, g561–g568, g613–g618</code></td>
+</tr>
+<tr>
+<td><strong>OBP1</strong> $FF49</td>
+<td><code>w92</code> (= <code>ppu_wr &amp; w870</code>)</td>
+<td>g619–g624, g671–g672 (8× latchnq_comp)</td>
+<td>object palette 1</td>
+<td><code>g521–g528</code></td>
+</tr>
+<tr>
+<td><strong>WY</strong> $FF4A</td>
+<td><code>w410</code> (= <code>ppu_wr &amp; w160</code>)</td>
+<td>g637–g643, g665 (8× latchr_comp)</td>
+<td>window Y position, compared with V counter (block 5)</td>
+<td><code>g532</code> + part of <code>g529..g618</code></td>
+</tr>
+<tr>
+<td><strong>WX</strong> $FF4B</td>
+<td><code>w811</code> (= <code>ppu_wr &amp; w533</code>)</td>
+<td>g634–g636, g666–g670 (8× latchr_comp)</td>
+<td>window X position, compared with H counter (block 5)</td>
+<td><code>g529–g530</code></td>
+</tr>
+</tbody>
+</table>
+</div><p><strong>STAT read value.</strong> The mode bits 0–1 are computed on the fly from the PPU mode handshakes: bit 0 from <code>!ppu_mode3</code>/VBlank state (<code>g854</code>, <code>g782</code>), bit 1 from <code>!(ppu_mode2 | ppu_mode3)</code> (<code>g865</code>, <code>g781</code>); bit 2 is the LY==LYC flag (<code>g859</code>, from the <code>nor_latch</code> <code>g906</code>); bits 3–6 are the interrupt enable latches; bit 7 is 0. (Exact per-bit polarity depends on the inverse-hold bus convention and should be confirmed by simulation.)</p>
+<h3 id="3-h-counter-lx">3. H counter (LX)</h3>
+<p>The H counter (the LCD X / "LX" counter, <code>h[7:0]</code> output to PPU2) is a binary counter with an AND carry chain, clocked by the fetch clock <code>w44</code>:</p>
+<ul>
+<li>bits 0–3: <code>g308</code> (h0, d=<code>!q</code>), <code>g321</code> (h1, d = h1^h0 via <code>g840</code>), <code>g306</code> (h2, d = h2^(h0&amp;h1) via <code>g844</code>/<code>g720</code>), <code>g307</code> (h3, d = h3^(h0&amp;h1&amp;h2) via <code>g866</code>/<code>g719</code>), all clocked by <code>w44</code>, reset by <code>w495</code> = <code>!h_restart &amp; n_ppu_reset</code>;</li>
+<li>bits 4–7: <code>g292</code> (h4), <code>g290</code> (h5), <code>g291</code> (h6), <code>g323</code> (h7), all clocked by <code>w375 = !h3</code> (ripple extension of the counter), with the same AND-carry increment (<code>g721</code>, <code>g697</code>, <code>g842</code>, <code>g843</code>, <code>g841</code>, <code>g892</code>–<code>g894</code>, <code>g871</code>).</li>
+</ul>
+<p>The counter is reset by <code>h_restart</code> (from PPU2, at the end of the line) via <code>g779</code>/<code>w495</code>.</p>
+<p><strong>Special values.</strong> <code>g799</code> (NAND5 on h0,h1,h2,h5,h7) detects <strong>LX = 167 (0xA7)</strong> — the end of the mandatory BG/WIN fetch window; the result (<code>w619</code>→<code>w618</code>) together with <code>sprite_x_match</code> (<code>g143</code>, <code>g707</code>) is captured by <code>g313</code> into <code>w615</code>, which sets the mode-3 latch (block 6). The SCX fine-scroll comparison (block 6) also uses the H counter.</p>
+<h3 id="4-v-counter-ly">4. V counter (LY)</h3>
+<p>The V counter (<code>v[7:0]</code> output) is a pure ripple counter: v0 (<code>g336</code>, clock <code>w416</code>), v1 (<code>g337</code>, clock <code>!v0</code>), v2 (<code>g261</code>, clock <code>!v1</code>), v3 (<code>g262</code>, clock <code>!v2</code>), v4 (<code>g263</code>), v5 (<code>g264</code>), v6 (<code>g335</code>), v7 (<code>g265</code>); all reset by <code>w256 = !(w407 | w406)</code> (<code>g770</code>/<code>g771</code>).</p>
+<ul>
+<li><strong>Line clock.</strong> The base clock <code>w416</code> (also exported as <code>vclk2</code> and driving the LCD <code>CPL</code>) comes from the sprite-selection logic (block 10): <code>g281</code> latches the "sprite processing complete" condition <code>w727</code> on the OAM clock half <code>w968</code>. Thus the V counter increments once per scan line.</li>
+<li><strong>Reset at LY=153.</strong> <code>g910</code> (AND4 on v7,v4,v3,v0) detects <strong>LY = 0x99 = 153</strong> (the last line of VBlank); <code>g333</code> latches it into <code>w407</code>, which forces <code>w256</code> low and resets the counter. <code>g911</code> (NOR8 on all V bits) detects <strong>LY = 0</strong>; <code>g334</code> latches it into <code>w420</code>, which produces the LCD <code>S</code> (start-of-frame) signal (<code>g822</code>).</li>
+<li><strong>VBLANK.</strong> <code>g725</code> (AND of v4 and v7) produces <code>vbl</code> (<code>w953</code>), i.e. "LY ≥ 144": this is the VBLANK indicator sent to PPU2 and, via <code>g332</code> (dffr on <code>w174</code>) and <code>g86</code>/<code>g826</code>, the <code>ppu_int_vbl</code> interrupt (block 14).</li>
+</ul>
+<h3 id="5-window-logic">5. Window logic</h3>
+<p>The window (WIN) logic decides when the window layer is active (<code>in_window</code> = <code>w145</code>, output to PPU2):</p>
+<ul>
+<li><strong>Vertical match (LY == WY):</strong> the WY latches (block 2) are compared with the V counter by the XNORs <code>g734–g737</code> and <code>g744–g748</code>, combined by <code>g802</code>/<code>g803</code> (NAND5) into <code>w958</code>/<code>w423</code>;</li>
+<li><strong>Horizontal match (LX == WX):</strong> the WX latches are compared with the H counter by the XNORs <code>g730–g733</code>, <code>g622–g623</code> and <code>g801</code>, combined by <code>g838</code> into <code>w942</code>;</li>
+<li><strong>The window latch</strong> <code>g872</code> (nor_latch) is set by <code>w532</code> (the window-start condition, see block 6) and cleared by <code>w334</code> (<code>g754</code>: <code>!(w538 &amp; !h_restart &amp; n_ppu_reset)</code>), so the window is active from (LY == WY and LX == WX) until the end of the line. <code>g516</code> outputs <code>in_window = !w146</code>. The LCDC window-enable bit 5 (<code>w538</code>) participates in the reset term, disabling the window when the bit is 0.</li>
+</ul>
+<h3 id="6-bgwin-fetch-cycles-mode-3-sequencer">6. BG/WIN fetch cycles (mode-3 sequencer)</h3>
+<p>This block generates the mode-3 fetch phases and the fetch clock:</p>
+<ul>
+<li><strong>Fetch enable.</strong> <code>w143</code> (<code>g898</code>) = <code>!(stop_oam_eval | w891 | w144)</code> is the main "fetch allowed" signal (async set/reset for the fetch flip-flops).</li>
+<li><strong>Fetch sequencer.</strong> The complementary-clock flip-flops <code>g258–g260</code>, <code>g274</code>, <code>g338</code>, <code>g315</code> (clocks <code>w464</code>/<code>w317</code>/<code>w463</code>/<code>w462</code>/<code>w288</code>) step through the fetch phases; their state (<code>w465/w467/w461/w854</code>) is decoded by <code>g749</code>/<code>g47</code>/<code>g48</code>/<code>g459</code>/<code>g460</code> into the two half-cycles of the buffer cycle:</li>
+<li><code>w211 = tm_bp_cys</code> (tile-map / buffer-page cycle), latched by the NAND-latch <code>g876</code> (set by <code>w143</code>, reset by <code>w656</code> = <code>mode3 &amp; w316</code>);</li>
+<li><code>w210 = tm_cy</code> (tile-map cycle) = <code>!w458 &amp; w211</code> (<code>g687</code>);</li>
+<li><code>w209 = bp_cy</code> (buffer-page cycle) = <code>w458 &amp; w211</code> (<code>g683</code>); <code>w458 = !w459 = !(w461 &amp; w221)</code>.</li>
+<li><strong>Mode 3 indicator.</strong> <code>w230 = ppu_mode3</code> is the <em>inverted</em> output (<code>nq</code>) of the NOR-latch <code>g874</code> (s = <code>w614</code>, r = <code>stop_oam_eval</code>). Because the output is taken from <code>nq</code>, the indicator is <strong>deasserted (0)</strong> while <code>w614 = !n_ppu_reset | w615</code> is high — i.e. during PPU reset or after the fetch-complete marker <code>w615</code> (LX = 167 &amp; no sprite match, latched by <code>g313</code>) — and it is re-asserted when <code>stop_oam_eval</code> finishes the OAM-scan phase. <code>ppu_mode3</code> serves as the async reset of the fetch flip-flops (<code>g260</code>, <code>g271</code>, <code>g275</code>, <code>g293</code>, <code>g314</code>, <code>g322</code>, <code>g328</code>–<code>g331</code>, <code>g276</code>) and gates the buffer-cycle latch <code>g876</code>. <code>g875</code> latches the window-start condition <code>w519 = h0 &amp; h3</code> → <code>w520</code>.</li>
+<li><strong>Fetch clock (register clock).</strong> <code>w44 = w626 | w9</code> (<code>g831</code>): <code>w9</code> is the fetch-window latch <code>g881</code> (set by <code>!mode3</code>, cleared when the SCX fine-scroll compare fires <code>w803&amp;w804</code>), and <code>w626 = !(w498 &amp; w499 &amp; w908)</code> is the sprite-fetch gate (<code>w908 = !(sprite_x_match | w496 | ppu_clk)</code>, <code>w499</code> = sprite-fetch latch <code>g871</code>). <code>w44</code> drives the low half of the H counter and all 48 shifter flip-flops — the "pixel/fetch clock" of the line.</li>
+<li><strong>SCX fine scroll.</strong> The 3-bit ripple counter <code>g277–g279</code> (base clock <code>w502 = !(w628 &amp; carry)</code>, reset <code>w501</code>) is compared with the SCX low bits <code>FF43_D0..2</code> by the XNORs <code>g738–g740</code>; <code>g916</code> (AND4 with the fetch-window latch <code>w9</code>) produces <code>w506</code>, which (via <code>g184</code>, <code>g329</code>, <code>g271</code>) yields the <code>w803/w804</code> pair that closes the fetch window — the SCX fine scroll (<code>SCX % 8</code>) determines how many initial pixels are shifted before the visible line starts.</li>
+</ul>
+<h3 id="7-vram-address-generation">7. VRAM address generation</h3>
+<p>The VRAM address bus <code>nma[12:0]</code> (and the external inverse-hold form <code>n_ma[12:0]</code> to the pads, via <code>not2</code> inverters <code>g474–g481</code>, <code>g485–g486</code>, <code>g518–g519</code>, <code>g579–g582</code>) is driven by four mutually exclusive sources, selected by tristate <code>notif0</code>/<code>notif1</code> banks:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Enable</th>
+<th>NMA bits</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CPU address <code>a[12:0]</code></td>
+<td><code>n_ena = w236 = vram_to_oam \| ppu_mode3</code> (<code>g776</code>, <code>g507</code>)</td>
+<td>all 13 bits</td>
+<td>CPU access to VRAM in modes 0–2 (when the PPU is not fetching and no VRAM→OAM DMA is running): <code>g538–g542</code>, <code>g571–g578</code>, <code>g580</code> pass the CPU address through</td>
+</tr>
+<tr>
+<td>Tile-map counter</td>
+<td><code>n_ena = w333 = !(bp_cy &amp; in_window)</code> (<code>g413</code>)</td>
+<td>nma[1..3], nma[0]</td>
+<td><code>g549–g551</code>, <code>g576</code> pass the TM counter value</td>
+</tr>
+<tr>
+<td>Tile-data counter</td>
+<td><code>n_ena = w572 = !(tm_cy &amp; in_window)</code> (<code>g490</code>, <code>g703</code>)</td>
+<td>nma[0..12]</td>
+<td><code>g552</code>, <code>g579</code>, <code>g581–g591</code> pass the TD counter value (bits 11–12 tied to the constant source <code>w47</code>)</td>
+</tr>
+<tr>
+<td>Address register (sprite tile index)</td>
+<td><code>ena = w209 = bp_cy</code></td>
+<td>nma[4..12]</td>
+<td><code>g855–g858</code>, <code>g860–g864</code> (notif1) pass the 8-bit value captured in the <code>dffr_comp</code> bank (below)</td>
+</tr>
+</tbody>
+</table>
+</div><p><strong>Tile-map counter</strong> (<code>g299–g302</code>, <code>g309</code>; ripple clocks <code>w379/w566/w564/w583/w274</code>, reset <code>w273</code>) and <strong>tile-data counter</strong> (<code>g294–g298</code>, <code>g310–g312</code>; ripple clocks <code>w634/w639/w384/w575/w124/w794/w638/w382</code>, reset <code>w383</code>) are 5–6 bit counters that address the tile map and the tile data during the mode-3 fetches; their resets <code>w273 = !w334</code> and <code>w383 = !(vbl | !n_ppu_reset)</code> (from <code>g833</code>) clear them at the start of each line.</p>
+<p><strong>Address register</strong> (<code>g882–g889</code>, eight <code>dffr_comp</code> with complementary clock <code>w311/w312</code> from <code>g470</code>/<code>g471</code>): captures an 8-bit value from the <code>md</code> bus (during the sprite/OAM phase — the sprite's tile index) and re-emits it on <code>nma[4..12]</code> during the buffer-page cycle, forming the VRAM address for the sprite tile data fetch.</p>
+<p><code>ppu1_ma0</code> (<code>g501</code>) outputs the address LSB (MA0) separately to PPU2.</p>
+<h3 id="8-bg-pixel-shifter">8. BG pixel shifter</h3>
+<ul>
+<li><strong>VRAM data capture.</strong> <code>g445–g449</code> and <code>g466–g468</code> (8× <code>latch_comp</code>, enable <code>w119</code>) capture the 8 <code>md</code> bus bits at the tile-data fetch phase. <code>w119</code> is decoded from the fetch sequencer state (<code>g7/g9/g208/g749/g47/g48</code> etc.): the capture is active while a fetch is in progress and the sequencer is in the right phase.</li>
+<li><strong>Serialization.</strong> The captured byte feeds the DFFSR shift chains (block "shifter" below): the set/reset inputs of the DFFSRs are NAND combinations (<code>g339–g346</code>, <code>g358–g363</code>, <code>g443–g444</code>) of the captured bits and their inverses (<code>g1–g10</code>, <code>g470–g471</code>), so the data is shifted out one pixel per <code>w44</code> clock edge. This is the <strong>BG pixel shifter</strong> (serial 2bpp pixels "BG_TILE0..7" in @msinger's <code>bg_px_shifter</code> schematic).</li>
+</ul>
+<h3 id="9-sprite-pixel-path">9. Sprite pixel path</h3>
+<ul>
+<li><strong>X-flip muxes.</strong> <code>g890–g897</code> (8× <code>mux</code>, select <code>w122 = sprite_x_flip &amp; sp_bp_cys</code> from <code>g705</code>) produce both the normal and the byte-reversed order of the 8 <code>md</code> bits (e.g. <code>g890</code>: <code>d1=md0, d0=md7</code>; <code>g891</code>: <code>d1=md7, d0=md0</code>). This implements the sprite <strong>X flip</strong>.</li>
+<li><strong>Sprite data latches.</strong> The two 8-bit banks <code>g450–g458/g462/g465</code> (enable <code>w34</code>) and <code>g453/g455/g457/g459–g461/g463–g464</code> (enable <code>w307</code>) hold the normal and the flipped byte (<code>w34</code>/<code>w307</code> are complementary enables derived from the sprite fetch state <code>g190–g193</code>/<code>g166</code>/<code>g690</code>/<code>g691</code>/<code>g203</code>/<code>g904</code>). The selected byte enters the DFFSR shift chains — this is the <strong>sprite pixel shifter</strong> (<code>sp_px_shifter</code>).</li>
+<li><strong>Priority / OBJ enable.</strong> The shifted sprite pixels and the attributes <code>obj_color</code> (<code>w198</code>) / <code>obj_prio</code> (<code>w523</code>) from PPU2 are merged by the combinational cloud <code>g348–g351</code>, <code>g375–g420</code>, <code>g425–g444</code>, <code>g680–g681</code>, <code>g694–g695</code>, <code>g700</code>, <code>g728–g729</code>, <code>g769</code>, <code>g836</code>, <code>g905</code>: the OBJ enable bit <code>FF40_D1</code> (<code>w822</code>) gates the object pixel output (<code>w439/w694</code> → <code>w438</code> → <code>w435</code>), and the result <code>w104</code> is fed to the pixel mux (block 11).</li>
+<li><strong>Sprite buffer page control.</strong> <code>sp_bp_cys</code> (<code>w123 = !(w648 | !mode3)</code>, <code>g489</code>, <code>g835</code>, <code>g783</code>) and the read strobe <code>n_sp_bp_mrd</code> (<code>w548 = !(w205 &amp; w123)</code>, <code>g702</code>, <code>g52</code>) coordinate the sprite buffer page fetches with the arbiter.</li>
+</ul>
+<h3 id="10-sprite-selection-ring-counter">10. Sprite selection (ring counter)</h3>
+<p>The seven toggle flip-flops <code>g282–g285</code>, <code>g316–g317</code>, <code>g319</code> (reset <code>w405 = !(w416 | !n_ppu_reset)</code> from <code>g770</code>) with their cross-coupled clocks (<code>w403/w404/w674/w703/w925/w926</code>, base clock <code>w509</code> = OAM clock half <code>w862</code>) form a <strong>ring / Johnson counter</strong> that steps through the sprite processing slots. The four NAND7s <code>g784–g787</code> decode the ring state into the sprite-select/priority conditions, combined by <code>g907</code> (NAND4) into <code>w929</code>, latched by <code>g318</code> into <code>w666</code> — the <strong>LAST_SPRITE</strong> marker that ends the LCD clock-pulse generation (<code>n_lcd_cpg</code>, see block 12). <code>w416</code> (the ring-complete decode latched by <code>g281</code>) serves as the V-counter line clock <code>vclk2</code> (block 4) and the LCD <code>CPL</code> source. This block is the physical home of the sprite-slot selection that @msinger draws as <code>sprite_control</code> / <code>sprite_store</code> / <code>sprite_x_prio</code>.</p>
+<h3 id="11-palettes-pixel-mux-ld0ld1-serializer">11. Palettes + pixel mux (LD0/LD1 serializer)</h3>
+<p>The palette registers (block 2) and the shifted pixel streams meet in the seven AOI-style <strong>AND-OR (aon2222)</strong> cells <code>g804–g810</code>, which form the pixel mux and the final serializer:</p>
+<ul>
+<li><code>g804</code>/<code>g805</code> combine the BG pixel stream (from <code>w104</code> and the shift-phase selectors <code>g756–g763</code>, <code>w110/w111/w454/w455</code>) with the <strong>BGP</strong> bits → <code>w937</code>/<code>w767</code> (BG color);</li>
+<li><code>g806</code>/<code>g807</code> combine the object-0 stream with the <strong>OBP0</strong> bits → <code>w768</code>/<code>w939</code>;</li>
+<li><code>g808</code>/<code>g809</code> combine the object-1 stream with the <strong>OBP1</strong> bits → <code>w781</code>/<code>w2</code>;</li>
+<li><code>g810</code> combines the four STAT interrupt enable bits with the mode/LYC conditions → <code>w650</code> = <code>ppu_int_stat</code> (block 14).</li>
+</ul>
+<p>The two OR3s <code>g814</code>/<code>g815</code> merge the three color sources into the two serial pixel lines: <code>w525 = w767|w768|w781</code> and <code>w3 = w937|w939|w2</code>; <code>g482</code>/<code>g483</code> (not2) output them as the LCD data lines <strong><code>n_lcd_ld0</code></strong> / <strong><code>n_lcd_ld1</code></strong>. Each aon2222 pairs (bit1, bit0) of a 2bpp pixel and the four pairs of a stage correspond to four pixels, so the block serializes the fetched 2bpp tile data into the two data bits of the LCD driver, one pixel per phase — exactly the "pixel_mux" of the schematic.</p>
+<h3 id="12-lcd-driver-timing">12. LCD driver timing</h3>
+<p>The LCD driver control signals are generated from the counters and the frame/fetch state:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>Output net</th>
+<th>Generation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>n_lcd_fr</code> (frame)</td>
+<td><code>w418</code> (<code>g823</code>)</td>
+<td><code>w417 = w956 ^ w692</code> (<code>g852</code>) from the frame counter <code>g266–g268</code> (three toggling <code>dffr</code>, clocks <code>w692/w933/w734</code>), i.e. the frame-inversion signal that alternates each frame</td>
+</tr>
+<tr>
+<td><code>n_lcd_cp</code> (clock pulse)</td>
+<td><code>w5</code> (<code>g825</code>)</td>
+<td><code>w6 = w896 | w7</code> (<code>g830</code>); <code>w896 = w520 &amp; w44</code> (<code>g699</code>), <code>w7 = w803 &amp; w804</code> — the pixel/fetch clock window</td>
+</tr>
+<tr>
+<td><code>n_lcd_cpg</code></td>
+<td><code>w943</code> (<code>g517</code>)</td>
+<td><code>w858 = w666 | w416</code> (<code>g853</code>) — clock-pulse generation stops at LAST_SPRITE / line end</td>
+</tr>
+<tr>
+<td><code>n_lcd_cpl</code></td>
+<td><code>w776</code> (<code>g824</code>)</td>
+<td><code>!w416</code> (the V-counter line clock / ring-complete signal)</td>
+</tr>
+<tr>
+<td><code>n_lcd_st</code> (start)</td>
+<td><code>w527</code> (<code>g821</code>)</td>
+<td><code>w528 = !(w426 | !n_ppu_reset | w649)</code> (<code>g187</code>, <code>g817</code>, <code>g772</code>) — start pulse at line start</td>
+</tr>
+<tr>
+<td><code>n_lcd_s</code> (sample)</td>
+<td><code>w419</code> (<code>g822</code>)</td>
+<td><code>w420</code> = latched "LY = 0" (block 4) — the start-of-frame sample pulse</td>
+</tr>
+<tr>
+<td><code>vclk2</code></td>
+<td><code>w683</code> (<code>g513</code>)</td>
+<td><code>= w416</code> (the V-counter line clock), sent to PPU2</td>
+</tr>
+</tbody>
+</table>
+</div><p>All outputs are active-low (<code>not3</code>/<code>not2</code> output buffers, <code>n_</code> prefix).</p>
+<h3 id="13-oam-parse-clocks-mode-2">13. OAM parse clocks (mode 2)</h3>
+<p>During Mode 2 (OAM scan) PPU1 generates the timing for PPU2's OAM read sequence:</p>
+<ul>
+<li><code>g303–g304</code> (two <code>dffr</code> dividers on the PPU clock phases <code>w363/w362</code>, reset <code>w148</code>) and <code>g315</code> produce the OAM clock phases: <code>w288 = ppu_clk/2</code>, <code>w286/w287</code> (the two half-phases), and <code>w862 = ppu_clk/4</code> (used as the base clock of the sprite ring, block 10);</li>
+<li><code>oam_addr_ck</code> = <code>w492</code> (<code>g499</code>), <code>oam_rd_ck</code> = <code>w285</code> (<code>g498</code>), <code>oam_xattr_latch_cck</code> = <code>w360</code> (<code>g130</code>, from <code>g361</code> = <code>!(w287|w288)</code>), <code>obj_prio_ck</code> = <code>w291</code> (<code>g494</code>, from <code>w290 = w239|w240</code> at <code>g832</code>/<code>g751</code>);</li>
+<li><code>oam_mode3_nrd</code> = <code>w337</code> (<code>g135</code>): low while the OAM is read during Mode 3 — <code>w338 = w225 &amp; w239</code> (<code>g722</code>), <code>w225 = !(w594|w522|w226)</code> (<code>g903</code>);</li>
+<li><code>oam_mode3_bl_pch</code> = <code>w223</code> (<code>g141</code>): <code>w224 = w205 &amp; w225</code> (<code>g709</code>) — the OAM bitline precharge disable, slightly longer than <code>oam_mode3_nrd</code> (see the comment in the netlist, issue <a href="https://github.com/emu-russia/dmgcpu/issues/328" rel="noopener noreferrer" target="_blank">#328</a>).</li>
+</ul>
+<h3 id="14-interrupt-outputs">14. Interrupt outputs</h3>
+<ul>
+<li><code>ppu_int_stat</code> = <code>w377</code> (<code>g827</code>): <code>w650</code> from the AND-OR cell <code>g810</code> = <code>(en0&amp;c0)|(en1&amp;c1)|(en2&amp;c2)|(en3&amp;c3)</code> — the four STAT interrupt enable latches (block 2) AND-ed with their conditions (the latched LY==LYC flag <code>w546</code>, the VBlank state <code>w175</code>, and the mode/fetch conditions <code>w775 = !vbl &amp; vclk2</code>, <code>w651</code>) and OR-ed together: the STAT interrupt request.</li>
+<li><code>ppu_int_vbl</code> = <code>w378</code> (<code>g826</code>): <code>w175</code> — the VBlank flag captured by <code>g332</code> (dffr on <code>w174</code>), i.e. <code>vbl</code> delayed by one clock.</li>
+</ul>
+<h3 id="15-reset-and-clock-generation">15. Reset and clock generation</h3>
+<ul>
+<li><strong>Soft reset:</strong> <code>n_ppu_reset</code> = <code>w148</code> = <code>w81 &amp; w82</code> (<code>g497</code>, <code>g412</code>) = <strong><code>LCDC.7 &amp; n_ppu_hard_reset</code></strong> — the PPU is held in reset whenever the LCD is disabled (<code>LCDC.7 = 0</code>) or the hard reset is asserted. <code>w148</code> resets the counters (H, V, TM, TD), the fetch sequencer and the mode latches; its inverse <code>w406/w421/w644</code> feeds the LCD-driver logic.</li>
+<li><strong>Hard reset tree:</strong> <code>n_ppu_hard_reset</code> → <code>w136/w137/w138</code>, <code>w246</code>, <code>w249</code> (buffered/inverted) clears all register latches.</li>
+<li><strong>Constant:</strong> <code>g867</code> (<code>const</code>) produces <code>w14 = 0</code> and <code>w47 = 1</code> (used e.g. in the tile-data address bits 11–12, block 7).</li>
+<li><strong>Fetch/register clock:</strong> <code>w44</code> (block 6) — the "4 MHz"-ish gated PPU clock that drives the H counter and the shifters.</li>
+<li><strong>PPU clock domains:</strong> <code>ppu_clk</code> (<code>w365</code>), <code>n_ppu_clk</code> (<code>w317</code>), the divided clocks <code>w363/w362</code>, and the OAM clock halves <code>w288/w862</code>.</li>
+</ul>
+<h3 id="16-dma-interface">16. DMA interface</h3>
+<ul>
+<li><strong>fexx:</strong> <code>fexx</code> = <code>w817</code> (<code>g514</code>) = <code>!ffxx &amp; arb_fexx_ffxx</code> (<code>g371</code>, <code>g181</code>) — the FExx (VRAM/OAM) vs FFxx (register) area indicator sent to PPU2.</li>
+<li><strong>n_dma_phi2_latched:</strong> <code>w74</code> (<code>g500</code>) from the NOR-latch <code>g873</code> (set by <code>w150 = !n_dma_phi</code> via <code>g137</code>, reset by <code>w151 = fexx &amp; ppu_wr</code> via <code>g723</code>) — the latched inverted DMA clock 2 sent to PPU2.</li>
+<li><strong>vram_to_oam / CPU address mux:</strong> the DMA transfer signal <code>w571</code> participates in <code>w236 = vram_to_oam | ppu_mode3</code> (block 7), letting the CPU address drive <code>nma</code> during DMA, and in the fetch-enable logic.</li>
+</ul>
+<h2 id="clock-domains">Clock domains</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>Source</th>
+<th>Driven elements</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>w44</code></td>
+<td><code>g831</code> = <code>w626 \| w9</code> (gated PPU clock)</td>
+<td>H counter bits 0–3, 48 shifter DFFSRs, <code>g306–g309</code>, <code>g321</code></td>
+</tr>
+<tr>
+<td><code>w317</code> (<code>n_ppu_clk</code>)</td>
+<td>PPU2</td>
+<td><code>g260</code>, <code>g270</code>, <code>g273</code>, <code>g275</code>, <code>g313</code>, <code>g324</code>, <code>g328</code>, ...</td>
+</tr>
+<tr>
+<td><code>w375 = !h3</code></td>
+<td><code>g88</code></td>
+<td>H counter bits 4–7 (<code>g290–g292</code>, <code>g323</code>)</td>
+</tr>
+<tr>
+<td><code>w416</code> (<code>vclk2</code>)</td>
+<td><code>g281</code> (ring-complete latch)</td>
+<td>V counter bit 0 (<code>g336</code>), LCD <code>CPL</code></td>
+</tr>
+<tr>
+<td>V-counter ripple</td>
+<td><code>!vN</code></td>
+<td><code>g337</code>, <code>g261–g265</code>, <code>g335</code></td>
+</tr>
+<tr>
+<td>TM counter ripple</td>
+<td><code>w379/w566/w564/w583/w274</code></td>
+<td><code>g299–g302</code>, <code>g309</code></td>
+</tr>
+<tr>
+<td>TD counter ripple</td>
+<td><code>w634/w639/w384/w575/w124/w794/w638/w382</code></td>
+<td><code>g294–g298</code>, <code>g310–g312</code></td>
+</tr>
+<tr>
+<td><code>w311/w312</code> (dual-rail)</td>
+<td><code>g470</code>/<code>g471</code></td>
+<td>address register <code>g882–g889</code></td>
+</tr>
+<tr>
+<td>Sprite ring</td>
+<td><code>w403/w404/w674/w703/w925/w926/w509</code></td>
+<td><code>g282–g285</code>, <code>g316–g319</code></td>
+</tr>
+<tr>
+<td>Fetch sequencer</td>
+<td><code>w464/w317/w463/w462/w288</code></td>
+<td><code>g258–g260</code>, <code>g274</code>, <code>g338</code>, <code>g315</code></td>
+</tr>
+<tr>
+<td>OAM clock</td>
+<td><code>w363/w362/w288/w862</code></td>
+<td><code>g303–g305</code>, <code>g315</code>, OAM clock outputs</td>
+</tr>
+<tr>
+<td>Register write</td>
+<td><code>w535/w597/w608/w247/w728/w70/w92/w410/w811</code></td>
+<td>the register latches (block 2)</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="map">Map</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Row</th>
+<th>Cells</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>nand, not, not, not, nand, not2, latch_comp, not2, not, not, nand, nand, not2, latch_comp, not, nand, nand, not, nand_latch, not2, and, not2, nand, not, nand, dffr, dffr, not, not, nand, dffr, not, not, not2, not, not2, not2, not2, not, not, not, notif0, latchnq_comp, notif0, notif0, notif0, latchnq_comp, notif0, latchnq_comp, notif0, latchnq_comp, notif0, notif0, notif0, latchnq_comp, latchnq_comp, notif0, not2, notif0, not2, not2, notif0, not2, dffr, dffr, dffr, dffr, dffr, not, nor, not, notif0, nand, notif0, notif0, notif0, not, nand, dffsr, notif0, not, nand, nand, not, dffr, not, dffr, not, not, not, nand, nand, not, nand, nand, dffsr, dffsr, not, not, not, not, nand, and3, not, not, and3, not, not, and3, and3</td>
+</tr>
+<tr>
+<td>2</td>
+<td>not, nand, nand, dffsr, latch_comp, dffsr, latch_comp, dffsr, latch_comp, dffsr, nand3, not, dffr, nor3, and, not, not, not, not, not, and, and, not2, not, latchnq_comp, latchnq_comp, not, not, notif0, notif0, not, notif0, latchr_comp, latchr_comp, xnor, not, latchr_comp, notif0, notif0, latchr_comp, not, latchr_comp, notif0, not, notif0, not, latchr_comp, dffr, dffr, notif0, dffr, dffr, dffr, latchnq_comp, latchnq_comp, latchnq_comp, latchnq_comp, latchnq_comp, nand, dffsr, nor, xor, latch_comp, latch_comp, nand, nand, or3, aon2222, not, aon2222, nand, dffsr, nand, nand, or3, nand, nand, or3, not, not, not3, not3</td>
+</tr>
+<tr>
+<td>3</td>
+<td>nand, not, nand, dffsr, latch_comp, dffsr, nand, not, nand, dffsr, nand, nand, not, latch_comp, latch_comp, dffr, not, nand3, not, nand, not, and, dffr, nor, nor3, not, dffr, dffr, not, and, dffr, latchr_comp, xnor, xnor, latchr_comp, xnor, not, not, nand5, xnor, latchr_comp, latchr_comp, xnor, latchr_comp, xnor, latchr_comp, nor8, not, and4, xnor, latchr_comp, latchr_comp, latchr_comp, xnor, not, latchr_comp, dffr, dffr, latchnq_comp, dffsr, not, aon2222, aon2222, dffsr, dffsr, and3, and3, not, not, and3, not, not, nor, dffsr, not2</td>
+</tr>
+<tr>
+<td>4</td>
+<td>dffsr, dffr_comp, dffr_comp, dffr_comp, dffr_comp, dffr_comp, dffr_comp, dffr_comp, mux, mux, mux, mux, mux, and, mux, mux, mux, nor_latch, dffr, nor_latch, and, nor, not, dffr, not2, not, dffr, nor, nand, nor, xnor, nand5, xnor, not, dffr, xnor, dffr, notif0, notif0, xnor, notif0, nor, xnor, nand5, nand5, xnor, xnor, notif0, notif0, notif0, or, not, not, notif0, notif0, notif0, not, not, dffr, nor3, notif0, latchnq_comp, nand, latchnq_comp, latch_comp, not, not, latch_comp, latch_comp, and3, nand, not3, dffsr, nand, nand, or3, or3, nand, dffsr, nand, dffsr, not2, not2, not2</td>
+</tr>
+<tr>
+<td>5</td>
+<td>not, notif0, notif0, notif0, notif0, not, nand, nand, notif1, nand, dffsr, nand, not, nand, nand, nand, dffsr, not, dffr_comp, notif0, not, nand, not, notif1, notif1, and, dffr, and, not, dffr, not, nor_latch, not, not3, dffr, nand4, dffr, nand3, nor3, dffr, xor, not, not, or, nor_latch, xor, notif0, notif0, xor, not, notif0, notif0, latchr_comp, or3, xor, xor, and, not, nand, not, and, not, not, latchr_comp, latchr_comp, latchr_comp, latchr_comp, nor_latch, dffr, and, latch_comp, notif0, latch_comp, not, notif0, not, latch_comp, latch_comp, latch_comp, dffr, nand, or, nand, not, dffsr, not, nand, nand, or3, dffsr, nand, nand, not, not3, not2, not2</td>
+</tr>
+<tr>
+<td>6</td>
+<td>and, dffsr, nand, nand, dffsr, nand, not, dffsr, dffsr, nand, nand, notif1, notif1, nand, not, nand, nand, dffr, not, dffr, nor, nand4, not, not2, not, not2, nor3, not4, or, or, not, dffr, xnor, xnor, xnor, dffr, and, xor, dffr, dffr, latchr_comp, latchr_comp, latchr_comp, latchr_comp, nand, nor4, xor, nor4, and, dffr, aon2222, nor, nor3, notif0, notif1, not, nor, latch_comp, latch_comp, not, latch_comp, not, latch_comp, not, not, not, latch_comp, latch_comp, not, dffr, not2, dffr, not, not, nand, nand, dffsr, dffr, and4, not, nand, dffsr</td>
+</tr>
+<tr>
+<td>7</td>
+<td>dffr, dffr, not, dffr, dffr, dffr, dffsr, not2, notif1, nand, not, dffsr, nand_latch, and4, not, not2, not, not, or3, and, and3, dffr, and, not, nand, and, nor, not, not, dffr, dffr, dffr, xor, and, nand3, dffr, dffr, dffr, not, xor, nand, nor3, xor, xor, xor, dffr, and, not, and, not, not, nand, nand, notif1, not4, not, or, not, nand, nand, and, nand, nand, or3, nand, nand, nand, not, not, nand, nand, not2, not, not2, not, nand, nand, dffr, dffr, not, nand, nand, dffr, dffr, not, not, nand7, nand4, nand7, not, not, nand7, nand</td>
+</tr>
+<tr>
+<td>8</td>
+<td>not3, not3, notif0, notif0, dffr, notif1, notif0, notif0, dffr, dffr, notif0, notif0, const, and, notif1, notif0, notif0, nor, notif1, nand5, not, not2, not2, not2, not2, nor, dffr, nor3, dffr, and, not, notif0, latchr_comp, notif0, and, not, notif0, not, not, not, not, not, and, and, notif0, notif0, notif0, or, notif0, notif0, not, latchr_comp, latchr_comp, latchr_comp, dffr, dffsr, dffsr, dffsr, nand, not, dffsr, nand, dffsr, or3, nand, dffsr, dffsr, nand, or3, not, dffsr, dffr, and3, and3, and3, not, nand7, not, not, and3, not, not, not</td>
+</tr>
+<tr>
+<td>9</td>
+<td>dffr, dffr, dffr, dffr, not, notif0, notif0, notif0, notif0, not2, nand3, not, not2, nand5, not, nand5, nand5, nand5, nand5, nand5, nand5, nand5, nand5, not, not, nand5, nand5, or, and, and, nor_latch, and, latchr_comp, notif0, latchr_comp, not, and, latchr_comp, and, and, not2, notif0, notif0, not2, and, not, not, not, notif0, not2, not2, notif0, notif0, notif0, nor_latch, notif0, and, not, dffr, nor, dffr, dffsr, nand, notif1, nand, nand, not, dffsr, or3, not, and, dffsr, not, dffsr, dffsr, nand, not, nand, dffsr, aon2222, aon2222, not, not, nand, not, dffsr, nand, not</td>
+</tr>
+<tr>
+<td>10</td>
+<td>dffr, not2, notif0, notif0, notif0, nor, not2, notif0, notif0, notif0, notif0, not, nand, notif0, not, notif0, and, notif0, notif0, nor3, not, notif0, notif0, not, and, not, not2, not2, not, not2, dffr, not2, dffr, not2, not, not, nor_latch, and, not, not, xor, not, nand3, not, notif0, latchr_comp, notif0, latchr_comp, latchr_comp, latchr_comp, not, nand5, and, not2, and, and, xor, dffr, not2, and, not, not, not, not, and, not, not, not, not2, not2, not, and, not, dffr, nand, not, not, latchr_comp, not2, not, nor, not, not, not, nand, nand, not2, and, and, not, not, nand, not, not, and, notif0, latchnq_comp, notif0, latchnq_comp, nand, notif0, latchnq_comp, notif0, latchnq_comp, notif0, latchnq_comp, not, nand, notif0, latchnq_comp, not, notif0, latchnq_comp, not, latchnq_comp, notif0, nand, not, nand, nand, dffsr, not, not</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="verified-by-the-ppu-testbench-issue-390">Verified by the PPU testbench (issue #390)</h2>
+<p>The joint testbench (<code>HDL/soc/icarus/ppu</code>, see <a href="../../HDL/soc/icarus/ppu/waves.html">waves.md</a>) runs the real <code>PPU1</code>+<code>PPU2</code> netlists together with behavioral VRAM/OAM models and confirmed:</p>
+<ul>
+<li>the per-line rhythm: <strong>456 clock ticks per scanline</strong>, mode 2 (<strong>OAM scan) ≈ 80 ticks</strong>, mode 3 (BG fetch) starts right after mode 2, LY increments once per line, <code>h_restart</code> pulses at line end;</li>
+<li>the <strong>BG fetch pipeline</strong>: in mode 3 PPU2 places the scroll-adder results on <code>nma</code> (map row <code>(V+SCY)&gt;&gt;3</code> at <code>nma[9:5]</code>, column <code>(H+SCX)&gt;&gt;3</code> at <code>nma[4:0]</code>, vertical fine <code>(V+SCY)&amp;7</code> at <code>nma[3:1]</code> — see <a href="ppu2.html">PPU2</a>, block 2), PPU1 captures the tile-map byte and then the two tile-data bytes at the row given by <code>LY&amp;7</code> (<code>$8010</code>-style <code>tile*16 + row*2</code> addressing with the tile index from the map byte), and the pixel serializer emits <strong>160 LD0/LD1 samples per line</strong> matching the VRAM content through the palette mux; the <strong>scroll adders</strong> were verified end-to-end by the <code>tb_ppu_scroll</code> test (SCY=1 → map row <code>(LY+SCY)&gt;&gt;3</code>; SCX=8 → first fetched map column <code>SCX&gt;&gt;3</code>);</li>
+<li>register write/read through the CPU bus: LCDC/SCY/SCX/BGP store the written values, <code>ppu_rd</code>/<code>ppu_wr</code> are produced by PPU2 from <code>soc_rd</code>/<code>soc_wr</code>, LY read-back tracks the V counter;</li>
+<li>the <strong>WIN layer</strong>: with LCDC.5/6 + WY/WX programmed (window covering the screen), the tile-map fetches switch to the window tile map ($9C00 with LCDC.6=1) — the WY/WX compare and <code>in_window</code> muxing of this page's block 5 are verified by <code>tb_ppu_window</code>.</li>
+</ul>
+<h2 id="open-questions">Open questions</h2>
+<ul>
+<li>The exact division of labor between PPU1 and PPU2 for the sprite logic: PPU1 contains the sprite pixel data path, the X-flip, the ring counter and the LAST_SPRITE detection, while PPU2 owns the OAM scan itself. The PPU2 side is now analysed in <a href="ppu2.html">PPU2</a> (mode-2 scan engine, 10-slot sprite store, compare); the OAM-port byte organisation and the store↔slot schedule are still being pinned down by the sprite testbench (see <a href="ppu2.html">PPU2 open questions</a>).</li>
+<li>The precise dot-level timing of the fetch phases (how <code>w44</code> pulses map to the 2-dot VRAM access rhythm) is not fully derived here; the testbench shows one tile-map + two tile-data fetches per 8-pixel group but the exact sub-dot schedule remains to be written up.</li>
+<li>The <code>dffr_comp</code> bank <code>g882–g889</code> is interpreted as the sprite tile-index/address register; its exact capture source (during mode 2 via <code>md</code>, or during mode 3) should be confirmed with a waveform dump of the sprite-fetch test. (Round-22 probe: no async reset (<code>nr1 = w47 = const1</code>) and the cells hold <code>x</code> during operation because they are clocked with undefined data; forcing them to 0 does not change the inert <code>obj_prio_ck</code>.)</li>
+<li>The role of the ring counter's seven flip-flops vs the 10-sprite store of the DMG (the ring is probably reused for groups of sprites) needs verification.</li>
+</ul>
+<h2 id="suspected-netlist-issues-reported-to-the-author-not-fixed-here">Suspected netlist issues (reported to the author, NOT fixed here)</h2>
+<ul>
+<li>
+<p><strong><code>g652</code> (ppu1.v:1837)</strong> — <code>latchr_comp</code> with the $FF40 write enable
+  (<code>ena w84</code>), data <code>D7</code> (<code>w79</code>) and reset <code>w82</code>; its output <code>w149</code> is read
+  only by <code>g305</code>. Looks like a duplicate capture of <code>LCDC.7</code> next to <code>g656</code>
+  (which drives <code>w81</code>); probably an intentional layout copy, but it is not
+  documented in the register table above.</p>
+</li>
+<li>
+<p><strong>STAT read-back encoding (frame test, round 15):</strong> during LY==LYC the
+  LYC-coincidence interrupt fires, but reading $FF41 returns bits with
+  <code>bit7=1</code> and <code>bit2=0</code> (e.g. 0xC2/0xC3) - i.e. bit 7 is not 0 as expected
+  and the coincidence flag reads 0 while the interrupt condition is true.
+  Either the read-back polarity for bits 2/7 is inverse-hold (the d-bit
+  drivers g859/g854 etc. feed <code>nq</code> sources) or bit 2 is only asserted
+  briefly; worth an author check (ppu1.v STAT read path, block 2/14).
+  Netlist detail (round 16): bit2 read = <code>q</code> of <code>g906</code> (nor_latch s=<code>w546</code>,
+  r=<code>w737</code> = hard-reset | STAT-write); <code>w546</code> = <code>g280</code> dffr sampling the live
+  <code>LY==LYC</code> compare (<code>w736</code>) on the /4 OAM clock <code>w509</code>; the compare equals 1
+  for the whole line, so the observed 0 is unexpected given the LYC
+  interrupt fires from the same flag - needs an author check.</p>
+</li>
+<li>
+<p><strong><code>g325</code>/<code>g326</code> (ppu1.v:1510-1511)</strong> — the <code>w530</code> window dividers of the
+  sprite-process ring reset term have <strong>no async reset</strong> (<code>nr1 = w47 =
+  const1</code>). In the testbench they power up deterministic (dmglib
+  <code>dffr</code> cells declare <code>initial val = 0</code>); the no-reset "init-0" probe
+  (round 22, <code>tb_ppu_ring_init0</code>) pins every no-reset trigger to 0 - even
+  when clocked with <code>x</code> - and shows <code>obj_prio_ck</code> is still silent, i.e. the
+  missing reset is a real silicon concern (undetermined power-up, no
+  garbage recovery), not the cause of the inert sprite path (see
+  <a href="../../HDL/soc/icarus/ppu/waves.html">waves.md</a>).</p>
+</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://github.com/msinger/dmg-schematics/" rel="noopener noreferrer" target="_blank">DMG-CPU Schematics by @msinger</a> — schematic pages <code>ppu_decode</code>, <code>background</code>, <code>bg_win_cycles</code>, <code>bg_px_shifter</code>, <code>sp_px_shifter</code>, <code>palettes</code>, <code>pixel_mux</code>, <code>lcd</code>, <code>sprite_*</code>, <code>ff41_stat</code> correspond to the blocks above.</li>
+<li><a href="http://iceboy.a-singer.de/dmg_cpu_b_map/" rel="noopener noreferrer" target="_blank">DMG-CPU B Map by @msinger</a></li>
+<li><a href="http://iceboy.a-singer.de/doc/dmg_cells.html" rel="noopener noreferrer" target="_blank">DMG-CPU Cells Reference by @msinger</a></li>
+<li><a href="https://gbdev.io/pandocs/Scrolling.html" rel="noopener noreferrer" target="_blank">Pan Docs: Scrolling</a> — SCY/SCX semantics and the "low 3 bits of SCX read once per scanline" behavior that matches the SCX fine-scroll comparator.</li>
+<li><a href="https://github.com/Gekkio/gb-research/" rel="noopener noreferrer" target="_blank">Game Boy hardware research by @Gekkio</a></li>
+</ul>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:2">
+<p>The constant 0 is globally scattered throughout the chip. Each large module with cells has a <code>const</code> cell whose output 0 is globally connected between all modules (so the input is marked as Bidir). In PPU1 the <code>const</code> cell <code>g867</code> produces <code>w14 = 0</code> and <code>w47 = 1</code>.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>Per the Game Boy memory map, $FF42 = SCY (background Y scroll) and $FF43 = SCX (background X scroll). The decode logic <code>g789</code>/<code>g796</code> (see below) confirms that <code>ff42</code>/<code>ff43</code> are the access indicators for exactly those registers; they are consumed by PPU2, which owns the SCY/SCX register bits (PPU1 only receives the low 3 bits of SCX as <code>FF43_D0..2</code>).&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG-CPU LR35902 SoC</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/soc/ppu1.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

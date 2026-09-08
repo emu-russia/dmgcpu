@@ -1,0 +1,2 @@
+markdown>=3.7
+pillow>=11.0

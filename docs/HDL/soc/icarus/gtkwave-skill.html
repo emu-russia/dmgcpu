@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GTKWave / Icarus Verilog skill (adapted for emu-russia/dmgcpu) · DMG-CPU Research</title>
+<meta name="description" content="Adapted and extended for this repository while bringing up the PPU regression testbench (issue 390).">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../../index.html">
+      <img class="brand-mark" src="../../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../../wiki/soc/Readme.html">SoC</a><a href="../../../wiki/sm83/Readme.html">SM83</a><a href="../../../wiki/pcb.html">PCB</a><a href="../../../wiki/methods.html">Methods</a><a href="../../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../../index.html">Home</a><span class="sep">/</span><a href="../../../HDL/Readme.html">HDL</a><span class="sep">/</span><span>soc</span><span class="sep">/</span><a href="../../../HDL/soc/icarus/Readme.html">HDL/soc/icarus - Icarus Verilog testbenches</a><span class="sep">/</span><span class="current">GTKWave / Icarus Verilog skill (adapted for emu-russia/dmgcpu)</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#environment-windows-tools-run-from-wsl">Environment (Windows tools run from WSL)</a></li><li class="toc-l2"><a href="#icarus-verilog-compilesimulate">Icarus Verilog compile/simulate</a></li><li class="toc-l2"><a href="#gtkwave-gtkw-save-file-format-the-big-gotcha">GTKWave .gtkw save-file format (the big gotcha)</a></li><li class="toc-l2"><a href="#waveform-images">Waveform images</a></li><li class="toc-l2"><a href="#repo-test-benches">Repo test benches</a></li><li class="toc-l2"><a href="#checking-signals-for-zx-floating-net-debugging">Checking signals for z/x (floating-net debugging)</a></li><li class="toc-l2"><a href="#dmg-cpu-soc-netlists-emu-russiadmgcpu-extra-notes">DMG-CPU SoC netlists (emu-russia/dmgcpu) - extra notes</a></li></ol></details>
+<article class="content"><h1 id="gtkwave-icarus-verilog-skill-adapted-for-emu-russiadmgcpu">GTKWave / Icarus Verilog skill (adapted for emu-russia/dmgcpu)</h1>
+<p>Adapted and extended for this repository while bringing up the PPU
+regression testbench (issue #390). Keep this file updated when working on
+new testbenches (APU, MMIO, Arb, Ser, ...) under <code>HDL/soc/icarus</code>.</p>
+<blockquote>
+<p>Origin: <a href="https://github.com/emu-russia/skills" rel="noopener noreferrer" target="_blank">emu-russia/skills</a>
+<code>hdl-sim-icarus-gtkwave.md</code>, extended with DMG-CPU SoC netlist notes
+(bus aliasing, tristate conventions, the <code>oam_ram.v</code>/<code>lcd_stub.v</code>
+models and the wave tooling used here).</p>
+</blockquote>
+<hr />
+<h1 id="icarus-verilog-gtkwave-tooling">Icarus Verilog + GTKWave tooling</h1>
+<p>Hard facts learned while completing the NES PPU Verilog model (emu-russia/breaks). Version-specific; verify with <code>-V</code> if anything changes.</p>
+<h2 id="environment-windows-tools-run-from-wsl">Environment (Windows tools run from WSL)</h2>
+<ul>
+<li>Icarus Verilog <strong>14.0 (devel)</strong>. Binaries: <code>C:\iverilog\bin\iverilog.exe</code>, <code>vvp.exe</code>. From WSL: <code>/mnt/c/iverilog/bin/iverilog.exe</code>, <code>/mnt/c/iverilog/bin/vvp.exe</code>.</li>
+<li>GTKWave <strong>3.3.128</strong> (w 1999-2026 BSI). Binary: <code>/mnt/c/iverilog/bin/gtkwave.exe</code>.</li>
+<li>These are Windows <code>.exe</code> run via WSL interop (<code>/mnt/c/...</code> invocation works; no <code>which</code> entry, call the full path).</li>
+</ul>
+<h3 id="critical-windows-cwd-must-not-be-a-unc-path">CRITICAL: Windows CWD must not be a UNC path</h3>
+<p><code>iverilog.exe</code> runs under <code>cmd.exe</code>, which rejects a UNC current directory (<code>\\wsl.localhost\...</code>). Symptom: <code>CMD.EXE ... UNC paths are not supported</code> / <code>No such file or directory</code> / <code>Preprocessor failed</code>. Fix: <code>cd</code> into a <code>/mnt/c/...</code> (drive-mapped) directory before running, or use <code>workdir</code> = a <code>/mnt/c/...</code> path. Do not compile from <code>/tmp</code> or a bare WSL path.</p>
+<h2 id="icarus-verilog-compilesimulate">Icarus Verilog compile/simulate</h2>
+<pre><code class="language-bash">cd /mnt/c/.../HDL/Framework/Icarus/ppu   # a /mnt/c path
+/mnt/c/iverilog/bin/iverilog.exe -g2012 -D RP2C02 -D ICARUS -o ppu.run ../../../Common/*.v ../../../PPU/*.v ppu.v
+/mnt/c/iverilog/bin/vvp.exe ppu.run      # -&gt; ppu_ntsc.vcd
+</code></pre>
+<ul>
+<li>The repo's <code>HDL/Common/*.v</code> primitive library (<code>dlatch</code>, <code>rsff</code>, <code>rsff_2_3</code>, <code>rsff_2_4</code>, <code>sdff</code>, <code>sdffr</code>, <code>sdffr2e</code>, <code>sdffe</code>, <code>sdffre</code>, <code>bustris</code>, <code>pnor</code>, <code>aoi</code>, <code>aoi211</code>, <code>oai</code>) requires <strong><code>-D ICARUS</code></strong>. Without it, the <code>sdff*</code> structural <code>else</code> branches reference <code>oldval</code> before declaration and elaboration fails with <code>Unable to bind ... oldval</code>.</li>
+<li>Revision macro: <code>RP2C02</code> (NTSC) or <code>RP2C07</code> (PAL). Both should compile; test both when touching revision-gated code (<code>ifdef RP2C07</code> in <code>video_out.v</code>, <code>fsm.v</code>, <code>ppu_top.v</code>).</li>
+<li><code>-g2012</code> avoids strict-Verilog-2001 lint on <code>always @(*)</code> and multi-dimensional arrays.</li>
+<li><strong>VCD vector values strip leading zeros</strong>: a 5-bit bus at 0 dumps as <code>b0</code>, not <code>b00000</code> (verified: <code>b0</code> for a <code>[4:0]</code> wire = <code>00000</code>). Don't misread <code>b0</code> as a 1-bit value.</li>
+</ul>
+<h2 id="gtkwave-gtkw-save-file-format-the-big-gotcha">GTKWave <code>.gtkw</code> save-file format (the big gotcha)</h2>
+<p>Two incompatible formats exist: <strong>v3.3.100</strong> (old) vs <strong>v3.3.128</strong> (current). Old save files open but silently stop loading the trace list (or hang) in 3.3.128.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Element</th>
+<th>v3.3.100 (broken in 3.3.128)</th>
+<th>v3.3.128 (correct)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>scalar</td>
+<td><code>@28</code></td>
+<td><code>@28</code> (unchanged)</td>
+</tr>
+<tr>
+<td>bus / vector</td>
+<td><code>@c00024</code>, <code>@c00022</code></td>
+<td><code>@22</code> (plain color; vector-ness comes from the signal name <code>[N:0]</code>, NOT a flag)</td>
+</tr>
+<tr>
+<td>group header</td>
+<td><code>@200</code></td>
+<td><code>@201</code> + <code>-Name</code></td>
+</tr>
+<tr>
+<td>group end</td>
+<td><code>@1401200</code> + <code>-group_end</code></td>
+<td>omit entirely (groups just run until the next header)</td>
+</tr>
+<tr>
+<td>header line</td>
+<td><code>GTKWave Analyzer v3.3.100</code></td>
+<td><code>GTKWave Analyzer v3.3.128</code></td>
+</tr>
+<tr>
+<td>marker line</td>
+<td><code>*-14.000000 37110 -1 ...</code></td>
+<td><code>*0.000000 -1 -1 ...</code> (26 × <code>-1</code>)</td>
+</tr>
+<tr>
+<td>footer</td>
+<td>—</td>
+<td><code>[pattern_trace] 1</code> then <code>[pattern_trace] 0</code></td>
+</tr>
+</tbody>
+</table>
+</div><ul>
+<li><code>@c00024</code> specifically makes 3.3.128 hang or drop the signal; <code>@c00022</code>/<code>@c00020</code> drop the bus; <code>@1401200</code>+<code>-group_end</code> stops the whole list. Never hand-copy these from old files.</li>
+<li>The <code>@XXXX</code> value is a raw <code>TraceFlagsType</code> bitmask (not just a color). Scalar colors are <code>0x20..0x2f</code>; the vector bit moved (old <code>0xc00000</code> → new <code>0x02000000</code>), so best avoid flags entirely and use <code>@22</code>/<code>@28</code>.</li>
+</ul>
+<h3 id="generating-a-correct-gtkw">Generating a correct .gtkw</h3>
+<p>Parse the actual VCD scope tree (never guess instance names):</p>
+<pre><code class="language-python"># parse $scope/$var/$enddefinitions; build path -&gt; [(name, width)]
+# signal name for a bus includes the [msb:lsb] suffix from the $var line
+# filter auto-generated wires (^w\d+$, ^bus\d+_\d+$)
+# emit: @201 + -Category  (header), @22 + path (bus), @28 + path (scalar)
+</code></pre>
+<h3 id="verifying-a-gtkw-actually-loads">Verifying a .gtkw actually loads</h3>
+<p>GTKWave Tcl (run via <code>-S</code>, script must live on a Windows path like <code>C:\...</code>, NOT <code>/tmp</code>):</p>
+<pre><code class="language-tcl">gtkwave file.gtkw -S C:/path/check.tcl
+# check.tcl:
+#   gtkwave::getTotalNumTraces   -&gt; total traces (signals + comments)
+#   gtkwave::getTraceNameFromIndex $i
+#   gtkwave::getTraceFlagsFromIndex $i   (scalar=40/0x28, comment=513/0x201)
+</code></pre>
+<ul>
+<li>Tcl list args must brace-wrap names containing brackets: <code>gtkwave::addSignalsFromList {PPU_Run.cpu_db[7:0]}</code> — plain quotes make Tcl try command substitution on <code>[7:0]</code>.</li>
+<li><code>gtkwave::getNumFacs</code> = total VCD signals; <code>getTotalNumTraces</code> = currently loaded traces.</li>
+<li>There is no <code>gtkwave::setSaveFileName</code>; <code>gtkwave::/File/Write_Save_File_As &lt;path&gt;</code> does work to export a save file headlessly (use it to dump GTKWave's own current format for a reference).</li>
+</ul>
+<h2 id="waveform-images">Waveform images</h2>
+<ul>
+<li>No <code>rsvg-convert</code>/<code>convert</code>/<code>inkscape</code> in the WSL image, and <code>matplotlib</code> is not installed — do not assume them.</li>
+<li>Reliable path for wiki PNGs is the GTKWave GUI (screenshot). A Python VCD→SVG renderer (hand-rolled, no deps) is a workable fallback for browser-viewable waveforms.</li>
+<li>The repo <code>.gitignore</code> already ignores <code>*.vcd</code> and <code>*.run</code> (<code>HDL/Framework/Icarus/.gitignore</code>), so generated artifacts won't pollute <code>git status</code>.</li>
+</ul>
+<h2 id="repo-test-benches">Repo test benches</h2>
+<ul>
+<li><code>HDL/Framework/Icarus/ppu/</code>: <code>ppu.v</code> (whole PPU), <code>fsm_test.v</code> ("PPU zero": PCLK + H/V counters + decoders + FSM), <code>vidout_test.v</code> (video generator), <code>ppu_render.v</code> (full PPU: resets, enables rendering via <code>$2001=0x1E</code>, loads 64 OAM sprites, runs <code>repeat(2048*3)</code> frames). <code>*.bat</code> wrappers exist; they compile from the <code>ppu/</code> dir with relative <code>../../../Common/*.v ../../../PPU/*.v</code>.</li>
+<li><code>HDL/Framework/Icarus/mos6502/</code> and <code>HDL/Framework/Icarus/apu/</code> follow the same pattern for the 6502 and APU.</li>
+</ul>
+<h2 id="checking-signals-for-zx-floating-net-debugging">Checking signals for z/x (floating-net debugging)</h2>
+<p>When a signal should be driven but the waveform shows <code>z</code>/<code>x</code>, parse the VCD and scan each signal's value-change records. Vector changes are <code>b&lt;bits&gt; &lt;id&gt;</code> (two tokens); scalar changes are <code>&lt;0/1/x/z&gt;&lt;id&gt;</code> (one token). Group by the signal's declared width from the <code>$var</code> line; a bit is <code>z</code>/<code>x</code> if any dumped value starts with <code>z</code>/<code>x</code>.</p>
+<pre><code class="language-python"># tokens on a value-change line: 'b0' is a vector value whose id is the NEXT token
+# '0k' is a scalar (value '0', id 'k')
+</code></pre>
+<ul>
+<li>Only <code>z</code>/<code>x</code> <em>after</em> time 0 matter; the <code>$dumpvars</code> initial block may legitimately show <code>x</code>.</li>
+<li>A stuck-at-zero counter is a separate concern from z: check whether its clock/step/load inputs are toggling, not just that it's driven.</li>
+</ul>
+<h2 id="dmg-cpu-soc-netlists-emu-russiadmgcpu-extra-notes">DMG-CPU SoC netlists (emu-russia/dmgcpu) - extra notes</h2>
+<p>Worked out while bringing up the PPU regression testbench (<code>HDL/soc/icarus/ppu</code>, issue emu-russia/dmgcpu#390).</p>
+<ul>
+<li>
+<p><strong>Bidirectional-bus aliases must be merged for Icarus.</strong> The Deroute-style
+  netlists (<code>ppu1.v</code>/<code>ppu2.v</code>, module lib <code>dmglib.v</code>) alias bus bits with
+  one-way statements: <code>assign d[7] = w79;</code> etc. Under Icarus this is a real
+  driver, so CPU write data never reaches the register latches (they read
+  <code>w79</code>). Preprocess: rename <code>w79</code> → <code>d[7]</code> everywhere, delete the alias and
+  the orphaned <code>wire w79;</code>. Tool in the repo: <code>merge_bus_aliases.py</code>
+  (only touches <code>d/md/nma/n_oama/n_oamb</code>), generates <code>ppu1_merged.v</code>/
+  <code>ppu2_merged.v</code>.</p>
+</li>
+<li>
+<p><strong><code>notif0/1</code> inverting tristates (precharged "inverse hold" buses):</strong>
+  the committed <code>x = ~x</code> body is a self-referential loop that never drives;
+  the working body is <code>x = ~a</code> while enabled <strong>with <code>===</code> enable compares</strong>
+  (<code>(n_ena === 1'b0)</code>, <code>(ena === 1'b1)</code>) so an uninitialized enable does not
+  put <code>x</code> on the bus. Note: const-0 cells (e.g. <code>notif0</code> with <code>a = const0</code>)
+  act as <em>active precharge</em> drivers (they pull the wire high) - do not
+  switch to discharge-only semantics without also adding pull-ups on every
+  notif-driven net, or scan counters/addresses will read back <code>x</code> from
+  floating nodes.</p>
+</li>
+<li>
+<p><strong>Level-sensitive register latches race the bus precharge.</strong> After a CPU
+  write strobe falls, keep the data valid ~8 ns (<code>assign d = (stb|hold) ?
+  data : z</code>) or the latches capture the precharged <code>1</code>s.</p>
+</li>
+<li>
+<p><strong>OAM macro bring-up.</strong> The repo <code>oam.v</code> is an empty stub. For the mode-2
+  scan a behavioral model with <em>bitline hold</em> (drive the last word between
+  reads; release only for writes) is closer to reality than tri-state z;
+  the byte↔port layout and precharge/capture phase timing are still open
+  research (see wiki/soc/ppu2.md) - cross-check against @msinger's
+  schematics/dmg-sim before trusting sprite waveforms.</p>
+</li>
+<li>
+<p><strong>Wave tooling:</strong> a dependency-free VCD→PNG renderer (<code>vcd2png.py</code>,
+  stdlib + Pillow, Windows fonts for labels) and a v3.3.128 <code>.gtkw</code> save
+  generator (<code>mk_gtkw.py</code>) live in <code>HDL/soc/icarus/ppu/</code>; see <code>waves.md</code>.
+  Icarus dumps vector values with leading zeros stripped (<code>b0</code> for a 5-bit
+  zero), parse widths from the <code>$var</code> declarations.</p>
+</li>
+</ul><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ HDL/soc/icarus - Icarus Verilog testbenches</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/HDL/soc/icarus/gtkwave-skill.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../../wiki/methods.html">Research methods</a></li><li><a href="../../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

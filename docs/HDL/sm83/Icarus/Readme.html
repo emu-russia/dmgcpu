@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SM83 Core Icarus TestBench · DMG-CPU Research</title>
+<meta name="description" content="Projects for Icarus Verilog (http://iverilog.icarus.com/).">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../../index.html">
+      <img class="brand-mark" src="../../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../../wiki/soc/Readme.html">SoC</a><a href="../../../wiki/sm83/Readme.html">SM83</a><a href="../../../wiki/pcb.html">PCB</a><a href="../../../wiki/methods.html">Methods</a><a href="../../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../../index.html">Home</a><span class="sep">/</span><a href="../../../HDL/Readme.html">HDL</a><span class="sep">/</span><a href="../../../HDL/sm83/Readme.html">SM83 Core HDL</a><span class="sep">/</span><span class="current">SM83 Core Icarus TestBench</span></nav>
+
+<article class="content"><h1 id="sm83-core-icarus-testbench">SM83 Core Icarus TestBench</h1>
+<p>Projects for Icarus Verilog (http://iverilog.icarus.com/).</p>
+<p>Two testbench layers live here:</p>
+<ul>
+<li>
+<p><strong>SM83 regression suite (issue #400)</strong> - <code>sm83_env.v</code> + <code>tb_sm83_*.v</code>,
+  regression tests on the <strong>real SM83 core netlist</strong> (register file, ALU +
+  flags, memory addressing, stack/16-bit, jumps, interrupts, HALT modes,
+  CB-prefix rotate/shift/bit ops, instruction timing).  Run everything
+  with <code>./run_all.sh</code> (each test prints a <code>RESULT ... PASS/FAIL</code> line).
+  Wave images + docs: <a href="waves.html">waves.md</a>, research log:
+  <a href="STATUS.html">STATUS.md</a>.</p>
+</li>
+<li>
+<p><strong>ROM-based harness</strong> (below) - <code>run.v</code> + <code>external_clk.v</code> + <code>roms/</code>,
+  runs blargg-style test ROMs through the same netlist with a <code>Bogus_HW</code>
+  memory model (this was the original per-ROM debug flow).</p>
+</li>
+</ul>
+<h2 id="how-to-use">How to Use</h2>
+<ul>
+<li>Download Icarus Verilog.</li>
+<li>Run the simulation using <code>make</code> (optional parameters: <code>ROM</code> can be any <code>.mem</code> file under <code>roms/</code>, <code>CYCLES</code> is the number of cycles to simulate):</li>
+</ul>
+<pre><code class="language-bash">make run ROM=roms/cpu_instrs.mem CYCLES=1000000
+</code></pre>
+<ul>
+<li>Use <code>gmake</code> instead of <code>make</code> for NetBSD, since its native make requires <code>.</code> for ifdef / endif directives</li>
+<li>Open <code>dmg_waves.fst</code> in <a href="https://gtkwave.sourceforge.net/" rel="noopener noreferrer" target="_blank">GTKWave</a> or <a href="https://surfer-project.org/" rel="noopener noreferrer" target="_blank">Surfer</a>.</li>
+<li>Additionally, you can load prepared signal sets (<code>debugging_instructions.gtkw</code>) into GTKWave: File -&gt; Read Save File.</li>
+<li>Think, scratch your head, fix bugs, redo everything.</li>
+</ul>
+<p><img alt="dmg_waves" decoding="async" loading="lazy" src="../../../imgstore/sm83/dmg_waves.png" /></p>
+<h2 id="verilator">Verilator</h2>
+<p>The simulation can be run in <a href="https://www.veripool.org/verilator/" rel="noopener noreferrer" target="_blank">Verilator</a>, which is ~35x faster than Icarus Verilog, but it requires a bit more setup.</p>
+<p>First, you need a custom build of a fork of <a href="https://yosyshq.net/yosys/" rel="noopener noreferrer" target="_blank">Yosys</a>, found <a href="https://github.com/Rodrigodd/yosys/tree/dmgcpu-changes-2" rel="noopener noreferrer" target="_blank">on this branch</a> (or <a href="https://github.com/Rodrigodd/yosys/commit/3ba9b002e5189a83ecfa4da7780d77eb4d2dfb70" rel="noopener noreferrer" target="_blank">this commit, to be precise</a>). Yosys will be used to convert the current design, which uses high-impedance signals to simulate dynamic logic (unsuitable for simulation in Verilator), into a design that only uses <code>0</code> and <code>1</code> values and can be simulated with Verilator. For more details, see <a href="https://github.com/emu-russia/dmgcpu/pull/292" rel="noopener noreferrer" target="_blank">this PR</a>.</p>
+<p>Set the path to the Yosys binary using the <code>DMG_YOSYS</code> environment variable, and run Yosys with the <code>make</code> target <code>yosys</code>:</p>
+<pre><code class="language-bash">make yosys
+</code></pre>
+<p>This will create a <code>sm83.yosys.v</code> file that can be used with Verilator (or any other simulator).</p>
+<p>Then, run the simulation with <code>make</code>:</p>
+<pre><code class="language-bash">make verilator ROM=roms/cpu_instrs.mem CYCLES=1000000
+</code></pre>
+<p>This will create a <code>dmg_waves3.fst</code> file that can be opened in <a href="https://gtkwave.sourceforge.net/" rel="noopener noreferrer" target="_blank">GTKWave</a> or <a href="https://surfer-project.org/" rel="noopener noreferrer" target="_blank">Surfer</a>.</p>
+<p>Note that <code>sm83.yosys.v</code> flattens the entire design, so the hierarchy is lost, and many signals are removed. If you need a particular signal, add a <code>(* keep *)</code> attribute to it.</p>
+<h2 id="testing">Testing</h2>
+<p>The CPU is tested by running individual test ROMs from blargg's <a href="https://github.com/retrio/gb-test-roms/tree/master/cpu_instrs" rel="noopener noreferrer" target="_blank">cpu_instrs</a> test suite (as well as the single ROM version). These ROMs rely very little on other peripherals of the GameBoy besides the CPU core itself. The necessary peripherals are emulated in the module <code>Bogus_HW</code> in <code>run.v</code>.</p>
+<p>In case of a test failure, a reference trace can be generated by running the emulator <a href="https://github.com/Rodrigodd/gameroy" rel="noopener noreferrer" target="_blank">Rodrigodd/gameroy</a> with the <a href="https://github.com/Rodrigodd/gameroy/pull/17" rel="noopener noreferrer" target="_blank">wave_trace feature enabled</a>. More specifically <a href="https://github.com/Rodrigodd/gameroy/commit/62c91d15e51dd6fc7a87f94b889be6ed91f4e5df" rel="noopener noreferrer" target="_blank">at this commit</a>, which contains changes that make the emulator behave more like the simulation.</p>
+<p>To assist in finding where the traces diverge, the tool <a href="https://github.com/rodrigodd/fst-merger/" rel="noopener noreferrer" target="_blank">rodrigodd/fst-trace</a> can be used to merge both traces into a single file and create signals that compare some signals of both traces.</p><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ SM83 Core Icarus TestBench</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/HDL/sm83/Icarus/Readme.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../../wiki/methods.html">Research methods</a></li><li><a href="../../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

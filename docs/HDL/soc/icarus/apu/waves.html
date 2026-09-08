@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APU waves (issue 398) · DMG-CPU Research</title>
+<meta name="description" content="Waveform documentation for the APU suite (HDL/soc/icarus/apu), rendered from the test VCDs with vcd2png.py (Pillow; .gtkw v3.3.128 save files sit next to each test).">
+<link rel="icon" href="../../../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../../../index.html">
+      <img class="brand-mark" src="../../../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../../../wiki/soc/Readme.html">SoC</a><a href="../../../../wiki/sm83/Readme.html">SM83</a><a href="../../../../wiki/pcb.html">PCB</a><a href="../../../../wiki/methods.html">Methods</a><a href="../../../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../../../index.html">Home</a><span class="sep">/</span><a href="../../../../HDL/Readme.html">HDL</a><span class="sep">/</span><span>soc</span><span class="sep">/</span><a href="../../../../HDL/soc/icarus/Readme.html">HDL/soc/icarus - Icarus Verilog testbenches</a><span class="sep">/</span><a href="../../../../HDL/soc/icarus/apu/Readme.html">APU Icarus testbench (issue 398)</a><span class="sep">/</span><span class="current">APU waves (issue 398)</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#tb_apu_regs-register-file">tb_apu_regs - register file</a></li><li class="toc-l2"><a href="#tb_apu_ch1-channel-1-square">tb_apu_ch1 - channel 1 square</a></li><li class="toc-l2"><a href="#tb_apu_ch2-channel-2-square">tb_apu_ch2 - channel 2 square</a></li><li class="toc-l2"><a href="#tb_apu_ch3-channel-3-wave">tb_apu_ch3 - channel 3 wave</a></li><li class="toc-l2"><a href="#tb_apu_ch4-channel-4-noise">tb_apu_ch4 - channel 4 noise</a></li><li class="toc-l2"><a href="#tb_apu_mix-mixer-volume-dac-enables">tb_apu_mix - mixer / volume / DAC enables</a></li></ol></details>
+<article class="content"><h1 id="apu-waves-issue-398">APU waves (issue #398)</h1>
+<p>Waveform documentation for the APU suite (<code>HDL/soc/icarus/apu</code>), rendered
+from the test VCDs with <code>vcd2png.py</code> (Pillow; <code>.gtkw</code> v3.3.128 save files
+sit next to each test). All timing facts below were measured on the real
+APU netlist (<code>apu_wc.v</code>, see Readme.md/STATUS.md).</p>
+<h2 id="tb_apu_regs-register-file">tb_apu_regs - register file</h2>
+<p>CPU write/read cycles to $FF10-$FF2F + the wave-RAM window $FF30-$FF3F.
+Shown: the address/data bus, the <code>soc_wr</code>-derived decode (<code>w188</code>), the
+wave-RAM window decode <code>w695</code> and the <code>n_wave_wr</code>/<code>n_wave_rd</code> strobes.</p>
+<p><img alt="tb_apu_regs" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/apu/waves/tb_apu_regs.png" /></p>
+<p>Verified facts:</p>
+<ul>
+<li>
+<p>register read-back masks (NR10 = 0x80|v, NR11 = 0x3F|(v&amp;0xC0), NR14 =
+  0xBF|(v&amp;0x40), ...; NR52 = 0x70|(power&lt;&lt;7)|status); freq-lo registers
+  (NR13/NR23/NR33) have no read-back (0xFF on read).</p>
+</li>
+<li>
+<p>$FF30-$FF3F accesses are decoded inside the APU (<code>w695</code> window).</p>
+</li>
+</ul>
+<h2 id="tb_apu_ch1-channel-1-square">tb_apu_ch1 - channel 1 square</h2>
+<p>Two duty segments (50% then 75%, X=0x780): the square high interval is
+1/2 (then 3/4) of the 262.144 us output period.</p>
+<p><img alt="tb_apu_ch1" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/apu/waves/tb_apu_ch1.png" /></p>
+<p>Verified facts:</p>
+<ul>
+<li>
+<p>output period = (2048-X)*32 osc = 262144 ns at X=0x780 (duty cycle
+  table exact: 12.5/25/50/75%).</p>
+</li>
+<li>
+<p>high level = NR12 volume; NR52 status bit0 tracks the channel.</p>
+</li>
+</ul>
+<h2 id="tb_apu_ch2-channel-2-square">tb_apu_ch2 - channel 2 square</h2>
+<p>Same structure as ch1 (no sweep) - works only with the w548 bus-model fix
+(<code>apu_wc.v</code>), see STATUS.md for the root cause.</p>
+<p><img alt="tb_apu_ch2" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/apu/waves/tb_apu_ch2.png" /></p>
+<h2 id="tb_apu_ch3-channel-3-wave">tb_apu_ch3 - channel 3 wave</h2>
+<p>Vol-100% segment with a known wave-RAM image: <code>ch3_out</code> sits at the
+sample value F while <code>ch3_active</code>/<code>wave_a</code> step the RAM at
+(2048-X)*2 osc per sample (X=0x7F0 -&gt; ~2 us/step in this window).</p>
+<p><img alt="tb_apu_ch3" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/apu/waves/tb_apu_ch3.png" /></p>
+<p>Verified facts:</p>
+<ul>
+<li>amplitude = sample scaled by NR32 (100/50/25%/mute measured);</li>
+<li>sample rate = 2^21/(2048-X) (steps measured 8x between X=0x7F0 and
+  X=0x780).</li>
+</ul>
+<h2 id="tb_apu_ch4-channel-4-noise">tb_apu_ch4 - channel 4 noise</h2>
+<p>LFSR output at NR43 divisor 0, 15-bit width: the level toggles between 0
+and F (NR42 volume) - a pseudo-random pattern, not a square.</p>
+<p><img alt="tb_apu_ch4" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/apu/waves/tb_apu_ch4.png" /></p>
+<h2 id="tb_apu_mix-mixer-volume-dac-enables">tb_apu_mix - mixer / volume / DAC enables</h2>
+<p>CPU writes to NR51/NR50/NR52 while the mixer outputs (lmixer/rmixer,
+n_lvolume/n_rvolume, vin, n_ch*_amp_en) are probed.</p>
+<p><img alt="tb_apu_mix" decoding="async" loading="lazy" src="../../../../imgstore/hdl/soc/icarus/apu/waves/tb_apu_mix.png" /></p>
+<p>Verified facts:</p>
+<ul>
+<li>NR51 low nibble -&gt; right (SO1) mixer, high nibble -&gt; left (SO2);</li>
+<li>NR50 volumes appear inverted on n_lvolume/n_rvolume; bits 7/3 -&gt; vin;</li>
+<li>n_ch*_amp_en follow the channel running / NR52 power state.</li>
+</ul><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ APU Icarus testbench (issue 398)</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/HDL/soc/icarus/apu/waves.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../../../wiki/methods.html">Research methods</a></li><li><a href="../../../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../../../assets/site.js"></script>
+</body>
+</html>

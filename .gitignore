@@ -4,4 +4,5 @@ temp
 # apu suite run artifacts
 HDL/soc/icarus/apu/*_segs.log
 __pycache__/
-__pycache__/
+# docs-site generator deps (Scripts/site/.deps)
+Scripts/site/.deps/

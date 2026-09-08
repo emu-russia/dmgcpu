@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Internal Buses · DMG-CPU Research</title>
+<meta name="description" content="The current value of the IR register. It is used to obtain decoder inputs, and in various places in the logic.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/sm83/Readme.html">DMG CPU Core</a><span class="sep">/</span><span class="current">Internal Buses</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#ir">IR</a></li><li class="toc-l2"><a href="#a">a</a></li><li class="toc-l2"><a href="#d">d</a></li><li class="toc-l2"><a href="#w">w</a></li><li class="toc-l2"><a href="#x">x</a></li><li class="toc-l2"><a href="#dl">DL</a></li><li class="toc-l2"><a href="#dv-alu-operand2">DV - ALU Operand2</a></li><li class="toc-l2"><a href="#alu-alu-operand1">alu - ALU Operand1</a></li><li class="toc-l2"><a href="#res">Res</a></li><li class="toc-l2"><a href="#internal-bottom-buses">Internal bottom buses</a></li><li class="toc-l2"><a href="#bidirectional-bus-multiplexing">Bidirectional bus multiplexing</a></li></ol></details>
+<article class="content"><h1 id="internal-buses">Internal Buses</h1>
+<h2 id="ir">IR</h2>
+<p>The current value of the IR register. It is used to obtain decoder inputs, and in various places in the logic.</p>
+<h2 id="a">a</h2>
+<p>Decoder input.</p>
+<h2 id="d">d</h2>
+<p>Decoder1 outputs.</p>
+<h2 id="w">w</h2>
+<p>Decoder2 outputs.</p>
+<h2 id="x">x</h2>
+<p>Decoder3 outputs.</p>
+<h2 id="dl">DL</h2>
+<p>The bus between the lower part and the DataMux. Most likely it is actually just an internal data bus (<code>DB</code>), but already named as <code>DL</code>.</p>
+<h2 id="dv-alu-operand2">DV - ALU Operand2</h2>
+<p>The value from the bottom for the DataMux/ALU.</p>
+<h2 id="alu-alu-operand1">alu - ALU Operand1</h2>
+<p>The value from the bottom for the ALU.</p>
+<h2 id="res">Res</h2>
+<p>ALU result to bottom/DataMux.</p>
+<h2 id="internal-bottom-buses">Internal bottom buses</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bus</th>
+<th>From Reg</th>
+<th>To Reg</th>
+<th>Precharge</th>
+<th>Bus Polarity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>abus</td>
+<td>H, L, A, SPL, SPH, PCL</td>
+<td>alu[7:0] to top (no reg)</td>
+<td>CLK2=0</td>
+<td>inverse hold</td>
+</tr>
+<tr>
+<td>bbus</td>
+<td>B, C, D, E, H, L, A, Z, SPL, SPH</td>
+<td>DV[7:0] to top (no reg)</td>
+<td>CLK2=0</td>
+<td>inverse hold</td>
+</tr>
+<tr>
+<td>cbus</td>
+<td>C, E, L, Z, SPL, PCL</td>
+<td>IDU Lo</td>
+<td>CLK2=0</td>
+<td>inverse hold</td>
+</tr>
+<tr>
+<td>dbus</td>
+<td>B, D, H, W, SPH, PCH</td>
+<td>IDU Hi</td>
+<td>CLK2=0</td>
+<td>inverse hold</td>
+</tr>
+<tr>
+<td>ebus</td>
+<td>Dedicated circuit</td>
+<td>C, E, L</td>
+<td>CLK4=0</td>
+<td></td>
+</tr>
+<tr>
+<td>fbus</td>
+<td>Dedicated circuit</td>
+<td>B, D, H, A</td>
+<td>CLK4=0</td>
+<td></td>
+</tr>
+<tr>
+<td>zbus</td>
+<td>Z</td>
+<td>SPL, PCL</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>wbus</td>
+<td>W</td>
+<td>SPH, PCH</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>adl</td>
+<td>IDU Lo</td>
+<td>SPL, PCL, Z</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>adh</td>
+<td>IDU Hi</td>
+<td>SPH, PCH, W</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div><p>The names of some internal bottom buses are arbitrary (do not make sense).</p>
+<h2 id="bidirectional-bus-multiplexing">Bidirectional bus multiplexing</h2>
+<p>This section describes the approach used in SM83 to connect bidirectional buses to consumers.</p>
+<p><img alt="buses" decoding="async" loading="lazy" src="../../imgstore/sm83/buses.jpg" /></p>
+<p>A few words if the schematic doesn't look very clear.</p>
+<ul>
+<li>The value from the bus does not come directly to the consumer, but is stored on the transparent DLatch (on the FET gates). From the DLatch output, the value comes out as a complement, because DLatch by its nature is an ordinary inverter (not). Why is this done? This is "z-protection": protecting the other consumer circuits from the HighZ value on the bus (regular logic only likes to work with 1's and 0's)</li>
+<li>If you want to output a value from the producer to the bus, the design in the figure below is used:<ul>
+<li>The value is output via znand, with the OE signal used to "open" znand; for this reason, the producer output value is inverted</li>
+<li>Bus is synchronous (clocked by CLK): when CLK=0 the bus is being precharged, when CLK=1 the value from the producers is updated if they have been "connected" by their OE signals.</li>
+<li>Several producers can be connected to the bus by hanging additional znand in bunches</li>
+</ul>
+</li>
+</ul>
+<p>From the above, it will be clear why the SM83 uses "inverse hold" for registers.</p>
+<p>⚠️ Such organization of data output on the bus has one disadvantage: if some producer has placed 0 on the bus, no one will be able to place value 1, because the bus can be driven only by value 0 (using znand), and value 1 gets there only during precharge. Actually a typical case was found recently: https://github.com/msinger/dmg-sim/pull/4 (there is a long discussion there, but you can fill a big cup of coffee, I think it will be interesting reading).</p><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG CPU Core</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/sm83/buses.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

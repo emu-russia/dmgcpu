@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clock Generator &amp; System Control · DMG-CPU Research</title>
+<meta name="description" content="ClkGen generates the clock signals for the whole chip, synchronizes the resets, and controls the external chip select and write synchronization.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/soc/Readme.html">DMG-CPU LR35902 SoC</a><span class="sep">/</span><span class="current">Clock Generator &amp; System Control</span></nav>
+
+<article class="content"><h1 id="clock-generator-system-control">Clock Generator &amp; System Control</h1>
+<div class="callout callout-note"><p class="callout-title">In general, we can consider that everything is good here. There may be some minor refinements, but in general "the engine has started"</p></div><p>ClkGen generates the clock signals for the whole chip, synchronizes the resets, and controls the external chip select and write synchronization.</p>
+<p><img alt="locator_clkgen" decoding="async" loading="lazy" src="../../imgstore/soc/locator_clkgen.jpg" /></p>
+<p><img alt="clkgen" decoding="async" loading="lazy" src="../../imgstore/soc/clkgen.jpg" /></p>
+<p><img alt="clkgen_netlist" decoding="async" loading="lazy" src="../../imgstore/soc/clkgen_netlist.png" /></p>
+<h2 id="module-overview">Module Overview</h2>
+<ul>
+<li>Clock generation: produces the clock signals (<code>clk1</code>..<code>clk9</code>, <code>cclk</code>) for the CPU and the peripherals.</li>
+<li>Reset: synchronizes <code>reset</code> into <code>n_reset2</code> and <code>sync_reset</code>.</li>
+<li>External chip select: generates <code>ext_cs_en</code> for external memory/peripheral access.</li>
+<li>Write synchronization: produces <code>cpu_wr_sync</code> from <code>cpu_wr</code>.</li>
+<li>Oscillator: controls the oscillator enable/stability signals (<code>osc_ena</code>, <code>osc_stable</code>).</li>
+</ul>
+<h2 id="signals">Signals</h2>
+<p><img alt="clkgen_ports" decoding="async" loading="lazy" src="../../imgstore/soc/clkgen_ports.png" /></p>
+<p>The names of signals of the CLK group have many synonyms used by different authors at different times.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>Dir</th>
+<th>From/Where To</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>clk_ena</td>
+<td>Input</td>
+<td>From Core</td>
+<td>Clock enable signal</td>
+</tr>
+<tr>
+<td>osc_ena</td>
+<td>Input</td>
+<td>From Core</td>
+<td>Oscillator enable signal</td>
+</tr>
+<tr>
+<td>cpu_wr_sync</td>
+<td>Output</td>
+<td>To MMIO,Arb</td>
+<td>Synchronized SM83 Core write signal</td>
+</tr>
+<tr>
+<td>cpu_wr</td>
+<td>Input</td>
+<td>From Core</td>
+<td>SM83 Core write signal</td>
+</tr>
+<tr>
+<td>ext_cs_en</td>
+<td>Output</td>
+<td>To Arb</td>
+<td>External chip select enable signal</td>
+</tr>
+<tr>
+<td>test_1</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>Test1 mode enable (disable all internal CPU A/D bus drivers). (Aka T1nT2)</td>
+</tr>
+<tr>
+<td>cpu_mreq</td>
+<td>Input</td>
+<td>From Core</td>
+<td>SM83 Core memory request signal</td>
+</tr>
+<tr>
+<td>sync_reset</td>
+<td>Output</td>
+<td>To Core</td>
+<td>Synchronized reset signal</td>
+</tr>
+<tr>
+<td>reset</td>
+<td>Input</td>
+<td>From /RES Pad</td>
+<td>System reset signal</td>
+</tr>
+<tr>
+<td>osc_stable</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>Oscillator stability signal</td>
+</tr>
+<tr>
+<td>n_test_reset</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>Active-low test reset signal</td>
+</tr>
+<tr>
+<td>n_clk_in</td>
+<td>Input</td>
+<td>From CK1_CK2 Pad</td>
+<td>Active-low external clock input</td>
+</tr>
+<tr>
+<td>n_reset2</td>
+<td>Output</td>
+<td>To Ser,MMIO,Arb,PPU,APU</td>
+<td>Active-low Global reset signal</td>
+</tr>
+<tr>
+<td>clk1</td>
+<td>Output</td>
+<td>To Core</td>
+<td>Generated clock signals for various CPU and peripheral components. (Aka BOWA,ADR_CLK_N)</td>
+</tr>
+<tr>
+<td>clk2</td>
+<td>Output</td>
+<td>To Core,MMIO,Arb,APU</td>
+<td>(Aka DATA_VALID,ADR_CLK_P)</td>
+</tr>
+<tr>
+<td>clk3</td>
+<td>Output</td>
+<td>To Core</td>
+<td>(Aka CPU_PHI,DATA_CLK_P)</td>
+</tr>
+<tr>
+<td>clk4</td>
+<td>Output</td>
+<td>To Core,MMIO,APU,PHI Pad</td>
+<td>(Aka #CPU_PHI,DATA_CLK_N)</td>
+</tr>
+<tr>
+<td>clk5</td>
+<td>Output</td>
+<td>To Core</td>
+<td>(Aka INC_CLK_N)</td>
+</tr>
+<tr>
+<td>clk6</td>
+<td>Output</td>
+<td>To Core,MMIO,PPU,APU</td>
+<td>(Aka INC_CLK_P)</td>
+</tr>
+<tr>
+<td>clk7</td>
+<td>Output</td>
+<td>To Core,HRAM,APU</td>
+<td>(Aka BUKE,LATCH_CLK)</td>
+</tr>
+<tr>
+<td>clk8</td>
+<td>Output</td>
+<td>To Core</td>
+<td>(Aka BOMA_1MHZ,MAIN_CLK_N)</td>
+</tr>
+<tr>
+<td>clk9</td>
+<td>Output</td>
+<td>To Core,MMIO,APU</td>
+<td>(Aka BOGA_1MHZ,MAIN_CLK_P)</td>
+</tr>
+<tr>
+<td>cclk</td>
+<td>Output</td>
+<td>To APU,PPU</td>
+<td>Input clk complement (same as n_clk_in) (Aka AZOF)</td>
+</tr>
+</tbody>
+</table>
+</div><p>Signal flow:</p>
+<ul>
+<li><code>n_clk_in</code> is inverted and divided into the CLK outputs (<code>clk1</code>..<code>clk9</code>, <code>cclk</code>); the clocks are gated by <code>osc_ena</code>/<code>osc_stable</code>.</li>
+<li><code>reset</code> is synchronized by <code>dmg_dffrnq_comp</code> flip-flops into <code>n_reset2</code> and <code>sync_reset</code>.</li>
+<li><code>ext_cs_en</code> is derived from <code>cpu_mreq</code> and enables external memory/peripheral access when the CPU requests it.</li>
+<li><code>cpu_wr_sync</code> is <code>cpu_wr</code> synchronized with the clock.</li>
+<li>The oscillator must be stable before the clocks are enabled.</li>
+</ul>
+<p>Phase pattern of all CLK outputs:</p>
+<p><img alt="clkgen1" decoding="async" loading="lazy" src="../../imgstore/waves/clkgen1.png" /></p>
+<p>If you see a picture like that, then you're good.</p>
+<div class="callout callout-note"><p class="callout-title">Measured phase table (issue #396, HDL/soc/icarus/soc/tb_clkgen)</p><p>Measured in simulation with the real ClkGen netlist (WSL-native Icarus;
+see <code>clkgen_phases.py</code> in the testbench folder). The M-cycle is 4
+oscillator cycles and all clocks toggle once per M-cycle except
+<code>n_clk_in</code>/<code>cclk</code>, which follow the oscillator.</p>
+</div><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>posedge offset inside the M-cycle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>n_clk_in</code> / <code>cclk</code></td>
+<td>every oscillator half-cycle (phases 32/96/160/224 ns at 4.19 MHz-ish osc)</td>
+</tr>
+<tr>
+<td><code>clk1</code>, <code>clk3</code>, <code>clk5</code>, <code>clk9</code></td>
+<td>0 (T-cycle 0 edge)</td>
+</tr>
+<tr>
+<td><code>clk2</code>, <code>clk8</code></td>
+<td>+1 oscillator cycle</td>
+</tr>
+<tr>
+<td><code>clk4</code></td>
+<td>+2 oscillator cycles</td>
+</tr>
+<tr>
+<td><code>clk6</code>, <code>clk7</code></td>
+<td>+3 oscillator cycles</td>
+</tr>
+</tbody>
+</table>
+</div><p>Verified behaviour (tb_clkgen, all PASS):</p>
+<ul>
+<li>
+<p><code>clk_ena=0</code> stops the CPU clock group <code>clk1..clk7</code> (clk6 tested)
+  while <code>clk8</code>/<code>clk9</code> keep running (they feed the divider chain / MMIO
+  oscillators) - "clock enable" is a <em>CPU-clocks</em> gate, not a global
+  stop.</p>
+</li>
+<li>
+<p><code>osc_ena=0</code> stops the whole clock tree (tested on clk9).</p>
+</li>
+<li><code>cpu_wr_sync</code> pulses exactly once per M-cycle while <code>cpu_wr</code> is high.</li>
+<li>
+<p><code>ext_cs_en</code> is <strong>active low</strong>: while <code>cpu_mreq</code> is held high it pulses
+  low ~64 ns once per M-cycle (the external chip-select enable window).</p>
+</li>
+<li>
+<p>reset release: after <code>/RES</code> goes away, <code>n_reset2</code>/<code>sync_reset</code>
+  deassert through the synchronizer chain below.</p>
+</li>
+</ul>
+<p>The older hypothesis below is kept for history; treat the measured table
+as authoritative.</p>
+<p>Assignment of Clocks (hypothesis, older):</p>
+<ul>
+<li>clk1+clk2: Prechagre Clock, during clk2=0 all buses are precharged where required. Matches about the same phase as clk8+clk9, but most likely the developers made a separate clock to control the timings precisely (moving the phase slightly with delays as required).</li>
+<li>clk3+clk4: M-cycle Clock (T ÷ 4)</li>
+<li>clk5+clk6: Last T-cycle (3) of the current M-cycle (@ posedge clk6)</li>
+<li>clk7: Used for Overlap technique when the circuit "completes" something on the 0th T-cycle of the next M-cycle (e.g. used for fetch-execute overlap in SM83 Core) (@ negedge clk7)</li>
+<li>clk8+clk9: First T-cycle (0) of the current M-cycle (@ posedge clk9)</li>
+</ul>
+<p>To get the "middle" T-cycles (1 and 2) you can use a bit of logic, for instance "If clk4=1 and clk6=0, then the 2nd T-cycle is now being executed".</p>
+<h2 id="netlist-structure-issue-396-analysis">Netlist structure (issue #396 analysis)</h2>
+<p>The ClkGen netlist is small (~56 cells) and splits into functional
+blocks:</p>
+<ul>
+<li>
+<p><strong>Oscillator / T-cycle skeleton</strong> (<code>g43/g44</code> NAND latch on <code>n_clk_in</code>,
+  dffs <code>g53..g56</code> clocked by <code>w5/w6</code> = the osc half-cycles): produces the
+  4-phase skeleton (<code>w7/w9/w60/w62</code> family), one M-cycle = 4 oscillator
+  cycles. <code>w5/w6</code> also give <code>cclk</code> (<code>g15</code>) and the phase clocks.</p>
+</li>
+<li>
+<p><strong>Phase shaping &amp; CPU-clock gating</strong>: the not2/not6/not10 inverter
+  chains (<code>g13..g28</code>) derive the individual <code>clk1..clk7</code> edges from the
+  skeleton; <code>clk_ena</code> enters through <code>g1/g16</code> (<code>w43</code>) into the <code>clk2..7</code>
+  combos. Measured: clk_ena=0 freezes clk1..clk7.</p>
+</li>
+<li>
+<p><strong>clk8/clk9 + cclk branch</strong>: <code>clk9 = ~w12</code>, <code>clk8 = ~clk9</code>,
+  <code>w12 = w40 &amp; osc_ena</code> - only <code>osc_ena</code> gates this branch (measured:
+  clk9 keeps running with clk_ena=0; stops with osc_ena=0).</p>
+</li>
+<li>
+<p><strong>Reset synchronizer</strong>: nor-latch <code>g51</code> (set when <code>~reset &amp; osc_stable</code>)</p>
+</li>
+<li>
+<p>dff <code>g52</code> (-&gt; <code>sync_reset</code> on posedge clk9) + <code>g6/g46</code> -&gt; <code>n_reset2</code>.
+  While <code>osc_stable=0</code> the latch cannot set, so the internal resets stay
+  asserted (observed: MMIO drives osc_stable after its own start-up; the
+  testbench forces it high). <code>n_test_reset</code> (from MMIO) is the async
+  reset of <code>g52..g56</code> - i.e. a hard reset of the whole divider/reset
+  chain.</p>
+</li>
+<li>
+<p><strong>cpu_wr_sync</strong> (<code>g49/g50/g3</code>): <code>cpu_wr</code> qualified by the phase window
+  <code>w21 = w7 &amp; ~w60</code> -&gt; one pulse per M-cycle while WR is high.</p>
+</li>
+<li>
+<p><strong>ext_cs_en</strong> (<code>g47/g48/g4</code>): <code>~w53</code> with <code>w53 = ~(test_1 | w56)</code> and
+  <code>w56 = ~((w9 &amp; w60) | cpu_mreq)</code> - a per-M-cycle low pulse while
+  <code>cpu_mreq</code> is high (measured above).</p>
+</li>
+</ul>
+<h2 id="map">Map</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Row</th>
+<th>Cells</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>not, not, not2(unused), not3, nand, nor, not2(unused), not3, nor, oan, not, not2, or, dffrnq_comp, nor_latch, nor, not, not, dffrnq_comp, not, dffrnq_comp, not, dffrnq_comp, not, dffrnq_comp, not, not2, nand, nand, not, not6</td>
+</tr>
+<tr>
+<td>2</td>
+<td>not6, not6, or, not, not, nand3, not, not2(unused), not2(unused), not2(unused), not2(unused), not2(unused), not, not, nand4, not6, not, not, nor3, (not4+not6){not10}, (not4+not6){not10}, not2, nor3, (not4+not6){not10}, (not4+not6){not10}, not2, nor, not6, not6, and, not, not</td>
+</tr>
+</tbody>
+</table>
+</div><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG-CPU LR35902 SoC</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/soc/clkgen.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

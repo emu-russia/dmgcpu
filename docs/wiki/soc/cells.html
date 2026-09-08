@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SHARP DMG CPU Cells Library · DMG-CPU Research</title>
+<meta name="description" content="The cells shown are only part of the SHARP cell library (name?), other cell types will probably be found in other chips of this era.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/soc/Readme.html">DMG-CPU LR35902 SoC</a><span class="sep">/</span><span class="current">SHARP DMG CPU Cells Library</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#symmetry-group">Symmetry group</a></li><li class="toc-l2"><a href="#dual-rail-clk">Dual-rail CLK</a></li><li class="toc-l2"><a href="#cells-list">Cells list</a></li><li class="toc-l2"><a href="#and">and</a></li><li class="toc-l2"><a href="#and3">and3</a></li><li class="toc-l2"><a href="#and4">and4</a></li><li class="toc-l2"><a href="#aon-ao1">aon (AO1)</a></li><li class="toc-l2"><a href="#aon22-ao2">aon22 (AO2)</a></li><li class="toc-l2"><a href="#aon222-ao3">aon222 (AO3)</a></li><li class="toc-l2"><a href="#aon2222-ao4">aon2222 (AO4)</a></li><li class="toc-l2"><a href="#aon222222-ao6">aon222222 (AO6)</a></li><li class="toc-l2"><a href="#bufif0-tri_buf_if0">bufif0 (TRI_BUF_IF0)</a></li><li class="toc-l2"><a href="#cnt-tffd">cnt (TFFD)</a></li><li class="toc-l2"><a href="#const">const</a></li><li class="toc-l2"><a href="#dffr-posedge-dff-with-single-rail-clk-synchronous-dual-rail-inverse-polarity-reset-qnq-output-dffr_b2">dffr - Posedge DFF With Single-rail CLK Synchronous Dual-rail Inverse Polarity Reset Q/NQ Output (DFFR_B2)</a></li><li class="toc-l2"><a href="#dffr_comp-dffr_a">dffr_comp (DFFR_A)</a></li><li class="toc-l2"><a href="#dffrnq_comp-dffr_b1">dffrnq_comp (DFFR_B1)</a></li><li class="toc-l2"><a href="#dffsr-posedge-dff-with-single-rail-clk-synchronous-dual-rail-inverse-polarity-set-asynchronous-inverse-polarity-reset-qnq-output-dffsr">dffsr - Posedge DFF With Single-rail CLK Synchronous Dual-rail Inverse Polarity Set Asynchronous Inverse Polarity Reset Q/NQ Output (DFFSR)</a></li><li class="toc-l2"><a href="#fa">fa</a></li><li class="toc-l2"><a href="#ha">ha</a></li><li class="toc-l2"><a href="#latch-d_latch_b">latch (D_LATCH_B)</a></li><li class="toc-l2"><a href="#latch_comp-d_latch_a2">latch_comp (D_LATCH_A2)</a></li><li class="toc-l2"><a href="#latchnq_comp-d_latch_a">latchnq_comp (D_LATCH_A)</a></li><li class="toc-l2"><a href="#latchr_comp-dr_latch">latchr_comp (DR_LATCH)</a></li><li class="toc-l2"><a href="#mux">mux</a></li><li class="toc-l2"><a href="#muxi">muxi</a></li><li class="toc-l2"><a href="#nand">nand</a></li><li class="toc-l2"><a href="#nand3">nand3</a></li><li class="toc-l2"><a href="#nand4">nand4</a></li><li class="toc-l2"><a href="#nand5">nand5</a></li><li class="toc-l2"><a href="#nand6">nand6</a></li><li class="toc-l2"><a href="#nand7">nand7</a></li><li class="toc-l2"><a href="#nand_latch">nand_latch</a></li><li class="toc-l2"><a href="#nor">nor</a></li><li class="toc-l2"><a href="#nor3">nor3</a></li><li class="toc-l2"><a href="#nor4">nor4</a></li><li class="toc-l2"><a href="#nor5">nor5</a></li><li class="toc-l2"><a href="#nor6">nor6</a></li><li class="toc-l2"><a href="#nor8">nor8</a></li><li class="toc-l2"><a href="#nor_latch">nor_latch</a></li><li class="toc-l2"><a href="#not">not</a></li><li class="toc-l2"><a href="#not2">not2</a></li><li class="toc-l2"><a href="#not3">not3</a></li><li class="toc-l2"><a href="#not4">not4</a></li><li class="toc-l2"><a href="#not6">not6</a></li><li class="toc-l2"><a href="#notif0-tri_inv_if0">notif0 (TRI_INV_IF0)</a></li><li class="toc-l2"><a href="#notif1-tri_inv_if1">notif1 (TRI_INV_IF1)</a></li><li class="toc-l2"><a href="#oai">oai</a></li><li class="toc-l2"><a href="#oan-oa">oan (OA)</a></li><li class="toc-l2"><a href="#or">or</a></li><li class="toc-l2"><a href="#or3">or3</a></li><li class="toc-l2"><a href="#or4">or4</a></li><li class="toc-l2"><a href="#xnor">xnor</a></li><li class="toc-l2"><a href="#xor">xor</a></li></ol></details>
+<article class="content"><h1 id="sharp-dmg-cpu-cells-library">SHARP DMG CPU Cells Library</h1>
+<p><img alt="dmg_cells" decoding="async" loading="lazy" src="../../imgstore/soc/dmg_cells.png" /></p>
+<p><img alt="dmglib" decoding="async" loading="lazy" src="../../imgstore/soc/dmglib.png" /></p>
+<p>The cells shown are only part of the SHARP cell library (name?), other cell types will probably be found in other chips of this era.</p>
+<h2 id="symmetry-group">Symmetry group</h2>
+<ul>
+<li>In general, the dihedral group 4 (D4) is used for cells</li>
+<li>By agreement among all researchers ident position of the cell (<code>e</code>) - when the ground is on the left</li>
+<li>As part of modules, cells are usually simply reflected relative to the vertical axis <code>e &lt;-&gt; b</code> (for ClkGen and Ser modules, cells are additionally rotated “sideways”)</li>
+<li>As part of macro cells (memory), cells can be arranged arbitrarily, as is more convenient </li>
+</ul>
+<p><img alt="Dih4_cycle_graph" decoding="async" loading="lazy" src="../../imgstore/Dih4_cycle_graph.png" /></p>
+<h2 id="dual-rail-clk">Dual-rail CLK</h2>
+<p>Sequential elements (latch, dff) are presented in two variants: with single-rail CLK and with dual-rail CLK (CLK + complement CLK). Where dual-rail CLK is used, the suffix <code>comp</code> is used in the cell name.</p>
+<h2 id="cells-list">Cells list</h2>
+<p>The following are all cell types, in alphabetical order. The names of cells by @msinger (http://iceboy.a-singer.de/doc/dmg_cells.html) are shown in parentheses (where the correspondence is not obvious)
+The topology is not complete (m1 is missing in some places), but it is sufficient to understand the cell architecture for reimplementation.</p>
+<h2 id="and">and</h2>
+<p><img alt="and" decoding="async" loading="lazy" src="../../imgstore/modules/soc/and.jpg" /></p>
+<h2 id="and3">and3</h2>
+<p><img alt="and3" decoding="async" loading="lazy" src="../../imgstore/modules/soc/and3.jpg" /></p>
+<h2 id="and4">and4</h2>
+<p><img alt="and4" decoding="async" loading="lazy" src="../../imgstore/modules/soc/and4.jpg" /></p>
+<h2 id="aon-ao1">aon (AO1)</h2>
+<p>2 AND to 2 OR Non-Inverting.</p>
+<p><img alt="aon" decoding="async" loading="lazy" src="../../imgstore/modules/soc/aon.jpg" /></p>
+<h2 id="aon22-ao2">aon22 (AO2)</h2>
+<p>2+2 AND to 3 OR Non-Inverting.</p>
+<p><img alt="aon22" decoding="async" loading="lazy" src="../../imgstore/modules/soc/aon22.jpg" /></p>
+<h2 id="aon222-ao3">aon222 (AO3)</h2>
+<p>2+2+2 AND to 4 OR Non-Inverting.</p>
+<p><img alt="aon222" decoding="async" loading="lazy" src="../../imgstore/modules/soc/aon222.jpg" /></p>
+<h2 id="aon2222-ao4">aon2222 (AO4)</h2>
+<p>2+2+2+2 AND to 5 OR Non-Inverting.</p>
+<p><img alt="aon2222" decoding="async" loading="lazy" src="../../imgstore/modules/soc/aon2222.jpg" /></p>
+<h2 id="aon222222-ao6">aon222222 (AO6)</h2>
+<p>2+2+2+2+2+2 AND to 7 OR Non-Inverting.</p>
+<p><img alt="aon222222" decoding="async" loading="lazy" src="../../imgstore/modules/soc/aon222222.jpg" /></p>
+<h2 id="bufif0-tri_buf_if0">bufif0 (TRI_BUF_IF0)</h2>
+<p><img alt="bufif0" decoding="async" loading="lazy" src="../../imgstore/modules/soc/bufif0.jpg" /></p>
+<h2 id="cnt-tffd">cnt (TFFD)</h2>
+<p><img alt="cnt" decoding="async" loading="lazy" src="../../imgstore/modules/soc/cnt.jpg" /></p>
+<p><img alt="cnt_tran" decoding="async" loading="lazy" src="../../imgstore/modules/soc/cnt_tran.jpg" /></p>
+<p><img alt="dmg_cnt" decoding="async" loading="lazy" src="../../imgstore/logisim/soc/dmg_cnt.png" /></p>
+<h2 id="const">const</h2>
+<p><img alt="const" decoding="async" loading="lazy" src="../../imgstore/modules/soc/const.jpg" /></p>
+<h2 id="dffr-posedge-dff-with-single-rail-clk-synchronous-dual-rail-inverse-polarity-reset-qnq-output-dffr_b2">dffr - Posedge DFF With Single-rail CLK Synchronous Dual-rail Inverse Polarity Reset Q/NQ Output (DFFR_B2)</h2>
+<p>The #res input is fed separately to the Master and Slave MUX so that synchronous reset can be done. But usually #res1 and #res2 are connected externally, so the DFF becomes with asynchronous reset.
+The dual-rail ck/cck signals are obtained locally by demultiplexing the CLK input signal.</p>
+<p><img alt="dffr" decoding="async" loading="lazy" src="../../imgstore/modules/soc/dffr.jpg" /></p>
+<p><img alt="dffr_tran" decoding="async" loading="lazy" src="../../imgstore/modules/soc/dffr_tran.jpg" /></p>
+<h2 id="dffr_comp-dffr_a">dffr_comp (DFFR_A)</h2>
+<p><img alt="dffr_comp" decoding="async" loading="lazy" src="../../imgstore/modules/soc/dffr_comp.jpg" /></p>
+<h2 id="dffrnq_comp-dffr_b1">dffrnq_comp (DFFR_B1)</h2>
+<p><img alt="dffrnq_comp" decoding="async" loading="lazy" src="../../imgstore/modules/soc/dffrnq_comp.jpg" /></p>
+<h2 id="dffsr-posedge-dff-with-single-rail-clk-synchronous-dual-rail-inverse-polarity-set-asynchronous-inverse-polarity-reset-qnq-output-dffsr">dffsr - Posedge DFF With Single-rail CLK Synchronous Dual-rail Inverse Polarity Set Asynchronous Inverse Polarity Reset Q/NQ Output (DFFSR)</h2>
+<p><img alt="dffsr" decoding="async" loading="lazy" src="../../imgstore/modules/soc/dffsr.jpg" /></p>
+<h2 id="fa">fa</h2>
+<p><img alt="fa" decoding="async" loading="lazy" src="../../imgstore/modules/soc/fa.jpg" /></p>
+<h2 id="ha">ha</h2>
+<p><img alt="ha" decoding="async" loading="lazy" src="../../imgstore/modules/soc/ha.jpg" /></p>
+<p><img alt="ha_tran" decoding="async" loading="lazy" src="../../imgstore/modules/soc/ha_tran.jpg" /></p>
+<h2 id="latch-d_latch_b">latch (D_LATCH_B)</h2>
+<p><img alt="latch" decoding="async" loading="lazy" src="../../imgstore/modules/soc/latch.jpg" /></p>
+<h2 id="latch_comp-d_latch_a2">latch_comp (D_LATCH_A2)</h2>
+<p><img alt="latch_comp" decoding="async" loading="lazy" src="../../imgstore/modules/soc/latch_comp.jpg" /></p>
+<h2 id="latchnq_comp-d_latch_a">latchnq_comp (D_LATCH_A)</h2>
+<p><img alt="latchnq_comp" decoding="async" loading="lazy" src="../../imgstore/modules/soc/latchnq_comp.jpg" /></p>
+<h2 id="latchr_comp-dr_latch">latchr_comp (DR_LATCH)</h2>
+<p><img alt="latchr_comp" decoding="async" loading="lazy" src="../../imgstore/modules/soc/latchr_comp.jpg" /></p>
+<h2 id="mux">mux</h2>
+<p><img alt="mux" decoding="async" loading="lazy" src="../../imgstore/modules/soc/mux.jpg" /></p>
+<h2 id="muxi">muxi</h2>
+<p><img alt="muxi" decoding="async" loading="lazy" src="../../imgstore/modules/soc/muxi.jpg" /></p>
+<h2 id="nand">nand</h2>
+<p><img alt="nand" decoding="async" loading="lazy" src="../../imgstore/modules/soc/nand.jpg" /></p>
+<h2 id="nand3">nand3</h2>
+<p><img alt="nand3" decoding="async" loading="lazy" src="../../imgstore/modules/soc/nand3.jpg" /></p>
+<h2 id="nand4">nand4</h2>
+<p><img alt="nand4" decoding="async" loading="lazy" src="../../imgstore/modules/soc/nand4.jpg" /></p>
+<h2 id="nand5">nand5</h2>
+<p><img alt="nand5" decoding="async" loading="lazy" src="../../imgstore/modules/soc/nand5.jpg" /></p>
+<h2 id="nand6">nand6</h2>
+<p><img alt="nand6" decoding="async" loading="lazy" src="../../imgstore/modules/soc/nand6.jpg" /></p>
+<h2 id="nand7">nand7</h2>
+<p><img alt="nand7" decoding="async" loading="lazy" src="../../imgstore/modules/soc/nand7.jpg" /></p>
+<h2 id="nand_latch">nand_latch</h2>
+<p><img alt="nand_latch" decoding="async" loading="lazy" src="../../imgstore/modules/soc/nand_latch.jpg" /></p>
+<h2 id="nor">nor</h2>
+<p><img alt="nor" decoding="async" loading="lazy" src="../../imgstore/modules/soc/nor.jpg" /></p>
+<h2 id="nor3">nor3</h2>
+<p><img alt="nor3" decoding="async" loading="lazy" src="../../imgstore/modules/soc/nor3.jpg" /></p>
+<h2 id="nor4">nor4</h2>
+<p><img alt="nor4" decoding="async" loading="lazy" src="../../imgstore/modules/soc/nor4.jpg" /></p>
+<h2 id="nor5">nor5</h2>
+<p><img alt="nor5" decoding="async" loading="lazy" src="../../imgstore/modules/soc/nor5.jpg" /></p>
+<h2 id="nor6">nor6</h2>
+<p><img alt="nor6" decoding="async" loading="lazy" src="../../imgstore/modules/soc/nor6.jpg" /></p>
+<h2 id="nor8">nor8</h2>
+<p><img alt="nor8" decoding="async" loading="lazy" src="../../imgstore/modules/soc/nor8.jpg" /></p>
+<h2 id="nor_latch">nor_latch</h2>
+<p><img alt="nor_latch" decoding="async" loading="lazy" src="../../imgstore/modules/soc/nor_latch.jpg" /></p>
+<h2 id="not">not</h2>
+<p><img alt="not" decoding="async" loading="lazy" src="../../imgstore/modules/soc/not.jpg" /></p>
+<h2 id="not2">not2</h2>
+<p><img alt="not2" decoding="async" loading="lazy" src="../../imgstore/modules/soc/not2.jpg" /></p>
+<h2 id="not3">not3</h2>
+<p><img alt="not3" decoding="async" loading="lazy" src="../../imgstore/modules/soc/not3.jpg" /></p>
+<h2 id="not4">not4</h2>
+<p><img alt="not4" decoding="async" loading="lazy" src="../../imgstore/modules/soc/not4.jpg" /></p>
+<h2 id="not6">not6</h2>
+<p><img alt="not6" decoding="async" loading="lazy" src="../../imgstore/modules/soc/not6.jpg" /></p>
+<h2 id="notif0-tri_inv_if0">notif0 (TRI_INV_IF0)</h2>
+<p><img alt="notif0" decoding="async" loading="lazy" src="../../imgstore/modules/soc/notif0.jpg" /></p>
+<h2 id="notif1-tri_inv_if1">notif1 (TRI_INV_IF1)</h2>
+<p><img alt="notif1" decoding="async" loading="lazy" src="../../imgstore/modules/soc/notif1.jpg" /></p>
+<h2 id="oai">oai</h2>
+<p>2 OR to 2 AND Inverting.</p>
+<p><img alt="oai" decoding="async" loading="lazy" src="../../imgstore/modules/soc/oai.jpg" /></p>
+<h2 id="oan-oa">oan (OA)</h2>
+<p>2 OR to 2 AND Non-Inverting.</p>
+<p><img alt="oan" decoding="async" loading="lazy" src="../../imgstore/modules/soc/oan.jpg" /></p>
+<h2 id="or">or</h2>
+<p><img alt="or" decoding="async" loading="lazy" src="../../imgstore/modules/soc/or.jpg" /></p>
+<h2 id="or3">or3</h2>
+<p><img alt="or3" decoding="async" loading="lazy" src="../../imgstore/modules/soc/or3.jpg" /></p>
+<h2 id="or4">or4</h2>
+<p><img alt="or4" decoding="async" loading="lazy" src="../../imgstore/modules/soc/or4.jpg" /></p>
+<h2 id="xnor">xnor</h2>
+<p><img alt="xnor" decoding="async" loading="lazy" src="../../imgstore/modules/soc/xnor.jpg" /></p>
+<h2 id="xor">xor</h2>
+<p><img alt="xor" decoding="async" loading="lazy" src="../../imgstore/modules/soc/xor.jpg" /></p><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG-CPU LR35902 SoC</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/soc/cells.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

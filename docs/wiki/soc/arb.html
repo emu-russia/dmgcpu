@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arbiter · DMG-CPU Research</title>
+<meta name="description" content="The module is a classic bus arbiter, which can often be found in older chips. It is responsible for connecting external and internal buses to each other, in various combinations.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/soc/Readme.html">DMG-CPU LR35902 SoC</a><span class="sep">/</span><span class="current">Arbiter</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l3"><a href="#signals">Signals</a></li><li class="toc-l2"><a href="#verified-behaviour-issue-396-tb_arb-all-pass">Verified behaviour (issue #396, tb_arb all-PASS)</a></li><li class="toc-l2"><a href="#annotated-design">Annotated Design</a></li><li class="toc-l2"><a href="#schematics">Schematics</a></li><li class="toc-l2"><a href="#map">Map</a></li></ol></details>
+<article class="content"><h1 id="arbiter">Arbiter</h1>
+<div class="callout callout-warning"><p><br />
+The section is under development and requires refinement, the schematics have not been verified in the simulator, but the study has gained "critical mass"</p>
+</div><p><img alt="locator_arb" decoding="async" loading="lazy" src="../../imgstore/soc/locator_arb.jpg" /></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th><img alt="arb" decoding="async" loading="lazy" src="../../imgstore/soc/arb.jpg" /></th>
+<th><img alt="arb_netlist" decoding="async" loading="lazy" src="../../imgstore/soc/arb_netlist.png" /></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div><p>The module is a classic bus arbiter, which can often be found in older chips. It is responsible for connecting external and internal buses to each other, in various combinations.
+It also contains a piece of arbitration for <code>a[15]</code>. <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> </p>
+<p>To familiarize yourself with the architecture, it's best to crawl through the annotated design, everything is quite obvious there. Sys Decode (address space decoder) parts, which are included in this module and output a number of signals for other parts of the chip, look a bit complicated. And the combo circuits for forming <code>/CS</code>, <code>/MCS</code>, <code>/MWR</code> and <code>/MRD</code> are of course also complicated (a lot of non-obvious signals form the combinatorial tree).</p>
+<h3 id="signals">Signals</h3>
+<p><img alt="arb_ports" decoding="async" loading="lazy" src="../../imgstore/soc/arb_ports.png" /></p>
+<p>The signal table is derived from the netlist.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal Name</th>
+<th>Direction</th>
+<th>From / Where To</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>clk2</code></td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Clock signal for the module (is used for Internal DB Precharge)</td>
+</tr>
+<tr>
+<td><code>n_reset2</code></td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Global Active-low reset signal.</td>
+</tr>
+<tr>
+<td><code>cpu_mreq</code></td>
+<td>Input</td>
+<td>From Core</td>
+<td>CPU memory request signal.</td>
+</tr>
+<tr>
+<td><code>ext_cs_en</code></td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>External chip select enable signal.</td>
+</tr>
+<tr>
+<td><code>cpu_wr_sync</code></td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Synchronized CPU write signal.</td>
+</tr>
+<tr>
+<td><code>a</code></td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Address bus (16-bit). <code>a[15]</code> is bidirectional, <code>a[14:0]</code> are inputs.</td>
+</tr>
+<tr>
+<td><code>d</code></td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Internal Data bus (8-bit).</td>
+</tr>
+<tr>
+<td><code>cpu_wr</code></td>
+<td>Input</td>
+<td>From Core</td>
+<td>CPU write signal.</td>
+</tr>
+<tr>
+<td><code>mmio_sel</code></td>
+<td>Output</td>
+<td>To Core</td>
+<td>Memory-mapped I/O select signal (<code>MMIO_REQ</code>).</td>
+</tr>
+<tr>
+<td><code>boot_sel</code></td>
+<td>Output</td>
+<td>To Core</td>
+<td>Boot select signal (<code>IPL_REQ</code>).</td>
+</tr>
+<tr>
+<td><code>n_DRV_HIGH_a15</code></td>
+<td>Output</td>
+<td>To A15 Pad</td>
+<td>Active-low drive high signal for <code>a[15]</code>.</td>
+</tr>
+<tr>
+<td><code>n_INPUT_a15</code></td>
+<td>Input</td>
+<td>From A15 Pad</td>
+<td>Active-low input signal for <code>a[15]</code>.</td>
+</tr>
+<tr>
+<td><code>DRV_LOW_a15</code></td>
+<td>Output</td>
+<td>To A15 Pad</td>
+<td>Drive low signal for <code>a[15]</code>.</td>
+</tr>
+<tr>
+<td><code>n_cs_topad</code></td>
+<td>Output</td>
+<td>To /CS Pad</td>
+<td>Active-low chip select to pad signal.</td>
+</tr>
+<tr>
+<td><code>CONST0</code></td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Constant 0 signal. <sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>n_DRV_HIGH_nmwr</code></td>
+<td>Output</td>
+<td>To /MWR Pad</td>
+<td>Active-low drive high signal for <code>n_mwr</code>.</td>
+</tr>
+<tr>
+<td><code>n_mwr</code></td>
+<td>Input</td>
+<td>From /MWR Pad</td>
+<td>Active-low memory write signal.</td>
+</tr>
+<tr>
+<td><code>DRV_LOW_nmwr</code></td>
+<td>Output</td>
+<td>To /MWR Pad</td>
+<td>Drive low signal for <code>n_mwr</code>.</td>
+</tr>
+<tr>
+<td><code>n_DRV_HIGH_nmrd</code></td>
+<td>Output</td>
+<td>To /MRD Pad</td>
+<td>Active-low drive high signal for <code>n_mrd</code>.</td>
+</tr>
+<tr>
+<td><code>n_mrd</code></td>
+<td>Input</td>
+<td>From /MRD Pad</td>
+<td>Active-low memory read signal.</td>
+</tr>
+<tr>
+<td><code>DRV_LOW_nmrd</code></td>
+<td>Output</td>
+<td>To /MRD Pad</td>
+<td>Drive low signal for <code>n_mrd</code>.</td>
+</tr>
+<tr>
+<td><code>n_DRV_HIGH_nmcs</code></td>
+<td>Output</td>
+<td>To /MCS Pad</td>
+<td>Active-low drive high signal for <code>n_mcs</code>.</td>
+</tr>
+<tr>
+<td><code>n_mcs</code></td>
+<td>Input</td>
+<td>From /MCS Pad</td>
+<td>Active-low memory chip select signal.</td>
+</tr>
+<tr>
+<td><code>DRV_LOW_nmcs</code></td>
+<td>Output</td>
+<td>To /MCS Pad</td>
+<td>Drive low signal for <code>n_mcs</code>.</td>
+</tr>
+<tr>
+<td><code>n_DRV_HIGH_md</code></td>
+<td>Output</td>
+<td>To MD Pads</td>
+<td>Active-low drive high signal for <code>md</code> (8-bit).</td>
+</tr>
+<tr>
+<td><code>n_md_frompad</code></td>
+<td>Input</td>
+<td>From MD Pads</td>
+<td>Active-low <code>md</code> input from pad (8-bit).</td>
+</tr>
+<tr>
+<td><code>DRV_LOW_md</code></td>
+<td>Output</td>
+<td>To MD Pads</td>
+<td>Drive low signal for <code>md</code> (8-bit).</td>
+</tr>
+<tr>
+<td><code>n_md_ena_pu</code></td>
+<td>Output</td>
+<td>To MD Pads</td>
+<td>Active-low <code>md</code> enable pull-up signal.</td>
+</tr>
+<tr>
+<td><code>n_DRV_HIGH_d</code></td>
+<td>Output</td>
+<td>To D Pads</td>
+<td>Active-low drive high signal for <code>d</code> (8-bit).</td>
+</tr>
+<tr>
+<td><code>n_db_frompad</code></td>
+<td>Input</td>
+<td>From D Pads</td>
+<td>Active-low data bus input from pad (8-bit).</td>
+</tr>
+<tr>
+<td><code>DRV_LOW_d</code></td>
+<td>Output</td>
+<td>To D Pads</td>
+<td>Drive low signal for <code>d</code> (8-bit).</td>
+</tr>
+<tr>
+<td><code>n_ena_pu_db</code></td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>Active-low enable pull-up signal for data bus.</td>
+</tr>
+<tr>
+<td><code>soc_wr</code></td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>System-on-Chip write signal.</td>
+</tr>
+<tr>
+<td><code>soc_rd</code></td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>System-on-Chip read signal.</td>
+</tr>
+<tr>
+<td><code>vram_to_oam</code></td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>VRAM to OAM transfer signal.</td>
+</tr>
+<tr>
+<td><code>dma_a_15</code></td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>DMA address bit 15 signal.</td>
+</tr>
+<tr>
+<td><code>non_vram_mreq</code></td>
+<td>Output</td>
+<td>To MMIO</td>
+<td>Non-VRAM memory request signal.</td>
+</tr>
+<tr>
+<td><code>test_1</code></td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>Test1 mode - disable all internal CPU A/D bus drivers.</td>
+</tr>
+<tr>
+<td><code>n_extdb_to_intdb</code></td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>Active-low external data bus to internal data bus signal.</td>
+</tr>
+<tr>
+<td><code>n_dblatch_to_intdb</code></td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>Active-low data bus latch to internal data bus signal.</td>
+</tr>
+<tr>
+<td><code>n_intdb_to_extdb</code></td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>Active-low internal data bus to external data bus signal.</td>
+</tr>
+<tr>
+<td><code>ffxx</code></td>
+<td>Output</td>
+<td>To MMIO, HRAM, APU, PPU1</td>
+<td>Signal indicating access to memory range <code>FFxx</code>.</td>
+</tr>
+<tr>
+<td><code>n_ppu_hard_reset</code></td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>Active-low PPU hard reset signal.</td>
+</tr>
+<tr>
+<td><code>ppu_mode3</code></td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>PPU mode 3 signal.</td>
+</tr>
+<tr>
+<td><code>md</code></td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Internal MD bus (8-bit).</td>
+</tr>
+<tr>
+<td><code>oam_din</code></td>
+<td>Output</td>
+<td>To PPU2</td>
+<td>OAM data input (8-bit).</td>
+</tr>
+<tr>
+<td><code>n_vram_to_oam</code></td>
+<td>Input</td>
+<td>From PPU2</td>
+<td>0: VRAM to OAM transfer signal. (active low)</td>
+</tr>
+<tr>
+<td><code>dma_addr_ext</code></td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>DMA external address signal.</td>
+</tr>
+<tr>
+<td><code>sp_bp_cys</code></td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>Sprite buffer page cycle - bus cycle when the PPU fetches sprite data into its buffer.</td>
+</tr>
+<tr>
+<td><code>tm_bp_cys</code></td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>Tile map buffer page cycle - bus cycle when the PPU fetches tile map data.</td>
+</tr>
+<tr>
+<td><code>n_sp_bp_mrd</code></td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>Active-low sprite buffer page memory read.</td>
+</tr>
+<tr>
+<td><code>n_tm_bp_cys</code></td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>Active-low tile map buffer page cycle.</td>
+</tr>
+<tr>
+<td><code>arb_fexx_ffxx</code></td>
+<td>Output</td>
+<td>To PPU1</td>
+<td>Arbitration signal for memory ranges <code>FExx</code> and <code>FFxx</code>.</td>
+</tr>
+<tr>
+<td><code>cpu_vram_oam_rd</code></td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>CPU VRAM/OAM read signal.</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="verified-behaviour-issue-396-tb_arb-all-pass">Verified behaviour (issue #396, tb_arb all-PASS)</h2>
+<p>Real Arbiter netlist in <code>HDL/soc/icarus/soc</code> (merged netlist
+<code>arb_merged.v</code>). Combines with the real MMIO decode so that CPU accesses
+to $FF50 reach the bank register.</p>
+<ul>
+<li><strong>Sys Decode outputs (combinational, with MREQ)</strong>:</li>
+<li><code>boot_sel</code> = 1 for $0000-$00FF while the BANK register is clear;</li>
+<li><code>ffxx</code> = 1 for $FFxx (a[15:8] = 0xFF);</li>
+<li><code>mmio_sel</code> = 1 for the $FE00+ (FExx/FFxx) window;</li>
+<li>
+<p><code>non_vram_mreq</code> = MREQ &amp; NOT ($8000-$9FFF VRAM window) - i.e. the
+    "non-VRAM" region excludes only the VRAM window, not cart RAM;</p>
+</li>
+<li>
+<p><code>arb_fexx_ffxx</code> = 1 for $FE00+ addresses (FExx vs FFxx arbitration).</p>
+</li>
+<li>
+<p><strong>$FF50 BANK register</strong> (<code>g166</code>, dff): a CPU write of 1 disables the
+  internal boot ROM (<code>boot_sel</code> goes 0); the write of 0 afterwards does
+  not re-enable it (write-1-only, matches the wiki).</p>
+</li>
+<li>
+<p><strong>Address/data bus role</strong>: in normal (non-TEST1) mode the Arbiter only
+  <em>reads</em> a[14:0] and drives nothing on the internal <code>a</code> bus; a[15] is
+  driven (from <code>n_INPUT_a15</code> pads) only in TEST1 mode; the d-bus
+  precharge driver (<code>clk2=0</code>) and the external-bus direction controls
+  come from MMIO (<code>n_extdb_to_intdb</code>/<code>n_dblatch_to_intdb</code>/
+  <code>n_intdb_to_extdb</code>).</p>
+</li>
+<li>
+<p><strong>/CS pad drive (measured, tb_arb PASS)</strong>: <code>/CS</code> (internal
+  <code>n_cs_topad</code>, the inverting OBUF in front of the pad) asserts ~2x per
+  CPU read cycle (M-cycle pulses via <code>ext_cs_en</code>) for addresses with
+  a15 &amp; (a13 | a14) - the $A000-$BFFF (cart RAM) and $C000-$FBFF
+  windows; it does <strong>not</strong> assert for the $0000-$7FFF ROM area, the
+  $8000-$9FFF VRAM window, or $FFxx (the ~(a[15:10]=111111) term kills
+  $FC00+). So this signal is the select for the external RAM / bus-
+  window devices, not for the cart ROM.</p>
+</li>
+</ul>
+<h2 id="annotated-design">Annotated Design</h2>
+<p><img alt="arb_annotated" decoding="async" loading="lazy" src="../../imgstore/hdl/soc/design/arb_annotated.png" /></p>
+<h2 id="schematics">Schematics</h2>
+<ul>
+<li>Int DB Precharge: controls the Int DB bus precharge</li>
+<li>Int DB -&gt; Ext DB Driver: connects Int DB to Ext DB</li>
+<li>Ext DB -&gt; Int DB Latch + tris: memorizes the Ext DB value on the latch (DB Latch)</li>
+<li>VRAM Test Mode Check: generates the VRAM Test Mode signal (when VRAM is controlled externally)</li>
+<li>Sys Decode (part): Sys Decode chunks</li>
+<li>Ext A15 -&gt; Int A15 tris: piece of address bus arbitration</li>
+<li>Int A15 -&gt; Ext A15 Driver: piece of address bus arbitration</li>
+<li>/CS Logic</li>
+<li>/MCS Logic</li>
+<li>/MRD Logic</li>
+<li>/MWR Logic</li>
+<li>Ext DB -&gt; Int DB Latch + tris: connects Ext DB to Int DB</li>
+<li>Ext DB -&gt; OAM DataIn DLatch: outputs a value from Ext DB for OAM DataIn</li>
+<li>MD Bus Setup: generates MD bus control signals</li>
+<li>Ext MD -&gt; Int MD tris: connects Ext MD to Int MD</li>
+<li>Int MD -&gt; Ext MD Driver: connects Int MD to Ext MD</li>
+<li>Int MD -&gt; Int DB tris: connects Int MD to Int DB</li>
+<li>Int DB -&gt; Int MD tris: connects Int DB to Int MD</li>
+<li>$FF50 BANK Reg: well-known register to disable mapping of the built-in BootROM (write 1 only)</li>
+</ul>
+<h2 id="map">Map</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Row</th>
+<th>Cells</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>nand, nand, nand, not, nand, nor, nor, nand, nand, nor, not, not, not, latch, notif0, notif0, notif0, latch, latch, const, nor, not, nand, nand, bufif0, not, nor, nor, not2, not2, not2, not2, not2, not2, not2, not2, not2, notif1, not2, not, notif1, notif1, not2, notif1, not2, notif1, notif1, not2, notif1, not2, not2, notif1, not2, bufif0, not2, or, not, notif1, not, notif1, not, notif1, not, notif1, not, notif1, notif1, not, not3, not, or, and, not, not, not, not, not, nand, not, or, not2, not, not2, not2, and4, not2</td>
+</tr>
+<tr>
+<td>2</td>
+<td>nor, not, nor, bufif0, latch, bufif0, bufif0, latch, bufif0, bufif0, notif0, not2, nand, bufif0, not, latch, notif0, latch, latch, or, or, and, and, or, and, and, or, and, and, nand, nor, and, not, and, not, or, or, and, or, not, not, bufif0, bufif0, bufif0, not, not, not, or, not, notif1, not, nor, not, dffr, not, and, mux, and, nand, not, or, and, not2, or, not2, nor4</td>
+</tr>
+<tr>
+<td>3</td>
+<td>nor, bufif0, not, bufif0, notif0, not, bufif0, bufif0, bufif0, bufif0, bufif0, bufif0, nor, notif0, bufif0, bufif0, notif0, bufif0, mux, bufif0, mux, bufif0, bufif0, and, nor, or3, and3, aon, nand, and, and, and3, notif1, and, nor6, nand7, nor8, not, notif1, and4, not, and, nand4, not, nand, and, dffr, mux, mux, and, and, not, not, not, not</td>
+</tr>
+</tbody>
+</table>
+</div><div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>The chip is topologically arranged so that the address bus arbitration is divided into three parts: in <a href="arb.html">arb</a>, in <a href="mmio.html">mmio</a>, and in <a href="apu.html">apu</a>, to equalize wire lengths.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>The constant 0 is globally scattered throughout the chip. Each large module with cells has a <code>const</code> cell whose output 0 is globally connected between all modules (so the input is marked as Bidir).&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG-CPU LR35902 SoC</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/soc/arb.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

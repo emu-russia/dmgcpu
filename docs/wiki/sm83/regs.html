@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registers Block · DMG-CPU Research</title>
+<meta name="description" content=":warning: Read and double-check everything here very thoughtfully. Complementary logic can blow your mind.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/sm83/Readme.html">DMG CPU Core</a><span class="sep">/</span><span class="current">Registers Block</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#register-bit">Register Bit</a></li><li class="toc-l2"><a href="#registers">Registers</a></li><li class="toc-l2"><a href="#internal-bottom-buses">Internal bottom buses</a></li><li class="toc-l2"><a href="#regs-to-buses">Regs To Buses</a></li><li class="toc-l2"><a href="#temp-registers-vs-bus-logic">Temp Registers vs Bus Logic</a></li><li class="toc-l2"><a href="#sp-register">SP Register</a></li><li class="toc-l2"><a href="#pc-register">PC Register</a></li></ol></details>
+<article class="content"><h1 id="registers-block">Registers Block</h1>
+<p><img alt="locator_regs" decoding="async" loading="lazy" src="../../imgstore/sm83/locator_regs.png" /></p>
+<p>⚠️ Read and double-check everything here very thoughtfully. Complementary logic can blow your mind.
+This additional work to proofread and verify register and bus connections (referred to as "Paths") is associated with #240</p>
+<h2 id="register-bit">Register Bit</h2>
+<p>All registers use a common module (with a small exception for Z/W register bits, see further in the Temp Registers section).</p>
+<p><img alt="regbit" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/regbit.jpg" /></p>
+<p><img alt="regbit_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/regbit_tran.jpg" /></p>
+<p>Latch with complementary set enable, complementary CLK.</p>
+<ul>
+<li>In the middle is a FlipFlop made of not</li>
+<li>Input value can be written to FlipFlop only if CLK=1 and LD=1</li>
+<li>When LD=0 the FlipFlop value is updated with the old value</li>
+<li>The output contains a DLatch with a gate memory that opens when LD=0 (so that the old value is returned during the write (LD=1))</li>
+<li>So the written value becomes relevant when LD 1-&gt;0 changes aka negedge (when the output latch opens and is updated with the value from FlipFlop).</li>
+<li>The whole thing is complicated by the complementary layout of the LD and CLK signals.</li>
+</ul>
+<p><img alt="regbit_waves" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/regbit_waves.jpg" /></p>
+<h2 id="registers">Registers</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Reg</th>
+<th>Name</th>
+<th>Input</th>
+<th>Output</th>
+<th>Load signal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>IR</td>
+<td>DL</td>
+<td>IR[7:0]</td>
+<td>w26</td>
+</tr>
+<tr>
+<td>1</td>
+<td>A</td>
+<td>fbus</td>
+<td>abus, bbus</td>
+<td>x38</td>
+</tr>
+<tr>
+<td>2</td>
+<td>L</td>
+<td>ebus</td>
+<td>abus, bbus, cbus</td>
+<td>x40</td>
+</tr>
+<tr>
+<td>3</td>
+<td>H</td>
+<td>fbus</td>
+<td>abus, bbus, dbus</td>
+<td>x39</td>
+</tr>
+<tr>
+<td>4</td>
+<td>E</td>
+<td>ebus</td>
+<td>bbus, cbus</td>
+<td>x50</td>
+</tr>
+<tr>
+<td>5</td>
+<td>D</td>
+<td>fbus</td>
+<td>bbus, dbus</td>
+<td>x48</td>
+</tr>
+<tr>
+<td>6</td>
+<td>C</td>
+<td>ebus</td>
+<td>bbus, cbus</td>
+<td>x51</td>
+</tr>
+<tr>
+<td>7</td>
+<td>B</td>
+<td>fbus</td>
+<td>bbus, dbus</td>
+<td>x49</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Z ("Temp Low")</td>
+<td>Circuit (see below)</td>
+<td>zbus, bbus, cbus</td>
+<td>x60</td>
+</tr>
+<tr>
+<td>9</td>
+<td>W ("Temp High")</td>
+<td>Circuit (see below)</td>
+<td>wbus, dbus</td>
+<td>x59</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="internal-bottom-buses">Internal bottom buses</h2>
+<p>The names of some buses are arbitrary (do not make sense).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bus</th>
+<th>From Reg</th>
+<th>To Reg</th>
+<th>Precharge</th>
+<th>Bus Polarity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>abus</td>
+<td>H, L, A, SPL, SPH, PCL</td>
+<td>alu[7:0] to top (no reg)</td>
+<td>CLK2=0</td>
+<td>inverse hold</td>
+</tr>
+<tr>
+<td>bbus</td>
+<td>B, C, D, E, H, L, A, Z, SPL, SPH</td>
+<td>DV[7:0] to top (no reg)</td>
+<td>CLK2=0</td>
+<td>inverse hold</td>
+</tr>
+<tr>
+<td>cbus</td>
+<td>C, E, L, Z, SPL, PCL</td>
+<td>IDU Lo</td>
+<td>CLK2=0</td>
+<td>inverse hold</td>
+</tr>
+<tr>
+<td>dbus</td>
+<td>B, D, H, W, SPH, PCH</td>
+<td>IDU Hi</td>
+<td>CLK2=0</td>
+<td>inverse hold</td>
+</tr>
+<tr>
+<td>ebus</td>
+<td>Dedicated circuit</td>
+<td>C, E, L</td>
+<td>CLK4=0</td>
+<td></td>
+</tr>
+<tr>
+<td>fbus</td>
+<td>Dedicated circuit</td>
+<td>B, D, H, A</td>
+<td>CLK4=0</td>
+<td></td>
+</tr>
+<tr>
+<td>zbus</td>
+<td>Z</td>
+<td>SPL, PCL</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>wbus</td>
+<td>W</td>
+<td>SPH, PCH</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>adl</td>
+<td>IDU Lo</td>
+<td>SPL, PCL, Z</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>adh</td>
+<td>IDU Hi</td>
+<td>SPH, PCH, W</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div><p>There are small pieces for Precharge scattered throughout the circuitry.</p>
+<p><img alt="bus_precharge" decoding="async" loading="lazy" src="../../imgstore/sm83/bus_precharge.jpg" /></p>
+<h2 id="regs-to-buses">Regs To Buses</h2>
+<p>Between the registers scattered small logic for issuing their values to the buses.</p>
+<p><img alt="regs_buses" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/regs_buses.jpg" /></p>
+<p><img alt="regs_buses_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/regs_buses_tran.jpg" /></p>
+<h2 id="temp-registers-vs-bus-logic">Temp Registers vs Bus Logic</h2>
+<p>The value on the temp registers (Z/W) does not come directly from the buses, but using logic. And, attention, the input of Z/W registers has inverse polarity (active low), but the output of the registers to the bus zbus/wbus in the regular polarity, so at the output of Z/W registers additional inverter (not) is sticked.</p>
+<p><img alt="gk" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/gk.jpg" /></p>
+<p><img alt="gk_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/gk_tran.jpg" /></p>
+<p>The picture shows how the signals at the input and output of Z/W registers vary compared to conventional registers:</p>
+<p><img alt="Path_ZW" decoding="async" loading="lazy" src="../../imgstore/sm83/Path_ZW.png" /></p>
+<p>Also: the inverters for the ebus/fbus buses most likely act as a transparent DLatch. If during the evaluation of the bus connection none of the znands "opens", the precharge that was made during CLK4=0 will remain at the inverter input. I don't think it is necessary to add DLatch for HDL implementation, it is enough to treat this part of the circuit as dynamic AOI-31.</p>
+<h2 id="sp-register">SP Register</h2>
+<p>⚠️ A distinctive feature of the SP register bits is that the value on them is loaded and kept in the inverse polarity. In addition to the regular output the register also has a complement output.</p>
+<p><img alt="x61" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/x61.jpg" /></p>
+<p>SP vs Buses:</p>
+<p><img alt="x61_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/x61_tran.jpg" /></p>
+<p>Between CLK6 and CLK7 there is a short period (1 half-cycle) when the SPH/SPL register input is in a floating state. To maintain this "floater" it is recommended to use a transparent latch in your implementation for the SPH/SPL inputs.</p>
+<h2 id="pc-register">PC Register</h2>
+<p>⚠️ A distinctive feature of the PC register bits is that the value on them is loaded and kept in the inverse polarity. In addition to the regular output the register also has a complement output. The register also has an Active-low input for resetting.</p>
+<p><img alt="x68" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/x68.jpg" /></p>
+<p>PC Regbit:</p>
+<p><img alt="x68_reg_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/x68_reg_tran.jpg" /></p>
+<p>PC vs Buses:</p>
+<p><img alt="x68_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/x68_tran.jpg" /></p>
+<p>Between CLK6 and CLK7 there is a short period (1 half-cycle) when the PCH/PCL register input is in a floating state. To maintain this "floater" it is recommended to use a transparent latch in your implementation for the PCH/PCL inputs.</p><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG CPU Core</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/sm83/regs.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

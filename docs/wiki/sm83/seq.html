@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sequencer · DMG-CPU Research</title>
+<meta name="description" content="LR-TD order.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/sm83/Readme.html">DMG CPU Core</a><span class="sep">/</span><span class="current">Sequencer</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#sequencer-inputs">Sequencer Inputs</a></li><li class="toc-l2"><a href="#sequencer-outputs">Sequencer Outputs</a></li><li class="toc-l2"><a href="#map">Map</a></li><li class="toc-l2"><a href="#module3-dff_posedge_comp">module3 - dff_posedge_comp</a></li><li class="toc-l2"><a href="#module4-rs_latch">module4 - rs_latch</a></li><li class="toc-l2"><a href="#module4_2-rs_latch2">module4_2 - rs_latch2</a></li><li class="toc-l2"><a href="#aoi_1-aoi_21">aoi_1 - aoi_21</a></li><li class="toc-l2"><a href="#aoi_2-aoi_21">aoi_2 - aoi_21</a></li><li class="toc-l2"><a href="#huge1-latchr_comp">huge1 - latchr_comp</a></li><li class="toc-l2"><a href="#hmm1-oai_21">hmm1 - oai_21</a></li><li class="toc-l2"><a href="#hmm2-aoi_31">hmm2 - aoi_31</a></li><li class="toc-l2"><a href="#hmm3-latch_comp">hmm3 - latch_comp</a></li><li class="toc-l2"><a href="#iwantsleep-oai_21">iwantsleep - oai_21</a></li><li class="toc-l2"><a href="#shielded-mreq">shielded - mreq</a></li><li class="toc-l2"><a href="#comb4-aoi_221_dyn">comb4 - aoi_221_dyn</a></li><li class="toc-l2"><a href="#comb5-aoi_22_dyn">comb5 - aoi_22_dyn</a></li><li class="toc-l2"><a href="#logic-behind-additional-decoder-inputs">Logic behind additional Decoder inputs</a></li><li class="toc-l2"><a href="#logisim">Logisim</a></li></ol></details>
+<article class="content"><h1 id="sequencer">Sequencer</h1>
+<p><img alt="locator_seq" decoding="async" loading="lazy" src="../../imgstore/sm83/locator_seq.png" /></p>
+<p><img alt="seq" decoding="async" loading="lazy" src="../../imgstore/sm83/seq.jpg" /></p>
+<p><img alt="Seq" decoding="async" loading="lazy" src="../../imgstore/hdl/sm83/Design/Seq.png" /></p>
+<h2 id="sequencer-inputs">Sequencer Inputs</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>From</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CLK1 / ADR_CLK_N</td>
+<td>External</td>
+<td>To g84 only; CLK2/1 are coupled by complement for g84, converting this DFF to negedge.</td>
+</tr>
+<tr>
+<td>CLK2 / ADR_CLK_P</td>
+<td>External</td>
+<td>To g84 only</td>
+</tr>
+<tr>
+<td>CLK4 / DATA_CLK_N</td>
+<td>External</td>
+<td></td>
+</tr>
+<tr>
+<td>CLK6 / INC_CLK_P</td>
+<td>External</td>
+<td>See <code>huge1</code> module</td>
+</tr>
+<tr>
+<td>CLK8 / MAIN_CLK_N</td>
+<td>External</td>
+<td></td>
+</tr>
+<tr>
+<td>CLK9 / MAIN_CLK_P</td>
+<td>External</td>
+<td></td>
+</tr>
+<tr>
+<td>SYNC_RESET</td>
+<td>External</td>
+<td>Port T12; Synchronous reset means that it is only applied during a certain phase value of some CLK</td>
+</tr>
+<tr>
+<td>RESET</td>
+<td>External</td>
+<td>Port T13; Unconditional and instantaneous reset, regardless of CLK</td>
+</tr>
+<tr>
+<td>OSC_STABLE (<em>deprecated signal name Clock_WTF</em>)</td>
+<td>External</td>
+<td>Port T15. To nand g59</td>
+</tr>
+<tr>
+<td>NMI (<em>deprecated signal name Unbonded</em>)</td>
+<td>External</td>
+<td>Port T16. NMI</td>
+</tr>
+<tr>
+<td>WAKE</td>
+<td>External</td>
+<td>Port B25</td>
+</tr>
+<tr>
+<td>BUS_DISABLE (<em>deprecated signal name Maybe1</em></td>
+<td>External</td>
+<td>Port R3. 1: Bus disable</td>
+</tr>
+<tr>
+<td>MMIO_REQ</td>
+<td>External</td>
+<td>Port R4. See <code>shielded</code> module</td>
+</tr>
+<tr>
+<td>IPL_REQ</td>
+<td>External</td>
+<td>Port R5. See <code>shielded</code> module</td>
+</tr>
+<tr>
+<td>IPL_DISABLE (<em>deprecated signal name Maybe2</em>)</td>
+<td>External</td>
+<td>Port R6. 1: IPL disabled; See <code>shielded</code> module</td>
+</tr>
+<tr>
+<td>Seq_Control1</td>
+<td>IRQ Logic</td>
+<td>To g42; 1: Wake up after an interrupt. Used in HLT opcode processing.</td>
+</tr>
+<tr>
+<td>Seq_Control2</td>
+<td>Bottom</td>
+<td>To nand g79</td>
+</tr>
+<tr>
+<td>d93</td>
+<td>Decoder1</td>
+<td>To g52, g78</td>
+</tr>
+<tr>
+<td>d99</td>
+<td>Decoder1</td>
+<td>To g80, g91, g94</td>
+</tr>
+<tr>
+<td>d100</td>
+<td>Decoder1</td>
+<td>To g46</td>
+</tr>
+<tr>
+<td>d101</td>
+<td>Decoder1</td>
+<td>To nand g65</td>
+</tr>
+<tr>
+<td>d102</td>
+<td>Decoder1</td>
+<td>See <code>huge1</code> module</td>
+</tr>
+<tr>
+<td>w6</td>
+<td>Decoder2</td>
+<td>Goes to WR</td>
+</tr>
+<tr>
+<td>w11</td>
+<td>Decoder2</td>
+<td>See <code>shielded</code> module</td>
+</tr>
+<tr>
+<td>w18</td>
+<td>Decoder2</td>
+<td>To g26</td>
+</tr>
+<tr>
+<td>w20</td>
+<td>Decoder2</td>
+<td>To not g22</td>
+</tr>
+<tr>
+<td>w26 (LoadIR)</td>
+<td>Decoder2</td>
+<td>See <code>huge1</code> module. Also: g26, g39</td>
+</tr>
+<tr>
+<td>w32</td>
+<td>Decoder2</td>
+<td>To not g18</td>
+</tr>
+<tr>
+<td>w33</td>
+<td>Decoder2</td>
+<td>To not g20</td>
+</tr>
+<tr>
+<td>w40</td>
+<td>Decoder2</td>
+<td>To g38</td>
+</tr>
+<tr>
+<td>x41</td>
+<td>Decoder3</td>
+<td>To g87, g94</td>
+</tr>
+<tr>
+<td>ALU_Out1</td>
+<td>ALU</td>
+<td>1: Skip branch; To nor g24</td>
+</tr>
+<tr>
+<td>IR</td>
+<td>IR</td>
+<td>Used to form the inputs of Decoder1. IR3 and IR4 are also used in other places.</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="sequencer-outputs">Sequencer Outputs</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>To</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a[25:0]</td>
+<td>Decoder1</td>
+<td>Decoder1 inputs</td>
+</tr>
+<tr>
+<td>CLK_ENA (<em>deprecated signal name LongDescr</em>)</td>
+<td>External</td>
+<td>See g49</td>
+</tr>
+<tr>
+<td>OSC_ENA (<em>deprecated signal name XCK_Ena</em>)</td>
+<td>External</td>
+<td>Port T14</td>
+</tr>
+<tr>
+<td>RD</td>
+<td>External</td>
+<td>Port R1</td>
+</tr>
+<tr>
+<td>WR = w6</td>
+<td>External</td>
+<td>Port R2</td>
+</tr>
+<tr>
+<td>MREQ</td>
+<td>External</td>
+<td>Port R7</td>
+</tr>
+<tr>
+<td>nCLK4</td>
+<td></td>
+<td>~CLK4</td>
+</tr>
+<tr>
+<td>SeqOut_1</td>
+<td>Bottom</td>
+<td></td>
+</tr>
+<tr>
+<td>SeqOut_2</td>
+<td>Decoder2, Decoder3</td>
+<td></td>
+</tr>
+<tr>
+<td>SeqOut_3</td>
+<td>GND -&gt; Not connected</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="map">Map</h2>
+<p>LR-&gt;TD order.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Row</th>
+<th>Blocks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>not (x18), not, nand, not, nand, not, nand, nor, nor, hmm1, not</td>
+</tr>
+<tr>
+<td>2</td>
+<td>nor3, not, aoi_1, not, not, huge1, not, module3, module3, module3, module3, hmm2, not, not</td>
+</tr>
+<tr>
+<td>3</td>
+<td>module3, iwantsleep, not, nor, module3, nor3, not, module4_2, nor3, not, aoi_2, not, module3, hmm3, nor</td>
+</tr>
+<tr>
+<td>4</td>
+<td>module3, module3, nand, nor, not, module4, module3, not, nand, not, module3, module4, not, nand3, module4, shielded, not, module3, not, nor, module4, nor, nand, nand, not, not, nor4, module3, module3, not, nor, not, module4, nand, comb4, module4, not, comb5, not</td>
+</tr>
+<tr>
+<td>5</td>
+<td>not, nor</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="module3-dff_posedge_comp">module3 - dff_posedge_comp</h2>
+<p>DFF on a complementary CLK (Dual Rails).</p>
+<p>Since the polarity of CLKs is now known (CLK9 = CLK, CLK8 = CCLK), we can say for sure that it is posedge DFF.</p>
+<p>In fact, when using Dual Rails, you can easily turn a posedge DFF into a negedge by simply rearranging the CLK complement signals.
+(and moreover this is what is done for <code>g84</code>, turning it into negedge dff)</p>
+<p>A distinctive feature of the circuits that do Edge Detection is the two serial MUX's that are opened complementary to the CLK. Using black magic and propagation delay - the edge of the signal is caught.</p>
+<p><img alt="module3" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/module3.jpg" /></p>
+<p><img alt="module3_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/module3_tran.jpg" /></p>
+<p>Note: If the DFF input goes to a MUX, which opens at CLK=0 by a P-type MOSFET, it is a posedge DFF.</p>
+<p><img alt="Modern_dff" decoding="async" loading="lazy" src="../../imgstore/Modern_dff.jpg" /></p>
+<h2 id="module4-rs_latch">module4 - rs_latch</h2>
+<p>A typical static latch, but made quite compact. The impressive gates on the FlipFlop, where the value is stored, are also a distinguishing feature.</p>
+<p>Also: reset input in inverse polarity (<code>#RESET</code>).</p>
+<p>⚠️ The module design is such that reset overrides set if both are set at the same time. Keep this in mind when making your HDL implementation.</p>
+<p><img alt="module4" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/module4.jpg" /></p>
+<p><img alt="module4_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/module4_tran.jpg" /></p>
+<h2 id="module4_2-rs_latch2">module4_2 - rs_latch2</h2>
+<p>Initially it was mistaken for module4, but after a detailed study it became clear that the lower part is different.</p>
+<p><img alt="module42" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/module42.jpg" /></p>
+<p><img alt="module42_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/module42_tran.jpg" /></p>
+<p>This is essentially the same rs_latch (see above), but with the inputs rearranged. The cell occurs in a single instance (g49) and Issue #219 was associated with it.</p>
+<p>(I rechecked all the other modules4).</p>
+<h2 id="aoi_1-aoi_21">aoi_1 - aoi_21</h2>
+<p>1 AND x2 to OR inverted.</p>
+<p><img alt="aoi_1" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/aoi_1.jpg" /></p>
+<p><img alt="aoi_1_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/aoi_1_tran.jpg" /></p>
+<h2 id="aoi_2-aoi_21">aoi_2 - aoi_21</h2>
+<p>1 AND x2 to OR inverted.</p>
+<p><img alt="aoi_2" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/aoi_2.jpg" /></p>
+<p><img alt="aoi_2_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/aoi_2_tran.jpg" /></p>
+<h2 id="huge1-latchr_comp">huge1 - latchr_comp</h2>
+<p>Latch with Active-High reset and complementary set enable, complementary CLK.</p>
+<p>A rather complicated circuit to master:</p>
+<ul>
+<li>In the middle is a FlipFlop made of not and nor (nor is used for resetting)</li>
+<li>Input value can be written to FlipFlop only if CLK=1 and LD=1</li>
+<li>When LD=0 the FlipFlop value is updated with the old value</li>
+<li>The output contains a DLatch with a gate memory that opens when LD=0 (so that the old value is returned during the write (LD=1))</li>
+<li>So the written value becomes relevant when LD 1-&gt;0 changes (when the output latch opens and is updated with the value from FlipFlop). The same applies to resetting if you do it at the same time as LD=1.</li>
+<li>The whole thing is complicated by the complementary layout of the LD and CLK signals.</li>
+</ul>
+<p>By the way, there are 2 <code>not</code> in the circuit to form the complement, one of which takes <code>CLK6</code> signal as input and the second <code>not</code> takes <code>LoadIR</code> signal as input.</p>
+<p><img alt="huge1" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/huge1.jpg" /></p>
+<p><img alt="huge1_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/huge1_tran.jpg" /></p>
+<h2 id="hmm1-oai_21">hmm1 - oai_21</h2>
+<p>1 OR x2 to AND inverted.</p>
+<p><img alt="hmm1" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/hmm1.jpg" /></p>
+<p><img alt="hmm1_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/hmm1_tran.jpg" /></p>
+<h2 id="hmm2-aoi_31">hmm2 - aoi_31</h2>
+<p>1 AND x3 to OR inverted.</p>
+<p><img alt="hmm2" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/hmm2.jpg" /></p>
+<p><img alt="hmm2_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/hmm2_tran.jpg" /></p>
+<h2 id="hmm3-latch_comp">hmm3 - latch_comp</h2>
+<p>Latch, complementary CLK.</p>
+<p>Latch means that the value is written on the CLK level, not on the edge of the signal, as in DFF.</p>
+<p>Output in inverse polarity (<code>#Q</code>).</p>
+<p><img alt="hmm3" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/hmm3.jpg" /></p>
+<p><img alt="hmm3_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/hmm3_tran.jpg" /></p>
+<p>⚠️ Note that CLK comes to this cell in complement, relative to the other DFFs. This cell is used to edge detect the NMI signal (or more precisely its derivative /NMI obtained from g53).</p>
+<h2 id="iwantsleep-oai_21">iwantsleep - oai_21</h2>
+<p>1 OR x2 to AND inverted.</p>
+<p><img alt="iwantsleep" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/iwantsleep.jpg" /></p>
+<p><img alt="iwantsleep_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/iwantsleep_tran.jpg" /></p>
+<h2 id="shielded-mreq">shielded - mreq</h2>
+<p>Very cleverly twisted combined logic. Bravo, SHARP engineers!</p>
+<p>This module is essentially used to generate the <code>#MREQ</code> signal. Below is <code>not</code> to invert it into a <code>MREQ</code> signal and output it to the outside.</p>
+<p><img alt="shielded" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/shielded.jpg" /></p>
+<p><img alt="shielded_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/shielded_tran.jpg" /></p>
+<p><img alt="mreq" decoding="async" loading="lazy" src="../../imgstore/logisim/sm83/mreq.png" /></p>
+<h2 id="comb4-aoi_221_dyn">comb4 - aoi_221_dyn</h2>
+<p>2 AND x2 to OR-3 inverted, dynamic.</p>
+<p><img alt="comb4" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/comb4.jpg" /></p>
+<p><img alt="comb4_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/comb4_tran.jpg" /></p>
+<h2 id="comb5-aoi_22_dyn">comb5 - aoi_22_dyn</h2>
+<p>2 AND x2 to OR inverted, dynamic.</p>
+<p><img alt="comb5" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/comb5.jpg" /></p>
+<p><img alt="comb5_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/comb5_tran.jpg" /></p>
+<h2 id="logic-behind-additional-decoder-inputs">Logic behind additional Decoder inputs</h2>
+<p>From @Gekkio's research we know the purpose of additional inputs of Decoder1.</p>
+<p>The first two are obvious: Sequencer is in interrupt sequence mode or in opcode processing state from <code>CB</code> table.</p>
+<p>The other three are "State[3]", encoding a timestamp for executing long instructions. Initially it appeared to be a counter, but it turns out that setting the states is more complicated and so the bits are simply called State0-2.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Extra Decoder1 Input</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a1</td>
+<td>1: IRQ sequence in progress (Gekkio: intr_dispatch)</td>
+</tr>
+<tr>
+<td>a3</td>
+<td>1: CB Opcode prefix (Gekkio: cb_mode)</td>
+</tr>
+<tr>
+<td>a20</td>
+<td>#State2 (0: state2 active)</td>
+</tr>
+<tr>
+<td>a22</td>
+<td>#State1 (0: state1 active)</td>
+</tr>
+<tr>
+<td>a24</td>
+<td>#State0 (0: state0 active)</td>
+</tr>
+</tbody>
+</table>
+</div><p>(the names of the states given here in inverse polarity, because Gekkio takes their names from the corresponding DFFs but they go to the specified decoder inputs in inverse polarity).</p>
+<h2 id="logisim">Logisim</h2>
+<p>An adaptation of the HDL schematic in Logisim has been made for better understanding.</p>
+<p><img alt="seq.png" decoding="async" loading="lazy" src="../../imgstore/logisim/sm83/seq.png" /></p><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG CPU Core</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/sm83/seq.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

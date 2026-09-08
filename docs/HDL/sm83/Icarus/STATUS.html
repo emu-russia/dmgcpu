@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SM83 core suite - status (issue 400) · DMG-CPU Research</title>
+<meta name="description" content="Snapshot of HDL/sm83/Icarus after the SM83-core regression bring-up. The suite drives the real SM83 core netlist (HDL/sm83:">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../../index.html">
+      <img class="brand-mark" src="../../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../../wiki/soc/Readme.html">SoC</a><a href="../../../wiki/sm83/Readme.html">SM83</a><a href="../../../wiki/pcb.html">PCB</a><a href="../../../wiki/methods.html">Methods</a><a href="../../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../../index.html">Home</a><span class="sep">/</span><a href="../../../HDL/Readme.html">HDL</a><span class="sep">/</span><a href="../../../HDL/sm83/Readme.html">SM83 Core HDL</a><span class="sep">/</span><a href="../../../HDL/sm83/Icarus/Readme.html">SM83 Core Icarus TestBench</a><span class="sep">/</span><span class="current">SM83 core suite - status (issue 400)</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#why-oracle">Why &quot;Oracle&quot;</a></li><li class="toc-l2"><a href="#status-per-test-all-pass-in-run_allsh">Status per test (all PASS in run_all.sh)</a></li><li class="toc-l2"><a href="#measured-facts-issue-400-oracle-answers">Measured facts (issue-400 &quot;oracle&quot; answers)</a></li><li class="toc-l2"><a href="#research-notes-open-items">Research notes / open items</a></li><li class="toc-l2"><a href="#files">Files</a></li></ol></details>
+<article class="content"><h1 id="sm83-core-suite-status-issue-400">SM83 core suite - status (issue #400)</h1>
+<p>Snapshot of <code>HDL/sm83/Icarus</code> after the SM83-core regression bring-up.
+The suite drives the <strong>real SM83 core netlist</strong> (HDL/sm83: <code>Top.v</code>
+SM83Core + ALU/Bottom/DataMux/Decoder1-3/IDU/IRNots/IRQ/Regs/Seq/
+SeqCells/Thingy + <code>_GekkioNames.v</code>) with <code>external_clk.v</code> (the CPU clock
+generator, same as the ROM harness <code>run.v</code>) and a flat 64K memory model
+(Bogus_HW bus conventions: reads on <code>MREQ &amp; RD</code>, writes captured at the WR
+trailing edge with the #1-delayed A/D copies).  Every test prints
+<code>RESULT tb_xxx N PASS/FAIL</code>; <code>run_all.sh</code> reports SUITE OK.</p>
+<h2 id="why-oracle">Why "Oracle"</h2>
+<p>The core netlist is the ground truth for the DMG-CPU: anything observable
+through its pins (bus cycles, register file, flags, decoder outputs,
+instruction durations, interrupt dispatch) can be measured on it and
+compared against documentation or expectations - this suite is the set of
+automated "questions" and recorded answers.</p>
+<h2 id="status-per-test-all-pass-in-run_allsh">Status per test (all PASS in run_all.sh)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Checks</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tb_sm83_regs</code></td>
+<td>13</td>
+<td>Register file + immediate/pair loads, SP, <code>LD (nn),A</code> store, PC at HALT</td>
+</tr>
+<tr>
+<td><code>tb_sm83_alu</code></td>
+<td>160</td>
+<td>8-bit ALU (ADD/ADC/SUB/SBC/AND/OR/XOR/CP) over 8 operand pairs - A result + Z/N/H/C flag law per case</td>
+</tr>
+<tr>
+<td><code>tb_sm83_mem</code></td>
+<td>18</td>
+<td>Memory addressing: (BC)/(DE)/(HL),A + A,(nn) forms, LDH (n8), HLI/HLD auto-inc/dec</td>
+</tr>
+<tr>
+<td><code>tb_sm83_stack</code></td>
+<td>15</td>
+<td>16-bit moves, PUSH/POP incl. AF, ADD HL/SP, LD (nn),SP, CALL/RET, JP cc</td>
+</tr>
+<tr>
+<td><code>tb_sm83_jump</code></td>
+<td>11</td>
+<td>JR NZ/Z/NC/C taken + not-taken paths, RST 08/18 (vector page + return push/pop)</td>
+</tr>
+<tr>
+<td><code>tb_sm83_irq</code></td>
+<td>8</td>
+<td>IE/IME/IF dispatch: HALT wake, PC push, IF ack-clear, vectors $40/$48/$50, RETI</td>
+</tr>
+<tr>
+<td><code>tb_sm83_cycles</code></td>
+<td>32</td>
+<td>Instruction T-state timing via M1-M1 intervals vs the documented SM83 table</td>
+</tr>
+<tr>
+<td><code>tb_sm83_cb</code></td>
+<td>256</td>
+<td>CB-prefix + A-rotate/shift/bit law: RLC/RRC/RL/RR/SLA/SRA/SWAP/SRL on A, BIT/RES/SET b,A, RLCA/RLA/RRCA/RRA</td>
+</tr>
+<tr>
+<td><code>tb_sm83_halt</code></td>
+<td>10</td>
+<td>HALT modes: clean stop (IME=0/IE=0), IF-after-HALT wake (no vector), halt-bug setup (no stop, no vector)</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="measured-facts-issue-400-oracle-answers">Measured facts (issue-400 "oracle" answers)</h2>
+<ul>
+<li>
+<p>Register file and pair loads, stack and memory addressing all match the
+  SM83 programming model byte-exactly (tb_sm83_regs/mem/stack).</p>
+</li>
+<li>
+<p>ALU flag law matches the reference Z/N/H/C computation for all tested
+  (op, operand) pairs, including carry-in for ADC/SBC and CP leaving A
+  unchanged (tb_sm83_alu).</p>
+</li>
+<li>
+<p>Relative-jump semantics: taken/not-taken paths are both exercised and
+  only the right branch's marker is written (tb_sm83_jump).  JR taken =
+  12 T-states, not-taken = 8 (tb_sm83_cycles).</p>
+</li>
+<li>
+<p>Interrupts: IE write at $FFFF is consumed by the core; asserting an IF
+  bit with IE+IME enabled wakes the CPU from HALT, pushes the return
+  address on the stack (SP-2), vectors to $40/$48/$50 by the request bit,
+  and CPU_IRQ_ACK clears the IF bit; RETI pops and returns (tb_sm83_irq).</p>
+</li>
+<li>
+<p>Timing oracle table (measured = documented, tb_sm83_cycles):
+  NOP/LD r,r/INC/DEC r = 4; LD r,n/ADD A,n/LD A,(HL) = 8;
+  LD rr,nn/ADD HL,rr = 12/8; LD (HL),n/INC/DEC (HL) = 12;
+  JR taken = 12, not taken = 8; JP = 16; CALL = 24; RET = 16.</p>
+</li>
+<li>
+<p>Rotate/shift/bit law matches the SM83 reference on the real netlist
+  (tb_sm83_cb, 256 checks): the CB ops set Z per result, the A-only
+  rotates (RLCA/RLA/RRCA/RRA) <strong>clear Z</strong> (measured - they behave like the
+  documented SM83 "A-rotate clears Z" quirk, unlike the CB forms which set
+  Z from the result), BIT sets H and inverts the tested bit into Z, and
+  RES/SET leave the flags untouched.</p>
+</li>
+<li>
+<p>HALT modes (tb_sm83_halt): with IME=0 and no IE/IF the core stops
+  cleanly (PC stable at HALT+1).  Asserting an IE-enabled IF bit while
+  halted wakes the core but, with IME=0, no vector is taken - execution
+  resumes at the instruction after HALT.  In the classic halt-bug setup
+  (IF already pending when HALT executes, IME=0) the core never stops and
+  still never dispatches (the byte after HALT is not executed normally -
+  see the open item below).</p>
+</li>
+</ul>
+<h2 id="research-notes-open-items">Research notes / open items</h2>
+<ul>
+<li>
+<p>The env reuses the <code>run.v</code> bus conventions so the same memory timing
+  questions that the blargg ROM harness answers at the program level are
+  here answered at the register/bus level (and much faster - sub-second
+  tests instead of multi-minute ROM runs).</p>
+</li>
+<li>
+<p>Warm-reset behaviour: after the core halts (HALT), re-asserting RESET
+  does not reliably restart it from PC=0 in this harness (the sync reset
+  chain needs the internal clocks; halt gates them).  Tests therefore use
+  one power-on reset per test and structure multi-phase scenarios (e.g.
+  tb_sm83_irq) as a single boot.</p>
+</li>
+<li>
+<p>CB-prefixed instructions produce an extra M1 pulse (the CB byte fetch
+  is an opcode fetch itself) - a timing-test note; the semantics are now
+  covered by <code>tb_sm83_cb</code> (rotates/shifts/BIT/RES/SET), and the "two M1
+  pulses per CB op" behaviour remains observable in the tb_sm83_cb wave.</p>
+</li>
+<li>
+<p>HALT-bug byte-steal (open): in the halt-bug setup (IME=0, IF pending at
+  the HALT instruction) the core runs past the HALT and the byte after it
+  is not executed as a normal instruction - the exact PC/byte-steal
+  pattern is a documented SM83 quirk that this harness reproduces but the
+  precise law is left as a further-measurement item (tb_sm83_halt asserts
+  only the "no stop + no vector" part).</p>
+</li>
+<li>
+<p>Register file / stack / jump and ALU semantics were also cross-verified
+  against the known-good blargg cpu_instrs results through run.v; the two
+  harnesses agree (register/flag outcomes of the same programs match).</p>
+</li>
+</ul>
+<h2 id="files">Files</h2>
+<ul>
+<li>
+<p><code>sm83_env.v</code> - reusable environment: real SM83Core + External_CLK +
+  flat memory + IF model + poke/peek/reset/wait/irq tasks + observable
+  state probes (pc/sp/ir/regA-L/zbus flags/bc/de/hl/decoder d,w,x).</p>
+</li>
+<li>
+<p><code>external_clk.v</code> - the CPU clock generator (shared with run.v).</p>
+</li>
+<li><code>tb_sm83_*.v</code> - regression tests (see the table above).</li>
+<li>
+<p><code>mk_gtkw.py</code>, <code>vcd2png.py</code> - GTKWave save-file / PNG renderer tooling
+  (adapted from the soc icarus suites; see <code>waves_cfg_*.json</code>).</p>
+</li>
+<li>
+<p><code>run_all.sh</code> - compile + run the whole suite (WSL-native Icarus).</p>
+</li>
+<li><code>waves/</code> - per-test PNG wave images; <code>waves.md</code> - this documentation.</li>
+</ul><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ SM83 Core Icarus TestBench</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/HDL/sm83/Icarus/STATUS.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../../wiki/methods.html">Research methods</a></li><li><a href="../../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

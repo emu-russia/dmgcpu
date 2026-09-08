@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Databus Multiplexer · DMG-CPU Research</title>
+<meta name="description" content="This module is an integration of two circuits called &quot;DataLatch&quot; (TopPart) and &quot;DataBridge&quot; (BottomPart).">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/sm83/Readme.html">DMG CPU Core</a><span class="sep">/</span><span class="current">Databus Multiplexer</span></nav>
+
+<article class="content"><h1 id="databus-multiplexer">Databus Multiplexer</h1>
+<p>This module is an integration of two circuits called "DataLatch" (TopPart) and "DataBridge" (BottomPart). After the whole chip was cracked, it became obvious that it is one circuit, just separated into two parts to reduce the length of wires.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th><img alt="locator_datalatch" decoding="async" loading="lazy" src="../../imgstore/sm83/locator_datalatch.png" /></th>
+<th><img alt="locator_databridge" decoding="async" loading="lazy" src="../../imgstore/sm83/locator_databridge.png" /></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div><p>Please, if you want to understand correctly how this tricky circuit works, read the whole section carefully and take into account that this schematic was originally designed as two sections of the wiki, so the description is a bit "fragmented". The most correct and easiest to understand circuit is at the very end of the section.</p>
+<h2 id="top-part">Top Part</h2>
+<p><img alt="datalatch" decoding="async" loading="lazy" src="../../imgstore/sm83/datalatch.jpg" /></p>
+<p>TopPart is used for the following operations:</p>
+<ul>
+<li>If the external databus (D[n]) is not floating (driven), load a value from it to the internal databus (DL), using transparent DLatch</li>
+<li>If the internal databus (DL[n]) is not floating (driven), load a value from it to the external databus (D), using transparent DLatch</li>
+<li>Connect the result from the ALU (Res[n]) to the internal databus (x37 = 1)</li>
+<li>Precharge internal databus (during CLK2=0)</li>
+</ul>
+<h3 id="top-part-bit">Top Part Bit</h3>
+<p>TopPart consists of 8 such chunks:</p>
+<p><img alt="module1" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/module1.jpg" /></p>
+<p><img alt="module1_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/module1_tran.jpg" /></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Port</th>
+<th>Dir</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a</td>
+<td>input</td>
+<td>DL_Control1. 1: Bus disable</td>
+</tr>
+<tr>
+<td>b</td>
+<td>input</td>
+<td>DL_Control2 (x37). ALU Result -&gt; DL</td>
+</tr>
+<tr>
+<td>c</td>
+<td>input</td>
+<td>Result from ALU (Res[n])</td>
+</tr>
+<tr>
+<td>clk</td>
+<td>input</td>
+<td>CLK2</td>
+</tr>
+<tr>
+<td>Data</td>
+<td>inout</td>
+<td>External databus (D[n])</td>
+</tr>
+<tr>
+<td>x</td>
+<td>inout</td>
+<td>Internal databus (DL[n])</td>
+</tr>
+</tbody>
+</table>
+</div><p>It looks like a mixture of dynamic CMOS logic, NMOS and regular CMOS.</p>
+<p>A gate capacitance is used as memory.</p>
+<p>Same thing by Gekkio: https://github.com/Gekkio/gb-research/tree/main/sm83-cpu-core/io-cell</p>
+<h3 id="top-part-circuit-analysis">Top Part Circuit analysis</h3>
+<p>External data bus driven (external-&gt;internal):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th><img alt="datalatch_extbus_0" decoding="async" loading="lazy" src="../../imgstore/sm83/datalatch_extbus_0.png" /></th>
+<th><img alt="datalatch_extbus_1" decoding="async" loading="lazy" src="../../imgstore/sm83/datalatch_extbus_1.png" /></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div><p>Internal data bus driven (internal-&gt;external):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th><img alt="datalatch_intbus_0" decoding="async" loading="lazy" src="../../imgstore/sm83/datalatch_intbus_0.png" /></th>
+<th><img alt="datalatch_intbus_1" decoding="async" loading="lazy" src="../../imgstore/sm83/datalatch_intbus_1.png" /></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div><p>In all cases, both the internal and external data buses are precharged (value=0xff) during CLK2=0.</p>
+<h3 id="top-part-logisim">Top Part Logisim</h3>
+<p>The circuit is very low-level, with bidirectional signals and tristates made as FETs, so it is difficult to make an identical circuit in Logisim.</p>
+<p>The closest approximation is following:</p>
+<p><img alt="DataLatch" decoding="async" loading="lazy" src="../../imgstore/logisim/sm83/DataLatch.png" /></p>
+<ul>
+<li>For the external data bus, the tristate is on the output AFTER precharging; the value from the internal data bus is stored on the transparent DLatch (<code>int_to_ext</code>)</li>
+<li>The multiplexing of the external data bus and the ALU result can be thought of as a locomotive of MUXes:<ul>
+<li>The leading mux selects between the connection of the internal data bus and the ALU result (x37 = 1)</li>
+<li>The next mux precharges the internal data bus if the ALU result is not required (since <code>Res</code> is always driven signal).</li>
+<li>The closing mux acts as tristate and disconnects the external data bus when Test1 = 1</li>
+</ul>
+</li>
+<li>The value from the external data bus is stored on the transparent DLatch (<code>ext_to_int</code>).</li>
+</ul>
+<h2 id="bottom-part">Bottom Part</h2>
+<p><img alt="databridge" decoding="async" loading="lazy" src="../../imgstore/sm83/databridge.jpg" /></p>
+<p>The purpose of this circuit is put DV bus value into DL bus.</p>
+<p>The DV value also goes "through" the DataBridge and is fed to the ALU input (Operand2).</p>
+<p><img alt="bridge_comb" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/bridge_comb.jpg" /></p>
+<p><img alt="bridge_comb_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/bridge_comb_tran.jpg" /></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>DataOut</th>
+<th>dv_bit</th>
+<th>dl_bit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>z</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>z</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>z</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="combined-datamux">Combined DataMux</h2>
+<p>If you combine the two circuits into one, then according to the latest data from our scientists, you should get something like this:</p>
+<p><img alt="DataMux" decoding="async" loading="lazy" src="../../imgstore/logisim/sm83/DataMux.png" /></p>
+<p>Again, Logisim doesn't support such tinkery, so here's a schematic closer to reality:</p>
+<p><img alt="datamux_tran" decoding="async" loading="lazy" src="../../imgstore/modules/sm83/datamux_tran.jpg" /></p><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG CPU Core</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/sm83/datamux.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

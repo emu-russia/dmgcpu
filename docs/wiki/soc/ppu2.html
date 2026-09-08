@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PPU2 · DMG-CPU Research</title>
+<meta name="description" content="PPU2 is the &quot;object / OAM&quot; half of the PPU. The two PPU blocks are split as follows (see also PPU1):">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script>(function(){try{var t=localStorage.getItem("dmgcpu-theme")||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../../index.html">
+      <img class="brand-mark" src="../../assets/favicon.svg" alt="" width="26" height="26">
+      <span class="brand-name">DMG-CPU <b>Research</b></span>
+    </a>
+    <nav class="topnav" aria-label="Primary"><a href="../../wiki/soc/Readme.html">SoC</a><a href="../../wiki/sm83/Readme.html">SM83</a><a href="../../wiki/pcb.html">PCB</a><a href="../../wiki/methods.html">Methods</a><a href="../../HDL/soc/icarus/Readme.html">Tests</a><a class="ext" href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+            aria-label="Switch colour theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+    </button>
+  </div>
+</header>
+<main id="main" class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span class="sep">/</span><span>wiki</span><span class="sep">/</span><a href="../../wiki/soc/Readme.html">DMG-CPU LR35902 SoC</a><span class="sep">/</span><span class="current">PPU2</span></nav>
+<details class="toc"><summary>On this page</summary><ol><li class="toc-l2"><a href="#role-in-the-soc">Role in the SoC</a></li><li class="toc-l2"><a href="#signals">Signals</a></li><li class="toc-l2"><a href="#netlist">Netlist</a></li><li class="toc-l2"><a href="#annotated-design">Annotated Design</a></li><li class="toc-l2"><a href="#functional-blocks">Functional blocks</a></li><li class="toc-l2"><a href="#clock-domains">Clock domains</a></li><li class="toc-l2"><a href="#map">Map</a></li><li class="toc-l2"><a href="#oam-sram-ground-truth-msingers-cell-reference">OAM SRAM ground truth (@msinger&#x27;s cell reference)</a></li><li class="toc-l2"><a href="#testbench-state-of-the-sprite-store-round-6">Testbench state of the sprite store (round 6)</a></li><li class="toc-l2"><a href="#suspected-netlist-issues-reported-to-the-author-not-fixed-here">Suspected netlist issues (reported to the author, NOT fixed here)</a></li><li class="toc-l2"><a href="#open-questions">Open questions</a></li><li class="toc-l2"><a href="#references">References</a></li></ol></details>
+<article class="content"><h1 id="ppu2">PPU2</h1>
+<div class="callout callout-note"><p class="callout-title">The netlist (</p><p><code>HDL/soc/ppu2.v</code>) has been annotated: the design is split into functional blocks and each block is described below. The signal table was corrected based on the netlist (several rows of the previous table were swapped: <code>ff42</code> is the <strong>SCY</strong> ($FF42) access indicator and <code>ff43</code> is the <strong>SCX</strong> ($FF43) one). Block descriptions were cross-checked against @msinger's DMG-CPU B schematics (<a href="https://github.com/msinger/dmg-schematics/" rel="noopener noreferrer" target="_blank">dmg-schematics</a>) and are being confirmed by the PPU testbench (<code>HDL/soc/icarus/ppu</code>).</p>
+</div><p><img alt="ppu2" decoding="async" loading="lazy" src="../../imgstore/soc/ppu2.jpg" /></p>
+<h2 id="role-in-the-soc">Role in the SoC</h2>
+<p>PPU2 is the "object / OAM" half of the PPU. The two PPU blocks are split as follows (see also <a href="ppu1.html">PPU1</a>):</p>
+<ul>
+<li><strong>PPU1:</strong> the BG/WIN part of the pipeline, the pixel serializers, the palettes and the pixel mux, the LCD driver interface, the H/V counters, the register decode and most of the PPU registers.</li>
+<li><strong>PPU2 (this page):</strong> the OAM side: <strong>PPU2 is the only master of the OAM RAM block</strong> (in <code>HDL/soc/dmgcpu.v</code> the nets <code>oa</code>, <code>n_oam_rd</code>, <code>n_oama_wr</code>, <code>n_oamb_wr</code>, <code>n_oama</code>, <code>n_oamb</code>, <code>oam_bl_pch</code> run exclusively between <code>PPU2</code> and <code>OAM</code>). The CPU never touches OAM directly — PPU2 performs every CPU OAM access on its behalf.</li>
+</ul>
+<p>The netlist shows the following split of duties:</p>
+<ol>
+<li><strong>The CPU-visible scroll registers SCY ($FF42) and SCX ($FF43) physically live in PPU2</strong> (two 8-bit <code>latchr_comp</code> banks). PPU1 receives only the low three SCX bits back as <code>FF43_D0..2</code> for its SCX fine-scroll counter. The register <em>access indicators</em> <code>ff42</code>/<code>ff43</code> are produced by PPU1's decoder and consumed here.</li>
+<li>PPU2 computes the <strong>scroll-adjusted line/column arithmetic</strong> <code>(V + SCY)</code> and <code>(H + SCX)</code> with two 8-bit ripple adders and drives the shared VRAM-address bus <code>nma</code> with the map row/column (and the vertical fine offset) during the BG tile-map / tile-data fetch windows.</li>
+<li>PPU2 contains the whole <strong>mode-2 OAM scan engine</strong> (scan counter, capture latches, port A/B control) and the <strong>10-slot sprite store</strong> that keeps, per selected sprite of the current line: an 8-bit field (the port-A byte), a 6-bit field (the registered OAM scan address — "which OAM entry"), and a 4-bit field used by the X-position logic.</li>
+<li>PPU2 generates the <strong>PPU clocks</strong> (<code>ppu_clk</code> = <code>cclk</code>, <code>n_ppu_clk</code>), the <strong>PPU hard reset</strong> (<code>n_ppu_hard_reset</code> = <code>!n_reset2</code>), the <strong><code>ppu_rd</code>/<code>ppu_wr</code></strong> strobes consumed by PPU1 and MMIO (they simply re-drive <code>soc_rd</code>/<code>soc_wr</code>), plus <code>h_restart</code>, <code>ppu_mode2</code>, <code>stop_oam_eval</code> and the per-object outputs <code>obj_color</code>, <code>obj_prio</code>, <code>sprite_x_flip</code>, <code>sprite_x_match</code> consumed by PPU1's sprite pixel path.</li>
+<li>PPU2 arbitrates the <strong>OAM port data</strong> among three writers (the CPU data bus <code>d</code>, the VRAM→OAM DMA <code>md</code> bus, and the Arbiter's <code>oam_din</code>), and routes <strong>OAM read data back to the CPU</strong> on <code>d</code>.</li>
+</ol>
+<p>The netlist is a flat gate-level Verilog: <strong>973 cells, 153 <code>assign</code> statements, 67 ports</strong> (the only hierarchical cell is the <code>const</code> cell <code>g527</code> producing <code>w69 = 0</code> and <code>w149 = 1</code>). The cell inventory:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cell type</th>
+<th style="text-align: right;">Count</th>
+<th>Cell type</th>
+<th style="text-align: right;">Count</th>
+<th>Cell type</th>
+<th style="text-align: right;">Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>notif0</td>
+<td style="text-align: right;">249</td>
+<td>dffr</td>
+<td style="text-align: right;">26</td>
+<td>nor</td>
+<td style="text-align: right;">11</td>
+</tr>
+<tr>
+<td>not</td>
+<td style="text-align: right;">169</td>
+<td>fa</td>
+<td style="text-align: right;">22</td>
+<td>nand4</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr>
+<td>latchnq_comp</td>
+<td style="text-align: right;">116</td>
+<td>nor4</td>
+<td style="text-align: right;">20</td>
+<td>dffrnq_comp</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr>
+<td>latchr_comp</td>
+<td style="text-align: right;">96</td>
+<td>latch</td>
+<td style="text-align: right;">16</td>
+<td>and3</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr>
+<td>xor</td>
+<td style="text-align: right;">84</td>
+<td>and</td>
+<td style="text-align: right;">16</td>
+<td>not4</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr>
+<td>not2</td>
+<td style="text-align: right;">43</td>
+<td>bufif0</td>
+<td style="text-align: right;">16</td>
+<td>or3</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td>or</td>
+<td style="text-align: right;">36</td>
+<td>nand3</td>
+<td style="text-align: right;">12</td>
+<td>aon22 / ha</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td>nand</td>
+<td style="text-align: right;">2</td>
+<td>nand5</td>
+<td style="text-align: right;">2</td>
+<td>aon / oai / oan</td>
+<td style="text-align: right;">1 each</td>
+</tr>
+</tbody>
+</table>
+</div><div class="callout callout-note"><p class="callout-title">Bus conventions</p><p>PPU2 uses the same <strong>precharged, inverse-hold</strong> buses as PPU1 (<code>d</code>, <code>md</code>, <code>nma</code>, <code>n_oama</code>, <code>n_oamb</code>, <code>oa</code>): drivers are inverting tristates (<code>notif0</code>) that pull the wire to the inverse of the data while enabled; otherwise the wire holds its precharged value. <code>bufif0</code> (non-inverting) is used only for the CPU OAM read-back path. Gate formulas below are the literal Boolean on the named nets.</p>
+</div><h2 id="signals">Signals</h2>
+<div class="callout callout-tip"><p class="callout-title">Boundary view</p><p>This table lists <strong>every</strong> PPU2 port, including the PPU1↔PPU2 handshake nets.
+The whole-PPU external interface (PPU1+PPU2 vs ClkGen / CPU / MMIO / Arbiter /
+OAM / pads, internal PPU1↔PPU2 nets excluded) is on the
+<a href="ppu.html#ppu-soc-boundary-external-signals">PPU SoC boundary</a> page.</p>
+</div><p><img alt="ppu2_ports" decoding="async" loading="lazy" src="../../imgstore/soc/ppu2_ports.png" /></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal Name</th>
+<th>Direction</th>
+<th>From / Where To</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FF40_D1</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>LCDC register ($FF40) bit 1 — OBJ enable (gates the sprite-compare logic)</td>
+</tr>
+<tr>
+<td>FF40_D2</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>LCDC register ($FF40) bit 2 — OBJ size (8×8 / 8×16)</td>
+</tr>
+<tr>
+<td>FF40_D3</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>LCDC register ($FF40) bit 3 — BG tile map select</td>
+</tr>
+<tr>
+<td>[7:0] a</td>
+<td>Input</td>
+<td>From Core</td>
+<td>CPU address bus. Used for CPU <strong>OAM</strong> accesses (address mux group <code>w48</code>)</td>
+</tr>
+<tr>
+<td>bp_cy</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>Buffer page cycle</td>
+</tr>
+<tr>
+<td>bp_sel</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>Buffer page select</td>
+</tr>
+<tr>
+<td>cclk</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Input clock complement — <strong>this is the PPU dot clock</strong> (<code>ppu_clk = cclk</code>)</td>
+</tr>
+<tr>
+<td>clk6</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Clock 6 (Aka INC_CLK_P); in PPU2 only re-buffered as <code>clk6_delay</code></td>
+</tr>
+<tr>
+<td>cpu_vram_oam_rd</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>CPU VRAM/OAM read strobe (selects the returned OAM port byte)</td>
+</tr>
+<tr>
+<td>[12:0] dma_a</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>DMA address bus (OAM destination during VRAM→OAM DMA)</td>
+</tr>
+<tr>
+<td>dma_addr_ext</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>DMA address external memory — selects the <code>oam_din</code> write-data group</td>
+</tr>
+<tr>
+<td>dma_run</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>DMA run control (gates mode 2, the oa mux and the OAM write decode)</td>
+</tr>
+<tr>
+<td>fexx</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>FExx register area indicator (VRAM/OAM)</td>
+</tr>
+<tr>
+<td>ff42</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td><strong>SCY ($FF42) access indicator</strong> — gates the SCY register write/read</td>
+</tr>
+<tr>
+<td>ff43</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td><strong>SCX ($FF43) access indicator</strong> — gates the SCX register write/read</td>
+</tr>
+<tr>
+<td>[7:0] h</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>H counter (LX) value — operand of the H+SCX adder and of the sprite compare</td>
+</tr>
+<tr>
+<td>in_window</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>In-window indicator (disables the scroll adders' nma drive on window lines)</td>
+</tr>
+<tr>
+<td>ma0</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>VRAM address bit 0 (MA0) — mode-3 nma drive</td>
+</tr>
+<tr>
+<td>n_dma_phi</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>DMA clock (inverted)</td>
+</tr>
+<tr>
+<td>n_dma_phi2_latched</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>Latched inverted DMA clock 2 (OAM write-data mux select)</td>
+</tr>
+<tr>
+<td>n_ppu_reset</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>PPU soft reset (active low; <code>LCDC.7</code>-gated in PPU1)</td>
+</tr>
+<tr>
+<td>n_reset2</td>
+<td>Input</td>
+<td>From ClkGen</td>
+<td>Global reset (active low) — source of <code>n_ppu_hard_reset</code></td>
+</tr>
+<tr>
+<td>oam_addr_ck</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>OAM address clock (scan state machine, scan-address register)</td>
+</tr>
+<tr>
+<td>[7:0] oam_din</td>
+<td>Input</td>
+<td>From Arb</td>
+<td>OAM data input bus (third write-data source, DMA-from-external cases)</td>
+</tr>
+<tr>
+<td>oam_dma_wr</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>OAM DMA write strobe</td>
+</tr>
+<tr>
+<td>oam_mode3_bl_pch</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>OAM bitline precharge during MODE3</td>
+</tr>
+<tr>
+<td>oam_mode3_nrd</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>OAM read during MODE3 (active low)</td>
+</tr>
+<tr>
+<td>oam_rd_ck</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>OAM read clock (slot-enable window, capture)</td>
+</tr>
+<tr>
+<td>oam_xattr_latch_cck</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>OAM X-attribute latch clock (precharge logic)</td>
+</tr>
+<tr>
+<td>obj_prio_ck</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>Object priority clock — clocks the ten per-slot in-use dffr</td>
+</tr>
+<tr>
+<td>ppu_mode3</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>PPU Mode 3 (pixel transfer) indicator</td>
+</tr>
+<tr>
+<td>soc_rd / soc_wr</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>SoC read/write strobes (re-driven as <code>ppu_rd</code>/<code>ppu_wr</code>)</td>
+</tr>
+<tr>
+<td>sp_bp_cys</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>Sprite buffer page cycle</td>
+</tr>
+<tr>
+<td>tm_cy</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>Tile map cycle</td>
+</tr>
+<tr>
+<td>[7:0] v</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>V counter (LY) value — operand of the V+SCY adder and of the port-B Y-test</td>
+</tr>
+<tr>
+<td>vbl</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>VBLANK indicator (mode-2 start is inhibited in VBlank)</td>
+</tr>
+<tr>
+<td>vclk2</td>
+<td>Input</td>
+<td>From PPU1</td>
+<td>Line clock — starts the mode-2 OAM scan</td>
+</tr>
+<tr>
+<td>vram_to_oam</td>
+<td>Input</td>
+<td>From MMIO</td>
+<td>VRAM to OAM transfer enable (DMA)</td>
+</tr>
+<tr>
+<td>CONST0</td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Constant 0 signal (local source <code>g527.q0</code>)</td>
+</tr>
+<tr>
+<td>FF43_D0 / FF43_D1 / FF43_D2</td>
+<td>Output</td>
+<td>To PPU1</td>
+<td><strong>SCX register bits 0..2</strong> (SCX fine scroll for PPU1)</td>
+</tr>
+<tr>
+<td>clk6_delay</td>
+<td>Output</td>
+<td>To MMIO</td>
+<td>Delayed clock 6 (<code>= clk6</code>)</td>
+</tr>
+<tr>
+<td>[7:0] d</td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Internal data bus (SCY/SCX writes, CPU OAM writes; OAM read return)</td>
+</tr>
+<tr>
+<td>h_restart</td>
+<td>Output</td>
+<td>To PPU1</td>
+<td>H counter restart (end-of-line; from the mode-2 start re-timed)</td>
+</tr>
+<tr>
+<td>[7:0] md</td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Internal video memory data bus (VRAM) — VRAM→OAM DMA source</td>
+</tr>
+<tr>
+<td>n_oam_rd</td>
+<td>Output</td>
+<td>To OAM</td>
+<td>OAM read enable (active low) — asserted in mode 2, mode 3 and CPU reads</td>
+</tr>
+<tr>
+<td>[7:0] n_oama</td>
+<td>Bidir</td>
+<td>To/From OAM</td>
+<td>OAM port A data bus (inverse hold) — attribute byte capture</td>
+</tr>
+<tr>
+<td>n_oama_wr</td>
+<td>Output</td>
+<td>To OAM</td>
+<td>OAM port A write enable (active low)</td>
+</tr>
+<tr>
+<td>[7:0] n_oamb</td>
+<td>Bidir</td>
+<td>To/From OAM</td>
+<td>OAM port B data bus (inverse hold) — Y byte capture, CPU read-back port</td>
+</tr>
+<tr>
+<td>n_oamb_wr</td>
+<td>Output</td>
+<td>To OAM</td>
+<td>OAM port B write enable (active low)</td>
+</tr>
+<tr>
+<td>n_ppu_clk</td>
+<td>Output</td>
+<td>To PPU1</td>
+<td>PPU clock (inverted)</td>
+</tr>
+<tr>
+<td>n_ppu_hard_reset</td>
+<td>Output</td>
+<td>To MMIO, Arb, PPU1</td>
+<td>PPU hard reset (<code>= !n_reset2</code>)</td>
+</tr>
+<tr>
+<td>[12:0] nma</td>
+<td>Bidir</td>
+<td>Global</td>
+<td>Internal video memory address bus between PPUs (inverse hold) — PPU2 drives the scroll adder results here</td>
+</tr>
+<tr>
+<td>n_vram_to_oam</td>
+<td>Output</td>
+<td>To Arb</td>
+<td>VRAM to OAM transfer (<code>= !vram_to_oam</code>)</td>
+</tr>
+<tr>
+<td>[7:1] oa</td>
+<td>Output</td>
+<td>To OAM</td>
+<td>OAM address (bits 7:1; bit 0 is not used; four sources: CPU/DMA/scan/store)</td>
+</tr>
+<tr>
+<td>oam_bl_pch</td>
+<td>Output</td>
+<td>To OAM</td>
+<td>OAM bitline precharge (also the attribute-latch enable window)</td>
+</tr>
+<tr>
+<td>obj_color</td>
+<td>Output</td>
+<td>To PPU1</td>
+<td>Object color (captured OAM attr bit 4)</td>
+</tr>
+<tr>
+<td>obj_prio</td>
+<td>Output</td>
+<td>To PPU1</td>
+<td>Object priority (captured OAM attr bit 7)</td>
+</tr>
+<tr>
+<td>ppu_clk</td>
+<td>Output</td>
+<td>To MMIO, PPU1</td>
+<td>PPU clock (<code>= cclk</code>)</td>
+</tr>
+<tr>
+<td>ppu_mode2</td>
+<td>Output</td>
+<td>To PPU1</td>
+<td>PPU Mode 2 (OAM scan) indicator</td>
+</tr>
+<tr>
+<td>ppu_rd / ppu_wr</td>
+<td>Output</td>
+<td>To MMIO, PPU1</td>
+<td>PPU read/write strobes (<code>= soc_rd</code>/<code>soc_wr</code>)</td>
+</tr>
+<tr>
+<td>sprite_x_flip</td>
+<td>Output</td>
+<td>To PPU1</td>
+<td>Sprite X flip (captured OAM attr bit 5)</td>
+</tr>
+<tr>
+<td>sprite_x_match</td>
+<td>Output</td>
+<td>To PPU1</td>
+<td>Sprite X match (one of the ten per-slot compares matched)</td>
+</tr>
+<tr>
+<td>stop_oam_eval</td>
+<td>Output</td>
+<td>To PPU1</td>
+<td>Stop OAM evaluation (scan finished)</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="netlist">Netlist</h2>
+<p><img alt="ppu2_netlist" decoding="async" loading="lazy" src="../../imgstore/soc/ppu2_netlist.png" /></p>
+<h2 id="annotated-design">Annotated Design</h2>
+<p><img alt="ppu2" decoding="async" loading="lazy" src="../../imgstore/hdl/soc/design/ppu2.png" /></p>
+<h2 id="functional-blocks">Functional blocks</h2>
+<p>The netlist is organized into the following functional blocks (instance numbers refer to <code>HDL/soc/ppu2.v</code>):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Block</th>
+<th>Key instances</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>SCY/SCX registers + access decode</td>
+<td>g657–g704/g726 (SCY), g639–g730 (SCX)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Scroll adders (V+SCY, H+SCX) + nma drive</td>
+<td>g971/ha, g590–g594; g973/ha, g587–g589/g605–g608; tristates g304–g307/g317–g344/g480–g484</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Port-B adder (OAM Y test)</td>
+<td>fa g595–g602, capture g204–g250</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Mode-2 OAM scan engine</td>
+<td>g954 (mode-2 latch), g938–g943 (scan-address register), g621/g625/g619/g614/g627/g626 (scan counter), g609/g612/g613/g630–g632, h_restart g955</td>
+</tr>
+<tr>
+<td>5</td>
+<td>OAM port data/address muxes (CPU, DMA, scan, sprite store)</td>
+<td>port data g296–g434, strobes g556/g557/g887/g888/g946, oa mux g352–g475, CPU read return g749–g764</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Sprite-store capture stage (16 port latches + attribute stage)</td>
+<td>g733–g748 (en <code>w165</code>), g203–g267 (en <code>w314</code>)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>10-slot sprite store (3×10 banks)</td>
+<td>8-bit latchr rows g635–g730 etc., 6-bit rows g163–g278, 4-bit rows g163–g278, slot walker g610/g633/g629/g634, in-use flags g611–g628</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Sprite compare (mode-3 match) + read-back muxes</td>
+<td>xor rows g770–g847, nor4 g899–g918, nand3 g920–g927, NAND5 g961/g962, or g875</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Clock/reset generation</td>
+<td>g558/g937/g535 (clocks), g136/g548 (hard reset), g947/g953 (ppu_rd/ppu_wr), g8–g10/g149/g151/g930 (reset fan-out)</td>
+</tr>
+<tr>
+<td>10</td>
+<td>DMA interface / CPU-OAM decode</td>
+<td>g574/g946/g950/g949/g944/g945, g139/g1/g529–g531/g533/g546–g547/g549/g568/g951/g952</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="1-scy-scx-registers">1. SCY / SCX registers</h3>
+<p>PPU2 does <strong>not</strong> decode <code>a[3:0]</code> for the scroll registers — PPU1's decoder produces the access indicators <code>ff42</code>/<code>ff43</code> (PPU1 <code>g789</code>/<code>g796</code>), and PPU2 simply gates them with the SoC strobes:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Register</th>
+<th>Write enable</th>
+<th>Read enable</th>
+<th>Latches</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SCY</strong> $FF42</td>
+<td><code>w10 = soc_wr &amp; ff42</code></td>
+<td><code>w144 = ppu_rd &amp; ff42</code></td>
+<td>g700,g699,g702,g726,g701,g703,g704,g657 (8× <code>latchr_comp</code>, reset <code>n_ppu_hard_reset</code>)</td>
+<td>all 8 bits → V+SCY adder (block 2); not exported</td>
+</tr>
+<tr>
+<td><strong>SCX</strong> $FF43</td>
+<td><code>w159 = soc_wr &amp; ff43</code></td>
+<td><code>w204 = ppu_rd &amp; ff43</code></td>
+<td>g730,g640,g641,g729,g658,g639,g728,g727</td>
+<td>bits 0..2 → <strong>FF43_D0..2</strong> to PPU1 (<code>w422</code>/<code>w156</code>/<code>w400</code>); all 8 bits → H+SCX adder</td>
+</tr>
+</tbody>
+</table>
+</div><p>Read-back is done by <code>notif0</code> tristates enabled by <code>!w144</code>/<code>!w203</code> fed from the latch <code>nq</code>s: e.g. for <code>d0</code> <code>g424</code> (SCY) and <code>g348</code> (SCX), so the bus voltage equals the register value (inverse-hold convention).</p>
+<h3 id="2-scroll-adders-and-the-nma-vram-address-drive">2. Scroll adders and the nma (VRAM-address) drive</h3>
+<p>Two 8-bit ripple adders compute the scroll-adjusted position:</p>
+<ul>
+<li><strong>V + SCY</strong> (<code>g971</code> half-adder + <code>g590–g594</code>, <code>g603</code>, <code>g604</code>): operands = V-counter bits + SCY latch q bits. Sum bits <code>w808..w182</code>.</li>
+<li><strong>H + SCX</strong> (<code>g973</code> half-adder + <code>g587–g589</code>, <code>g605–g608</code>): operands = H-counter bits + SCX latch q bits. <strong>Sum bits 0–2 are discarded</strong> (<code>s</code> of <code>g973/g608/g589</code> unconnected — only carries propagate): the SCX <em>fine</em> scroll is handled in PPU1's 3-bit fine counter fed with <code>FF43_D0..2</code>. Sum bits 3–7 continue into the nma drive.</li>
+</ul>
+<p>PPU2 then drives the shared VRAM-address bus <code>nma</code> (via <code>notif0</code>, inverse-hold) on <strong>non-window lines</strong>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Driven nma bits</th>
+<th>Value</th>
+<th>Enable (<code>n_ena</code>)</th>
+<th>Phase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>nma[1..3]</td>
+<td>(V+SCY) sum bits 0..2 — vertical fine, ×2</td>
+<td><code>w153 = !(!in_window &amp; bp_cy)</code></td>
+<td>tile-data fetch (<code>g344/g484/g482</code>)</td>
+</tr>
+<tr>
+<td>nma[5..9]</td>
+<td>(V+SCY) sum bits 3..7 — tile-map row, ×32</td>
+<td><code>w183 = !(tm_cy &amp; !in_window)</code></td>
+<td>tile-map fetch (<code>g481/g319/g317/g318/g480</code>)</td>
+</tr>
+<tr>
+<td>nma[0..4]</td>
+<td>(H+SCX) sum bits 3..7 — tile-map column</td>
+<td><code>w183</code></td>
+<td>tile-map fetch (<code>g304–g307/g320</code>)</td>
+</tr>
+</tbody>
+</table>
+</div><p>So the BG tile-map address is assembled by PPU2 from <code>(V+SCY)&gt;&gt;3</code> (row, ×32, nma[9:5]) and <code>(H+SCX)&gt;&gt;3</code> (column, nma[4:0]) during <code>tm_cy</code>, and the tile-data fine vertical offset <code>(V+SCY)&amp;7</code> (×2, nma[3:1]) during <code>bp_cy</code>. PPU1's own nma drivers (its TM/TD counters) complete the addresses (tile-map base select, tile index, byte parity). The exact per-cycle alignment of the two drivers is confirmed by the joint testbench (waves).</p>
+<h3 id="3-port-b-adder-the-oam-y-test">3. Port-B adder (the OAM "Y test")</h3>
+<p>The eight <code>latchnq_comp</code> <code>g204–g250</code> (enable <code>w120</code>) capture the OAM <strong>port B byte</strong> (through the port latches g733–g748). Their <code>nq</code> outputs feed the full-adder row <code>g595–g602</code> whose other operand is the <strong>inverted V counter</strong> — i.e. this adder tests the sprite Y position against the current line (<code>Y − V</code>-type range test). The results (<code>w68/w543/w438/w479/w473/w476/w485/w482</code>) drive the entry-selection logic and read-back muxes.</p>
+<p><strong>Interpretation:</strong> during the mode-2 scan port B carries the sprite <strong>Y</strong> byte and the adder performs the per-entry Y-range test (16/32 rows depending on <code>FF40_D2</code> OBJ size); only entries in range are eligible for the store. Port A carries the <strong>attribute byte</strong> (bits 7/5/4 → <code>obj_prio</code>/<code>sprite_x_flip</code>/<code>obj_color</code>), which is fixed by wiring. (The byte↔port mapping depends on the OAM macro; see Open questions.)</p>
+<h3 id="4-mode-2-oam-scan-engine">4. Mode-2 OAM scan engine</h3>
+<p><strong><code>ppu_mode2</code></strong> = <code>w100 &amp; !dma_run</code> (<code>g576</code>/<code>g139</code>), where <code>w100</code> is the <code>q</code> of the <code>nor_latch</code> <code>g954</code>:</p>
+<ul>
+<li><strong>set</strong> by <code>w98</code> (dffr <code>g612</code>, clk <code>oam_addr_ck</code>, <code>d = vclk2 &amp; !vbl</code>) — the OAM-address-clock edge that follows PPU1's line clock, outside VBlank;</li>
+<li><strong>reset</strong> by <code>!n_ppu_reset | stop_oam_eval</code>.</li>
+</ul>
+<p><strong>Scan address.</strong> The live address comes from the ripple counter <code>g621(g625(g619(g614(g627(g626))</code> (dffr, base clock <code>w647</code>, reset <code>w650 = n_ppu_reset &amp; !h_restart</code>); during mode 2 its outputs are muxed onto <code>oa</code> (group <code>w518 = !ppu_mode2</code>, <code>oa[1]</code> = 0). Six <code>dffrnq_comp</code> <code>g938–g943</code> (clk <code>oam_addr_ck</code>) register the current oa value; their <code>nq</code> outputs are the <strong>registered OAM scan address</strong> that mode 3 reuses (block 7). <code>stop_oam_eval</code> (<code>= !w860</code>) fires from a small state machine on <code>g631</code>/<code>g632</code> when the scan-address counter finishes.</p>
+<p><strong><code>h_restart</code></strong> (<code>= !w713</code>) is the mode-2 start re-timed on the opposite <code>oam_addr_ck</code> phase (<code>g609</code>, <code>w99</code>): it ends PPU1's H counter and clears PPU2's own line state (<code>w410 = !h_restart</code> resets the slot walker).</p>
+<p><strong>OAM read/precharge.</strong> The OAM read strobe <code>n_oam_rd</code> and the port-latch capture enable (<code>w165</code>) are asserted during <strong>mode-2</strong> read clocks (<code>ppu_mode2 &amp; oam_rd_ck</code>), during <strong>mode-3</strong> OAM re-reads (<code>oam_mode3_nrd</code>) and during <strong>CPU FExx reads</strong> (<code>fexx &amp; ppu_rd &amp; !clk6</code>). <code>oam_bl_pch</code> (<code>w58</code>) combines the DMA/<code>fexx</code> precharge disable, PPU1's mode-3 precharge and the mode-2 X-attribute latch clock; note <code>w314</code> (the attribute-stage latch enable) <strong>equals <code>oam_bl_pch</code></strong> — the attribute stage captures exactly between OAM drive phases ("X-attribute latch" window).</p>
+<h3 id="5-oam-port-and-address-muxes">5. OAM port and address muxes</h3>
+<p><strong>OAM write data</strong> (<code>n_oama</code>/<code>n_oamb</code>) has three mutually exclusive sources:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Enable (<code>n_ena</code>)</th>
+<th>Data</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>w62 = !vram_to_oam</code></td>
+<td><code>md</code> bus</td>
+<td><strong>VRAM→OAM DMA</strong></td>
+</tr>
+<tr>
+<td><code>w123 = !w889</code></td>
+<td><code>d</code> bus</td>
+<td><strong>CPU OAM writes</strong></td>
+</tr>
+<tr>
+<td><code>w140 = !dma_addr_ext</code></td>
+<td><code>oam_din</code> (Arbiter echo)</td>
+<td>DMA sourced from external memory</td>
+</tr>
+</tbody>
+</table>
+</div><p><strong>Write strobes:</strong> <code>n_oama_wr = !(w125 &amp; w508)</code>, <code>n_oamb_wr = !(w125 &amp; !w508)</code> with <code>w125 = (fexx &amp; w888 &amp; ppu_wr) | oam_dma_wr</code> and port select <code>w508 = !dma_a[0]</code> (while <code>dma_run</code>), else constant. So <strong>VRAM→OAM DMA alternates the ports with the source-address parity, and CPU OAM writes always target one fixed port</strong> (the CPU-facing port B).</p>
+<p><strong><code>oa</code> address mux</strong> — four sources per bit (buffered by <code>g68–g73/g526</code>):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Enable (<code>n_ena</code>)</th>
+<th>Address source</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>w48 = ppu_mode2|ppu_mode3|dma_run</code></td>
+<td>CPU <code>a[7:1]</code></td>
+<td>CPU OAM access</td>
+</tr>
+<tr>
+<td><code>w403 = !dma_run</code></td>
+<td><code>dma_a[7:1]</code></td>
+<td>DMA destination</td>
+</tr>
+<tr>
+<td><code>w518 = !ppu_mode2</code></td>
+<td>scan counter + <code>oa[1]=0</code></td>
+<td>mode-2 scan</td>
+</tr>
+<tr>
+<td><code>w444</code> / <code>w475</code></td>
+<td>stored sprite fields</td>
+<td>mode-3 sprite re-fetch</td>
+</tr>
+</tbody>
+</table>
+</div><p><strong>CPU OAM read return:</strong> the port latches hold the last OAM word; <code>bufif0</code> banks drive the selected port byte onto <code>d</code> (select from <code>cpu_vram_oam_rd</code> + port parity). So CPU OAM reads also go through PPU2.</p>
+<h3 id="6-sprite-store-capture-stage">6. Sprite-store capture stage</h3>
+<p>Per OAM word access, 16 <code>dmg_latch</code> <code>g733–g748</code> (enable <code>w165</code> = OAM read active) capture the <strong>entire</strong> <code>n_oama[7:0]</code> + <code>n_oamb[7:0]</code> buses. Two follower stages select the interesting bytes:</p>
+<ol>
+<li><strong><code>g204–g250</code></strong> (enable <code>w120</code>): capture the port B byte (Y) — feeds the port-B adder (block 3).</li>
+<li><strong><code>g203–g267</code></strong> (enable <code>w314</code> = <code>oam_bl_pch</code>): capture the port A byte. Three <code>nq</code> outputs are module outputs:</li>
+</ol>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Output</th>
+<th>Latch</th>
+<th>Captured port-A bit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>obj_color</code></td>
+<td>g203 (d from g748)</td>
+<td>attr bit 4 (colour/palette)</td>
+</tr>
+<tr>
+<td><code>obj_prio</code></td>
+<td>g263 (d from g734)</td>
+<td>attr bit 7 (priority)</td>
+</tr>
+<tr>
+<td><code>sprite_x_flip</code></td>
+<td>g267 (d from g733)</td>
+<td>attr bit 5 (X flip)</td>
+</tr>
+</tbody>
+</table>
+</div><p>The eight attribute bits are inverted (<code>g7/g60/g65/g67/g78/g79/g150/g928</code>) into the nets <code>w413/w415/w431/w433/w294/w325/w590/w594</code> — the common data input of all ten 8-bit store banks.</p>
+<h3 id="7-the-10-slot-sprite-store">7. The 10-slot sprite store</h3>
+<p>Each of the 10 slots = one <strong>8-bit <code>latchr_comp</code> bank</strong> (reset by the slot's in-use flag, i.e. an unclaimed slot stays cleared) + one <strong>6-bit <code>latchnq_comp</code> bank</strong> + one <strong>4-bit <code>latchnq_comp</code> bank</strong>, all capturing from shared buses. The three banks of a slot share one master enable net (e.g. master <code>w321</code> → 8-bit en <code>w77</code>, 6-bit en <code>w247</code>, 4-bit en <code>w251</code>):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>slot master</th>
+<th>8-bit bank en / instances</th>
+<th>6-bit bank en</th>
+<th>4-bit bank en</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>w292</td>
+<td><code>w40</code>: g650–g652, g713–g717</td>
+<td><code>w685</code>: g268–g273</td>
+<td><code>w288</code>: g216,g217,g240,g241</td>
+</tr>
+<tr>
+<td>w321</td>
+<td><code>w77</code>: g668,g669,g675,g676,g689,g690,g694,g695</td>
+<td><code>w247</code>: g208–g212,g249</td>
+<td><code>w251</code>: g185–g188</td>
+</tr>
+<tr>
+<td>w266</td>
+<td><code>w90</code>: g647–g649,g653–g656,g712</td>
+<td><code>w722</code>: g175,g176,g274–g277</td>
+<td><code>w328</code>: g167–g170</td>
+</tr>
+<tr>
+<td>w297</td>
+<td><code>w296</code>: g637,g638,g719–g721,g723–g725</td>
+<td><code>w728</code>: g179–g184</td>
+<td><code>w715</code>: g171–g174</td>
+</tr>
+<tr>
+<td>w349</td>
+<td><code>w414</code>: g659–g663,g696–g698</td>
+<td><code>w489</code>: g260–g266</td>
+<td><code>w736</code>: g227–g230</td>
+</tr>
+<tr>
+<td>w666</td>
+<td><code>w437</code>: g642–g646,g705–g707</td>
+<td><code>w305</code>: g196–g198,g253–g255</td>
+<td><code>w866</code>: g213–g215,g239</td>
+</tr>
+<tr>
+<td>w215</td>
+<td><code>w512</code>: g670–g674,g691–g693</td>
+<td><code>w276</code>: g222,g242,g244,g245,g247,g248</td>
+<td><code>w825</code>: g178,g194,g256,g278</td>
+</tr>
+<tr>
+<td>w344</td>
+<td><code>w585</code>: g664–g667,g681–g684</td>
+<td><code>w283</code>: g218–g221,g243,g246</td>
+<td><code>w341</code>: g177,g257,g258,g259</td>
+</tr>
+<tr>
+<td>w603</td>
+<td><code>w600</code>: g677–g680,g685–g688</td>
+<td><code>w664</code>: g199–g202,g251,g252</td>
+<td><code>w65</code>: g223–g226</td>
+</tr>
+<tr>
+<td>w226</td>
+<td><code>w747</code>: g635,g636,g708–g711,g718,g722</td>
+<td><code>w656</code>: g189–g193,g195</td>
+<td><code>w578</code>: g163–g166</td>
+</tr>
+</tbody>
+</table>
+</div><p><strong>Slot enable decode.</strong> A bank captures only while the slot master is low, i.e. on <strong>OAM read-clock pulses when the mode-2 state is current and the store window is open</strong> (<code>w852 = oam_rd_ck &amp; w209 &amp; w816</code>, <code>w223 = !w852</code>). The per-slot selection decodes the four state bits of the <strong>per-line sprite-slot walker</strong> <code>g610/g633/g629/g634</code> (ripple-clocked, reset <code>!h_restart</code>) — ten NAND4 <code>g889–g898</code> with OR trees produce the ten slot terms.</p>
+<p><strong>Per-slot in-use flags.</strong> Ten dffr <code>g611–g628</code> (clock <code>obj_prio_ck</code>, async reset <code>w371</code>) capture whether each slot is claimed; each flag, OR-ed, feeds the <em>async reset</em> of the slot's 8-bit bank: an unclaimed slot is held cleared, a claimed one can hold data.</p>
+<p><strong>Contents (per slot):</strong></p>
+<ul>
+<li>the <strong>8-bit field</strong> = the current port-A (attribute) byte captured during the scan;</li>
+<li>the <strong>6-bit field</strong> = the <em>registered OAM scan address</em> (which OAM entry the sprite came from), placed on the shared bus <code>w213/w279/w284/w323/w347/w487</code> by <code>notif0</code> groups enabled in mode 3 (from <code>g938–g943</code> <code>nq</code>s);</li>
+<li>the <strong>4-bit field</strong> (nets <code>w66/w257/w259/w310</code>) = extra per-sprite data from the port-B arithmetic, used by the X-position logic.</li>
+</ul>
+<p>The store behaves like a rotating array whose write/read schedule (which scan address lands in which slot, the 10-sprite limit) is confirmed by simulation.</p>
+<h3 id="8-sprite-compare-mode-3">8. Sprite compare (mode 3)</h3>
+<p>All <code>q</code> outputs of the 8-bit banks feed <code>dmg_xor</code> rows whose second operand is a <strong>reference byte derived from the H counter</strong> (e.g. slot 0: <code>g770/g771/g828–g831/g840/g841</code> comparing stored bits against <code>!h7..!h0</code>). Per slot the XORs merge in two nibbles (<code>nor4</code> pairs <code>g899–g918</code>) and a <code>nand3</code> gated by <code>w332 = FF40_D1(OBJ enable) &amp; ppu_mode3</code> produces the per-slot byte-match flag (<code>g920–g927</code>, <code>g969</code>, <code>g970</code>).</p>
+<p><strong><code>sprite_x_match</code></strong> = <code>w804 | w767</code> (<code>g875</code>), where the two NAND5 <code>g961</code>/<code>g962</code> collect the ten per-slot flag terms (five each).</p>
+<p>The flag terms also enable the read-back <code>notif0</code> groups that place particular slots' stored data onto the shared 6/4-bit buses (and from there onto <code>oa</code> in mode 3 via the group <code>w444</code>, plus extra XORs <code>g765/g825/g846/g847</code> comparing the 4-bit field against the captured <code>n_oama[6]</code>).</p>
+<p><strong>Interpretation:</strong> in mode 3 the ten stored fields are matched against the running LX value so the store is searched for the sprite starting at the current X; on a match the 6-bit OAM-address field is re-driven onto <code>oa</code>, the OAM is re-read (tile/attributes for PPU1's fetch), and the object pixel stream (<code>obj_color</code>/<code>obj_prio</code>/<code>sprite_x_flip</code>) is presented to PPU1. The exact semantics of the stored byte vs the LX reference are an open question (see below) — resolved by the sprite testbench.</p>
+<h3 id="9-clock-and-reset-generation">9. Clock and reset generation</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>Formula</th>
+<th>Cells</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ppu_clk</code></td>
+<td><code>= cclk</code> (double inversion <code>g558</code> + <code>not4</code> <code>g937</code>)</td>
+<td>g558, g937</td>
+</tr>
+<tr>
+<td><code>n_ppu_clk</code></td>
+<td><code>= !ppu_clk</code></td>
+<td>g535</td>
+</tr>
+<tr>
+<td><code>clk6_delay</code></td>
+<td><code>= clk6</code> (<code>g137/g25</code>); internal <code>w453 = !clk6</code> used in the CPU-OAM-read gate</td>
+<td>g137, g25, g138</td>
+</tr>
+<tr>
+<td><code>n_ppu_hard_reset</code></td>
+<td><code>= !n_reset2</code></td>
+<td>g136, g548</td>
+</tr>
+<tr>
+<td><code>ppu_rd</code> / <code>ppu_wr</code></td>
+<td><code>= soc_rd</code> / <code>= soc_wr</code> (buffered)</td>
+<td>g947, g953</td>
+</tr>
+<tr>
+<td>reset fan-out</td>
+<td><code>w570 = !n_ppu_reset</code>; <code>w650 = n_ppu_reset &amp; !h_restart</code>; <code>w371 = !(h_restart | !n_ppu_reset)</code>; <code>w410 = !h_restart</code></td>
+<td>g8–g10, g12, g149, g151, g930</td>
+</tr>
+</tbody>
+</table>
+</div><p>Note: <strong>the PPU dot clock is the external complement clock <code>cclk</code></strong> — PPU2 does not divide <code>clk6</code> for the PPU (that division happens in PPU1's OAM-clock block, ppu1.md block 13, which feeds PPU2 the <code>oam_addr_ck</code>/<code>oam_rd_ck</code>/<code>oam_xattr_latch_cck</code>/<code>obj_prio_ck</code> pulses).</p>
+<h3 id="10-dma-cpu-oam-access-summary">10. DMA / CPU-OAM access summary</h3>
+<ul>
+<li><strong>VRAM→OAM DMA</strong> (<code>vram_to_oam</code>): data = <code>md</code> → OAM ports; write strobes from <code>oam_dma_wr</code>; destination = <code>dma_a[7:1]</code>; port parity = <code>dma_a[0]</code>; <code>n_vram_to_oam</code> output to the Arbiter.</li>
+<li><strong>CPU OAM write</strong>: data = <code>d</code>; strobe <code>fexx &amp; !(dma_run|ppu_mode2|mode3-qualified) &amp; ppu_wr</code>; address = <code>a[7:1]</code>.</li>
+<li><strong>CPU OAM read</strong>: PPU2 asserts <code>n_oam_rd</code> with the CPU address, captures the OAM word and drives the selected port byte onto <code>d</code>.</li>
+<li><strong><code>oam_din</code></strong>: a third write-data path (<code>w140 = !dma_addr_ext</code>) used when the Arbiter holds the DMA data (DMA from external memory sources).</li>
+</ul>
+<h2 id="clock-domains">Clock domains</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>Source</th>
+<th>Driven elements</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ppu_clk</code> / <code>n_ppu_clk</code></td>
+<td><code>cclk</code></td>
+<td><code>g630</code>, <code>g631</code> (stop-oam), OAM scan state</td>
+</tr>
+<tr>
+<td><code>oam_addr_ck</code></td>
+<td>PPU1</td>
+<td>scan FSM <code>g612/g613/g632</code>, scan-address register <code>g938–g943</code>, scan counter</td>
+</tr>
+<tr>
+<td><code>oam_rd_ck</code></td>
+<td>PPU1</td>
+<td>capture / slot-enable logic</td>
+</tr>
+<tr>
+<td><code>obj_prio_ck</code></td>
+<td>PPU1</td>
+<td>per-slot in-use dffr <code>g611–g628</code></td>
+</tr>
+<tr>
+<td>OAM read pulses</td>
+<td>PPU2 decode (<code>n_oam_rd</code>, capture <code>w165</code>)</td>
+<td>port latches <code>g733–g748</code>, store banks</td>
+</tr>
+<tr>
+<td><code>oam_bl_pch</code></td>
+<td>PPU2 (fexx/dma_phi + PPU1 mode-3 + mode-2 X-attr)</td>
+<td>OAM block, attribute-stage enable <code>w314</code></td>
+</tr>
+<tr>
+<td>Register writes</td>
+<td><code>w10</code>/<code>w159</code> (<code>soc_wr &amp; ff42/43</code>)</td>
+<td>SCY/SCX latches</td>
+</tr>
+<tr>
+<td>Slot walker</td>
+<td>ripple <code>w834</code></td>
+<td><code>g610/g633/g629/g634</code> (reset <code>!h_restart</code>)</td>
+</tr>
+<tr>
+<td>Scan counter</td>
+<td>ripple from <code>w647</code></td>
+<td><code>g621/g625/g619/g614/g627/g626</code></td>
+</tr>
+<tr>
+<td>nma drives</td>
+<td><code>ppu_mode3</code>/<code>bp_cy</code>/<code>tm_cy</code>/<code>in_window</code></td>
+<td>tristate groups <code>w153/w183/w170</code></td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="map">Map</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Row</th>
+<th>Cells</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>not, not2, not2, not2, not4, or3, not2, not, and, aon22, nor3, notif0, notif0, and, not, and, and, and, notif0, fa, not2, notif0, fa, notif0, notif0, notif0, and, notif0, notif0, notif0, notif0, not, notif0, not, dffr, notif0, notif0, and3, nand, nand, notif0, notif0, fa, notif0, notif0, and, not2, notif0, not2, not2, and, not2, and, not, and, not, and, ha, not2, not2, not2, or, not, not, not2, not2, not2, nor, not, not2, not2, not, or, notif0, notif0, not, notif0, not, notif0, not, notif0, notif0, latchnq_comp, notif0, notif0, latchnq_comp, not, notif0, latchnq_comp, latchnq_comp, latchnq_comp, latchnq_comp, not, notif0, notif0, latchnq_comp, latchnq_comp, latchnq_comp, latchnq_comp, notif0, notif0, latchnq_comp, latchnq_comp, latchnq_comp, latchnq_comp</td>
+</tr>
+<tr>
+<td>2</td>
+<td>not, notif0, notif0, notif0, notif0, not, nand3, notif0, not, notif0, latchr_comp, latchr_comp, not, not, notif0, notif0, notif0, notif0, notif0, notif0, fa, fa, not, and, fa, and, notif0, nor_latch, oan, latchnq_comp, nand3, not, notif0, notif0, notif0, xor, not, xor, notif0, not2, notif0, not, not, dffr, not, not, or3, xor, xor, fa, not, xor, xor, latchnq_comp, latchnq_comp, latchnq_comp, not, latchnq_comp, latchnq_comp, not, latchnq_comp, not, latchnq_comp, latchnq_comp, not, not, notif0, latchnq_comp, notif0, not, latchnq_comp, notif0, notif0, notif0, not, dffr, and, dffr, notif0, notif0, not, not, not, notif0, or, notif0, latchnq_comp, notif0, notif0, notif0, not, not, notif0, not</td>
+</tr>
+<tr>
+<td>3</td>
+<td>not, not2, notif0, not2, notif0, oai, notif0, latchr_comp, latchr_comp, notif0, notif0, notif0, latchr_comp, notif0, notif0, notif0, not4, notif0, latch, notif0, not, notif0, notif0, not2, notif0, notif0, notif0, dffr, dffr, not2, not2, and3, notif0, xor, latchnq_comp, latchnq_comp, notif0, notif0, latchnq_comp, latchnq_comp, nor4, not, xor, xor, xor, nor4, latchr_comp, latchr_comp, xor, nor4, not, latchr_comp, notif0, notif0, notif0, latchr_comp, dffr, not, notif0, latchnq_comp, notif0, latchnq_comp, latchnq_comp, latchnq_comp, notif0, latchnq_comp, latchnq_comp, notif0, nor4, xor, xor, not, or, not, not, dffr, not, not, not, or, nand4, or, or, nand4, latchnq_comp, notif0, or, latchnq_comp, nand4, notif0, or</td>
+</tr>
+<tr>
+<td>4</td>
+<td>not, not, notif0, notif0, not2, notif0, not2, notif0, latchr_comp, latchr_comp, bufif0, notif0, latchr_comp, fa, notif0, fa, notif0, notif0, notif0, notif0, latchnq_comp, notif0, latchnq_comp, latchnq_comp, latchnq_comp, notif0, latchnq_comp, not, not2, notif0, latchnq_comp, latchnq_comp, not, not, not, dffr, xor, xor, xor, not, nand3, xor, latchr_comp, nor4, xor, latchr_comp, latchr_comp, latchr_comp, latchr_comp, nand3, latchr_comp, not, latchr_comp, latchr_comp, dffr, not, not, or, not2, or, not2, not, xor, nor4, xor, nand3, xor, xor, xor, not, dffr, latchr_comp, latchr_comp, not, notif0, notif0, notif0, nand4, nand4, not, not, not, not, nand4, latchnq_comp, notif0, not, notif0, latchnq_comp</td>
+</tr>
+<tr>
+<td>5</td>
+<td>notif0, notif0, notif0, notif0, notif0, notif0, notif0, notif0, notif0, notif0, notif0, fa, fa, not, fa, fa, fa, notif0, notif0, latch, dffr, not, not, fa, notif0, fa, latchr_comp, latchr_comp, latchr_comp, latchr_comp, xor, xor, latchr_comp, xor, not, xor, nand3, xor, nor4, xor, xor, not, nor, or, nor, dffr, not, dffr, dffr, nand3, notif0, notif0, xor, latchr_comp, nor4, latchr_comp, latchr_comp, latchr_comp, latchr_comp, not, latchnq_comp, latchnq_comp, notif0, notif0, not, notif0, not, latchnq_comp, latchnq_comp, not, not, latchnq_comp</td>
+</tr>
+<tr>
+<td>6</td>
+<td>notif0, notif0, notif0, notif0, notif0, notif0, notif0, notif0, bufif0, latchr_comp, latchr_comp, latchr_comp, latchr_comp, latchr_comp, latchr_comp, notif0, notif0, notif0, not, dffr, and4, notif0, ha, notif0, dffr, notif0, not, notif0, notif0, notif0, not, not, fa, not, not, fa, not, notif0, notif0, latchr_comp, latchr_comp, latchr_comp, or, nand5, or, latchr_comp, nor4, latchr_comp, nand5, or, nor, latchr_comp, latchr_comp, or, not2, or, dffr, latchnq_comp, nor4, latchnq_comp, latchr_comp, xor, xor, xor, xor, latchr_comp, latchr_comp, latchr_comp, not, not, not2, not2, not, latchnq_comp, latchnq_comp, not, latchnq_comp, latchnq_comp, not, nand4, not, not, latchnq_comp</td>
+</tr>
+<tr>
+<td>7</td>
+<td>notif0, notif0, notif0, and3, notif0, not, notif0, latchr_comp, notif0, notif0, notif0, notif0, latchr_comp, notif0, notif0, notif0, notif0, notif0, notif0, not, not, notif0, not, notif0, fa, or, dffr, notif0, notif0, latchnq_comp, not, not, not, fa, notif0, fa, or, not, not2, not2, not2, not, or, not, aon22, or, not, or, dffr, nor, nor, nor, not, or, not, not, not, xor, nor, xor, or, xor, xor, nor, not, or, not2, nor, or, not, or, not, latchnq_comp, latchnq_comp, latchnq_comp, latchnq_comp, xor, xor, xor, latchr_comp, latchr_comp, xor, latchr_comp, not, latchr_comp, latchr_comp, or, not, not, latchnq_comp, latchnq_comp, latchnq_comp, latchnq_comp, latchnq_comp, not, notif0, nand4, nand4, notif0</td>
+</tr>
+<tr>
+<td>8</td>
+<td>notif0, notif0, notif0, aon, not2, not, and3, notif0, notif0, notif0, notif0, not2, notif0, notif0, notif0, const, notif0, latch, latch, not2, notif0, notif0, fa, notif0, notif0, dffr, notif0, notif0, latchnq_comp, not, nand6, notif0, notif0, notif0, notif0, notif0, latchnq_comp, notif0, notif0, not, notif0, notif0, not, notif0, notif0, not, not, not, xor, dffr, latchr_comp, not, not, not, latchr_comp, latchr_comp, or, not, or, not, or, not, not, dffr, not, or, notif0, notif0, not, dffr, or, notif0, notif0, not, notif0, latchr_comp, not, not, latchr_comp, not, xor, xor, latchr_comp, latchr_comp, notif0, notif0, not, notif0, notif0, notif0, not, notif0, notif0, notif0, latchnq_comp, not, nand4, not, not, or</td>
+</tr>
+<tr>
+<td>9</td>
+<td>notif0, bufif0, bufif0, bufif0, bufif0, bufif0, bufif0, bufif0, bufif0, latch, dffrnq_comp, dffrnq_comp, latchnq_comp, notif0, not, dffrnq_comp, dffrnq_comp, latch, latchnq_comp, not, latchnq_comp, latchnq_comp, notif0, latchnq_comp, latchnq_comp, latchnq_comp, not, latchnq_comp, latchnq_comp, latchnq_comp, latchnq_comp, latchnq_comp, latchr_comp, latchr_comp, latchr_comp, latchr_comp, xor, latchr_comp, xor, xor, nor, or, latchr_comp, latchr_comp, dffr, latchr_comp, latchr_comp, not, nand3, xor, not2, xor, xor, latchr_comp, latchr_comp, xor, nor4, not, latchr_comp, latchr_comp, latchr_comp, latchnq_comp, latchnq_comp, latchnq_comp, latchnq_comp, not, or, latchnq_comp, latchnq_comp, notif0</td>
+</tr>
+<tr>
+<td>10</td>
+<td>bufif0, bufif0, bufif0, and, and, bufif0, not, notif0, not, latch, latch, latch, latch, latch, latch, latchnq_comp, latchnq_comp, not, not, not, dffrnq_comp, dffr, not, not, latchnq_comp, not, not, latchnq_comp, latchnq_comp, not, notif0, not, notif0, notif0, latchnq_comp, xor, xor, nor4, nor4, nand3, xor, not, xor, xor, xor, nor4, xor, xor, notif0, nand3, nand3, notif0, nor4, xor, latchr_comp, latchr_comp, latchr_comp, latchr_comp, nor4, xor, latchr_comp, latchr_comp, nor4, latchr_comp, latchr_comp, latchr_comp, latchr_comp, nor4, nand3, xor, xor, latchr_comp, latchnq_comp, latchnq_comp, notif0, notif0, latchnq_comp, latchnq_comp, latchnq_comp, latchnq_comp, notif0, latchnq_comp, latchnq_comp</td>
+</tr>
+<tr>
+<td>11</td>
+<td>not, notif0, notif0, notif0, notif0, not4, not2, bufif0, notif0, bufif0, notif0, notif0, notif0, notif0, notif0, notif0, notif0, latch, latch, latch, not2, latch, not2, dffrnq_comp, notif0, not2, latchnq_comp, latchnq_comp, latchnq_comp, not, notif0, latchnq_comp, latchnq_comp, latchnq_comp, not, not, latchnq_comp, notif0, xor, xor, xor, xor, xor, xor, nor4, xor, xor, notif0, latchnq_comp, latchnq_comp, latchnq_comp, not, latchnq_comp, notif0, not, latchr_comp, latchr_comp, latchr_comp, latchr_comp, xor, xor, xor, xor, not, not, latchr_comp, xor, latchr_comp, xor, xor, xor, nor4, xor, xor, latchr_comp, xor, latchr_comp, notif0, notif0, notif0, notif0, notif0, latchnq_comp, notif0, notif0, notif0, notif0</td>
+</tr>
+</tbody>
+</table>
+</div><h2 id="oam-sram-ground-truth-msingers-cell-reference">OAM SRAM ground truth (@msinger's cell reference)</h2>
+<p>From the <a href="https://iceboy.a-singer.de/doc/dmg_cells.html#sram" rel="noopener noreferrer" target="_blank">DMG-CPU cells reference</a>
+("SRAM", Variant A is used in HRAM and OAM):</p>
+<ul>
+<li>
+<p>The DMG-CPU B die has <strong>four SRAM instances: HRAM, Wave RAM and 2× OAM</strong> —
+  i.e. OAM is physically two SRAM macros (matching the two PPU2 ports
+  <code>n_oama</code>/<code>n_oamb</code>).</p>
+</li>
+<li>
+<p>The macro is built from <strong>6T cells with dynamic NMOS read/write</strong>: bit
+  lines are precharged to 1 (<code>BL_PCH</code>, active low) before every access; a
+  read drives the data pad to <code>D = ~bit</code> (a stored 0 pulls the pad high), so
+  the "inverse-hold" values seen on <code>n_oama</code>/<code>n_oamb</code> are the real macro
+  behaviour (<code>~mem</code> in the testbench model is correct).</p>
+</li>
+<li>
+<p>Rows are selected by <strong>address bits A2 and up</strong>; <strong>A0/A1 select one of four
+  byte columns</strong> inside a row. For OAM (40 entries × 4 bytes = 160 bytes)
+  the natural mapping is: word line = OAM entry (40 rows), columns = the
+  four bytes of the entry. The macro access granularity is therefore one
+  byte (row + 2 column bits), while the testbench uses PPU2's 7-bit
+  <code>oa[7:1]</code> word interface (bit 0 unused) with two 8-bit data ports - the
+  exact column/byte&lt;-&gt;port encoding inside the 2×OAM macros still needs the
+  schematic pages (the repo OAM module is an empty stub).</p>
+</li>
+</ul>
+<h2 id="testbench-state-of-the-sprite-store-round-6">Testbench state of the sprite store (round 6)</h2>
+<p>The behavioural OAM model (<code>HDL/soc/icarus/ppu/oam_ram.v</code>: two ports over
+80 16-bit words, port B = even bytes, bitline hold) removed the earlier
+mode-3 overrun: with OBJ enabled the mode-2/3 line rhythm is now normal. The
+sprite <em>store</em> still never claims a slot because the per-slot in-use dffr
+<code>g611–g628</code> are clocked by <code>obj_prio_ck</code> (input from PPU1), and in the
+simulated lines <code>obj_prio_ck = ~(w239|w240)</code> (<code>ppu1</code> <code>g494</code>/<code>g832</code>) never
+pulses (<code>w239</code> = <code>nq</code> of <code>g286</code>, <code>w240</code> = nand3 <code>g751</code> over the
+sprite-process FFs <code>g322/g287/g314</code>): PPU1's sprite-clock domain (mode-3
+fetch/prio FFs clocked off <code>w596</code> = ppu_clk / <code>w815</code>, ring
+<code>g282–g285/g316/g317/g319</code>) does not start without the corresponding PPU2
+store/handshake state. Mapping that handshake is the next research step.</p>
+<h2 id="suspected-netlist-issues-reported-to-the-author-not-fixed-here">Suspected netlist issues (reported to the author, NOT fixed here)</h2>
+<p>Per the issue workflow, suspected problems in <code>ppu1.v</code>/<code>ppu2.v</code> are reported
+rather than patched in this repository:</p>
+<ol>
+<li>
+<p><strong>PPU2 scan-address register has no reset</strong> (ppu2.v:2089-2094, <code>g938–g943</code>, six
+   <code>dffrnq_comp</code>, clk <code>w648</code> = <code>oam_addr_ck</code>): their async reset <code>nr1</code> is
+   hard-wired to <code>w149</code> (const <code>g527.q1</code> = 1), i.e. they are never reset.
+   In the testbench they power up deterministic (dmglib <code>dffrnq_comp</code>
+   declares <code>initial val = 0</code>) but can clock in <code>x</code> from the scan-counter
+   data (<code>g942</code>/<code>g943</code> hold <code>x</code> during the whole mode-2 scan). The no-reset
+   "init-0" probe (round 22, <code>tb_ppu_ring_init0</code>) pins them to 0 even when
+   clocked with <code>x</code> - the scan register then reads a defined <code>010000</code> every
+   line, yet the Y-test AND6 and the store window <code>w852</code> still never open.
+   So the missing reset is a real silicon concern (undetermined power-up,
+   no garbage recovery), not the cause of the inert store path (see
+   <a href="../../HDL/soc/icarus/ppu/waves.html">waves.md</a>).</p>
+</li>
+<li>
+<p><strong>PPU1 <code>g652</code> looks like a second LCDC.D7 latch</strong> next to <code>g656</code>:
+   <em>reported round 9:</em> during mode 2 the <code>oa</code> scan group (<code>n_ena w518 =</code> on
+   <code>g419</code>, ppu2.v:1570)
+   !ppu_mode2<code>) and the port-B-adder const group (</code>n_ena w475 = !w476<code>) can
+   be **enabled simultaneously** when the Y-test sum bit</code>w476<code>is 1
+   vs the port-B const group (</code>g421<code>, ppu2.v:1572) - (observed directly,
+   waves.md), driving the same</code>oa<code>nodes to opposite
+   rails. On a static full-drive model this is contention</code>x<code>; check whether
+   these two</code>oa<code>mux phases are supposed to be separated in time (dynamic
+   precharge/evaluate) or whether one of the enable terms is wrong.</code>g652<code>(</code>latchr_comp<code>, ena</code>w84<code>= the $FF40 write enable, d =</code>w79<code>=
+   D7, nres</code>w82<code>= same reset family) drives</code>w149<code>, which is read only by
+   dffr</code>g305<code>, while</code>g656<code>(same ena/d/reset) drives</code>w81<code>= LCDC.7.
+   Probably an intentional copy for layout, but it is undocumented
+   (</code>wiki/soc/ppu1.md` lists the LCDC bank as g649–g657).</p>
+</li>
+</ol>
+<h2 id="open-questions">Open questions</h2>
+<ul>
+<li>
+<p><strong>OAM bus idle/precharge state.</strong> The behavioural testbench shows that
+  internal precharge nodes of the OAM port-select decode (e.g. <code>w863</code>/
+  <code>w508</code>, the <code>oa</code> const groups <code>g419</code>/<code>g421</code>) only resolve if the macro
+  never lets the bitlines float: with the current macro model the
+  <code>n_oama_wr</code>/<code>n_oamb_wr</code> strobes and part of the <code>oa</code> mux ride <code>x</code> during
+  idle. CPU OAM writes <em>do</em> land with word address <code>a[7:1]</code> on both port
+  lanes (observed with a bitline-hold macro), but the byte↔port layout and
+  the precharge-phase timing need the schematic-level OAM macro timing
+  (the repo OAM module <code>HDL/soc/oam.v</code> is an empty stub).</p>
+</li>
+<li>
+<p>The <strong>OAM port A/B mapping</strong> was tested both ways (A = even byte and
+  A = odd byte of the 16-bit word) with the sprite testbench: the mode-2
+  scan cadence and the attribute-capture x-half-cycles are identical in both
+  layouts, so the byte↔port mapping alone does not explain the residual x;
+  it must be combined with the real precharge/capture phase timing.</p>
+</li>
+<li>
+<p>The exact <strong>byte ↔ OAM-port mapping</strong> (port A = attribute byte, port B = Y byte, CPU port B, DMA parity alternation) needs confirmation with the OAM model; the repo OAM netlist is a stub (<code>HDL/soc/oam.v</code>).</p>
+</li>
+<li>The <strong>sprite-compare semantics</strong>: the stored 8-bit field is matched against the H counter in mode 3 — whether the port-A byte read during the scan is literally the sprite X (making the names <code>obj_color</code>/<code>obj_prio</code>/<code>sprite_x_flip</code> re-examinable at the PPU1 boundary) or the equality gates serve a different scheduling function. A line with known OAM contents (sprite testbench) will pin this down.</li>
+<li>The exact <strong>slot↔OAM-entry↔enable schedule</strong> (which of the 40 scan addresses land in which of the 10 slots, and how the "10 maximum" is enforced).</li>
+<li><strong>stop_oam_eval</strong> count: the exact scan-address value that terminates mode 2 (decode <code>w493</code>).</li>
+<li><strong>Polarity conventions</strong> of the precharged buses and of <code>n_oam_rd</code>/<code>oam_bl_pch</code>/<code>ppu_mode2</code>/<code>stop_oam_eval</code>/<code>h_restart</code> inferred here need waveform confirmation.</li>
+<li>The port-B <strong>Y-range test</strong> bounds (16/32 rows for 8×8 / 8×16 sprites via <code>FF40_D2</code>).</li>
+<li>The <strong>mode-3 sprite re-fetch protocol</strong>: order of the <code>oa</code> groups <code>w444</code> vs <code>w475</code> and how PPU1's <code>sp_bp_cys</code>/<code>ma0</code> close the sprite VRAM-fetch addresses.</li>
+</ul>
+<h2 id="references">References</h2>
+<ul>
+<li><code>HDL/soc/ppu2.v</code> — analysed netlist (module PPU2).</li>
+<li><code>HDL/soc/dmgcpu.v</code> — top-level wiring (PPU2 ↔ OAM exclusivity, ppu_rd/ppu_wr/ppu_clk fan-out).</li>
+<li><code>HDL/soc/arb.v</code>, <code>HDL/soc/oam.v</code> — Arbiter / OAM (stub) cross-checks.</li>
+<li><code>HDL/soc/ppu1.v</code> &amp; <a href="ppu1.html">wiki/soc/ppu1.md</a> — sibling block analysis and PPU1↔PPU2 handshake.</li>
+<li><a href="https://github.com/msinger/dmg-schematics/" rel="noopener noreferrer" target="_blank">DMG-CPU Schematics by @msinger</a> — schematic pages for cross-checking the blocks above.</li>
+<li>PPU testbench: <code>HDL/soc/icarus/ppu</code> (<a href="../../HDL/soc/icarus/ppu/Readme.html">Readme</a>, waves in <code>HDL/soc/icarus/ppu/waves.md</code>).</li>
+</ul><nav class="article-nav" aria-label="Page footer"><a class="up" href="Readme.html">↑ DMG-CPU LR35902 SoC</a><a class="top" href="#main">Back to top ↑</a><a href="https://github.com/emu-russia/dmgcpu/blob/main/wiki/soc/ppu2.md" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></nav></article>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="about">
+      <h4>DMG-CPU Research</h4>
+      <p>Die-level reverse engineering of the Nintendo DMG-CPU SoC of the
+      original Game&nbsp;Boy: from silicon photographs to a die-perfect
+      Verilog netlist.</p>
+      <p class="foot-note">Unofficial research project, not affiliated with or
+      endorsed by Nintendo. Terminology conventions are defined in the
+      <a href="../../Readme.html">readme</a>.</p>
+    </div>
+    <div><h4>Wiki</h4><ul><li><a href="../../wiki/soc/Readme.html">SoC overview</a></li><li><a href="../../wiki/sm83/Readme.html">SM83 core</a></li><li><a href="../../wiki/pcb.html">Reference PCB</a></li><li><a href="../../wiki/methods.html">Research methods</a></li><li><a href="../../wiki/datasets.html">Datasets</a></li></ul></div><div><h4>Verilog</h4><ul><li><a href="../../HDL/soc/icarus/Readme.html">Icarus suites</a></li><li><a href="../../HDL/sm83/Icarus/waves.html">SM83 suite waves</a></li><li><a href="../../HDL/soc/icarus/ppu/waves.html">PPU suite waves</a></li><li><a href="../../HDL/soc/icarus/apu/waves.html">APU suite waves</a></li><li><a href="../../HDL/soc/icarus/gtkwave-skill.html">GTKWave skill</a></li></ul></div><div><h4>Links</h4><ul><li><a href="https://github.com/emu-russia/dmgcpu" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a></li><li><a href="https://github.com/emu-russia/Deroute" target="_blank" rel="noopener noreferrer">Deroute utility ↗</a></li><li><a href="https://github.com/msinger/dmg-schematics" target="_blank" rel="noopener noreferrer">dmg-schematics ↗</a></li><li><a href="https://github.com/Gekkio/gb-research" target="_blank" rel="noopener noreferrer">gb-research (Gekkio) ↗</a></li><li><a href="https://github.com/emu-russia/dmgcpu/issues" target="_blank" rel="noopener noreferrer">issues ↗</a></li></ul></div>
+  </div>
+</footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>
