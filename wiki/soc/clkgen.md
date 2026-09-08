@@ -65,7 +65,36 @@ Phase pattern of all CLK outputs:
 
 If you see a picture like that, then you're good.
 
-Assignment of Clocks (hypothesis, but pretty sure):
+> [!NOTE] Measured phase table (issue #396, HDL/soc/icarus/soc/tb_clkgen)
+> Measured in simulation with the real ClkGen netlist (WSL-native Icarus;
+> see `clkgen_phases.py` in the testbench folder). The M-cycle is 4
+> oscillator cycles and all clocks toggle once per M-cycle except
+> `n_clk_in`/`cclk`, which follow the oscillator.
+
+| Signal | posedge offset inside the M-cycle |
+|--------|-----------------------------------|
+| `n_clk_in` / `cclk` | every oscillator half-cycle (phases 32/96/160/224 ns at 4.19 MHz-ish osc) |
+| `clk1`, `clk3`, `clk5`, `clk9` | 0 (T-cycle 0 edge) |
+| `clk2`, `clk8` | +1 oscillator cycle |
+| `clk4` | +2 oscillator cycles |
+| `clk6`, `clk7` | +3 oscillator cycles |
+
+Verified behaviour (tb_clkgen, all PASS):
+- `clk_ena=0` stops the CPU clock group `clk1..clk7` (clk6 tested)
+  while `clk8`/`clk9` keep running (they feed the divider chain / MMIO
+  oscillators) - "clock enable" is a *CPU-clocks* gate, not a global
+  stop.
+- `osc_ena=0` stops the whole clock tree (tested on clk9).
+- `cpu_wr_sync` pulses exactly once per M-cycle while `cpu_wr` is high.
+- `ext_cs_en` is **active low**: while `cpu_mreq` is held high it pulses
+  low ~64 ns once per M-cycle (the external chip-select enable window).
+- reset release: after `/RES` goes away, `n_reset2`/`sync_reset`
+  deassert through the synchronizer chain below.
+
+The older hypothesis below is kept for history; treat the measured table
+as authoritative.
+
+Assignment of Clocks (hypothesis, older):
 - clk1+clk2: Prechagre Clock, during clk2=0 all buses are precharged where required. Matches about the same phase as clk8+clk9, but most likely the developers made a separate clock to control the timings precisely (moving the phase slightly with delays as required).
 - clk3+clk4: M-cycle Clock (T ÷ 4)
 - clk5+clk6: Last T-cycle (3) of the current M-cycle (@ posedge clk6)
@@ -73,6 +102,35 @@ Assignment of Clocks (hypothesis, but pretty sure):
 - clk8+clk9: First T-cycle (0) of the current M-cycle (@ posedge clk9)
 
 To get the "middle" T-cycles (1 and 2) you can use a bit of logic, for instance "If clk4=1 and clk6=0, then the 2nd T-cycle is now being executed".
+
+## Netlist structure (issue #396 analysis)
+
+The ClkGen netlist is small (~56 cells) and splits into functional
+blocks:
+
+- **Oscillator / T-cycle skeleton** (`g43/g44` NAND latch on `n_clk_in`,
+  dffs `g53..g56` clocked by `w5/w6` = the osc half-cycles): produces the
+  4-phase skeleton (`w7/w9/w60/w62` family), one M-cycle = 4 oscillator
+  cycles. `w5/w6` also give `cclk` (`g15`) and the phase clocks.
+- **Phase shaping & CPU-clock gating**: the not2/not6/not10 inverter
+  chains (`g13..g28`) derive the individual `clk1..clk7` edges from the
+  skeleton; `clk_ena` enters through `g1/g16` (`w43`) into the `clk2..7`
+  combos. Measured: clk_ena=0 freezes clk1..clk7.
+- **clk8/clk9 + cclk branch**: `clk9 = ~w12`, `clk8 = ~clk9`,
+  `w12 = w40 & osc_ena` - only `osc_ena` gates this branch (measured:
+  clk9 keeps running with clk_ena=0; stops with osc_ena=0).
+- **Reset synchronizer**: nor-latch `g51` (set when `~reset & osc_stable`)
+  + dff `g52` (-> `sync_reset` on posedge clk9) + `g6/g46` -> `n_reset2`.
+  While `osc_stable=0` the latch cannot set, so the internal resets stay
+  asserted (observed: MMIO drives osc_stable after its own start-up; the
+  testbench forces it high). `n_test_reset` (from MMIO) is the async
+  reset of `g52..g56` - i.e. a hard reset of the whole divider/reset
+  chain.
+- **cpu_wr_sync** (`g49/g50/g3`): `cpu_wr` qualified by the phase window
+  `w21 = w7 & ~w60` -> one pulse per M-cycle while WR is high.
+- **ext_cs_en** (`g47/g48/g4`): `~w53` with `w53 = ~(test_1 | w56)` and
+  `w56 = ~((w9 & w60) | cpu_mreq)` - a per-M-cycle low pulse while
+  `cpu_mreq` is high (measured above).
 
 ## Map
 

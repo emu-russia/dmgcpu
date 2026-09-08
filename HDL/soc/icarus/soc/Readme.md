@@ -50,6 +50,8 @@ Verified so far (tb_mmio all-PASS, WSL-native iverilog):
 | `soc_env.v` | Reusable environment: real DUTs + CPU/pad/memory stand-ins, CPU write/read tasks phase-aligned to ClkGen's `cpu_wr_sync`. |
 | `tb_soc_probe.v` | Bring-up probe test (dev). |
 | `tb_mmio.v` | **MMIO register testbench** (PASS): resets, TIMA/TAC roundtrips, IF set/clear (int pulses + CPU irq ack + IF write), lfo_16384Hz = clk9/64, DIV write. |
+| `tb_clkgen.v` | **ClkGen testbench** (PASS): reset release, clk_ena/osc_ena gating, cpu_wr_sync rate, ext_cs_en. |
+| `clkgen_phases.py` | Tool: measured M-cycle + posedge phase table of the 9 clocks (feeds wiki/soc/clkgen.md). |
 | `tb_ser.v` | **Serial-link testbench** (PASS): SB load + SC start (internal clock), 8 ticks, int_serial, IF flag, SC auto-clear. |
 | `tb_mmio.gtkw`, `tb_ser.gtkw`, `waves_cfg_*.json`, `waves/*.png` | GTKWave saves + wave images. |
 | `waves.md` | Wave documentation (per-test images). |

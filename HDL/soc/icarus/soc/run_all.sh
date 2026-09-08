@@ -6,7 +6,7 @@
 cd "$(dirname "$0")"
 SRC="../../dmglib.v ../../clkgen.v mmio_merged.v arb_merged.v ser_merged.v ../../sram.v hram_merged.v soc_env.v"
 FAIL=0
-for t in tb_mmio tb_ser tb_soc_probe; do
+for t in tb_clkgen tb_mmio tb_ser tb_soc_probe; do
   echo "=== $t ==="
   iverilog -D ICARUS -o $t.run $SRC $t.v || { echo "$t: COMPILE FAIL"; FAIL=1; continue; }
   vvp $t.run 2>&1 | tail -3
