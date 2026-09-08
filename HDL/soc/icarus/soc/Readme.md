@@ -15,7 +15,7 @@ Round 1 (bring-up):
   master and pad stand-ins (same bus conventions as the PPU env).
 - `tb_soc_probe.v`: reset + MMIO register roundtrip bring-up.
 
-Verified so far (probe prints, WSL-native iverilog):
+Verified so far (tb_mmio all-PASS, WSL-native iverilog):
 - reset: with `osc_stable=1`, `n_reset2`/`sync_reset` deassert; the clock
   tree and `cpu_wr_sync` pulse.
 - MMIO register write path: the CPU write window is `cpu_wr_sync` (MMIO's
@@ -24,12 +24,17 @@ Verified so far (probe prints, WSL-native iverilog):
   the rising edge when the window closes (`cpu_wr_sync` falls, inside the
   `clk2=1` non-precharge phase). The CPU model holds data ~6 ns past that
   edge.
-- register roundtrips: TIMA ($FF05) = exact; TAC ($FF07) read-back =
-  0xF8|TAC (matches the real Game Boy); TMA ($FF06) captures except for a
-  bus-settle x on one bit (write-phase tuning in progress); SB/SC and IF
-  read-backs are still off (read sampling / Ser participation in progress);
-  DIV ($FF04) reads x until its clock source (the 16384 Hz LFO chain) is
-  characterized.
+- register roundtrips: TIMA ($FF05) exact; TAC ($FF07) read-back =
+  0xF8|TAC (matches the real Game Boy); TMA ($FF06) mostly exact
+  (bus-settle x on one bit); TIMA/TMA/TAC write-decode clocks verified.
+- IF flags: set by the interrupt source pulses (int_jp etc.), cleared by
+  the CPU interrupt acknowledge (cpu_irq_ack) - *not* by an $FF0F write
+  (a $FF0F write *sets* the flags instead); lfo_16384Hz = clk9 / 64
+  (6 divider stages, real-chip 1.048 MHz / 64 = 16384 Hz).
+- open questions: DIV read-back has bus-contention x on two bits (const-1
+  keeper vs read-back driver - needs a weak-bus model variant like the PPU
+  suite); TIMA's count-source taps and the timer IRQ path need the divider
+  analysis (pending); SB/SC (Ser) and HRAM tests next.
 
 ## Files
 
@@ -38,7 +43,10 @@ Verified so far (probe prints, WSL-native iverilog):
 | `merge_bus_aliases.py` | Tool: rewrites `assign <bus>[i] = wNNN` bus-bit aliases into true net aliases (rename `wNNN` -> `<bus>[i]`, delete alias + orphaned wire). Handles multi-module files (ser.v). Buses per netlist: mmio `a`,`d`; arb `a`,`d`,`md`; ser `d`; hram `d`. |
 | `mmio_merged.v`, `arb_merged.v`, `ser_merged.v`, `hram_merged.v` | Merged netlists (generated - regenerate with `merge_bus_aliases.py`, see the tool header). |
 | `soc_env.v` | Reusable environment: real DUTs + CPU/pad/memory stand-ins, CPU write/read tasks phase-aligned to ClkGen's `cpu_wr_sync`. |
-| `tb_soc_probe.v` | Bring-up probe test. |
+| `tb_soc_probe.v` | Bring-up probe test (dev). |
+| `tb_mmio.v` | **MMIO register testbench** (PASS): resets, TIMA/TAC roundtrips, IF set/clear (int pulses + CPU irq ack + IF write), lfo_16384Hz = clk9/64, DIV write. |
+| `tb_mmio.gtkw`, `waves_cfg_mmio.json`, `waves/tb_mmio.png` | GTKWave save + wave image for the MMIO test. |
+| `waves.md` | Wave documentation (per-test images). |
 | `run_all.sh` | Compile + run the suite. |
 
 ## Tooling notes

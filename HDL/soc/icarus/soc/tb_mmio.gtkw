@@ -1,0 +1,68 @@
+[*]
+[*] GTKWave Analyzer v3.3.128 (w)1999-2026 BSI
+[*]
+[*] generated for HDL/soc/icarus/soc tb_mmio (issue #396)
+[*]
+[dumpfile] "tb_mmio.vcd"
+[timestart] 0
+[size] 1920 1000
+[pos] -1 -1
+*-0.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb_mmio
+[sst_width] 250
+[signals_width] 200
+[sst_expanded] 1
+[sst_vpaned_height] 400
+@28
+tb_mmio.env.reset
+
+@28
+tb_mmio.env.clk9
+
+@28
+tb_mmio.env.clk2
+
+@28
+tb_mmio.env.n_reset2
+
+@28
+tb_mmio.env.cpu_wr_sync
+
+@22
+tb_mmio.env.cpu_a[15:0]
+
+@22
+tb_mmio.env.d[7:0]
+
+@28
+tb_mmio.env.soc_wr
+
+@28
+tb_mmio.env.soc_rd
+
+@22
+tb_mmio.env.cpu_irq_trig[4:0]
+
+@28
+tb_mmio.env.ffxx
+
+@28
+tb_mmio.env.mmio.lfo_16384Hz
+
+@28
+tb_mmio.env.mmio.lfo_512Hz
+
+@28
+tb_mmio.env.mmio.w148
+
+@28
+tb_mmio.env.mmio.w223
+
+@28
+tb_mmio.env.mmio.w53
+
+@28
+tb_mmio.env.mmio.w217
+
+[pattern_trace] 1
+[pattern_trace] 0

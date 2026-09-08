@@ -41,10 +41,10 @@ module tb_soc_probe;
 	task rd3(input [15:0] addr, input [40:0] tag);
 		reg [7:0] v1, v2, v3;
 		begin
-			env.cpu_read_at(addr, 2,  v1);
+			env.cpu_read(addr, v1);          // clk2-aligned sample
 			env.cpu_read_at(addr, 40, v2);
 			env.cpu_read_at(addr, 120, v3);
-			$display("READ3 %s (%h): d@2=%b d@40=%b d@120=%b", tag, addr, v1, v2, v3);
+			$display("READ3 %s (%h): align=%b d@40=%b d@120=%b", tag, addr, v1, v2, v3);
 		end
 	endtask
 
@@ -87,6 +87,14 @@ module tb_soc_probe;
 	end
 
 	// ---- decode-event monitor ----
+	always @(posedge env.cpu_rd) begin
+		#40;
+		if (env.cpu_a[7:0] == 8'h04 && env.cpu_a[15:8] == 8'hFF)
+			$display("DIVRD @%0t d=%b w138=%b load=%b w105=%b w77=%b w139=%b w137=%b w116=%b w112=%b q14=%b q92=%b q73=%b q25=%b clk6=%b",
+				$time, env.d, env.mmio.w138, env.mmio.w16, env.mmio.w105, env.mmio.w77,
+				env.mmio.w139, env.mmio.w137, env.mmio.w116, env.mmio.w112,
+				env.mmio.w14, env.mmio.w92, env.mmio.w73, env.mmio.w25, env.clk6);
+	end
 	always @(posedge env.mmio.w223) $display("W223-pos @%0t d=%b a=%h ffxx=%b soc_wr=%b", $time, env.d, env.a, env.ffxx, env.soc_wr);
 	always @(negedge env.mmio.w223) $display("W223-neg @%0t d=%b a=%h soc_wr=%b", $time, env.d, env.a, env.soc_wr);
 	always @(posedge env.mmio.w148) $display("W148-pos @%0t d=%b a=%h soc_wr=%b", $time, env.d, env.a, env.soc_wr);

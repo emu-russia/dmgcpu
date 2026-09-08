@@ -138,9 +138,9 @@ module soc_env;
 	wire ppu_rd = 1'b0, ppu_wr = 1'b0;
 	wire n_ppu_hard_reset = 1'b1;    // inactive
 	wire ff46 = 1'b0;
-	wire ppu_int_stat = 1'b0, ppu_int_vbl = 1'b0;
-	wire ppu_mode3 = 1'b0;           // PPU idle (no mode-3 VRAM bursts)
-	wire int_jp = 1'b0;              // joypad interrupt (APU) - tests drive it
+	reg ppu_int_stat = 1'b0, ppu_int_vbl = 1'b0;
+	reg int_jp = 1'b0;               // joypad interrupt (APU)
+	reg ppu_mode3 = 1'b0;            // PPU idle (no mode-3 VRAM bursts)
 	wire FF60_D1 = 1'b0;             // DIV fast mode off
 	wire ppu_clk;
 	assign ppu_clk = cclk;           // PPU clock ~ cclk passthrough
